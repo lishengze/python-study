@@ -130,13 +130,13 @@ def testModule ():
 # 封装：
 # 继承：
 # 多态：(js无法实现)
-
 def testPoly ():
+    print 'Test Object Poly'
     class Anaimal(object):
         def __init__ (self, name):
             self.__name = name
         def run (self):
-            print 'Anaimal', self.__name
+            print 'Anaimal: ', self.__name
     
     class Mammal(Anaimal):
         def __init__ (self, name):
@@ -147,6 +147,7 @@ def testPoly ():
     class Dog(Anaimal):
         def __init__ (self, name):
             self.__name = name
+            self.age = 10
         def run (self):
             print 'Dog: ' , self.__name
 
@@ -156,16 +157,69 @@ def testPoly ():
         def run (self):
             print 'Cat: ' , self.__name    
 
-    objList = [Anaimal('Color'), Mammal('Strong'), Dog('Loyal'), Cat('Proud')]
+    dog1 = Dog('Loyal')
+    print getattr(dog1, 'age')
+
+    objList = [Anaimal('Color'), Mammal('Strong'), Dog('Loyal'), Cat('Proud')]    
     
     for obj in objList:
-        print obj
         obj.run()
+    
+    husky = Dog('Dom')
+    print isinstance(husky, Dog)
+    print isinstance(husky,Anaimal)
+    print isinstance('a', str)
+    print isinstance('a', unicode)
+# 测试分别给实例和对象添加属性和方法
+def testAddProMethod():
+    class TmpObj(object):
+        def __init__ (self, name):
+            self.name = name
+    
+    obj1 = TmpObj('lee')
+    obj2 = TmpObj('tom')
+    obj1.age = 10
 
+    # print obj1.age, obj2.age
+    
+    from types import MethodType
+    def printName(self):
+        print self.name
+    TmpObj.printName = MethodType(printName, None, TmpObj)
+    obj1.printName()
+    obj2.printName()
+# 测试@property
+def testProperty():
+    class Student(object):
+        # def __init__(self, score):
+        #     self.score = score
+        
+        @property
+        def score (self):
+            return self._score
+        
+        @score.setter
+        def score (self, value):
+            if not isinstance(value, int):
+                raise ValueError('value must be int')
+            if value < 0 or value > 100:
+                raise ValueError('value must less than 100 and bigger than 0')
+            self._score = value
+    
+    stu1 = Student()
+    stu1.score = 100
+    print stu1.score
+    
+#面向对象测试集合
 def testObjectOriented():
-    testPoly()
+    print 'Test Object-Oriented'
+    # testPoly()
+    # testAddProMethod()
+    testProperty()
 
 def testAll ():
     # testFunProgram()
     # testModule()
     testObjectOriented()
+
+testAll()
