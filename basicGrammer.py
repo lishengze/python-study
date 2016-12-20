@@ -209,17 +209,140 @@ def testProperty():
     stu1 = Student()
     stu1.score = 100
     print stu1.score
-    
+# 测试__iter__ 属性
+# __iter__ : 将实例本身设置为迭代对象;
+# next: 通过next来确定每次循环的操作与返回的值;
+def testIterPro():
+    class fib(object):
+        def __init__ (self):
+            self.a, self.b = 0,1
+        def __iter__(self):
+            return self
+        def next(self):
+            self.a, self.b = self.b, self.a + self.b
+            if self.a > 100:
+                raise StopIteration()
+            return self.a 
+
+    for val in fib():
+        print val
+
+# 测试__getitem__
+# __getitem__: 重载[index]操作符, index可以是一个数值也可以是slice函数;
+def testGetItem():
+    class fib(object):
+        def __getitem__(self, n):
+            a, b = 0, 1
+            for x in range(1,n):
+                a,  b = b, a + b
+            return a
+    print fib[5]
+
 #面向对象测试集合
 def testObjectOriented():
     print 'Test Object-Oriented'
     # testPoly()
     # testAddProMethod()
-    testProperty()
+    # testProperty()
+    # testIterPro()
+    testGetItem()
 
+# 进程与线程
+# 测试进程
+def testProcess ():
+    from multiprocessing import Process
+    import os
+    def run_proc (name):
+        print 'Run child process %s (%s)...' % (name, os.getpid())
+
+    print 'Parent proess %s.' % os.getpid()
+    childProess = Process(target=run_proc, args=('test',))
+    print 'Process will start.'
+    # childProess.start()
+    # childProess.join()
+    print 'Process ends.'
+
+# 测试进程间通讯
+def testProcessCom () :
+    from multiprocessing import Process, Queue
+    import os, time, random
+
+    def write (q):
+        for value in ['a', 'b', 'c']:
+            print 'Put %s in queue' % value
+            q.put(value)
+            time.sleep(random.random())
+    
+    def read (q):
+        while True:
+            value = q.get(True)
+            print 'Get %s from queue' % value
+    q = Queue()
+    pw = Process(target = write, args = (q,))
+    pr = Process(target = read, args = (q,))
+    pw.start()
+    pr.start()
+    pw.join()
+    pr.terminate()
+
+# 测试线程锁机制
+balance = 0
+def testThreadLock () :   
+    import time, threading
+    lock = threading.Lock()
+    def change_it(n):
+        global balance
+        balance = balance + n
+        balance = balance - n
+
+    def run_thread(n):
+        for i in range(100000):
+            lock.acquire()
+            try :
+                change_it(n)
+            finally:
+                lock.release()
+    
+    t1 = threading.Thread(target=run_thread, args=(5,))
+    t2 = threading.Thread(target=run_thread, args=(8,))
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
+    print balance
+
+# 测试线程Local变量
+def testThreadLocal ():
+    import threading
+    local_school = threading.local()
+
+    def process_student():
+        print 'Hello, %s (in %s)' % (local_school.student, threading.current_thread().name)
+    def proess_thread (name) :
+        local_school.student = name
+        process_student()
+
+    t1 = threading.Thread(target=proess_thread, args=('Alice',), name='Thread-A')
+    t2 = threading.Thread(target=proess_thread, args=('Bella',), name='Thread-B')
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
+
+
+# 测试进程与线程
+def testProcessThread():
+    #  testProcess()
+    #  testProcessCom()
+    #  testThreadLock()
+     testThreadLocal()
+
+# 测试程序汇总
 def testAll ():
     # testFunProgram()
     # testModule()
-    testObjectOriented()
+    # testObjectOriented()
+    testProcessThread()
 
-testAll()
+if __name__ == '__main__':
+    testAll()
