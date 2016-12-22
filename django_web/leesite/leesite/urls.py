@@ -19,8 +19,11 @@ urlpatterns = [
 """
 from django.conf.urls import url
 from django.contrib import admin
-from leesite.views import hello
+from leesite.views import hello, current_datetime, hours_head
+
 
 urlpatterns = [
     url('^hello/$', hello),
+    url('^time/$', current_datetime),
+    url('^time/plus/(\d{1,2})/$', hours_head),
 ]
