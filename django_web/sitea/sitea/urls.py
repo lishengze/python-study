@@ -1,4 +1,4 @@
-"""leesite URL Configuration
+"""sitea URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.10/topics/http/urls/
@@ -12,24 +12,10 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-]
-
 """
 from django.conf.urls import url
 from django.contrib import admin
-from leesite.views import hello, current_datetime, hours_head
-from leesite.views import index, add, ajax_dict, ajax_list
-
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^hello/$', hello),
-    url(r'^time/$', current_datetime),
-    url(r'^time/plus/(\d{1,2})/$', hours_head),
-    url(r'^$', index),
-    url(r'^add/$', add),
-    url(r'^ajax_dict',ajax_dict),
-    url(r'ajax_list', ajax_list),
 ]
