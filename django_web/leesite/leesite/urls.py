@@ -20,8 +20,7 @@ urlpatterns = [
 from django.conf.urls import url
 from django.contrib import admin
 from leesite.views import hello, current_datetime, hours_head
-from leesite.views import index, add, ajax_dict, ajax_list
-
+from leesite.views import index, add, ajax_dict, ajax_list, testScript
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -31,5 +30,6 @@ urlpatterns = [
     url(r'^$', index),
     url(r'^add/$', add),
     url(r'^ajax_dict',ajax_dict),
-    url(r'ajax_list', ajax_list),
+    url(r'^ajax_list', ajax_list),
+    url(r'^testScript.js/$',testScript),
 ]

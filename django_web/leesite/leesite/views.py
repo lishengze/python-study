@@ -43,8 +43,13 @@ def hours_head (request, offset):
 	return HttpResponse(html)
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'testScript.html')
 
+def testScript(request):
+	t = get_template("js/testScript.js")
+	c = Context({'value': 'Come on'})
+	jscript = t.render(c)
+	return HttpResponse(jscript)
 
 def add(request):
     a = request.GET['a']
