@@ -110,10 +110,13 @@ $(function () {
     //     //     }]
     //     // });
     // })
+    var testSendData = {
+        
+    }
 
     $.ajax({  
         url: getJSONUrl,  
-        data: { 'ss': [1,2], 'st':3 },  
+        data: { 'ss': [1,2,3,4,9], 'st':3 },  
         dataType: "json",  
         type: "POST",  
         traditional: true,  

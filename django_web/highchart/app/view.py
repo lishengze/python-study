@@ -25,11 +25,14 @@ def get_highchart_drilldown (request):
 	return render(request, "src/Highcharts-4.2.6/js/drilldown.js")
 
 def get_chart (request):
-	return render(request, "chart.js")
+	return render(request, "chart-origin.js")
 
 @csrf_exempt
 def sendData (request):
-	data = {'A':[1,2,3], 'B':'BB'}
+	a1 = request.POST['ss']
+	a3 = request.POST.getlist('ss')
+	a2 = request.POST['st']
+	data = {'A': a3, 'B': a2}
 	return HttpResponse(json.dumps(data), content_type= "application/json")	
 
 def ajax_dict (request):
