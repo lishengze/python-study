@@ -1,6 +1,6 @@
 <html lang="en-us">
 	<head>
-		<title>Change user | Django site admin</title>
+		<title>修改用户信息</title>
 		<link rel="stylesheet" type="text/css" href="./static/admin/css/base.css">
 		<link rel="stylesheet" type="text/css" href="./static/admin/css/forms.css">
 		<script type="text/javascript" src="/admin/jsi18n/"></script>
@@ -56,7 +56,7 @@
 			</div>
 			<!-- Content -->
 			<div id="content" class="colM">
-				<h1>Change user</h1>
+				<h1>修改用户</h1>
 				<div id="content-main">
 					<ul class="object-tools">					
 						<li>						
@@ -68,15 +68,15 @@
 						<div>
 							<fieldset class="module aligned ">            
 								<div class="form-row field-username">								            
-													<div>                                        
-																<label class="required" for="id_username">用户名:</label>                        
-																	<input class="vTextField" id="id_username" maxlength="150" name="username" type="text" value="lsz" required="">                    
-																<p class="help">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</p>
-													</div>								
-										</div>
+									<div>                                        
+										<label class="required" for="id_username">用户名:</label>                        
+											<input class="vTextField" id="id_username" maxlength="150" name="username" type="text" value="lsz" required="">                    
+										<p class="help">要求150个字符以内的数字、字母、符号也只支持 @/./+/-/_.</p>
+									</div>								
+								</div>
 								<div class="form-row field-password">																
 									<div>																				
-										<label for="id_password">Password:</label>										
+										<label for="id_password">密码:</label>										
 										<div id="id_password">
 											<strong>算法</strong>: pbkdf2_sha256 
 											<strong>迭代次数</strong>: 30000 
@@ -144,7 +144,7 @@
 															<input type="text" placeholder="Filter" id="id_groups_input">
 														</p>
 														<select multiple="multiple" class="filtered" data-field-name="groups" data-is-stacked="0" id="id_groups_from" name="groups_old"></select>
-														<a title="Click to choose all groups at once." href="#" id="id_groups_add_all_link" class="selector-chooseall">Choose all</a>
+														<a title="Click to choose all groups at once." href="#" id="id_groups_add_all_link" class="selector-chooseall">全选</a>
 													</div>
 													<ul class="selector-chooser">
 														<li>
@@ -155,7 +155,7 @@
 														</li>
 													</ul>
 													<div class="selector-chosen">
-														<h2>Chosen groups 
+														<h2>选择的群组
 															<span class="help help-tooltip help-icon" title="This is the list of chosen groups. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes.">
 																</span>
 														</h2>
