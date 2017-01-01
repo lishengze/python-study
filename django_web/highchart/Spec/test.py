@@ -1,3 +1,3 @@
-from django.contrib import admin
-
-print admin.site.urls
+'''
+测试正则表达式
+'''

@@ -38,3 +38,25 @@ def sendData (request):
 def ajax_dict (request):
 	name_dict = {'twz': 'Life is short!'}
 	return HttpResponse(json.dumps(name_dict), content_type = "application/json")
+
+class Main(object):
+	def __init__(self):
+		self.name = 'main'
+	
+	def m_ajax_dict(self, request):
+		name_dict = {'twz': 'Life is short! Go on!'}
+		return HttpResponse(json.dumps(name_dict), content_type = "application/json")
+
+main_site = Main()
+
+class AdminSite(object):
+	def __init__(self):
+		self.name = 'admin_size'
+
+	def urls(self, request):
+		url_path = request.path
+		url_array = url_path.split('/')
+		template_name = url_path[1:len(url_path)-1] + '.html'
+		return render(request, template_name)
+
+admin_site = AdminSite()
