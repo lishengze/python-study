@@ -20,7 +20,7 @@ from app.view import sendData, ajax_dict
 from app.view import main_site, admin_site
 
 urlpatterns = [
-    url(r'^admin/', admin_site.urls),
+    url(r'^admin/', admin.site.urls),
     url(r'^index/$', index),
     url(r'jquery.min.js/$', get_jquery),
     url(r'highcharts.js/$', get_highchart),
@@ -28,5 +28,6 @@ urlpatterns = [
     url(r'drilldown.js/$', get_highchart_drilldown),
     url(r'^chart.js/$', get_chart),
     url(r'^sendData/$', sendData),
-    url(r'ajax_dict', main_site.m_ajax_dict),
+    url(r'ajax_dict', ajax_dict),
+    url(r'static', admin_site.query_static),
 ]
