@@ -349,4 +349,3 @@ CLIENT = 'client'
 XML = 'xml'
 XML_CONFIG = 'config'
 XML_SRVS = {XML_CONFIG : ('monmanager',)}
-

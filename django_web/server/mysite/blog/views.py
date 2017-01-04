@@ -26,6 +26,7 @@ from ecall import *
 from verControl import *
 from taskinfo import *
 
+import json
 #欢迎页
 @csrf_protect
 def index(request, pageNo=None, etype=None, keyword=None):
@@ -256,9 +257,6 @@ def query_all_taskresult(request):
 	else:
 		return index(request)
 
-def query_test(request):
-	return render(request, 'test_req.html')
-
 ###查询版本信息
 def query_all_version(request):
 	#if request.method == 'POST':
@@ -273,6 +271,9 @@ def query_all_version(request):
 			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
 			rsp = recv_end(sock)
+			print 'All Version Rsp: '
+			print rsp
+			print 'End!'
 			sock.close()
 			rsp_list = rsp.split("\n")
 			version_list = []
@@ -283,7 +284,7 @@ def query_all_version(request):
 					version_info.decode(info)
 					version_list.append(version_info)
 			for info in version_list:
-				print(info.encode())
+				print(info.version)
 		except Exception as e:
 			print('notifyDaemon failed!')
 			print(traceback.format_exc())
@@ -300,6 +301,158 @@ def search(request):
 	else:
 		return index(request)
 
+def query_test(request):
+	return render(request, 'test_req.html')
+
+def test_all_srvstatus(request):
+	if request.method != '':
+		req_info = ReqInfo(0, cfg.FLAG_REQTYPE_SRVSTATUS)
+		rsp = ''
+		try:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			print 'Test_all_srvstatus'
+			print rsp
+			sock.close()
+			rsp_list = rsp.split("\n")
+			SrvStatus_list = []
+			for token in rsp_list:
+				if token.startswith(cfg.TIP_BODY_REQ):
+					info = token[len(cfg.TIP_BODY_REQ):]
+					srv_status = SrvStatus()
+					srv_status.decode(info)
+					SrvStatus_list.append(srv_status.__dict__)
+			# for info in SrvStatus_list:
+			# 	print(info.encode())
+			rsp_data = SrvStatus_list
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		# return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+	else:
+		return index(request)
+
+def test_all_tasklist(request):
+	#if request.method == 'POST':
+	if request.method != '':
+
+		#从POST请求中获取查询关键字
+		###
+		req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKLIST)
+		rsp_data = ''
+		try:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			print rsp
+			rsp_list = rsp.split("\n")
+			task_list = []
+			for token in rsp_list:
+				if token.startswith(cfg.TIP_INFO_TASK):
+					info = token[len(cfg.TIP_INFO_TASK):]
+					task_info = TaskInfo()
+					task_info.decode(info)
+					task_list.append(task_info.__dict__)
+			# for info in task_list:
+			# 	print(info.encode())
+			sock.close()
+			rsp_data = task_list
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		# return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+	else:
+		return index(request)
+
+def test_all_taskresult(request):
+	if request.method != '':
+		print 'test_all_taskresult!'
+		req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKRESULT)
+		task_result = ''
+		try:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			task_result = recv_end(sock)
+			task_result.split('\n')
+			print task_result
+			sock.close()
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		return HttpResponse(task_result)
+	else:
+		return index(request)
+
+def test_all_version(request):
+	if request.method != '':
+		print '\nTest_all_version!'
+		req_info = ReqInfo(0, cfg.FLAG_REQTYPE_VERSION)
+		rsp = ''
+		try:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			sock.close()
+			rsp_list = rsp.split("\n")
+			version_list = []
+
+			for token in rsp_list:
+				if token.startswith(cfg.TIP_BODY_VERINFO):
+					info = token[len(cfg.TIP_BODY_VERINFO):]
+					version_info = VersionInfo()
+					version_info.decode(info)
+					version_list.append(version_info.__dict__)
+			# if info in version_list:
+			# 	print info
+			rsp_data = version_list
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		print request
+		print request.path
+		# print request.REQUEST
+		for value in request:
+			print value
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+		# return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
+	else:
+		return index(request)
+
+def query_static_src(request):
+	path_name = request.path
+	print path_name
+	path_array = path_name.split('/')
+	static_index = 0
+	for value in path_array:
+		if (value == 'static'):
+			break
+		static_index += 1
+	static_file_name = r'/'.join(path_array[static_index:])
+	print static_file_name
+	# return render(request, 'static/jquery-1.8.3/jquery.min.js')
+	return render(request, static_file_name)
 
 #存储用户留言信息
 def leave_comment(request,eid=None):

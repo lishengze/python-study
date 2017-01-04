@@ -42,7 +42,7 @@ def getInfo(buf, tip_start, tip_end):
 		buf: socket.recv()
 		tip_start:开始标记
 		tip_end:结束标记
-		
+
 	Returns:
 		info：开始标记及结束标记之间的内容
 		buf:结束标记后面的内容
@@ -117,6 +117,10 @@ class ReqInfo:
 	def __init__(self, TID=0, req_type=cfg.FLAG_REQTYPE_TASKINFO):
 		self.TID = TID
 		self.req_type = req_type
+		self.__dict__ = {
+			'TID': self.TID,
+			'req_type': self.req_type
+		}
 
 	def encode(self):
 		info_str = cfg.TIP_BODY_REQ + str(self.TID) + cfg.DCOLON + str(self.req_type) + cfg.NEWLINE
@@ -144,6 +148,16 @@ class TaskInfo:
 		self.cmd = cmd
 		self.cmdline = cmdline
 		self.task_type = task_type
+		self.__dict__ = {
+			'info_time': self.info_time,
+			'exec_time': self.exec_time,
+			'state': self.state,
+			'PID': self.PID,
+			'TID': self.TID,
+			'cmd': self.cmd,
+			'cmdline': self.cmdline,
+			'task_type': self.task_type
+		}
 
 	def setState(self, state):
 		self.state = state
@@ -194,6 +208,15 @@ class SrvStatus:
 		self.cmdline = cmdline
 		self.PID = PID
 		self.starttime = starttime
+		self.__dict__ = {
+			'srvid': self.srvid,
+			'status': self.status,
+			'timestamp': self.timestamp,
+			'ip': self.ip,
+			'cmdline': self.cmdline,
+			'PID': self.PID,
+			'starttime': self.starttime
+		}
 
 	def setStatus(self, status, timestamp):
 		self.status = status
@@ -241,7 +264,13 @@ class VersionInfo:
 		self.version = version
 		self.datetime = datetime
 		self.status = status
-	
+		self.__dict__ = {
+			'object': self.object,
+			'version': self.version,
+			'datetime': self.datetime,
+			'status': self.status
+		}
+
 	def encode(self):
 		info_str = cfg.TIP_BODY_VERINFO + str(self.object) + cfg.DCOLON + str(self.version) + cfg.DCOLON + str(self.datetime)\
 			+ cfg.DCOLON + str(self.status) + cfg.NEWLINE
@@ -256,7 +285,7 @@ class VersionInfo:
 			self.status = info_list[3]
 			return True
 		else:
-			return False	
+			return False
 '''
 from taskinfo import TaskInfo
 

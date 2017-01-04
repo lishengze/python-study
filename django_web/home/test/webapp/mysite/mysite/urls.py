@@ -44,7 +44,10 @@ urlpatterns = [
     url(r'^latest/feed/$', LatestEntriesFeed()),
     url(r'^test_req/$', blog_views.query_test),
     url(r'static', blog_views.query_static_src),
-    url(r'test_req/AJAX/Request_All_Version/$', blog_views.test_all_version),
+    url(r'AJAX/Request_All_SrvStatus/$', blog_views.test_all_srvstatus),
+    url(r'AJAX/Request_All_Version/$', blog_views.test_all_version),
+    url(r'AJAX/Request_All_TaskList/$', blog_views.test_all_tasklist),
+    url(r'AJAX/Request_All_TaskResult/$', blog_views.test_all_taskresult),
     url(r'^',blog_views.index),
 
 ]

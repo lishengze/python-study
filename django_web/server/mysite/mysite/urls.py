@@ -31,9 +31,9 @@ urlpatterns = [
     url(r'^account/logout/', blog_views.alogout),
 #    url(r'^essay/(?P<eid>\d+)/$',blog_views.essay_details),
  #   url(r'^search/$',blog_views.task),
- 	###Ö´ÐÐ¼´Ê±ÈÎÎñ
+ 	###Ö´ï¿½Ð¼ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
  	url(r'^task1/$',blog_views.task_rpc),
- 	###Ö´ÐÐ¼Æ»®ÈÎÎñ
+ 	###Ö´ï¿½Ð¼Æ»ï¿½ï¿½ï¿½ï¿½ï¿½
  	url(r'^task2/$',blog_views.task_ntf),
     url(r'^req1/$',blog_views.query_all_srvstatus),
     url(r'^req2/$',blog_views.query_all_tasklist),
@@ -42,6 +42,12 @@ urlpatterns = [
     url(r'^leavemsg/(?P<eid>\d+)/$',blog_views.leave_comment1),
     url(r'^(?P<pageNo>\d+)/(?P<etype>\d+)/$',blog_views.index),
     url(r'^latest/feed/$', LatestEntriesFeed()),
-    url(r'^',blog_views.index),
     url(r'^test_req/$', blog_views.query_test),
+    url(r'static', blog_views.query_static_src),
+    url(r'AJAX/Request_All_SrvStatus/$', blog_views.test_all_srvstatus),
+    url(r'AJAX/Request_All_Version/$', blog_views.test_all_version),
+    url(r'AJAX/Request_All_TaskList/$', blog_views.test_all_tasklist),
+    url(r'AJAX/Request_All_TaskResult/$', blog_views.test_all_taskresult),
+    url(r'^',blog_views.index),
+
 ]

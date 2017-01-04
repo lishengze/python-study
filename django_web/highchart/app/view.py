@@ -38,7 +38,6 @@ def sendData (request):
 
 def ajax_dict (request):
     tmpObj = Student()
-	name_dict = {'twz': 'Life is short!'}
 	return HttpResponse(json.dumps(tmpObj), content_type = "application/json")
 
 class Main(object):
