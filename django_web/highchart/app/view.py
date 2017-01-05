@@ -3,7 +3,6 @@ from django.template import Template, Context
 from django.template.loader import get_template
 from django.shortcuts import render, render_to_response
 from django.views.decorators.csrf import csrf_exempt
-from student import Student, student2dict
 import json
 
 def index (request) :
@@ -40,36 +39,36 @@ def ajax_dict (request):
     tmpObj = Student()
 	return HttpResponse(json.dumps(tmpObj), content_type = "application/json")
 
-class Main(object):
-	def __init__(self):
-		self.name = 'main'
+# class Main(object):
+# 	def __init__(self):
+# 		self.name = 'main'
 	
-	def m_ajax_dict(self, request):
-		name_dict = {'twz': 'Life is short! Go on!'}
-		return HttpResponse(json.dumps(name_dict), content_type = "application/json")
+# 	def m_ajax_dict(self, request):
+# 		name_dict = {'twz': 'Life is short! Go on!'}
+# 		return HttpResponse(json.dumps(name_dict), content_type = "application/json")
 
-main_site = Main()
+# main_site = Main()
 
-class AdminSite(object):
-	def __init__(self):
-		self.name = 'admin_size'
+# class AdminSite(object):
+# 	def __init__(self):
+# 		self.name = 'admin_size'
 
-	def urls(self, request):
-		url_path = request.path
-		url_array = url_path.split('/')
-		template_name = url_path[1:len(url_path)-1] + '.html'
-		return render(request, template_name)
+# 	def urls(self, request):
+# 		url_path = request.path
+# 		url_array = url_path.split('/')
+# 		template_name = url_path[1:len(url_path)-1] + '.html'
+# 		return render(request, template_name)
 
-	def query_static(self, request):
-    		path_name = request.path
-			# path_array = path_name.split('/')
-			# static_index = 0
-			# for value in path_array:
-    		# 		if 'static' == value:
-    		# 				break
-			# 		static_index += 1
-			# static_file_name = '/'.join(path_array[static_index:])
-			# return render(request, static_file_name)
+# 	def query_static(self, request):
+#     		path_name = request.path
+# 			# path_array = path_name.split('/')
+# 			# static_index = 0
+# 			# for value in path_array:
+#     		# 		if 'static' == value:
+#     		# 				break
+# 			# 		static_index += 1
+# 			# static_file_name = '/'.join(path_array[static_index:])
+# 			# return render(request, static_file_name)
 
 
-admin_site = AdminSite()
+# admin_site = AdminSite()

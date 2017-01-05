@@ -86,13 +86,13 @@ def test_get_file_name():
 	print 'transed file name:  ' + get_file_name(path)
 
 def test_get_static_file_name():
-	path = '/a/static/b/c.js/'
+	path = '/main/static/b/c.js'
 	print 'original file name: ' + path
 	print 'transed file name:  ' + get_static_file_name(path)
 
 def global_func():
-	test_get_file_name()
-	# test_get_static_file_name()
+	# test_get_file_name()
+	test_get_static_file_name()
 	# test_get_ajax_request_name()
 
 global_func()

@@ -17,7 +17,6 @@ from django.conf.urls import url
 from django.contrib import admin
 from app.view import index, get_jquery, get_highchart, get_highchart_data, get_highchart_drilldown, get_chart
 from app.view import sendData, ajax_dict
-from app.view import main_site, admin_site
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -28,6 +27,5 @@ urlpatterns = [
     url(r'drilldown.js/$', get_highchart_drilldown),
     url(r'^chart.js/$', get_chart),
     url(r'^sendData/$', sendData),
-    url(r'ajax_dict', ajax_dict),
-    url(r'static', admin_site.query_static),
+    url(r'ajax_dict', ajax_dict), 
 ]
