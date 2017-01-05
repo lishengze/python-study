@@ -301,8 +301,97 @@ def search(request):
 	else:
 		return index(request)
 
-def query_test(request):
-	return render(request, 'test_req.html')
+def is_ajax_request(path):
+	path_array = path.split('/')
+	ajax_flag = 'AJAX'
+	if ajax_flag in path_array:
+		return True
+	else:
+		return False
+
+def is_static_file(file_name):
+	name_array = file_name.split('/')
+	static_flag = 'static'
+	if static_flag in name_array:
+		return True
+	else:
+		return False
+
+def delete_headend_slash(strvalue):
+	str_start_index = 0
+	str_end_index = len(strvalue)
+	if strvalue[str_start_index] == '/':
+		str_start_index = 1
+	if strvalue[str_end_index-1] == '/':
+		str_end_index -= 1
+	return strvalue[str_start_index:str_end_index]
+
+def get_static_file_name(origin_file_name):
+	name_array = origin_file_name.split('/')
+	index = 0
+	static_flag = 'static'
+	for value in name_array:
+		if value == static_flag:
+			break
+		index += 1
+	trans_file_name = '/'.join(name_array[index:])
+	return delete_headend_slash(trans_file_name)
+
+def get_html_file_name(path):
+	name_array = path.split('/')
+	return name_array[len(name_array)-1]
+
+def get_file_name(path):
+	file_name = delete_headend_slash(path)
+	js_flag = '.js'
+	css_flag = '.css'
+	html_flag = '.html'
+	if file_name[-3:] == js_flag or file_name[-4:] == css_flag:
+		if is_static_file(file_name):
+			file_name = get_static_file_name(file_name)
+	elif file_name[-5:] == html_flag:
+		file_name = get_html_file_name(file_name)
+	else:
+		file_name += html_flag	
+	return file_name
+
+def get_ajax_request_name(path):
+	name_array = path.split('/')
+	ajax_flag = 'AJAX'
+	index = 0
+	for value in name_array:
+		if value == ajax_flag:
+			break
+		index += 1
+	ajax_request_name = '/'.join(name_array[index+1:])
+	return delete_headend_slash(ajax_request_name)	
+
+def get_ajax_func(path):
+	ajax_name = get_ajax_request_name(path)
+	print 'ajax_name: ' + ajax_name
+	ajax_func_dict = {
+		'Request_All_SrvStatus': test_all_srvstatus,
+		'Request_All_TaskList': test_all_tasklist,
+		'Request_All_TaskResult': test_all_taskresult,
+		'Request_All_Version': test_all_version		
+	}
+	ajax_func = ajax_func_dict.get(ajax_name, default_ajax_request)
+	return ajax_func
+
+def main_query_rsp(request):
+	if is_ajax_request(request.path):
+		print '\nIs AJAX Request'
+		ajax_func = get_ajax_func(request.path)
+		return ajax_func(request)		
+	else:
+		print '\nIs not AJAX Request'
+		file_name = get_file_name(request.path)
+		print 'file name: ' + file_name + '\n'
+		return render(request, file_name)
+	return render(request, file_name)
+
+def default_ajax_request(request):
+	return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
 
 def test_all_srvstatus(request):
 	if request.method != '':
@@ -401,13 +490,19 @@ def test_all_taskresult(request):
 
 def test_all_version(request):
 	if request.method != '':
-		print '\nTest_all_version!'
+		print '\n+++++ Test_all_version START! +++++'
+		print request
 		req_info = ReqInfo(0, cfg.FLAG_REQTYPE_VERSION)
 		rsp = ''
 		try:
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			tcp_send_head = genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF
+
+			print 'sock send info: '
+			print tcp_send_head + '\n'
+
 			rsp = recv_end(sock)
 			sock.close()
 			rsp_list = rsp.split("\n")
@@ -425,18 +520,13 @@ def test_all_version(request):
 		except Exception as e:
 			print('notifyDaemon failed!')
 			print(traceback.format_exc())
-		print request
-		print request.path
-		# print request.REQUEST
-		for value in request:
-			print value
+
 		response = HttpResponse(json.dumps(rsp_data))
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
 		response["Access-Control-Max-Age"] = "1000"
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
-		# return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
 	else:
 		return index(request)
 
@@ -451,8 +541,9 @@ def query_static_src(request):
 		static_index += 1
 	static_file_name = r'/'.join(path_array[static_index:])
 	print static_file_name
-	# return render(request, 'static/jquery-1.8.3/jquery.min.js')
 	return render(request, static_file_name)
+
+
 
 #存储用户留言信息
 def leave_comment(request,eid=None):

@@ -431,6 +431,9 @@ def test_all_version(request):
 		for value in request:
 			print value
 		response = HttpResponse(json.dumps(rsp_data))
+
+
+
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
 		response["Access-Control-Max-Age"] = "1000"
