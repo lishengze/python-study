@@ -94,18 +94,22 @@ def get_html_file_name(path):
 	name_array = path.split('/')
 	return name_array[len(name_array)-1]
 
+def is_empty_html_request(file_name):
+	name_array = file_name.split('/')
+	last_file_name = name_array[len(name_array)-1]
+	if last_file_name.find('.') == -1:
+		return True
+	else:
+		return False
+
 def get_file_name(path):
 	file_name = delete_headend_slash(path)
-	js_flag = '.js'
-	css_flag = '.css'
 	html_flag = '.html'
-	if file_name[-3:] == js_flag or file_name[-4:] == css_flag:
-		if is_static_file(file_name):
-			file_name = get_static_file_name(file_name)
-	elif file_name[-5:] == html_flag:
-		file_name = get_html_file_name(file_name)
-	else:
-		file_name += html_flag	
+	if is_static_file(file_name):
+		file_name = get_static_file_name(file_name)
+	if is_empty_html_request(file_name):
+		file_name += html_flag
+	file_name = unicode(file_name, "utf-8")		
 	return file_name
 
 def get_ajax_request_name(path):

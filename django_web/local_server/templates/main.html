@@ -2,7 +2,7 @@
 <head lang="en">
     <meta charset="utf-8">
     <title> Test Request </title>
-    <script src="static/jquery-1.8.3/jquery.min.js"></script>
+    <script src="/static/jquery-1.8.3/jquery.min.js"></script>
 </head>
 <body>
   <div id = 'Test Communication'>
@@ -16,7 +16,7 @@
   <p id="Request_All_TaskResult_Rsp"></p>
   <input type="button" id="Request_All_Version" value="Request All Version">
   <p id="Request_All_Version_Rsp"></p>
-  <a href="/main/index/"> SubHtml </a>
+  <a href="/index/"> SubHtml </a>
 	<script>
       $('#Request_All_SrvStatus').click(function(){
           $.getJSON('AJAX/Request_All_SrvStatus/',function(rsp_result){
