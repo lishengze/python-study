@@ -18,6 +18,6 @@ from django.contrib import admin
 from server.views import main_query_rsp
 
 urlpatterns = [
-    # url(r'^admin/', admin.site.urls),
+    url(r'^admin/', admin.site.urls),
     url(r'^', main_query_rsp),
 ]
