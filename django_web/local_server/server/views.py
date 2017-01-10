@@ -164,5 +164,4 @@ def main_query_rsp(request):
 		return render(request, file_name, file_object)
 
 def get_main_object():
-    
 	return {'name': 'LEE'}

@@ -24,13 +24,11 @@ import config_web as cfg_w
 admin.autodiscover()
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-   url(r'root/(?P<path>.*)$', serve,
-   {'document_root': cfg_w.TEMPLATES_PATH}),
+    url(r'root/(?P<path>.*)$', serve,
+    {'document_root': cfg_w.TEMPLATES_PATH}),
     url(r'^account/login/', blog_views.alogin),
    	url(r'^account/register/', blog_views.register),
     url(r'^account/logout/', blog_views.alogout),
-#    url(r'^essay/(?P<eid>\d+)/$',blog_views.essay_details),
- #   url(r'^search/$',blog_views.task),
  	###ִ�м�ʱ����
  	url(r'^task1/$',blog_views.task_rpc),
  	###ִ�мƻ�����
@@ -42,12 +40,14 @@ urlpatterns = [
     url(r'^leavemsg/(?P<eid>\d+)/$',blog_views.leave_comment1),
     url(r'^(?P<pageNo>\d+)/(?P<etype>\d+)/$',blog_views.index),
     url(r'^latest/feed/$', LatestEntriesFeed()),
+
 	url(r'^test_req/', blog_views.main_query_rsp),
     url(r'AJAX/Request_All_SrvStatus/$', blog_views.test_all_srvstatus),
     url(r'AJAX/Request_All_Version/$', blog_views.test_all_version),
     url(r'AJAX/Request_All_TaskList/$', blog_views.test_all_tasklist),
     url(r'AJAX/Request_All_TaskResult/$', blog_views.test_all_taskresult),    
-    url(r'static', blog_views.query_static_src),
+	url(r'^', blog_views.main_query_rsp),
+	
     url(r'^',blog_views.index),
 
 ]

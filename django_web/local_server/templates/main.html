@@ -8,6 +8,11 @@
   <div id = 'Test Communication'>
       <h1> Hello {{name}}! </h1>
   </div>
+  <ul>
+    {% for user_name in users%}
+      <li> {{user_name}} </li>
+    {% endfor %}
+  </ul>
   <input type="button" id="Request_All_SrvStatus" value="Request All SrvStatus">
   <p id="Request_All_SrvStatus_Rsp"></p>
   <input type="button" id="Request_All_TaskList" value="Request All TaskList">

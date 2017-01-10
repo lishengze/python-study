@@ -2,12 +2,18 @@
 <head lang="en">
     <meta charset="utf-8">
     <title> Test Request </title>
-    <script src="static/jquery-1.8.3/jquery.min.js"></script>
+    <script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
 </head>
 <body>
   <div id = 'Test Communication'>
-      <h1> Hello World! </h1>
+      <h1> Hello {{name}} </h1>
+	  <h2> Hello {{user.name}} </h2>
   </div>
+  <ul>
+    {% for user_name in users%}
+      <li> {{user_name}} </li>
+    {% endfor %}
+  </ul>
   <input type="button" id="Request_All_SrvStatus" value="Request All SrvStatus">
   <p id="Request_All_SrvStatus_Rsp"></p>
   <input type="button" id="Request_All_TaskList" value="Request All TaskList">
@@ -16,7 +22,7 @@
   <p id="Request_All_TaskResult_Rsp"></p>
   <input type="button" id="Request_All_Version" value="Request All Version">
   <p id="Request_All_Version_Rsp"></p>
-  <a href="index.html"> SubHtml </a>
+  <a href="/index.html/"> SubHtml </a>
 	<script>
       $('#Request_All_SrvStatus').click(function(){
           $.getJSON('AJAX/Request_All_SrvStatus/',function(rsp_result){
@@ -37,7 +43,7 @@
           })
       })
       $('#Request_All_Version').click(function(){
-          $.getJSON('AJAX/Request_All_Version/',function(rsp_result){
+          $.getJSON('/AJAX/Request_All_Version/',function(rsp_result){
               console.log (rsp_result)
               // $('#Request_All_Version_Rsp').append(rsp_result.twz + '<br>');
           })
