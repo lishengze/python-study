@@ -163,5 +163,8 @@ def main_query_rsp(request):
 		print 'file name: ' + file_name + '\n'
 		return render(request, file_name, file_object)
 
+def get_admin_auth_group_object():
+	return {'name': 'Manager'}
+
 def get_main_object():
 	return {'name': 'LEE'}

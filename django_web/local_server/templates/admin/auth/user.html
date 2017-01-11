@@ -132,7 +132,7 @@
                   </div>
                 </form>
               </div>
-              <div id="changelist-filter">
+              <!--<div id="changelist-filter">
                 <h2>Filter</h2>
                 <h3> By staff status </h3>
                 <ul>
@@ -161,7 +161,7 @@
                     <li>
                     <a href="?is_active__exact=0">No</a></li>
                 </ul>
-              </div>
+              </div>-->
               <form id="changelist-form" method="post" novalidate="">
                 <input type="hidden" name="csrfmiddlewaretoken" value="5G09nG2rN6zowYuTQE7eHx9zleDknt1wBCAqwltzmhegpIlqkyQ9nVoQV4XLL7fN">
                 <div class="actions">
@@ -215,8 +215,6 @@
                         <a href="/admin/auth/user/1/change/">{{user.name}}</a>
                       </th>
                       <td class="field-email">{{user.email}}</td>
-                      <td class="field-first_name">&nbsp;</td>
-                      <td class="field-last_name">&nbsp;</td>
                       <td class="field-is_staff">
                         <img src="/static/admin/img/icon-yes.svg" alt="True">
                       </td>

@@ -27,82 +27,6 @@ from verControl import *
 from taskinfo import *
 
 import json
-#欢迎页
-@csrf_protect
-def index(request, pageNo=None, etype=None, keyword=None):
-	try:
-		#文章分页后的页数
-		pgNo=int(pageNo)
-	except:
-		pgNo=1
-	try:
-		etype=int(etype)
-	except:
-		etype=None
-
-	if etype:
-		#查询该类别的文章，exclude表示not in或者!=
-		datas=Essay.objects.all().filter(eType=etype).exclude(title='welcome')
-	elif keyword:
-		#根据关键字查询,title__contains表示Sql like %+keyword+%
-		#Q对象表示Sql关键字OR查询
-		#详细的介绍http://docs.djangoproject.com/en/1.0/topics/db/queries/#complex-lookups-with-q-objects
-		datas=Essay.objects.all().get(Q(title__contains=keyword)|
-									  Q(abstract__contains=keyword)).exclude(title='welcome')
-	else:
-		#查询所有文章
-		datas=Essay.objects.all().exclude(title='welcome')
-	#最近的5篇文章
-	recentList=datas[:5]
-	#数据分页
-	paginator = Paginator(datas, 10)
-	if pgNo==0:
-		pgNo=1
-	if pgNo>paginator.num_pages:
-		pgNo=paginator.num_pages
-	curPage=paginator.page(pgNo)
-	#返回到mian.html模板页
-	return render(request, 'main.html',{'csrfmiddlewaretoken': 'random string',
-										   'page':curPage,
-										   'essay_type':EssayType.objects.all(),
-										   'pcount':paginator.num_pages,
-										   'recent':recentList,
-										   'archives':Archive.objects.all(),
-										   'welcome':Essay.objects.filter(title='welcome')[0]}
-										   	)
-
-#文章详细信息
-@csrf_protect
-def essay_details(request,eid=None):
-	#返回文章详细信息或者404页面
-	essay=get_object_or_404(Essay,id=eid)
-	recentList=Essay.objects.all()[:5]
-	#新用户的Session
-	if request.session.get('e'+str(eid),True):
-		request.session['e'+str(eid)]=False
-		#这里可以用一个timer实现，浏览次数保存在内存中，
-		#timer定期将浏览次数提交到数据库
-		#文章浏览次数+1
-		essay.view_count=essay.view_count+1
-		essay.save()
-	return render(request, 'details.html',{'csrfmiddlewaretoken': 'random string',
-												  'essay':essay,
-												  'essay_type':EssayType.objects.all(),
-												   'archives':Archive.objects.all(),
-												  'date_format':essay.pub_date.strftime('%A %B %d %Y').split(),
-												  'recent':recentList
-												  })
-def leave_comment1(request,eid=None):
-	if request.method == 'POST' and eid:
-		uname=request.POST.get('uname',None)
-		content=request.POST.get('comment',None)
-		email=request.POST.get('email',None)
-		essay=Essay.objects.get(id=eid)
-		Dic_Run = {}
-		Dic_Run[cfg.CMD] = 'deployConsole'
-		Dic_Run[cfg.CTR] = 'PD'
-		return HttpResponse(Ecall(**Dic_Run))
-	return HttpResponse(cfg.SYS_WINDOWS)
 
 @csrf_protect
 ###执行即时任务
@@ -291,139 +215,6 @@ def query_all_version(request):
 		return HttpResponse(rsp.replace("\n", "<br/>"))
 	else:
 		return index(request)
-#根据关键字来搜索文章
-def search(request):
-	if request.method == 'POST':
-		#从POST请求中获取查询关键字
-		key=request.POST.get('keyword',None)
-		print(task_info.encode())
-		return index(request,keyword=key)
-	else:
-		return index(request)
-
-def is_ajax_request(path):
-	path_array = path.split('/')
-	ajax_flag = 'AJAX'
-	if ajax_flag in path_array:
-		return True
-	else:
-		return False
-
-def is_static_file(file_name):
-	name_array = file_name.split('/')
-	static_flag = 'static'
-	if static_flag in name_array:
-		return True
-	else:
-		return False
-
-def delete_headend_slash(strvalue):
-	str_start_index = 0
-	str_end_index = len(strvalue)
-	if strvalue[str_start_index] == '/':
-		str_start_index = 1
-	if strvalue[str_end_index-1] == '/':
-		str_end_index -= 1
-	return strvalue[str_start_index:str_end_index]
-
-def get_static_file_name(origin_file_name):
-	name_array = origin_file_name.split('/')
-	index = 0
-	static_flag = 'static'
-	for value in name_array:
-		if value == static_flag:
-			break
-		index += 1
-	trans_file_name = '/'.join(name_array[index:])
-	return delete_headend_slash(trans_file_name)
-
-def get_html_file_name(path):
-	name_array = path.split('/')
-	return name_array[len(name_array)-1]
-
-def is_empty_html_request(file_name):
-	name_array = file_name.split('/')
-	last_file_name = name_array[len(name_array)-1]
-	if last_file_name.find('.') == -1:
-		return True
-	else:
-		return False
-
-def is_html_request(path_name):
-	html_flag = '.html'
-	flag = False
-	if len(path_name) > len(html_flag) and path_name[-len(html_flag):] == html_flag:
-		flag = True
-	return flag
-
-def get_file_name(path):
-	file_name = delete_headend_slash(path)
-	html_flag = '.html'
-	# if is_static_file(file_name):
-	# 	file_name = get_static_file_name(file_name)
-	if is_empty_html_request(file_name):
-		file_name += html_flag	
-	return file_name
-
-def get_ajax_request_name(path):
-	name_array = path.split('/')
-	ajax_flag = 'AJAX'
-	index = 0
-	for value in name_array:
-		if value == ajax_flag:
-			break
-		index += 1
-	ajax_request_name = '/'.join(name_array[index+1:])
-	return delete_headend_slash(ajax_request_name)	
-
-def get_ajax_func(path):
-	ajax_name = get_ajax_request_name(path)
-	print 'ajax_name: ' + ajax_name
-	ajax_func_dict = {
-		'Request_All_SrvStatus': test_all_srvstatus,
-		'Request_All_TaskList': test_all_tasklist,
-		'Request_All_TaskResult': test_all_taskresult,
-		'Request_All_Version': test_all_version		
-	}
-	ajax_func = ajax_func_dict.get(ajax_name, default_ajax_request)
-	return ajax_func
-
-def get_file_object(file_name):
-	file_object_dict = {
-		'test_req.html': get_test_req_object
-	}
-	object_func = file_object_dict.get(file_name, lambda :{})	
-	print object_func()
-	return object_func()
-
-def main_query_rsp(request):
-	if is_ajax_request(request.path):
-		print '\nIs AJAX Request'
-		ajax_func = get_ajax_func(request.path)
-		return ajax_func(request)		
-	else:
-		print '\nIs not AJAX Request'
-		file_name = get_file_name(request.path)
-		file_object = {}
-		if is_html_request(file_name):
-			file_object = get_file_object(file_name)
-		print 'file name: ' + file_name + '\n'
-		return render(request, file_name, file_object)
-
-def get_test_req_object():
-	user = {
-		'name': 'Python'
-	}
-	users = ['lee', 'Tom', 'Trump', 'Clinton']
-	req_object = {
-		'name': 'Django',
-		'user': user,
-		'users': users
-	}	
-	return req_object
-
-def default_ajax_request(request):
-	return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
 
 def test_all_srvstatus(request):
 	if request.method != '':
@@ -562,117 +353,189 @@ def test_all_version(request):
 	else:
 		return index(request)
 
-def query_static_src(request):
-	path_name = request.path
-	print path_name
-	# path_array = path_name.split('/')
-	# static_index = 0
-	# for value in path_array:
-	# 	if (value == 'static'):
-	# 		break
-	# 	static_index += 1
-	# static_file_name = r'/'.join(path_array[static_index:])
-	# print static_file_name
-	return render(request, 'test_req.html')
+def is_ajax_request(path):
+	path_array = path.split('/')
+	ajax_flag = 'AJAX'
+	if ajax_flag in path_array:
+		return True
+	else:
+		return False
 
-def test_static_file(request):
-	print 'test_static_file'
-	print request.path
-	return render(request, 'index.html')
+def is_static_file(file_name):
+	name_array = file_name.split('/')
+	static_flag = 'static'
+	if static_flag in name_array:
+		return True
+	else:
+		return False
 
-#存储用户留言信息
-def leave_comment(request,eid=None):
-	if request.method == 'POST' and eid:
-		uname=request.POST.get('uname',None)
-		content=request.POST.get('comment',None)
-		email=request.POST.get('email',None)
-		essay=Essay.objects.get(id=eid)
-		if uname and content and email and essay:
-			comment=Comment()
-			comment.uname=uname
-			comment.content=content
-			comment.email=email
-			comment.essay=essay
-			comment.pub_date=datetime.datetime.now()
-			comment.save()
-			return essay_details(request,eid)
-		return index(request)
+def delete_headend_slash(strvalue):
+	str_start_index = 0
+	str_end_index = len(strvalue)
+	if strvalue[str_start_index] == '/':
+		str_start_index = 1
+	if strvalue[str_end_index-1] == '/':
+		str_end_index -= 1
+	return strvalue[str_start_index:str_end_index]
 
-	return index(request)
+def get_static_file_name(origin_file_name):
+	name_array = origin_file_name.split('/')
+	index = 0
+	static_flag = 'static'
+	for value in name_array:
+		if value == static_flag:
+			break
+		index += 1
+	trans_file_name = '/'.join(name_array[index:])
+	return delete_headend_slash(trans_file_name)
 
-@csrf_protect
-def alogin(request):
-	errors= []
-	account=None
-	password=None
-	if request.method == 'POST' :
-		if not request.POST.get('account'):
-			errors.append('Please Enter account')
-		else:
-			account = request.POST.get('account')
-		if not request.POST.get('password'):
-			errors.append('Please Enter password')
-		else:
-			password= request.POST.get('password')
-		if account is not None and password is not None :
-			user = auth.authenticate(username=account, password=password)
-			if user is not None:
-				if user.is_active:
-					auth.login(request, user)
-					return HttpResponseRedirect('/')
-				else:
-					errors.append('disabled account')
-			else :
-				errors.append('invaild user')
-	return render(request, 'login.html', {'csrfmiddlewaretoken': 'random string', 'errors': errors})
+def get_html_file_name(path):
+	name_array = path.split('/')
+	return name_array[len(name_array)-1]
 
-@csrf_protect
-def register(request):
-	errors= []
-	account=None
-	password=None
-	password2=None
-	email=None
-	CompareFlag=False
+def is_empty_html_request(file_name):
+	name_array = file_name.split('/')
+	last_file_name = name_array[len(name_array)-1]
+	if last_file_name.find('.') == -1:
+		return True
+	else:
+		return False
 
-	if request.method == 'POST':
-		if not request.POST.get('account'):
-			errors.append('Please Enter account')
-		else:
-			account = request.POST.get('account')
-		if not request.POST.get('password'):
-			errors.append('Please Enter password')
-		else:
-			password = request.POST.get('password')
-		if not request.POST.get('password2'):
-			errors.append('Please Enter password2')
-		else:
-			password2 = request.POST.get('password2')
-		if not request.POST.get('email'):
-			errors.append('Please Enter email')
-		else:
-			email= request.POST.get('email')
+def is_html_request(path_name):
+	html_flag = '.html'
+	flag = False
+	if len(path_name) > len(html_flag) and path_name[-len(html_flag):] == html_flag:
+		flag = True
+	return flag
 
-		if password is not None and password2 is not None:
-			if password == password2:
-				CompareFlag = True
-			else :
-				errors.append('password2 is diff password ')
+def get_file_name(path):
+	file_name = delete_headend_slash(path)
+	html_flag = '.html'
+	# if is_static_file(file_name):
+	# 	file_name = get_static_file_name(file_name)
+	if is_empty_html_request(file_name):
+		file_name += html_flag
+	return file_name
 
+def get_ajax_request_name(path):
+	name_array = path.split('/')
+	ajax_flag = 'AJAX'
+	index = 0
+	for value in name_array:
+		if value == ajax_flag:
+			break
+		index += 1
+	ajax_request_name = '/'.join(name_array[index+1:])
+	return delete_headend_slash(ajax_request_name)
 
-		if account is not None and password is not None and password2 is not None and email is not None and CompareFlag:
-			userlist = User.objects.all()
-			try:
-				user=User.objects.create_user(account, email, password)
-			except IntegrityError as e:
-				return HttpResponse(e)
-			else:
-				user.is_active=True
-				user.save
-				return HttpResponseRedirect('/account/login/')
+def get_ajax_func(path):
+	ajax_name = get_ajax_request_name(path)
+	print 'ajax_name: ' + ajax_name
+	ajax_func_dict = {
+		'Request_All_SrvStatus': test_all_srvstatus,
+		'Request_All_TaskList': test_all_tasklist,
+		'Request_All_TaskResult': test_all_taskresult,
+		'Request_All_Version': test_all_version
+	}
+	ajax_func = ajax_func_dict.get(ajax_name, default_ajax_request)
+	return ajax_func
 
-	return render(request, 'register.html', {'csrfmiddlewaretoken': 'random string', 'errors': errors})
+def get_file_object(file_name):
+	file_object_dict = {
+		'test_req.html': get_test_req_object,
+		'admin/auth/group.html': get_admin_auth_group_object,
+		'admin/auth/user.html': get_admin_auth_user_object,
+		'admin/auth/group/add.html': get_admin_auth_group_add_object,
+	}
+	object_func = file_object_dict.get(file_name, lambda :{})
+	print object_func()
+	return object_func()
 
-def alogout(request):
-	auth.logout(request)
-	return HttpResponseRedirect('/')
+def main_query_rsp(request):
+	if is_ajax_request(request.path):
+		print '\nIs AJAX Request'
+		ajax_func = get_ajax_func(request.path)
+		return ajax_func(request)
+	else:
+		print '\nIs not AJAX Request'
+		file_name = get_file_name(request.path)
+		file_object = {}
+		if is_html_request(file_name):
+			file_object = get_file_object(file_name)
+		print 'file name: ' + file_name + '\n'
+		return render(request, file_name, file_object)
+
+def default_ajax_request(request):
+	return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
+
+def get_test_req_object():
+	user = {
+		'name': 'Python'
+	}
+	users = ['lee', 'Tom', 'Trump', 'Clinton']
+	req_object = {
+		'name': 'Django',
+		'user': user,
+		'users': users
+	}
+	return req_object
+
+def get_admin_auth_group_object():
+	user = {
+		'name': 'Timmy',
+		'age': 20
+	}
+	communist_party = {
+		'name': '共产党',
+		'people_scale': 20000
+	}
+	democratic_party = {
+		'name': '民主党',
+		'people_scale': 10000
+	}
+	republican_party = {
+		'name': '共和党',
+		'people_scale': 10000
+	}
+	groups = [communist_party, democratic_party, republican_party]
+	tmp_object = {
+		'user': user,
+		'groups': groups,
+		'group_numbs': len(groups)
+	}
+	return tmp_object
+
+def get_admin_auth_group_add_object():
+	user = {
+		'name': 'James',
+		'age': 20
+	}
+	tmp_object = {
+		'user': user
+	}
+	return tmp_object
+
+def get_admin_auth_user_object():
+	user = {
+		'name': 'James',
+		'age': 20
+	}
+	Trump = {
+		'name': 'Trump',
+		'email': 'Trump@gmail.com'
+	}
+	Clinton = {
+		'name': 'Clinton',
+		'email': 'Clinton@gmail.com'
+	}
+	Obama = {
+		'name': 'Obama',
+		'email': 'Obama@gmail.com'
+	}
+	users = [Trump, Clinton, Obama]
+	tmp_object = {
+		'user': user,
+		'users': users,
+		'user_numb': len(users)
+	}
+	return tmp_object

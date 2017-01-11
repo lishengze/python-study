@@ -94,13 +94,21 @@ def testClosure ():
     for val in fn :
         print val()
 
+def testFor ():
+    obj = {
+        'name': 'lee',
+        'age': 20
+    }
+    for value in obj:
+        print value, obj[value]
 
 def testFunProgram ():
     # testMapReduce()
     # testFilter()
     # testSorted()
     # testWorkSpace()
-    testClosure()
+    testFor()
+    # testClosure()
 
 
 
@@ -339,10 +347,10 @@ def testProcessThread():
 
 # 测试程序汇总
 def testAll ():
-    # testFunProgram()
+    testFunProgram()
     # testModule()
     # testObjectOriented()
-    testProcessThread()
+    # testProcessThread()
 
 if __name__ == '__main__':
     testAll()

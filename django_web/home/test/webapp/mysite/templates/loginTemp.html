@@ -29,7 +29,7 @@
   <p>上期技术版权所有</p>
  </div>
  <script>
-    $('#loginBtn').click(function(){
+    function loginFunc () {
       var logName = $('#loginName').val();
       var logPassword = $('#loginPassword').val();
       if(logName == '') {
@@ -37,15 +37,21 @@
       } else if(logPassword == '') {
         alert('请输入密码');
       } else if(logName === "admin" && logPassword === "admin") {
-
         setCookie('username',logName,30);
         setCookie('password',logPassword,30);
+        console.log(getCookie('username'))
         window.location.href="/home/";
-
       } else {
         alert('用户名或者密码错误！');
       }
-    })
+    }
+    function enterFunc (event) {
+      if (event.keyCode === 13) {
+        loginFunc();
+      }
+    }
+    $('#loginBtn').click(loginFunc)
+    $(window).keydown(enterFunc)
  </script>
 </body>
 </html>
