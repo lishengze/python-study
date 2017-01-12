@@ -42,12 +42,13 @@ urlpatterns = [
     url(r'^req3/$',blog_views.query_all_taskresult),
     url(r'^req4/$',blog_views.query_all_version),
 
-	url(r'^test_req/', blog_views.main_query_rsp),
+
     url(r'^', blog_views.main_query_rsp),
-    url(r'AJAX/Request_All_SrvStatus/$', blog_views.test_all_srvstatus),
-    url(r'AJAX/Request_All_Version/$', blog_views.test_all_version),
-    url(r'AJAX/Request_All_TaskList/$', blog_views.test_all_tasklist),
-    url(r'AJAX/Request_All_TaskResult/$', blog_views.test_all_taskresult),
+    # url(r'^test_req/', blog_views.main_query_rsp),
+    # url(r'AJAX/Request_All_SrvStatus/$', blog_views.test_all_srvstatus),
+    # url(r'AJAX/Request_All_Version/$', blog_views.test_all_version),
+    # url(r'AJAX/Request_All_TaskList/$', blog_views.test_all_tasklist),
+    # url(r'AJAX/Request_All_TaskResult/$', blog_views.test_all_taskresult),
 
 
 ]

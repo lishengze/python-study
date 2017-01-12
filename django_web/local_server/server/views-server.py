@@ -325,11 +325,12 @@ def test_task_ntf(request):
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 			sock.send(genNtfHead() + task_info.encode() + cfg.TIP_INFO_EOF)
-            rsp = recv_end(sock)
 			sock.close()
 		except Exception as e:
 			print('notifyDaemon failed!')
 			print((traceback.format_exc()))
+		# return HttpResponse(task_info.encode())
+
 		rsp_data = task_info.__dict__
 		# rsp_data = {'data': 'test_task_rpc!'}
 		response = HttpResponse(json.dumps(rsp_data))
@@ -560,9 +561,7 @@ def get_ajax_func(path):
 		'Request_All_SrvStatus': test_all_srvstatus,
 		'Request_All_TaskList': test_all_tasklist,
 		'Request_All_TaskResult': test_all_taskresult,
-		'Request_All_Version': test_all_version,
-        'Request_Task_Rpc': test_task_rpc,
-        'Request_Task_Ntf': test_task_ntf
+		'Request_All_Version': test_all_version
 	}
 	ajax_func = ajax_func_dict.get(ajax_name, default_ajax_request)
 	return ajax_func

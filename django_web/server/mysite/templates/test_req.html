@@ -14,6 +14,10 @@
       <li> {{user_name}} </li>
     {% endfor %}
   </ul>
+  <input type="button" id="Request_Task_Rpc" value="Request Task Rpc">
+  <p id="Request_Task_Rpc_Rsp"></p>
+  <input type="button" id="Request_Task_Ntf" value="Request_Task_Ntf">
+  <p id="Request_Task_Ntf_Rsp"></p>
   <input type="button" id="Request_All_SrvStatus" value="Request All SrvStatus">
   <p id="Request_All_SrvStatus_Rsp"></p>
   <input type="button" id="Request_All_TaskList" value="Request All TaskList">
@@ -24,6 +28,18 @@
   <p id="Request_All_Version_Rsp"></p>
   <a href="/index.html/"> SubHtml </a>
 	<script>
+      $('#Request_Task_Rpc').click(function(){
+          $.getJSON('AJAX/Request_Task_Rpc/',function(rsp_result){
+              console.log (rsp_result)
+              // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
+          })
+      })
+      $('#Request_Task_Ntf').click(function(){
+          $.getJSON('AJAX/Request_Task_Ntf/',function(rsp_result){
+              console.log (rsp_result)
+              // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
+          })
+      })
       $('#Request_All_SrvStatus').click(function(){
           $.getJSON('AJAX/Request_All_SrvStatus/',function(rsp_result){
               console.log (rsp_result)

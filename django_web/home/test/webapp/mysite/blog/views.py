@@ -28,6 +28,55 @@ from taskinfo import *
 
 import json
 
+g_users = {}
+g_groups = {}
+g_chosen_user = {}
+g_chosen_group = {}
+g_login_user = {}
+
+class User(object):
+	def __init__(self, name = 'tmp', email = 'tmp', permisson = 'all'):
+		self.name = name
+		self.email = email
+		self.permisson = permisson
+
+	def __dict__(self):
+		return {
+			'name': self.name,
+			'email': self.email,
+			'permisson': self.permisson
+		}
+
+class Group(object):
+	def __init__(self, name = 'tmp', permisson = 'all'):
+		self.name = name
+		self.permisson = permisson
+
+	def __dict__(self):
+		return {
+			'name': self.name,
+			'permisson': self.permisson
+		}
+
+def init_globals():
+	global g_users, g_groups, g_login_user
+	Trump = User('Trump', 'Trump@gmail.com')
+	Clinton = User('Clinton', 'Clinton@gmail.com')
+	Obama = User('Obama', 'Obama@gmail.com')
+	Bush = User('Bush', 'Bush@gmail.com')
+	g_users = [Trump, Clinton, Obama, Bush]
+	g_chosen_user = Trump
+
+	communist_party = Group('共产党')
+	democratic_party = Group('民主党')
+	republican_party = Group('共和党')
+	g_groups = [communist_party, democratic_party, republican_party]
+	g_chosen_group = republican_party
+
+	g_login_user = User('SHFE.SFIT', 'SHFE.SFIT@hotmail.com')
+
+init_globals()
+
 @csrf_protect
 ###执行即时任务
 def task_rpc(request):
@@ -213,6 +262,82 @@ def query_all_version(request):
 			print('notifyDaemon failed!')
 			print(traceback.format_exc())
 		return HttpResponse(rsp.replace("\n", "<br/>"))
+	else:
+		return index(request)
+
+def test_task_rpc(request):
+	#if request.method == 'POST':
+	if request.method != '':
+
+		#从POST请求中获取查询关键字
+		rsp = ''
+		#cmdline=request.POST.get('keyword',None)
+		cmdline = '--cmd info'
+		cmd = 'info'
+		print('web req cmd :%s'%(cmdline))
+
+		#if cmdline.find(cfg.SEMICOLON) != -1:
+		#	task_type, cmdline = cmdline.split(cfg.SEMICOLON)  ##命令行中有分号
+		#else:
+		#	task_type = cfg.TASK_TYPE_ECALL
+		task_type = cfg.TASK_TYPE_ECALL
+		task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=0, \
+			cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
+		try:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
+			sock.send(genRpcHead() + task_info.encode() + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			sock.close()
+			rsp_data = rsp
+			print rsp_data
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		# return HttpResponse(rsp.replace("\n", "<br/>"))
+		rsp_data = {'data': 'test_task_rpc!'}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+	else:
+		return index(request)
+
+def test_task_ntf(request):
+	if request.method != '':
+		#从POST请求中获取查询关键字
+		rsp = ''
+		#cmdline=request.POST.get('keyword',None)
+		cmdline = '--cmd info'
+		cmd = 'info'
+		tasktime = int(time.time()) + 1800
+
+		print('web req cmd :%s'%(cmdline))
+		if cmdline.find(cfg.SEMICOLON) != -1:
+			task_type, cmdline = cmdline.split(cfg.SEMICOLON)  ##命令行中有分号
+		else:
+			task_type = cfg.TASK_TYPE_ECALL
+			task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=tasktime, \
+								 cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
+		try:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
+			sock.send(genNtfHead() + task_info.encode() + cfg.TIP_INFO_EOF)
+            rsp = recv_end(sock)
+			sock.close()
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print((traceback.format_exc()))
+		rsp_data = task_info.__dict__
+		# rsp_data = {'data': 'test_task_rpc!'}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
 	else:
 		return index(request)
 
@@ -435,7 +560,9 @@ def get_ajax_func(path):
 		'Request_All_SrvStatus': test_all_srvstatus,
 		'Request_All_TaskList': test_all_tasklist,
 		'Request_All_TaskResult': test_all_taskresult,
-		'Request_All_Version': test_all_version
+		'Request_All_Version': test_all_version,
+        'Request_Task_Rpc': test_task_rpc,
+        'Request_Task_Ntf': test_task_ntf
 	}
 	ajax_func = ajax_func_dict.get(ajax_name, default_ajax_request)
 	return ajax_func
@@ -443,9 +570,16 @@ def get_ajax_func(path):
 def get_file_object(file_name):
 	file_object_dict = {
 		'test_req.html': get_test_req_object,
+		'admin.html': get_admin_object,
+		'admin/auth.html': get_admin_auth_object,
+		'admin/logout.html': get_admin_logout_object,
+		'admin/password_change.html': get_admin_password_change_object,
 		'admin/auth/group.html': get_admin_auth_group_object,
-		'admin/auth/user.html': get_admin_auth_user_object,
 		'admin/auth/group/add.html': get_admin_auth_group_add_object,
+		'admin/auth/group/change.html': get_admin_auth_group_change_object,
+		'admin/auth/user.html': get_admin_auth_user_object,
+		'admin/auth/user/add.html': get_admin_auth_user_add_object,
+		'admin/auth/user/change.html': get_admin_auth_user_change_object,
 	}
 	object_func = file_object_dict.get(file_name, lambda :{})
 	print object_func()
@@ -480,62 +614,68 @@ def get_test_req_object():
 	}
 	return req_object
 
-def get_admin_auth_group_object():
-	user = {
-		'name': 'Timmy',
-		'age': 20
-	}
-	communist_party = {
-		'name': '共产党',
-		'people_scale': 20000
-	}
-	democratic_party = {
-		'name': '民主党',
-		'people_scale': 10000
-	}
-	republican_party = {
-		'name': '共和党',
-		'people_scale': 10000
-	}
-	groups = [communist_party, democratic_party, republican_party]
+def get_admin_object():
 	tmp_object = {
-		'user': user,
-		'groups': groups,
-		'group_numbs': len(groups)
+		'user': g_login_user
+	}
+	return tmp_object
+
+def get_admin_auth_object():
+	tmp_object = {
+		'user': g_login_user
+	}
+	return tmp_object
+
+def get_admin_logout_object():
+	tmp_object = {
+		'user': g_login_user
+	}
+	return tmp_object
+
+def get_admin_password_change_object():
+	tmp_object = {
+		'user': g_login_user
+	}
+	return tmp_object
+
+def get_admin_auth_group_object():
+	tmp_object = {
+		'user': g_login_user,
+		'groups': g_groups,
+		'group_numbs': len(g_groups)
 	}
 	return tmp_object
 
 def get_admin_auth_group_add_object():
-	user = {
-		'name': 'James',
-		'age': 20
-	}
 	tmp_object = {
-		'user': user
+		'user': g_login_user
+	}
+	return tmp_object
+
+def get_admin_auth_group_change_object():
+
+	tmp_object = {
+		'user': g_login_user,
+		'group': g_chosen_group
 	}
 	return tmp_object
 
 def get_admin_auth_user_object():
-	user = {
-		'name': 'James',
-		'age': 20
-	}
-	Trump = {
-		'name': 'Trump',
-		'email': 'Trump@gmail.com'
-	}
-	Clinton = {
-		'name': 'Clinton',
-		'email': 'Clinton@gmail.com'
-	}
-	Obama = {
-		'name': 'Obama',
-		'email': 'Obama@gmail.com'
-	}
-	users = [Trump, Clinton, Obama]
 	tmp_object = {
-		'user': user,
-		'users': users,
-		'user_numb': len(users)
+		'user': g_login_user,
+		'users': g_users,
+		'user_numb': len(g_users)
+	}
+	return tmp_object
+
+def get_admin_auth_user_add_object():
+	tmp_object = {
+		'user': g_login_user
+	}
+	return tmp_object
+
+def get_admin_auth_user_change_object():
+	tmp_object = {
+		'user': g_login_user
 	}
 	return tmp_object
