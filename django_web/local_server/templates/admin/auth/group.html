@@ -1,10 +1,12 @@
+<!DOCTYPE html>
 <html lang="en-us">
   <head>
     <title>Select group to change | Django site admin</title>
     <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
     <link rel="stylesheet" type="text/css" href="/static/admin/css/changelists.css">
-    <script type="text/javascript" src="/admin/jsi18n/"></script>
-    <script type="text/javascript" src="/static/admin/js/core.js"></script>
+    <script src="/static/js/jquery-1.11.3/jquery.min.js"></script>
+    <script src="/static/js/admin/group.js"></script>
+    <!-- <script type="text/javascript" src="/static/admin/js/core.js"></script>
     <script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
     <script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
     <script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
@@ -12,7 +14,7 @@
     <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
     <script type="text/javascript" src="/static/admin/js/prepopulate.js"></script>
     <script type="text/javascript" src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
-    <meta name="robots" content="NONE,NOARCHIVE">
+    <meta name="robots" content="NONE,NOARCHIVE"> -->
   </head>
 <body class=" app-auth model-group change-list" data-admin-utc-offset="28800">
   <!-- Container -->
@@ -75,7 +77,10 @@
                   <thead>
                     <tr>
                       <th scope="col" class="action-checkbox-column">
-                         <div class="text"><span><input id="action-toggle" type="checkbox"></span></div>
+                         <div class="text"><span>
+                           <input id="action-toggle" type="checkbox"></span>
+                           <input type='button' id='test_button' value='testCheckbox'>
+                         </div>
                          <div class="clear"></div>
                       </th>
                       <th scope="col" class="column-__str__">
@@ -85,18 +90,20 @@
                     </tr>
                   </thead>
                   <tbody>
+                    {% for group in groups %}
                     <tr class="row1">
                       <td class="action-checkbox">
                         <input class="action-select" name="_selected_action" value="1" type="checkbox">
                       </td>
                       <th class="field-__str__">
-                        <a href="http://127.0.0.1:8000/admin/auth/group/1/change/">Test1</a>
+                        <a href="/admin/auth/group/change/">{{group.name}}</a>
                       </th>
                     </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
               </div>
-              <p class="paginator">1 个群组 </p>
+              <p class="paginator">{{group_numbs}} 个群组 </p>
             </form>
           </div>
         </div>

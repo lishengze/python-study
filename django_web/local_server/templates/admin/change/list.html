@@ -31,32 +31,32 @@
 		<div id="container">
 			<!-- Header -->
 			<div id="header">
-				<div id="branding">        
+				<div id="branding">
 					<h1 id="site-name"><a href="/admin/">管理主页</a></h1>
-				</div>                
+				</div>
 				<div id="user-tools">
 					欢迎用户,
 					<strong>lsz</strong>.
 					<a href="/">访问主页</a> /
-					<a href="/admin/password_change/">修改密码</a> /			
-					<a href="/admin/logout/">退出</a>            
+					<a href="/admin/password_change/">修改密码</a> /
+					<a href="/admin/logout/">退出</a>
 				</div>
 			</div>
 			<!-- END Header -->
 			<div class="breadcrumbs">
-				<a href="/admin/">主页</a>› 
+				<a href="/admin/">主页</a>›
 				<a href="/admin/auth/">Authentication and Authorization</a> › Users
 			</div>
 			<!-- Content -->
 			<div id="content" class="flex">
-  		    	<h1>Select user to change</h1>        
-				<div id="content-main">					
+  		    	<h1>Select user to change</h1>
+				<div id="content-main">
 					<ul class="object-tools">
-						<li>							
+						<li>
 							<a href="/admin/auth/user/add/" class="addlink">
 								Add user
 							</a>
-						</li>												
+						</li>
 					</ul>
 					<div class="module filtered" id="changelist">
 						<div id="toolbar">
@@ -69,14 +69,14 @@
 							</div>
 							</form>
 						</div>
-						<div id="changelist-filter">
+						<!-- <div id="changelist-filter">
 							<h2>Filter</h2>
 							<h3> By staff status </h3>
 							<ul>
 								<li class="selected"><a href="?">All</a></li>
 								<li><a href="?is_staff__exact=1">Yes</a></li>
 								<li><a href="?is_staff__exact=0">No</a></li>
-							</ul>					
+							</ul>
 							<h3> By superuser status </h3>
 							<ul>
 								<li class="selected"><a href="?">All</a></li>
@@ -89,52 +89,52 @@
 								<li><a href="?is_active__exact=1">Yes</a></li>
 								<li><a href="?is_active__exact=0">No</a></li>
 							</ul>
-						</div>
-						<form id="changelist-form" method="post" novalidate=""><input type="hidden" 
-							name="csrfmiddlewaretoken" value="db1sVflsyEU5XogpRX8nMaZNwfU9QY1SJ7BJ4UMA7PzXQ87WlRRisye465eAeCf9">          
+						</div> -->
+						<form id="changelist-form" method="post" novalidate=""><input type="hidden"
+							name="csrfmiddlewaretoken" value="db1sVflsyEU5XogpRX8nMaZNwfU9QY1SJ7BJ4UMA7PzXQ87WlRRisye465eAeCf9">
 							<div class="actions">
 								<label>
-									Action: 
+									操作:
 									<select name="action" required="">
 										<option value="" selected="selected">---------</option>
-										<option value="delete_selected">Delete selected users</option>
+										<option value="delete_selected">删除选中的用户</option>
 									</select>
 								</label>
 								<input class="select-across" name="select_across" type="hidden" value="0">
 									<button type="submit" class="button" title="Run the selected action" name="index" value="0">Go</button>
-									<span class="action-counter" data-actions-icnt="1" style="display: inline;">0 of 1 selected</span>													
+									<span class="action-counter" data-actions-icnt="1" style="display: inline;">0 of 1 selected</span>
 							</div>
 							<div class="results">
 								<table id="result_list">
 									<thead>
 										<tr>
-											<th scope="col" class="action-checkbox-column">											
+											<th scope="col" class="action-checkbox-column">
 												<div class="text">
 													<span><input type="checkbox" id="action-toggle"></span>
 												</div>
 												<div class="clear"></div>
 											</th>
-											<th scope="col" class="sortable column-username sorted ascending">																							
+											<th scope="col" class="sortable column-username sorted ascending">
 												<div class="sortoptions">
-													<a class="sortremove" href="?o=" title="Remove from sorting"></a>													
+													<a class="sortremove" href="?o=" title="Remove from sorting"></a>
 													<a href="?o=-1" class="toggle ascending" title="Toggle sorting"></a>
-												</div>																							
+												</div>
 												<div class="text"><a href="?o=-1">Username</a></div>
 												<div class="clear"></div>
 											</th>
-											<th scope="col" class="sortable column-email">																																		
+											<th scope="col" class="sortable column-email">
 												<div class="text"><a href="?o=2.1">Email address</a></div>
 												<div class="clear"></div>
 											</th>
-											<th scope="col" class="sortable column-first_name">																																		
+											<th scope="col" class="sortable column-first_name">
 												<div class="text"><a href="?o=3.1">First name</a></div>
 												<div class="clear"></div>
 											</th>
-											<th scope="col" class="sortable column-last_name">																																		
+											<th scope="col" class="sortable column-last_name">
 												<div class="text"><a href="?o=4.1">Last name</a></div>
 												<div class="clear"></div>
 											</th>
-											<th scope="col" class="sortable column-is_staff">		
+											<th scope="col" class="sortable column-is_staff">
 												<div class="text"><a href="?o=5.1">Staff status</a></div>
 												<div class="clear"></div>
 											</th>
@@ -161,7 +161,7 @@
 							<p class="paginator">1 user </p>
 						</form>
 					</div>
-				</div>        
+				</div>
 				<br class="clear">
 			</div>
 			<!-- END Content -->
