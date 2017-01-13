@@ -2,69 +2,48 @@
 <head lang="en">
     <meta charset="utf-8">
     <title> Test Request </title>
-    <script src="./static/js/jquery-1.11.3/jquery.min.js"></script>
-    <script src="./test.js"></script>
+    <!--<script src="./static/js/jquery-1.11.3/jquery.min.js"></script>-->
+    <script type="text/javascript" src="./jquery.min.js"></script>
+    <script type="text/javascript" src="test.js"></script>
 </head>
 <body>
-  <input type="checkbox" id="checkbox1" value="checkbox1">
-  <input type="checkbox" id="checkbox2" value="checkbox2">
-  <input type="checkbox" id="checkbox3" value="checkbox3">
+  <input type="checkbox" id="checkbox1" value="checkbox1"> checkbox1 <br>
+  <input type="checkbox" id="checkbox2" value="checkbox2"> checkbox1 <br>
+  <input type="checkbox" id="checkbox3" value="checkbox3"> checkbox1 <br>
+  <p id='selectNumb'> 0 个被选中</p>
   <br>
-  <input type="button" id="Request_Task_Rpc" value="Request Task Rpc">
-  <p id="Request_Task_Rpc_Rsp"></p>
-  <input type="button" id="Request_Task_Ntf" value="Request_Task_Ntf">
-  <p id="Request_Task_Ntf_Rsp"></p>
-  <input type="button" id="Request_All_SrvStatus" value="Request All SrvStatus">
-  <p id="Request_All_SrvStatus_Rsp"></p>
-  <input type="button" id="Request_All_TaskList" value="Request All TaskList">
-  <p id="Request_All_TaskList_Rsp"></p>
-  <input type="button" id="Request_All_TaskResult" value="Request All TaskResult">
-  <p id="Request_All_TaskResult_Rsp"></p>
-  <input type="button" id="Request_All_Version" value="Request All Version">
-  <p id="Request_All_Version_Rsp"></p>
-  <a href="/index.html/"> SubHtml </a>
-	<script>
-    //   $('#Request_Task_Rpc').click(function(){
-    //       console.log ('Request_Task_Rpc')
-    //     //   $.getJSON('AJAX/Request_Task_Rpc/',function(rsp_result){
-    //     //       console.log (rsp_result)
-    //     //       // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
-    //     //   })
-    //   })
-        $(':checkbox').each(function() {
-            console.log ('checkbox')
-        });
-
-      $('#Request_Task_Ntf').click(function(){
-          $.getJSON('AJAX/Request_Task_Ntf/',function(rsp_result){
-              console.log (rsp_result)
-              // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
-          })
-      })
-      $('#Request_All_SrvStatus').click(function(){
-          $.getJSON('AJAX/Request_All_SrvStatus/',function(rsp_result){
-              console.log (rsp_result)
-              // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
-          })
-      })
-      $('#Request_All_TaskList').click(function(){
-          $.getJSON('AJAX/Request_All_TaskList/',function(rsp_result){
-              console.log (rsp_result)
-              // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
-          })
-      })
-      $('#Request_All_TaskResult').click(function(){
-          $.getJSON('AJAX/Request_All_TaskResult/',function(rsp_result){
-              console.log (rsp_result)
-              // $('#Request_All_TaskResult_Rsp').append(rsp_result.twz + '<br>');
-          })
-      })
-      $('#Request_All_Version').click(function(){
-          $.getJSON('/AJAX/Request_All_Version/',function(rsp_result){
-              console.log (rsp_result)
-              // $('#Request_All_Version_Rsp').append(rsp_result.twz + '<br>');
-          })
-      })
-	</script>
-
+    <script>
+        // $(':checkbox').each(function() {
+        //     console.log ($(this).attr('id'))
+        // });
+        // var selectedNumb = 0;
+        // $(':checkbox').change(function(){            
+        //     if ($(this).attr('id') === 'checkbox1') {
+        //         if ($(this).is(':checked')) {
+        //             $(':checkbox').each(function() {
+        //                 if ($(this).attr('id') !== 'checkbox1' && !$(this).is(':checked')) {
+        //                     $(this).attr("checked", true);
+        //                     ++selectedNumb;
+        //                     $('#selectNumb').text(selectedNumb + ' 个被选中');
+        //                 }
+        //             });
+        //         } else {
+        //             $(':checkbox').each(function() {
+        //                 if ($(this).attr('id') !== 'checkbox1' && $(this).is(':checked')) {
+        //                     $(this).attr("checked", false);
+        //                     --selectedNumb;
+        //                     $('#selectNumb').text(selectedNumb + ' 个被选中');
+        //                 }
+        //             });                    
+        //         } 
+        //     } else {
+        //         if ($(this).is(':checked')) {
+        //             ++selectedNumb;
+        //         } else {
+        //             --selectedNumb;
+        //         }
+        //         $('#selectNumb').text(selectedNumb + ' 个被选中');
+        //     } 
+        // })
+    </script>
 </body>
