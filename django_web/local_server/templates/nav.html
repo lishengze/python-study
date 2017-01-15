@@ -1,0 +1,18 @@
+
+<div id="header" style="overflow:hidden;">
+    <div class = 'row' style="background-image: url('/static/images/nav2.jpg') ;
+    background-size: 100% 100%;
+    margin-bottom:10px">
+    <div class="col-md-10">
+      <h1><a href="/home.html/">上期技术监控组版本控制系统<span>
+      </span></a></h1>
+    </div>
+    <div class="col-md-2"  style=" border-style: solid; border-width: 2px">
+      <div id="userMessage" >用户信息：<div id = 'username_nav'></div><br>用户ID: <br>用户状态:<br></div>
+    </div>
+  </div>
+</div>
+<script>
+  console.log (getCookie('username'))
+  $("#username_nav").text( getCookie('username'))
+</script>

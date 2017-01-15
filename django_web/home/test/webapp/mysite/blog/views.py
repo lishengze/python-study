@@ -13,6 +13,7 @@ from django.contrib import auth
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 
 from blog.models import Essay,EssayType,Archive,Comment
 import config_web as cfg_w
@@ -39,9 +40,7 @@ class User(object):
 		self.name = name
 		self.email = email
 		self.permisson = permisson
-
-	def __dict__(self):
-		return {
+		self.__dict__ = {
 			'name': self.name,
 			'email': self.email,
 			'permisson': self.permisson
@@ -51,12 +50,30 @@ class Group(object):
 	def __init__(self, name = 'tmp', permisson = 'all'):
 		self.name = name
 		self.permisson = permisson
-
-	def __dict__(self):
-		return {
+		self.__dict__ = {
 			'name': self.name,
 			'permisson': self.permisson
 		}
+
+class RpcResult(object):
+	def __init__(self, data_type, data_array):
+		if data_type == 'default':
+			self.__dict__ = {
+				'object_info': data_array[0],
+				'ip_address': data_array[1],
+				'cmd_line': ' '.join(data_array[2:])
+			}
+		if data_type == 'relay':
+			self.__dict__ = {
+				'origin_ip_address': data_array[0],
+				'relay_relation': data_array[1],
+			}
+		if data_type == 'host':
+			self.__dict__ = {
+				'ip_address': data_array[0],
+				'os_type': data_array[1],
+				'host_name': data_array[2]
+			}
 
 def init_globals():
 	global g_users, g_groups, g_login_user
@@ -265,38 +282,49 @@ def query_all_version(request):
 	else:
 		return index(request)
 
+@csrf_exempt
 def test_task_rpc(request):
 	#if request.method == 'POST':
 	if request.method != '':
-
-		#从POST请求中获取查询关键字
+		req_json = request.POST.getlist('req_json')[0]
+		print req_json
+		trans_req_json = json.loads(req_json)
+		data_type = trans_req_json['--args']
+		if data_type == '' or data_type =='app':
+			data_type = 'default'
+		print trans_req_json
+		print 'data_type: ', data_type
+		cmdStr = ''
+		for value in trans_req_json:
+			# print value , trans_req_json[value]
+			if trans_req_json[value] !='':
+				cmdStr += value + ' ' + trans_req_json[value] + ' '
+		print ('\nThe REQUEST command line is: %s\n' %(cmdStr))
 		rsp = ''
-		#cmdline=request.POST.get('keyword',None)
-		cmdline = '--cmd info'
+		cmdline = cmdStr
 		cmd = 'info'
-		print('web req cmd :%s'%(cmdline))
 
-		#if cmdline.find(cfg.SEMICOLON) != -1:
-		#	task_type, cmdline = cmdline.split(cfg.SEMICOLON)  ##命令行中有分号
-		#else:
-		#	task_type = cfg.TASK_TYPE_ECALL
 		task_type = cfg.TASK_TYPE_ECALL
 		task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=0, \
-			cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
+					cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
 		try:
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 			sock.send(genRpcHead() + task_info.encode() + cfg.TIP_INFO_EOF)
 			rsp = recv_end(sock)
 			sock.close()
-			rsp_data = rsp
-			print rsp_data
+			print ('The original rsp data is:\n%s' %(rsp))
+			trans_rsp_data = process_rpc_result(rsp, data_type)
+			print 'Transed Rsp Data: '
+			print trans_rsp_data
 		except Exception as e:
 			print('notifyDaemon failed!')
 			print(traceback.format_exc())
 		# return HttpResponse(rsp.replace("\n", "<br/>"))
-		rsp_data = {'data': 'test_task_rpc!'}
+		rsp_data = {'data': trans_rsp_data,
+					'type': data_type}
 		response = HttpResponse(json.dumps(rsp_data))
+		# response = HttpResponse(req_json)
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
 		response["Access-Control-Max-Age"] = "1000"
@@ -304,6 +332,40 @@ def test_task_rpc(request):
 		return response
 	else:
 		return index(request)
+
+def process_rpc_result(origin_data, data_type):
+	array_data = get_rpc_array_result(origin_data)
+	# print 'array_data: '
+	# print array_data
+	dict_data = get_rpc_dict_result(array_data, data_type)
+	return dict_data
+
+def get_rpc_array_result(origin_data):
+	tmpdata = origin_data.split('\n')
+	tmpdata = tmpdata[1:len(tmpdata)-1]
+	index = 0
+	str_head = '[info]xxx: '
+	final_result = []
+	while index < len(tmpdata):
+		tmp_result = []
+		tmpdata[index] = tmpdata[index][len(str_head):]
+		tmpdata[index] = tmpdata[index].split(' ')
+		# print tmpdata[index]
+		for value in tmpdata[index]:
+			if value != '':
+				tmp_result.append(value)
+		final_result.append(tmp_result)
+		index += 1
+	return final_result
+
+def get_rpc_dict_result(array_data, data_type):
+	index = 0
+	dict_data = []
+	while index < len(array_data):
+		tmp_dict_data = RpcResult(data_type, array_data[index])
+		dict_data.append(tmp_dict_data.__dict__)
+		index += 1
+	return dict_data
 
 def test_task_ntf(request):
 	if request.method != '':
@@ -325,7 +387,6 @@ def test_task_ntf(request):
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 			sock.send(genNtfHead() + task_info.encode() + cfg.TIP_INFO_EOF)
-            rsp = recv_end(sock)
 			sock.close()
 		except Exception as e:
 			print('notifyDaemon failed!')
@@ -585,6 +646,7 @@ def get_file_object(file_name):
 	print object_func()
 	return object_func()
 
+@csrf_exempt
 def main_query_rsp(request):
 	if is_ajax_request(request.path):
 		print '\nIs AJAX Request'

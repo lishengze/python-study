@@ -29,10 +29,31 @@
   <a href="/index.html/"> SubHtml </a>
 	<script>
       $('#Request_Task_Rpc').click(function(){
-          $.getJSON('AJAX/Request_Task_Rpc/',function(rsp_result){
-              console.log (rsp_result)
-              // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
-          })
+        req_data = {
+          '--cmd': 'info',
+          '--args':'relay',
+          '--grp': '',
+          '--ctr': '',
+          '--srv': '',
+          '--srvno': '',
+          '--ictr': '',
+          '--isrv': '',
+          '--isrvno': '',
+        }
+          // $.getJSON('AJAX/Request_Task_Rpc/',function(rsp_result){
+          //     console.log (rsp_result)
+          //     // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
+          // })
+          $.ajax({
+            url: '/AJAX/Request_Task_Rpc/',
+            data: {'req_json': JSON.stringify(req_data)},
+            dataType: 'json',
+            type: 'POST',
+            traditional: true,
+            success: function (responseJSON) {
+                console.log (responseJSON)
+            }
+          });
       })
       $('#Request_Task_Ntf').click(function(){
           $.getJSON('AJAX/Request_Task_Ntf/',function(rsp_result){

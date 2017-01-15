@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.views.static import serve
 from feed import LatestEntriesFeed
 from blog import views as blog_views
+from django.views.generic.base import RedirectView
 
 import config_web as cfg_w
 
@@ -41,7 +42,7 @@ urlpatterns = [
     url(r'^req2/$',blog_views.query_all_tasklist),
     url(r'^req3/$',blog_views.query_all_taskresult),
     url(r'^req4/$',blog_views.query_all_version),
-
+    url(r'^favicon.ico', RedirectView.as_view(url=r'static/images/favicon.ico')),
 
     url(r'^', blog_views.main_query_rsp),
     # url(r'^test_req/', blog_views.main_query_rsp),
@@ -49,6 +50,4 @@ urlpatterns = [
     # url(r'AJAX/Request_All_Version/$', blog_views.test_all_version),
     # url(r'AJAX/Request_All_TaskList/$', blog_views.test_all_tasklist),
     # url(r'AJAX/Request_All_TaskResult/$', blog_views.test_all_taskresult),
-
-
 ]
