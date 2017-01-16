@@ -52,4 +52,10 @@ $(function () {
             })
         } 
     })
+
+    $('#testHref').click(function(){
+        console.log('testHref')
+        url = 'index.html'
+        window.location.href = url;
+    })
 });
