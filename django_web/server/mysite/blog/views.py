@@ -88,6 +88,7 @@ def init_globals():
 	democratic_party = Group('民主党')
 	republican_party = Group('共和党')
 	g_groups = [communist_party, democratic_party, republican_party]
+
 	g_chosen_group = republican_party
 
 	g_login_user = User('SHFE.SFIT', 'SHFE.SFIT@hotmail.com')
@@ -284,12 +285,16 @@ def query_all_version(request):
 
 @csrf_exempt
 def test_task_rpc(request):
-	#if request.method == 'POST':
 	if request.method != '':
 		req_json = request.POST.getlist('req_json')[0]
 		print req_json
 		trans_req_json = json.loads(req_json)
-		data_type = trans_req_json['--args']
+		if '--args' in trans_req_json:
+			command_type = trans_req_json['--cmd']
+			# if data_type == 'publish' or data_type == 'rollback' or data_type == 'show' or data_type == 'drop' or data_type == 'delete':
+			#    data_type = 'version_control'
+		else:
+			data_type = 'default'
 		if data_type == '' or data_type =='app':
 			data_type = 'default'
 		print trans_req_json
@@ -334,11 +339,13 @@ def test_task_rpc(request):
 		return index(request)
 
 def process_rpc_result(origin_data, data_type):
-	array_data = get_rpc_array_result(origin_data)
-	# print 'array_data: '
-	# print array_data
-	dict_data = get_rpc_dict_result(array_data, data_type)
-	return dict_data
+	complete_data = origin_data
+	if data_type != 'version_control':
+		array_data = get_rpc_array_result(origin_data)
+		# print 'array_data: '
+		# print array_data
+		complete_data = get_rpc_dict_result(array_data, data_type)
+	return complete_data
 
 def get_rpc_array_result(origin_data):
 	tmpdata = origin_data.split('\n')
@@ -387,6 +394,8 @@ def test_task_ntf(request):
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 			sock.send(genNtfHead() + task_info.encode() + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			print rsp
 			sock.close()
 		except Exception as e:
 			print('notifyDaemon failed!')
@@ -539,6 +548,42 @@ def test_all_version(request):
 	else:
 		return index(request)
 
+def set_chosen_grouporuser(request):
+	global g_users, g_groups, g_chosen_user, g_chosen_group
+	test_value = request.POST.getlist('test_value')[0]
+	# print test_value
+	test_value = test_value.encode('utf-8')
+	print test_value
+	rsp_url = ''
+	error_info = ''
+
+	is_user_request = False
+	is_group_request = False
+	for group in g_groups:
+		if test_value == group.name:
+			g_chosen_group = group
+			is_group_request = True
+	for user in g_users:
+		if test_value == user.name:
+			g_chosen_user = user
+			is_user_request = True
+
+	if is_group_request:
+		rsp_url = '/admin/auth/group/change'
+	elif is_user_request:
+		rsp_url = '/admin/auth/user/change'
+	else :
+		error_info = 'request name does not exit!'
+
+	rsp_data = {'data': rsp_url,
+				'error': error_info}
+	response = HttpResponse(json.dumps(rsp_data))
+	response["Access-Control-Allow-Origin"] = "*"
+	response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+	response["Access-Control-Max-Age"] = "1000"
+	response["Access-Control-Allow-Headers"] = "*"
+	return response
+
 def is_ajax_request(path):
 	path_array = path.split('/')
 	ajax_flag = 'AJAX'
@@ -623,7 +668,8 @@ def get_ajax_func(path):
 		'Request_All_TaskResult': test_all_taskresult,
 		'Request_All_Version': test_all_version,
         'Request_Task_Rpc': test_task_rpc,
-        'Request_Task_Ntf': test_task_ntf
+        'Request_Task_Ntf': test_task_ntf,
+		'Set_Chosen_GroupOrUser': set_chosen_grouporuser
 	}
 	ajax_func = ajax_func_dict.get(ajax_name, default_ajax_request)
 	return ajax_func
@@ -715,9 +761,8 @@ def get_admin_auth_group_add_object():
 	return tmp_object
 
 def get_admin_auth_group_change_object():
-
 	tmp_object = {
-		'user': g_login_user,
+		'login_user': g_login_user,
 		'group': g_chosen_group
 	}
 	return tmp_object
@@ -738,6 +783,7 @@ def get_admin_auth_user_add_object():
 
 def get_admin_auth_user_change_object():
 	tmp_object = {
-		'user': g_login_user
+		'login_user': g_login_user,
+		'chosen_user': g_chosen_user
 	}
 	return tmp_object

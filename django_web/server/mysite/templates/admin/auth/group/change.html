@@ -3,7 +3,8 @@
 		<title> 修改群组 </title>
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
-		<script type="text/javascript" src="/static/admin/js/core.js"></script>
+    <script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
+		<!-- <script type="text/javascript" src="/static/admin/js/core.js"></script>
 		<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
 		<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
 		<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
@@ -13,7 +14,7 @@
 		<script type="text/javascript" src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
 		<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
 		<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
-		<meta name="robots" content="NONE,NOARCHIVE">
+		<meta name="robots" content="NONE,NOARCHIVE"> -->
 	</head>
 	<body class=" app-auth model-group change-form" data-admin-utc-offset="28800">
 		<!-- Container -->
@@ -25,7 +26,7 @@
 	      </div>
 				<div id="user-tools">
 	        欢迎,
-	        <strong>{{user.name}}</strong>.
+	        <strong>{{login_user.name}}</strong>.
 	        <a href="/">返回站点</a> /
 	        <a href="/admin/password_change/">修改密码</a> /
 	        <a href="/admin/logout/">退出登录</a>
@@ -36,7 +37,7 @@
 				<a href="/admin/">主页</a>
 				› <a href="/admin/auth/">身份认证与授权管理</a>
 				› <a href="/admin/auth/group/">群组</a>
-				› {{group.name}}
+				› {{login_user.name}}
 			</div>
 	    <!-- Content -->
 	    <div id="content" class="colM">
@@ -54,7 +55,7 @@
 				        <div class="form-row field-name">
 					        <div>
 					          <label class="required" for="id_name">名称:</label>
-					          <input class="vTextField" id="id_name" maxlength="80" name="name" type="text" value="Test1" required="">
+					          <input class="vTextField" id="id_name" maxlength="80" name="name" type="text" value="{{group.name}}" required="">
 					        </div>
 				        </div>
 						    <div class="form-row field-permissions">

@@ -37,7 +37,7 @@ $('#releaseResult').kendoGrid({
    console.log(document.cookie)
    var objectInput = $('#inputObject').val();
    var versionInput = $('#inputVersion').val();
-   $.getJSON('http://172.1.128.170:8000/test_req/AJAX/Request_All_Version/', function(getData) {
+   $.getJSON('/test_req/AJAX/Request_All_Version/', function(getData) {
      console.log(getCookie('admin'));
      var data1 = getData
      var dataSource = new kendo.data.DataSource({

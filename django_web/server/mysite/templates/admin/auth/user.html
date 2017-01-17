@@ -3,7 +3,9 @@
 	<title>选择用户进行修改| 上期技术后台管理</title>
 	<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
 	<link rel="stylesheet" type="text/css" href="/static/admin/css/changelists.css">
-	<script type="text/javascript">
+	<script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
+	<script src="/static/js/admin/group.js"></script>
+	<!-- <script type="text/javascript">
 	try {
 			window.AG_onLoad = function(func) { if (window.addEventListener) { window.addEventListener('DOMContentLoaded', func); } };
 			window.AG_removeElementById = function(id) { var element = document.getElementById(id); if (element && element.parentNode) { element.parentNode.removeChild(element); }};
@@ -24,7 +26,7 @@
 	<script type="text/javascript" src="/static/admin/js/urlify.js"></script>
 	<script type="text/javascript" src="/static/admin/js/prepopulate.js"></script>
 	<script type="text/javascript" src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
-	<meta name="robots" content="NONE,NOARCHIVE">
+	<meta name="robots" content="NONE,NOARCHIVE"> -->
 </head>
 <body class=" app-auth model-user change-list" data-admin-utc-offset="28800">
 	<!-- Container -->
@@ -162,7 +164,7 @@
 												<input class="action-select" name="_selected_action" type="checkbox" value="1">
 											</td>
 											<th class="field-username">
-												<a href="/admin/auth/user/change/">{{user.name}}</a>
+												<a id='hrefJump' style="color:blue">{{user.name}}</a>
 											</th>
 											<td class="field-email">{{user.email}}</td>
 											<td class="field-is_staff"><img src="/static/admin/img/icon-yes.svg" alt="True"></td>
