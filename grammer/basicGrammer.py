@@ -102,12 +102,23 @@ def testFor ():
     for value in obj:
         print value, obj[value]
 
+def testForin ():
+    tmp = ['a', 'b', 'c']
+    if 'a' not in tmp or  'a' == 'a':
+        print 'True'
+
+def testStrFind():
+    tmp = "abcde"
+    print tmp.find("abd")
+
 def testFunProgram ():
     # testMapReduce()
     # testFilter()
     # testSorted()
     # testWorkSpace()
-    testFor()
+    # testFor()
+    # testForin()
+    testStrFind()
     # testClosure()
 
 

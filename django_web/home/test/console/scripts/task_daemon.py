@@ -192,7 +192,7 @@ def doTask(task_info):
 			cmdline = "python %s --tid %d %s"%(cfg.FILE_NAME_MAIN, task_info.TID, task_info.cmdline)
 		elif task_info.task_type == cfg.TASK_TYPE_VERCONTROL:
 			#cmdline = "python %s --tid %d %s"%(cfg.FILE_NAME_VERCTRL, task_info.TID, task_info.cmdline)
-			cmdline = "python %s %s"%(cfg.FILE_NAME_VERCTRL, task_info.cmdline)	
+			cmdline = "python %s %s"%(cfg.FILE_NAME_VERCTRL, task_info.cmdline)
 		if cfg.FLAG_DEBUG:
 			print("cmdline[%s]"%(cmdline))
 		os.chdir(cfg.WORK_PATH_SCR)
@@ -209,7 +209,7 @@ def doTask(task_info):
 			info = "===== process[%d] doTask [%s] start at [%s]\n"%(pid, task_info.cmdline, startTime) \
 				+ result + "----- process[%d] doTask [%s]  end  at [%s]\n"%(pid, task_info.cmdline, endTime)
 			f.write(info)
-			
+
 		if cfg.FLAG_DEBUG:
 			print("process[%d] doTask  end  at %s"%(pid, endTime))
 			print("doTask cost time [%d] secs"%(int(endTime) - int(startTime)))
@@ -329,11 +329,11 @@ def genRspBody(req_info):
 			for task_info in TaskList:
 				task_info_str += task_info.encode()
 			return task_info_str
-		
+
 		elif req_info.req_type == cfg.FLAG_REQTYPE_VERSION:
 			ver_info_str = cfg.FLAG_NULL
 			ver_map = loadVersionMap()
-			
+
 			if TID == 0 or TID > 3:
 				for object in ver_map.keys():
 					ver_list = ver_map[object]
@@ -431,7 +431,7 @@ def updateSrvStatusFromNTF(result_info):
 			if status == cfg.CMD_UNDEPLOY_TIP:
 				setSrvStatus(srvid, cfg.FLAG_SRV_UNDEPLOY, timestamp)
 			elif status == cfg.CMD_CONNERR_TIP:
-				setSrvStatus(srvid, cfg.FLAG_SRV_UNKNOWN, timestamp)	
+				setSrvStatus(srvid, cfg.FLAG_SRV_UNKNOWN, timestamp)
 			elif status in (cfg.CMD_NOALIVE_TIP, cfg.CMD_STOPPED_TIP):
 				setSrvStatus(srvid, cfg.FLAG_SRV_NOTALIVE, timestamp)
 			elif status == cfg.CMD_RUNNING_TIP:
@@ -456,7 +456,7 @@ def ScanTaskList():
 		if cfg.FLAG_DEBUG and iCount > 120:
 			iCount = 0
 			print("ScanTaskList at %d Length of TaskList is [%d]"%(timestamp, len(TaskList)))
-		
+
 		for task_info in TaskList:
 			if task_info.isTimeOut(timestamp):
 				print("[DROP] timeout task [%s] [%d] [%d]"%(task_info.cmdline, task_info.TID, task_info.exec_time))

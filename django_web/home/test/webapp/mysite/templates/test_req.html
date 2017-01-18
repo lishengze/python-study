@@ -14,6 +14,8 @@
       <li> {{user_name}} </li>
     {% endfor %}
   </ul>
+  <input type="button" id="Set_ENV_KEY" value="Set ENV_KEY">
+  <p id="Set_ENV_KEY_Rsp"></p>
   <input type="button" id="Request_Task_Rpc" value="Request Task Rpc">
   <p id="Request_Task_Rpc_Rsp"></p>
   <input type="button" id="Request_Task_Ntf" value="Request_Task_Ntf">
@@ -28,10 +30,25 @@
   <p id="Request_All_Version_Rsp"></p>
   <a href="/index.html/"> SubHtml </a>
 	<script>
+      $('#Set_ENV_KEY').click(function(){
+        var ENV_KEY = 'PTEST_170'
+        $.ajax({
+          url: '/AJAX/Set_ENV_KEY/',
+          data: {'env_key_value': ENV_KEY},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log (responseJSON)
+          }
+        });
+      });
+
       $('#Request_Task_Rpc').click(function(){
         req_data = {
-          '--cmd': 'show',
-          '--args':'xml:1.1.1',
+          'type': 'version_control',
+          '--cmd': 'publish',
+          '--args':'xml:2.3.114',
           '--grp': '',
           '--ctr': '',
           '--srv': '',
@@ -40,20 +57,16 @@
           '--isrv': '',
           '--isrvno': '',
         }
-          // $.getJSON('AJAX/Request_Task_Rpc/',function(rsp_result){
-          //     console.log (rsp_result)
-          //     // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
-          // })
-          $.ajax({
-            url: '/AJAX/Request_Task_Rpc/',
-            data: {'req_json': JSON.stringify(req_data)},
-            dataType: 'json',
-            type: 'POST',
-            traditional: true,
-            success: function (responseJSON) {
-                console.log (responseJSON)
-            }
-          });
+        $.ajax({
+          url: '/AJAX/Request_Task_Rpc/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log (responseJSON)
+          }
+        });
       })
       $('#Request_Task_Ntf').click(function(){
           $.getJSON('/AJAX/Request_Task_Ntf/',function(rsp_result){

@@ -34,6 +34,9 @@ g_groups = {}
 g_chosen_user = {}
 g_chosen_group = {}
 g_login_user = {}
+g_env_array = []
+# ENV_KEY = 'PTEST_170'
+ENV_KEY = 'TEST_170'
 
 class User(object):
 	def __init__(self, name = 'tmp', email = 'tmp', permisson = 'all'):
@@ -74,9 +77,16 @@ class RpcResult(object):
 				'os_type': data_array[1],
 				'host_name': data_array[2]
 			}
+		if is_version_control_req(data_type):
+			self.__dict__ = {
+				'SEQ': data_array[0],
+				'version': data_array[1],
+				'datetime': data_array[2],
+				'status': data_array[3]
+			}
 
 def init_globals():
-	global g_users, g_groups, g_login_user
+	global g_users, g_groups, g_login_user, g_env_array
 	Trump = User('Trump', 'Trump@gmail.com')
 	Clinton = User('Clinton', 'Clinton@gmail.com')
 	Obama = User('Obama', 'Obama@gmail.com')
@@ -93,7 +103,38 @@ def init_globals():
 
 	g_login_user = User('SHFE.SFIT', 'SHFE.SFIT@hotmail.com')
 
+	for value in cfg_w.ENV_DICT:
+		g_env_array.append(value)
+	print 'g_env_array: '
+	print g_env_array
+
 init_globals()
+
+def sock_conn(key):
+	daemaon_ip = cfg_w.ENV_DICT[key][1]
+	daemon_port = cfg_w.ENV_DICT[key][2]
+	print(daemaon_ip, daemon_port)
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sock.connect((daemaon_ip, daemon_port))
+	return sock
+
+def set_env_key(request):
+	global ENV_KEY
+	req_env_key_value = request.POST.getlist('env_key_value')[0]
+
+	ENV_KEY = req_env_key_value
+	print 'ENV_KEY: ', ENV_KEY
+
+	rsp_data = {
+		'data': req_env_key_value
+	}
+	response = HttpResponse(json.dumps(rsp_data))
+	# response = HttpResponse(req_json)
+	response["Access-Control-Allow-Origin"] = "*"
+	response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+	response["Access-Control-Max-Age"] = "1000"
+	response["Access-Control-Allow-Headers"] = "*"
+	return response
 
 @csrf_protect
 ###执行即时任务
@@ -116,8 +157,9 @@ def task_rpc(request):
 		task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=0, \
 			cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
 		try:
-			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
+			# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
+			sock = sock_conn(ENV_KEY)
 			sock.send(genRpcHead() + task_info.encode() + cfg.TIP_INFO_EOF)
 			rsp = recv_end(sock)
 			sock.close()
@@ -289,45 +331,49 @@ def test_task_rpc(request):
 		req_json = request.POST.getlist('req_json')[0]
 		print req_json
 		trans_req_json = json.loads(req_json)
-		if '--args' in trans_req_json:
-			command_type = trans_req_json['--cmd']
-			# if data_type == 'publish' or data_type == 'rollback' or data_type == 'show' or data_type == 'drop' or data_type == 'delete':
-			#    data_type = 'version_control'
-		else:
-			data_type = 'default'
-		if data_type == '' or data_type =='app':
-			data_type = 'default'
 		print trans_req_json
-		print 'data_type: ', data_type
-		cmdStr = ''
-		for value in trans_req_json:
-			# print value , trans_req_json[value]
-			if trans_req_json[value] !='':
-				cmdStr += value + ' ' + trans_req_json[value] + ' '
-		print ('\nThe REQUEST command line is: %s\n' %(cmdStr))
-		rsp = ''
-		cmdline = cmdStr
-		cmd = 'info'
 
 		task_type = cfg.TASK_TYPE_ECALL
+		cmdline = ''
+		if 'type' in trans_req_json and trans_req_json['type'] == 'version_control':
+			data_type = 'version_control_' + trans_req_json['--cmd']
+			task_type = cfg.TASK_TYPE_VERCONTROL
+		elif '--args' not in trans_req_json or trans_req_json['--args'] == '' or \
+			trans_req_json['--args'] =='app':
+			data_type = 'default'
+		else:
+			data_type = trans_req_json['--args']
+
+		print 'data_type: ', data_type
+		print 'task_type: ', task_type
+		req_para = ['--cmd', '--args', '--grp', \
+					'--ctr', '--srv', '--srvno',\
+					'--ictr', '--isrv', '--isrvno']
+		for value in req_para:
+			if value in req_para and trans_req_json[value] !='':
+				cmdline += value + ' ' + trans_req_json[value] + ' '
+		print ('\nThe REQUEST command line is: %s\n' %(cmdline))
+
+		original_rsp_data = ''
+		cmd = 'info'
+
 		task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=0, \
 					cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
+		trans_rsp_data = {}
 		try:
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 			sock.send(genRpcHead() + task_info.encode() + cfg.TIP_INFO_EOF)
-			rsp = recv_end(sock)
+			original_rsp_data = recv_end(sock)
 			sock.close()
-			print ('The original rsp data is:\n%s' %(rsp))
-			trans_rsp_data = process_rpc_result(rsp, data_type)
+			print ('The original rsp data is:\n%s' %(original_rsp_data))
+			trans_rsp_data = process_rpc_result(original_rsp_data, data_type)
 			print 'Transed Rsp Data: '
 			print trans_rsp_data
 		except Exception as e:
 			print('notifyDaemon failed!')
 			print(traceback.format_exc())
-		# return HttpResponse(rsp.replace("\n", "<br/>"))
-		rsp_data = {'data': trans_rsp_data,
-					'type': data_type}
+		rsp_data = trans_rsp_data
 		response = HttpResponse(json.dumps(rsp_data))
 		# response = HttpResponse(req_json)
 		response["Access-Control-Allow-Origin"] = "*"
@@ -339,15 +385,47 @@ def test_task_rpc(request):
 		return index(request)
 
 def process_rpc_result(origin_data, data_type):
-	complete_data = origin_data
-	if data_type != 'version_control':
-		array_data = get_rpc_array_result(origin_data)
-		# print 'array_data: '
-		# print array_data
-		complete_data = get_rpc_dict_result(array_data, data_type)
-	return complete_data
+	failed_data = get_rpc_failed_data(origin_data, data_type)
+	if failed_data == '':
+		array_data = []
+		if is_version_control_req(data_type):
+			array_data = get_version_ctr_array_result(origin_data)
+		else:
+			array_data = get_task_rpc_array_result(origin_data)
+		print array_data
+		dict_data = get_rpc_dict_result(array_data, data_type)
+		return {'data': dict_data, 'type': data_type}
+	else:
+		return {'data': failed_data, 'type': 'Failed'}
 
-def get_rpc_array_result(origin_data):
+def get_rpc_failed_data(origin_data, data_type):
+	tmpdata = origin_data.split('\n')
+	failed_data = tmpdata
+	if is_version_control_req(data_type):
+		for value in tmpdata:
+			if value.find('---') != -1:
+				failed_data = ''
+				break
+	return failed_data
+
+def is_version_control_req(data_type):
+	if data_type.find('version_control') != -1:
+		return True
+	else:
+		return False
+
+def get_version_ctr_array_result(origin_data):
+	tmpdata = origin_data.split('\n')
+	array_data = []
+	tmpdata = tmpdata[len(tmpdata)-2].split('\t')
+	array_data.append(tmpdata)
+	# print tmpdata
+	# for value in tmpdata:
+	# 	if value != '':
+	# 		array_data.append(value)
+	return array_data
+
+def get_task_rpc_array_result(origin_data):
 	tmpdata = origin_data.split('\n')
 	tmpdata = tmpdata[1:len(tmpdata)-1]
 	index = 0
@@ -512,6 +590,7 @@ def test_all_version(request):
 		print request
 		req_info = ReqInfo(0, cfg.FLAG_REQTYPE_VERSION)
 		rsp = ''
+		rsp_data = ''
 		try:
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
@@ -663,6 +742,7 @@ def get_ajax_func(path):
 	ajax_name = get_ajax_request_name(path)
 	print 'ajax_name: ' + ajax_name
 	ajax_func_dict = {
+		'Set_ENV_KEY': set_env_key,
 		'Request_All_SrvStatus': test_all_srvstatus,
 		'Request_All_TaskList': test_all_tasklist,
 		'Request_All_TaskResult': test_all_taskresult,
@@ -677,6 +757,7 @@ def get_ajax_func(path):
 def get_file_object(file_name):
 	file_object_dict = {
 		'test_req.html': get_test_req_object,
+		'login.html': get_login_object,
 		'admin.html': get_admin_object,
 		'admin/auth.html': get_admin_auth_object,
 		'admin/logout.html': get_admin_logout_object,
@@ -719,6 +800,12 @@ def get_test_req_object():
 		'name': 'Django',
 		'user': user,
 		'users': users
+	}
+	return req_object
+
+def get_login_object():
+	req_object = {
+		'ENV': g_env_array
 	}
 	return req_object
 
