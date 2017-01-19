@@ -53,7 +53,7 @@ $(function () {
         }
     })
 
-    $('#hrefJump').click(function(){
+    $('.hrefJump').click(function(){
         url = '/admin.html/'
         textValue = $(this).text();
         console.log(textValue);
@@ -69,7 +69,7 @@ $(function () {
                 alert(responseJSON.error)
               } else {
                 window.location.href = responseJSON.data;
-              }              
+              }
           }
         });
         // window.location.href = url;
