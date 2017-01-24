@@ -1,8 +1,0 @@
-
-#div1 {position:relative;bottom:70px;left:420px; width:250px; height:250px; margin: 20px auto 0; }
-#div1 a {position:absolute; top:0px; left:0px; font-family: Microsoft YaHei; color:#fff; font-weight:bold; text-decoration:none; padding: 3px 6px; }
-#div1 a:hover {border: 1px solid #eee; background:#0A2B1D; }
-
-p { font: 16px Microsoft YaHei; text-align: center; color: #ba0c0c; }
-p a { font-size: 14px; color: #ba0c0c; }
-p a:hover { color: red; }

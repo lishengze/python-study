@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from server.views import main_query_rsp
+from server.views import server_view
 from django.views.generic.base import RedirectView
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^favicon.ico', RedirectView.as_view(url=r'static/images/favicon.ico')),
-    url(r'^', main_query_rsp),
+    url(r'^', server_view.main_query_rsp),
 ]
