@@ -3,6 +3,8 @@
 		<title>修改用户信息</title>
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
+		<script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
+		<!-- <script type="text/javascript" src="/admin/jsi18n/"></script>
 		<script type="text/javascript">
 			try {
 				window.AG_onLoad = function(func) { if (window.addEventListener) { window.addEventListener('DOMContentLoaded', func); } };
@@ -30,7 +32,7 @@
 		<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 		<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
 		<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>
-		<meta name="robots" content="NONE,NOARCHIVE">
+		<meta name="robots" content="NONE,NOARCHIVE"> -->
 	</head>
 	<body class=" app-auth model-user change-form" data-admin-utc-offset="28800">
 		<!-- Container -->
@@ -42,8 +44,8 @@
 				</div>
 				<div id="user-tools">
 					欢迎,
-					<strong>lsz</strong>.
-					<a href="/home/">访问主页</a> /
+					<strong>{{login_user.name}}</strong>.
+					<a href="/">访问主页</a> /
 					<a href="/admin/password_change/">修改密码</a> /
 					<a href="/admin/logout/">退出</a>
 				</div>
@@ -69,7 +71,7 @@
 								<div class="form-row field-username">
 									<div>
 										<label class="required" for="id_username">用户名:</label>
-											<input class="vTextField" id="id_username" maxlength="150" name="username" type="text" value="lsz" required="">
+											<input class="vTextField" id="id_username" maxlength="150" name="username" type="text" value="{{chosen_user.name}}" required="">
 										<p class="help">要求150个字符以内的数字、字母、符号也只支持 @/./+/-/_.</p>
 									</div>
 								</div>
@@ -99,7 +101,7 @@
 								<div class="form-row field-email">
 									<div>
 										<label for="id_email">邮箱地址:</label>
-										<input class="vTextField" id="id_email" maxlength="254" name="email" type="email" value="{{user.email}}">
+										<input class="vTextField" id="id_email" maxlength="254" name="email" type="email" value="{{chosen_user.email}}">
 									</div>
 								</div>
 							</fieldset>

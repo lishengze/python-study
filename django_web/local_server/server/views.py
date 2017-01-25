@@ -16,6 +16,8 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 
 import json
+from models import Person
+from models import GroupInfo
 
 g_users = {}
 g_groups = {}
@@ -52,6 +54,10 @@ def init_globals():
 	Bush = User('Bush', 'Bush@gmail.com')
 	g_users = [Trump, Clinton, Obama, Bush]
 	g_chosen_user = Trump
+
+	# communist_party = Group('Communist Party')
+	# democratic_party = Group('Democratic Party')
+	# republican_party = Group('Republican Party')
 
 	communist_party = Group('共产党')
 	democratic_party = Group('民主党')
@@ -160,7 +166,8 @@ class ViewMain(object):
 			'Upload_File': self._ajax_func.upload_file,
 			'Set_DB_Data': self._ajax_func.set_dbdata,
 			'Get_DB_Data': self._ajax_func.get_dbdata,
-
+			'Delete_Group': self._ajax_func.delete_group_data,
+			'Add_Group': self._ajax_func.add_group_data,
 		}
 		ajax_func = ajax_func_dict.get(ajax_name, self._ajax_func.default_ajax_request)
 		return ajax_func
@@ -207,7 +214,14 @@ class AjaxReqFunc(object):
 		return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
 
 	def set_dbdata(self, request):
-		rsp_data = {'data': 'test_task_rpc!'}
+		# tmp_data = Person(name='LSZ', age=27)
+		# tmp_data.save()
+
+		for group_data in g_groups:
+			db_obj = GroupInfo(name = group_data.name, permission = group_data.permisson)
+			db_obj.save()
+
+		rsp_data = {'data': 'set database data!'}
 		response = HttpResponse(json.dumps(rsp_data))
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
@@ -216,13 +230,59 @@ class AjaxReqFunc(object):
 		return response
 
 	def get_dbdata(self, request):
-		rsp_data = {'data': 'test_task_rpc!'}
+		person_obj = Person.objects.all()
+		result = {
+			'name': person_obj[0].name,
+			'age': person_obj[0].age
+		}
+
+		group_array = []
+		group_obj = GroupInfo.objects.all()
+		
+		for tmp_obj in group_obj:
+			group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
+
+		rsp_data = {'data': group_array}
 		response = HttpResponse(json.dumps(rsp_data))
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
 		response["Access-Control-Max-Age"] = "1000"
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
+
+	def delete_group_data(self, request):
+		delete_data = request.POST.getlist('delete_group')
+		successful_delete_data = []
+		failed_delete_data = []
+		for value in delete_data:
+			if GroupInfo.objects.filter(name = value).delete():
+				successful_delete_data.append(value)
+			else:
+				failed_delete_data.append(value)
+		
+		rsp_data = {'successful': successful_delete_data,
+					'failed': failed_delete_data}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+	
+	def add_group_data(self, request):
+		add_data = request.POST.getlist('req_data')
+		add_group = GroupInfo(name = add_data.name, permission = add_data.permission)
+		status = 'Failed'
+		if add_group.save() :
+			status = 'Successful'
+
+		rsp_data = {'status': status}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response			
 
 	def upload_file(self, request):
 		rsp_data = {}
@@ -442,10 +502,16 @@ class GetHtmlObject(object):
 		return tmp_object
 
 	def get_admin_auth_group_object(self):
+		group_array = []
+		group_obj = GroupInfo.objects.all()
+		
+		for tmp_obj in group_obj:
+			group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
+		
 		tmp_object = {
 			'user': g_login_user,
-			'groups': g_groups,
-			'group_numbs': len(g_groups)
+			'groups': group_array,
+			'group_numbs': len(group_array)
 		}
 		return tmp_object
 
