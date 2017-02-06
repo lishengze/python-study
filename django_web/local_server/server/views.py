@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_protect, csrf_exempt
 import json
 from models import Person
 from models import GroupInfo
+from models import UserInfo
 
 g_users = {}
 g_groups = {}
@@ -140,6 +141,22 @@ class ViewMain(object):
 			file_name += html_flag
 		return file_name
 
+	def get_html_file_name_and_id(self, file_name):
+		html_flag = '.html'
+		file_name = file_name[:len(file_name)-len(html_flag)]
+		file_name_array = file_name.split('/')
+		if file_name_array[len(file_name_array)-1] == 'change' and file_name_array[len(file_name_array)-2].isdigit():
+			data_id = file_name_array[len(file_name_array)-2]
+			file_name_array.remove(file_name_array[len(file_name_array)-2])
+			file_name = '/'.join(file_name_array)
+			file_name = self.delete_headend_slash(file_name) + html_flag
+			return {
+				'id': data_id,
+				'file_name': file_name,
+			}
+		else:
+			return False
+
 	def get_ajax_request_name(self, path):
 		name_array = path.split('/')
 		ajax_flag = 'AJAX'
@@ -162,7 +179,8 @@ class ViewMain(object):
 			'Request_All_Version': self._ajax_func.test_all_version,
 	        'Request_Task_Rpc': self._ajax_func.test_task_rpc,
 	        'Request_Task_Ntf': self._ajax_func.test_task_ntf,
-			'Set_Chosen_GroupOrUser': self._ajax_func.set_chosen_grouporuser,
+			'Set_Chosen_Group': self._ajax_func.set_chosen_group,
+			'Set_Chosen_User': self._ajax_func.set_chosen_user,
 			'Upload_File': self._ajax_func.upload_file,
 			'Set_DB_Data': self._ajax_func.set_dbdata,
 			'Get_DB_Data': self._ajax_func.get_dbdata,
@@ -172,7 +190,7 @@ class ViewMain(object):
 		ajax_func = ajax_func_dict.get(ajax_name, self._ajax_func.default_ajax_request)
 		return ajax_func
 
-	def get_file_object(self, file_name):
+	def get_file_object(self, file_name, id = -1):
 		file_object_dict = {
 			'test_req.html': self._get_html_object.get_test_req_object,
 			'login.html': self._get_html_object.get_login_object,
@@ -188,8 +206,12 @@ class ViewMain(object):
 			'admin/auth/user/change.html': self._get_html_object.get_admin_auth_user_change_object,
 		}
 		object_func = file_object_dict.get(file_name, lambda :{})
-		print object_func()
-		return object_func()
+		if id !=-1:
+			print object_func(id)
+			return object_func(id)
+		else:
+			print object_func()
+			return object_func()
 
 	@csrf_exempt
 	def main_query_rsp(self, request):
@@ -202,7 +224,13 @@ class ViewMain(object):
 			file_name = self.get_file_name(request.path)
 			file_object = {}
 			if self.is_html_request(file_name):
-				file_object = self.get_file_object(file_name)
+				return_data = self.get_html_file_name_and_id(file_name)
+				print return_data
+				if return_data:
+					file_name = return_data['file_name']
+					file_object = self.get_file_object(file_name, return_data['id'])
+				else:
+					file_object = self.get_file_object(file_name)
 			print 'file name: ' + file_name + '\n'
 			return render(request, file_name, file_object)
 
@@ -238,7 +266,7 @@ class AjaxReqFunc(object):
 
 		group_array = []
 		group_obj = GroupInfo.objects.all()
-		
+
 		for tmp_obj in group_obj:
 			group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
 
@@ -259,7 +287,7 @@ class AjaxReqFunc(object):
 				successful_delete_data.append(value)
 			else:
 				failed_delete_data.append(value)
-		
+
 		rsp_data = {'successful': successful_delete_data,
 					'failed': failed_delete_data}
 		response = HttpResponse(json.dumps(rsp_data))
@@ -268,12 +296,17 @@ class AjaxReqFunc(object):
 		response["Access-Control-Max-Age"] = "1000"
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
-	
+
 	def add_group_data(self, request):
-		add_data = request.POST.getlist('req_data')
-		add_group = GroupInfo(name = add_data.name, permission = add_data.permission)
-		status = 'Failed'
-		if add_group.save() :
+		add_data = request.POST.getlist('req_data')[0]
+		trans_add_data = json.loads(add_data)
+		print trans_add_data
+		status = ''
+		if GroupInfo.objects.filter(name = trans_add_data['name']):
+			status = 'Failed'
+		else:
+			add_group = GroupInfo(name = trans_add_data['name'], permission = trans_add_data['permission'])
+			add_group.save()
 			status = 'Successful'
 
 		rsp_data = {'status': status}
@@ -282,7 +315,67 @@ class AjaxReqFunc(object):
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
 		response["Access-Control-Max-Age"] = "1000"
 		response["Access-Control-Allow-Headers"] = "*"
-		return response			
+		return response
+
+	def set_chosen_group(self, request):
+		global g_users, g_groups, g_chosen_user, g_chosen_group
+		group_name = request.POST.getlist('req_json')[0]
+		group_name = group_name.encode('utf-8')
+		print 'group_name:   ', group_name
+		group = GroupInfo.objects.filter(name = group_name)
+		print 'group_id:  ', group[0].id
+		rsp_url = ''
+		error_info = ''
+		if group:
+			g_chosen_group = group
+			rsp_url = '/admin/auth/group/' + str(group[0].id) + '/change'
+		else:
+			error_info = 'request name does not exit!'
+
+		rsp_data = {'data': rsp_url,
+					'error': error_info}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+
+	def set_chosen_user(self, request):
+		global g_users, g_groups, g_chosen_user, g_chosen_group
+		test_value = request.POST.getlist('req_json')[0]
+		# print test_value
+		test_value = test_value.encode('utf-8')
+		print test_value
+		rsp_url = ''
+		error_info = ''
+
+		is_user_request = False
+		is_group_request = False
+		for group in g_groups:
+			if test_value == group.name:
+				g_chosen_group = group
+				is_group_request = True
+		for user in g_users:
+			if test_value == user.name:
+				g_chosen_user = user
+				is_user_request = True
+
+		if is_group_request:
+			rsp_url = '/admin/auth/group/change'
+		elif is_user_request:
+			rsp_url = '/admin/auth/user/change'
+		else :
+			error_info = 'request name does not exit!'
+
+		rsp_data = {'data': rsp_url,
+					'error': error_info}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
 
 	def upload_file(self, request):
 		rsp_data = {}
@@ -419,42 +512,6 @@ class AjaxReqFunc(object):
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
 
-	def set_chosen_grouporuser(self, request):
-		global g_users, g_groups, g_chosen_user, g_chosen_group
-		test_value = request.POST.getlist('test_value')[0]
-		# print test_value
-		test_value = test_value.encode('utf-8')
-		print test_value
-		rsp_url = ''
-		error_info = ''
-
-		is_user_request = False
-		is_group_request = False
-		for group in g_groups:
-			if test_value == group.name:
-				g_chosen_group = group
-				is_group_request = True
-		for user in g_users:
-			if test_value == user.name:
-				g_chosen_user = user
-				is_user_request = True
-
-		if is_group_request:
-			rsp_url = '/admin/auth/group/change'
-		elif is_user_request:
-			rsp_url = '/admin/auth/user/change'
-		else :
-			error_info = 'request name does not exit!'
-
-		rsp_data = {'data': rsp_url,
-					'error': error_info}
-		response = HttpResponse(json.dumps(rsp_data))
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
 class GetHtmlObject(object):
 	def __init__(self):
 		self.name = 'GetHtmlObject'
@@ -504,10 +561,10 @@ class GetHtmlObject(object):
 	def get_admin_auth_group_object(self):
 		group_array = []
 		group_obj = GroupInfo.objects.all()
-		
+
 		for tmp_obj in group_obj:
 			group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
-		
+
 		tmp_object = {
 			'user': g_login_user,
 			'groups': group_array,
@@ -521,10 +578,18 @@ class GetHtmlObject(object):
 		}
 		return tmp_object
 
-	def get_admin_auth_group_change_object(self):
+	def get_admin_auth_group_change_object(self, cur_id = -1):
+		group_json = {}
+		if cur_id !=-1:
+			group = GroupInfo.objects.filter(id = int(cur_id))[0]
+			print group
+			group_json = {
+				'name': group.name,
+				'permission': group.permission
+			}
 		tmp_object = {
 			'login_user': g_login_user,
-			'group': g_chosen_group
+			'group': group_json
 		}
 		return tmp_object
 
@@ -542,10 +607,19 @@ class GetHtmlObject(object):
 		}
 		return tmp_object
 
-	def get_admin_auth_user_change_object(self):
+	def get_admin_auth_user_change_object(self, cur_id = -1):
+		user_json = {}
+		if cur_id !=-1:
+			cur_user = UserInfo.objects.filter(id = cur_id)[0]
+			user_json = {
+				'name': cur_user['name'],
+				'email': cur_user['email'],
+				'permission': cur_user['permission']
+			}
+
 		tmp_object = {
 			'login_user': g_login_user,
-			'chosen_user': g_chosen_user
+			'group': user_json
 		}
 		return tmp_object
 
