@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>上期技术版本控制登录系统</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   {% include 'dependence.html' %}
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
 <style>
   body{
   	overflow:hidden;
@@ -38,11 +39,11 @@
   }
 .form-control{
 	 width: 100%;
-	 padding: 1em 2em 1em 3em;
+	 padding: 0em 2em;
 	 /*color: #dd3e3e;*/
 	 font-size: 18px;
-	 outline: none;
-	 border: none;
+	 /*outline: none;
+	 border: none;*/
 	 font-weight: 100;
 	 /*border-bottom: 1px solid#484856;*/
 	 margin-bottom: 1em;
@@ -71,7 +72,7 @@
   	-moz-transition: 1s all;
   	-o-transition: 1s all;
   }
-  .EvrKeySelect{
+  /*.EvrKeySelect{
     width: 100%;
     padding: 8px 0em 8px 3em;
     font-size: 15px;
@@ -81,10 +82,9 @@
     border-bottom: 1px solid#484856;
     margin-bottom: 10px;
     border-radius: 4px;
-  }
+  }*/
 </style>
-<script src="/static/js/developer/cookie.js"></script>
-
+  <!-- <meta name="renderer" content="webkit"/> -->
  <!--SIGN UP-->
  <h1>上期技术版本控制登录系统</h1>
 <div class="login-form">
@@ -104,7 +104,7 @@
     <div class="form-group">
       <label class="col-sm-4 control-label inputLabel">环境选择</label>
       <div class="col-sm-8 ">
-          <select class = 'EvrKeySelect'>
+          <select id = 'EvrKeySelect' class = ' form-control'>
             {% for item in ENV_KEY %}
             <option >{{ item }}</option>
             {% endfor %}
@@ -122,28 +122,29 @@
     function loginFunction() {
       var logName = $('#loginName').val();
       var logPassword = $('#loginPassword').val();
-      var getType = $('.EvrKeySelect').val()
+      var getType = $('#EvrKeySelect').val()
       if(logName == '') {
         alert('请输入用户名');
       } else if(logPassword == '') {
         alert('请输入密码');
       } else if(logName === "admin" && logPassword === "admin") {
-        setCookie('username',logName,30);
-        setCookie('password',logPassword,30);
-        setCookie('EvrKeySelect',getType,30);
-          var ENV_KEY = getType;
-          $.ajax({
-            url: '/AJAX/Set_ENV_KEY/',
-            data: {'env_key_value': ENV_KEY},
-            dataType: 'json',
-            type: 'POST',
-            traditional: true,
-            success: function (responseJSON) {
-                 console.log(responseJSON)
-                window.location.href="/home.html";
+        localStorage.setItem('logName', logName)
+        localStorage.setItem('ENV_KEY', getType)
+        var ENV_KEY = getType;
+        console.log(ENV_KEY)
+        // alert(ENV_KEY)
+        $.ajax({
+          url: '/AJAX/Set_ENV_KEY/',
+          data: {'env_key_value': ENV_KEY},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              //  alert(responseJSON)
+              window.location.href="/home.html";
 
-            }
-          });
+          }
+        });
           // alert('aaa')
         // window.location.href="/home/";
       } else {

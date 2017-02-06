@@ -23,19 +23,8 @@
    </div>
     <div id = 'dropResult'></div>
   </div>
-  <div class="searchRightContainer" style = 'float: right;width: 30%;height:550px;border-left: 1px solid #BDBDBD;' >版本信息(最近5次)：
-    <div style= 'border-top: 1px solid #BDBDBD;' > XML:<br>
-      <table border="1" id = 'dropXmlContext'>
-      </table>
-    </div>
-    <div style= 'border-top: 1px solid #BDBDBD;' > Server:<br>
-      <table border="1" id = 'dropServerContext'>
-      </table>
-    </div>
-    <div style= 'border-top: 1px solid #BDBDBD;' > Client:<br>
-      <table id = 'dropClientContext'>
-      </table>
-    </div>
+  <div class="rightContainer"  style = 'float: right;width: 25%;height:550px;border-left: 1px solid #BDBDBD;'>
+    {% include 'rightBlock-version-control-rightVersion.html' %}
   </div>
 </div>
 <script>
@@ -65,58 +54,5 @@
         }
       });
     }
-  }
-  $.getJSON('/AJAX/Request_All_Version/', function(getData) {
-    var data1 = getData;
-    console.log(data1)
-    var xmlCount = 0;
-    var serverCount = 0;
-    var clientCount = 0;
-    var xmlContext = ''
-    var serverContext = ''
-    var clientContext = ''
-    var title = '<tr><td>version</td><td>datetime</td></tr>'
-    for(var i = 0; i < data1.length; i++) {
-      if(data1[i].object == 'xml' && xmlCount< 5) {
-          if(xmlCount == 0){
-           xmlContext = title;
-          }
-          xmlContext += statusJudge(data1[i])
-          xmlCount++;
-
-        } else if(data1[i].object == 'server' && serverCount< 5){
-          if(serverCount == 0){
-            serverContext = title;
-          }
-          serverContext += statusJudge(data1[i]);
-          serverCount ++;
-        } else if(data1[i].object == 'client' && clientCount< 5){
-          if(clientCount == 0) {
-            clientContext = title;
-          }
-          clientContext += statusJudge(data1[i])
-          clientCount ++;
-        }
-      }
-      $('#dropXmlContext').append(xmlContext );
-      $('#dropServerContext').append(serverContext );
-      $('#dropClientContext').append(clientContext )
-
-  })
-
-  function statusJudge(data) {
-    var text = ''
-    if(data.status == 'C') {
-      text +='<tr style ="background-color:blue"><td>'+ data.version + '</td>';
-      text +='<td>'+ data.datetime + '</td></tr>';
-    } else if(data.status == 'D'){
-      text +='<tr style ="background-color:gray"><td>'+ data.version + '</td>';
-      text +='<td>'+ data.datetime + '</td></tr>';
-    } else if(data.status == 'H'){
-      text +='<tr style ="background-color:#6699FF"><td>'+ data.version + '</td>';
-      text +='<td>'+ data.datetime + '</td></tr>';
-    }
-    return text;
-
   }
 </script>

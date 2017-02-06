@@ -20,7 +20,8 @@
   </div>
 </div>
 <script>
-  console.log (getCookie('username'))
-  $(".username_nav").text( getCookie('username'))
-  $(".envr_nav").text(getCookie('EvrKeySelect'))
+  // console.log (getCookie('logName'))
+  // alert(localStorage.getItem('logName'))
+  $(".username_nav").text(localStorage.getItem('logName'))
+  $(".envr_nav").text(localStorage.getItem('ENV_KEY'))
 </script>

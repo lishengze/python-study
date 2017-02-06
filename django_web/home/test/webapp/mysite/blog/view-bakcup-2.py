@@ -28,8 +28,6 @@ from verControl import *
 from taskinfo import *
 
 import json
-from models import Person
-from models import GroupInfo
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -101,12 +99,9 @@ def init_globals():
 	g_users = [Trump, Clinton, Obama, Bush]
 	g_chosen_user = Trump
 
-	# communist_party = Group('共产党')
-	# democratic_party = Group('民主党')
-	# republican_party = Group('共和党')
-	communist_party = Group('Communist Party')
-	democratic_party = Group('Democratic Party')
-	republican_party = Group('Republican Party')
+	communist_party = Group('共产党')
+	democratic_party = Group('民主党')
+	republican_party = Group('共和党')
 	g_groups = [communist_party, democratic_party, republican_party]
 
 	g_chosen_group = republican_party
@@ -115,8 +110,8 @@ def init_globals():
 
 	for value in cfg_w.ENV_DICT:
 		g_env_array.append(value)
-	# print 'g_env_array: '
-	# print g_env_array
+	print 'g_env_array: '
+	print g_env_array
 
 init_globals()
 
@@ -388,157 +383,211 @@ def get_rpc_dict_result(array_data, data_type):
 		index += 1
 	return dict_data
 
-class ViewMain(object):
-	def __init__(self):
-		self.name = "ViewMain"
-		self._ajax_func = AjaxReqFunc()
-		self._get_html_object = GetHtmlObject()
+### 请求相关.
+def is_ajax_request(path):
+	path_array = path.split('/')
+	ajax_flag = 'AJAX'
+	if ajax_flag in path_array:
+		return True
+	else:
+		return False
 
-	def is_ajax_request(self, path):
-		path_array = path.split('/')
-		ajax_flag = 'AJAX'
-		if ajax_flag in path_array:
-			return True
-		else:
-			return False
+def is_static_file(file_name):
+	name_array = file_name.split('/')
+	static_flag = 'static'
+	if static_flag in name_array:
+		return True
+	else:
+		return False
 
-	def is_static_file(self, file_name):
-		name_array = file_name.split('/')
-		static_flag = 'static'
-		if static_flag in name_array:
-			return True
-		else:
-			return False
+def delete_headend_slash(strvalue):
+	str_start_index = 0
+	str_end_index = len(strvalue)
+	if strvalue[str_start_index] == '/':
+		str_start_index = 1
+	if strvalue[str_end_index-1] == '/':
+		str_end_index -= 1
+	return strvalue[str_start_index:str_end_index]
 
-	def delete_headend_slash(self, strvalue):
-		str_start_index = 0
-		str_end_index = len(strvalue)
-		if strvalue[str_start_index] == '/':
-			str_start_index = 1
-		if strvalue[str_end_index-1] == '/':
-			str_end_index -= 1
-		return strvalue[str_start_index:str_end_index]
+def get_static_file_name(origin_file_name):
+	name_array = origin_file_name.split('/')
+	index = 0
+	static_flag = 'static'
+	for value in name_array:
+		if value == static_flag:
+			break
+		index += 1
+	trans_file_name = '/'.join(name_array[index:])
+	return delete_headend_slash(trans_file_name)
 
-	def get_static_file_name(self, origin_file_name):
-		name_array = origin_file_name.split('/')
-		index = 0
-		static_flag = 'static'
-		for value in name_array:
-			if value == static_flag:
+def get_html_file_name(path):
+	name_array = path.split('/')
+	return name_array[len(name_array)-1]
+
+def is_empty_html_request(file_name):
+	name_array = file_name.split('/')
+	last_file_name = name_array[len(name_array)-1]
+	if last_file_name.find('.') == -1:
+		return True
+	else:
+		return False
+
+def is_html_request(path_name):
+	html_flag = '.html'
+	flag = False
+	if len(path_name) > len(html_flag) and path_name[-len(html_flag):] == html_flag:
+		flag = True
+	return flag
+
+def get_file_name(path):
+	file_name = delete_headend_slash(path)
+	html_flag = '.html'
+	# if is_static_file(file_name):
+	# 	file_name = get_static_file_name(file_name)
+	if is_empty_html_request(file_name):
+		file_name += html_flag
+	return file_name
+
+def get_ajax_request_name(path):
+	name_array = path.split('/')
+	ajax_flag = 'AJAX'
+	index = 0
+	for value in name_array:
+		if value == ajax_flag:
+			break
+		index += 1
+	ajax_request_name = '/'.join(name_array[index+1:])
+	return delete_headend_slash(ajax_request_name)
+
+def get_ajax_func(path):
+	ajax_name = get_ajax_request_name(path)
+	print 'ajax_name: ' + ajax_name
+	ajax_func_dict = {
+		'Set_ENV_KEY': g_ajax_func.set_env_key,
+		'Request_All_SrvStatus': g_ajax_func.test_all_srvstatus,
+		'Request_All_TaskList': g_ajax_func.test_all_tasklist,
+		'Request_All_TaskResult': g_ajax_func.test_all_taskresult,
+		'Request_All_Version': g_ajax_func.test_all_version,
+        'Request_Task_Rpc': g_ajax_func.test_task_rpc,
+        'Request_Task_Ntf': g_ajax_func.test_task_ntf,
+		'Set_Chosen_GroupOrUser': g_ajax_func.set_chosen_grouporuser,
+		'Upload_File': g_ajax_func.upload_file,
+
+	}
+	ajax_func = ajax_func_dict.get(ajax_name, g_ajax_func.default_ajax_request)
+	return ajax_func
+
+def get_file_object(file_name):
+	file_object_dict = {
+		'test_req.html': g_get_html_object.get_test_req_object,
+		'login.html': g_get_html_object.get_login_object,
+		'admin.html': g_get_html_object.get_admin_object,
+		'admin/auth.html': g_get_html_object.get_admin_auth_object,
+		'admin/logout.html': g_get_html_object.get_admin_logout_object,
+		'admin/password_change.html': g_get_html_object.get_admin_password_change_object,
+		'admin/auth/group.html': g_get_html_object.get_admin_auth_group_object,
+		'admin/auth/group/add.html': g_get_html_object.get_admin_auth_group_add_object,
+		'admin/auth/group/change.html': g_get_html_object.get_admin_auth_group_change_object,
+		'admin/auth/user.html': g_get_html_object.get_admin_auth_user_object,
+		'admin/auth/user/add.html': g_get_html_object.get_admin_auth_user_add_object,
+		'admin/auth/user/change.html': g_get_html_object.get_admin_auth_user_change_object,
+	}
+	object_func = file_object_dict.get(file_name, lambda :{})
+	print object_func()
+	return object_func()
+
+@csrf_exempt
+def main_query_rsp(request):
+	if is_ajax_request(request.path):
+		print '\nIs AJAX Request'
+		ajax_func = get_ajax_func(request.path)
+		return ajax_func(request)
+	else:
+		print '\nIs not AJAX Request'
+		file_name = get_file_name(request.path)
+		file_object = {}
+		if is_html_request(file_name):
+			file_object = get_file_object(file_name)
+		print 'file name: ' + file_name + '\n'
+		return render(request, file_name, file_object)
+
+
+
+def uploadFile(sock, FileSrc, FileDst):
+	try:
+		file_md5 = md5sum(FileSrc)
+		filename = os.path.basename(FileSrc)
+		f = open(FileSrc, 'rb')
+		sock.send(genFileHead(filename, file_md5, FileDst))
+		bytes = 0
+		while 1:
+			fileinfo = f.read(cfg.DEFAULT_RECV)
+			if not fileinfo:
 				break
-			index += 1
-		trans_file_name = '/'.join(name_array[index:])
-		return self.delete_headend_slash(trans_file_name)
+			bytes = bytes + len(fileinfo)
+			#print('Send ' + str(bytes) + ' bytes ...')
+			sock.send(fileinfo)
+			#time.sleep(0.001)
+		sock.send(cfg.TIP_INFO_EOF)
+		rtn = cfg.CMD_SUCC
+	except Exception as e:
+		rtn = cfg.CMD_FAIL
+		print(traceback.format_exc())
+	finally:
+		return rtn
 
-	def get_html_file_name(self, path):
-		name_array = path.split('/')
-		return name_array[len(name_array)-1]
-
-	def is_empty_html_request(self, file_name):
-		name_array = file_name.split('/')
-		last_file_name = name_array[len(name_array)-1]
-		if last_file_name.find('.') == -1:
-			return True
+def downloadFile(sock, FileSrc, FileDst):
+	try:
+		sock.send(genFReqHead(FileSrc) + cfg.TIP_INFO_EOF)
+		rsp = recv_end(sock)
+		head_info, buf = getFRspHead(rsp)
+		print(head_info)
+		print('++++++++')
+		print(buf)
+		seq_id, filename, status = getFRspInfo(head_info.strip())
+		print(filename, status)
+		if int(status) == cfg.CMD_SUCC:
+			## dir exsit?
+			f = open(FileDst, 'w')
+			f.write(buf)
+			f.close()
+			rtn = cfg.CMD_SUCC
 		else:
-			return False
+			rtn = cfg.CMD_FAIL
+	except Exception as e:
+		rtn = cfg.CMD_FAIL
+		print(traceback.format_exc())
+	finally:
+		return rtn
 
-	def is_html_request(self, path_name):
-		html_flag = '.html'
-		flag = False
-		if len(path_name) > len(html_flag) and path_name[-len(html_flag):] == html_flag:
-			flag = True
-		return flag
+@csrf_protect
+def upload_file_pro(request):
+	rsp = ''
+	if request.method == "POST":
+		start_time = int(time.time())
+		myFile = request.FILES.get("myfile", None)
+		if not myFile:
+			return HttpResponse("no files for upload!")
+		filepath = os.path.join(cfg.WORK_PATH_TEMP, myFile.name)
+		filedst = filepath + cfg.DOT + cfg.PID
+		destination = open(filepath,'wb+')
+		for chunk in myFile.chunks():
+			destination.write(chunk)
+		destination.close()
 
-	def get_file_name(self, path):
-		file_name = self.delete_headend_slash(path)
-		html_flag = '.html'
-		# if is_static_file(file_name):
-		# 	file_name = get_static_file_name(file_name)
-		if self.is_empty_html_request(file_name):
-			file_name += html_flag
-		return file_name
-
-	def is_html_has_id(file_name):
-		pass
-
-	def get_file_name_and_id(file_name):
-		pass
-
-	def get_ajax_request_name(self, path):
-		name_array = path.split('/')
-		ajax_flag = 'AJAX'
-		index = 0
-		for value in name_array:
-			if value == ajax_flag:
-				break
-			index += 1
-		ajax_request_name = '/'.join(name_array[index+1:])
-		return self.delete_headend_slash(ajax_request_name)
-
-	def get_ajax_func(self, path):
-		ajax_name = self.get_ajax_request_name(path)
-		print 'ajax_name: ' + ajax_name
-		ajax_func_dict = {
-			'Set_ENV_KEY': self._ajax_func.set_env_key,
-			'Request_All_SrvStatus': self._ajax_func.test_all_srvstatus,
-			'Request_All_TaskList': self._ajax_func.test_all_tasklist,
-			'Request_All_TaskResult': self._ajax_func.test_all_taskresult,
-			'Request_All_Version': self._ajax_func.test_all_version,
-	        'Request_Task_Rpc': self._ajax_func.test_task_rpc,
-	        'Request_Task_Ntf': self._ajax_func.test_task_ntf,
-			'Set_Chosen_Group': self._ajax_func.set_chosen_group,
-			'Set_Chosen_User': self._ajax_func.set_chosen_user,
-			'Upload_File': self._ajax_func.upload_file,
-			'Set_DB_Data': self._ajax_func.set_dbdata,
-			'Get_DB_Data': self._ajax_func.get_dbdata,
-			'Delete_Group': self._ajax_func.delete_group_data,
-			'Add_Group': self._ajax_func.add_group_data,
-		}
-		ajax_func = ajax_func_dict.get(ajax_name, self._ajax_func.default_ajax_request)
-		return ajax_func
-
-	def get_file_object(self, file_name, id=-1):
-		file_object_dict = {
-			'test_req.html': self._get_html_object.get_test_req_object,
-			'login.html': self._get_html_object.get_login_object,
-			'admin.html': self._get_html_object.get_admin_object,
-			'admin/auth.html': self._get_html_object.get_admin_auth_object,
-			'admin/logout.html': self._get_html_object.get_admin_logout_object,
-			'admin/password_change.html': self._get_html_object.get_admin_password_change_object,
-			'admin/auth/group.html': self._get_html_object.get_admin_auth_group_object,
-			'admin/auth/group/add.html': self._get_html_object.get_admin_auth_group_add_object,
-			'admin/auth/group/change.html': self._get_html_object.get_admin_auth_group_change_object,
-			'admin/auth/user.html': self._get_html_object.get_admin_auth_user_object,
-			'admin/auth/user/add.html': self._get_html_object.get_admin_auth_user_add_object,
-			'admin/auth/user/change.html': self._get_html_object.get_admin_auth_user_change_object,
-		}
-		object_func = file_object_dict.get(file_name, lambda :{})
-		if id !=-1:
-			print object_func(return_data.id)
-			return object_func(return_data.id)
+		sock = sock_conn(ENV_KEY)
+		rtn = uploadFile(sock, filepath, filedst)
+		end_time = int(time.time())
+		if rtn == cfg.CMD_SUCC:
+			rsp = recv_end(sock)
+			info = '<br/>File transfer SUCC, cost ' + str(end_time - start_time) + ' secs.'
 		else:
-			print object_func()
-			return object_func()
-
-	@csrf_exempt
-	def main_query_rsp(self, request):
-		if self.is_ajax_request(request.path):
-			print '\nIs AJAX Request'
-			ajax_func = self.get_ajax_func(request.path)
-			return ajax_func(request)
-		else:
-			print '\nIs not AJAX Request'
-			file_name = self.get_file_name(request.path)
-			file_object = {}
-			if self.is_html_request(file_name):
-				if self.is_html_has_id(file_name):
-					return_data = get_file_name_and_id(file_name)
-					file_name = return_data.file_name
-					file_object = self.get_file_object(file_name, return_data.id)
-				else:
-					file_object = self.get_file_object(file_name)
-			print 'file name: ' + file_name + '\n'
-			return render(request, file_name, file_object)
+			info = '<br/>File transfer FAIL, cost ' + str(end_time - start_time) + ' secs.'
+		rsp = rsp + info
+		sock.close()
+		return HttpResponse(rsp)
+	else:
+		return index(request)
 
 class AjaxReqFunc(object):
 	def __init__ (self):
@@ -610,83 +659,6 @@ class AjaxReqFunc(object):
 		destination.close()
 		return full_file_name
 
-	def set_dbdata(self, request):
-		tmp_data = Person(name='LSZ', age=27)
-		tmp_data.save()
-
-		for group_data in g_groups:
-			print group_data.name
-			print group_data.permisson
-			db_obj = GroupInfo(id = group_data.name, name = group_data.name, permission = group_data.permisson)
-			db_obj.save()
-
-		rsp_data = {'data': 'set database data!'}
-		response = HttpResponse(json.dumps(rsp_data))
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
-	def get_dbdata(self, request):
-		# person_obj = Person.objects.all()
-		# result = {
-		# 	'name': person_obj[0].name,
-		# 	'age': person_obj[0].age
-		# }
-
-		group_array = []
-		group_obj = GroupInfo.objects.all()
-
-		for tmp_obj in group_obj:
-			group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
-
-		rsp_data = {'data': group_array}
-		response = HttpResponse(json.dumps(rsp_data))
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
-	def delete_group_data(self, request):
-		delete_data = request.POST.getlist('delete_group')
-		successful_delete_data = []
-		failed_delete_data = []
-		for value in delete_data:
-			if GroupInfo.objects.filter(name = value).delete():
-				successful_delete_data.append(value)
-			else:
-				failed_delete_data.append(value)
-
-		rsp_data = {'successful': successful_delete_data,
-					'failed': failed_delete_data}
-		response = HttpResponse(json.dumps(rsp_data))
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
-	def add_group_data(self, request):
-		add_data = request.POST.getlist('req_data')[0]
-		trans_add_data = json.loads(add_data)
-		print trans_add_data
-		status = ''
-		if GroupInfo.objects.filter(name = trans_add_data['name']):
-			status = 'Failed'
-		else:
-			add_group = GroupInfo(name = trans_add_data['name'], permission = trans_add_data['permission'])
-			add_group.save()
-			status = 'Successful'
-
-		rsp_data = {'status': status}
-		response = HttpResponse(json.dumps(rsp_data))
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
 
 	def set_env_key(self, request):
 		global ENV_KEY
@@ -947,34 +919,9 @@ class AjaxReqFunc(object):
 		else:
 			return index(request)
 
-	def set_chosen_group(self, request):
+	def set_chosen_grouporuser(self, request):
 		global g_users, g_groups, g_chosen_user, g_chosen_group
-		group_name = request.POST.getlist('req_json')[0]
-		group_name = group_name.encode('utf-8')
-		print group_name
-		group = GroupInfo.objects.filter(name = group_name)
-		print group[0].id
-		rsp_url = ''
-		error_info = ''
-
-		if group:
-			g_chosen_group = group
-			rsp_url = '/admin/auth/group/' + group[0].id + '/change'
-		else:
-			error_info = 'request name does not exit!'
-
-		rsp_data = {'data': rsp_url,
-					'error': error_info}
-		response = HttpResponse(json.dumps(rsp_data))
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
-	def set_chosen_user(self, request):
-		global g_users, g_groups, g_chosen_user, g_chosen_group
-		test_value = request.POST.getlist('req_json')[0]
+		test_value = request.POST.getlist('test_value')[0]
 		# print test_value
 		test_value = test_value.encode('utf-8')
 		print test_value
@@ -1007,6 +954,7 @@ class AjaxReqFunc(object):
 		response["Access-Control-Max-Age"] = "1000"
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
+
 class GetHtmlObject(object):
 	def __init__(self):
 		self.name = 'GetHtmlObject'
@@ -1054,16 +1002,10 @@ class GetHtmlObject(object):
 		return tmp_object
 
 	def get_admin_auth_group_object(self):
-		group_array = []
-		group_obj = GroupInfo.objects.all()
-
-		for tmp_obj in group_obj:
-			group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
-
 		tmp_object = {
 			'user': g_login_user,
-			'groups': group_array,
-			'group_numbs': len(group_array)
+			'groups': g_groups,
+			'group_numbs': len(g_groups)
 		}
 		return tmp_object
 
@@ -1101,212 +1043,6 @@ class GetHtmlObject(object):
 		}
 		return tmp_object
 
-server_view = ViewMain()
+g_ajax_func = AjaxReqFunc()
 
-### 请求相关.
-# def is_ajax_request(path):
-# 	path_array = path.split('/')
-# 	ajax_flag = 'AJAX'
-# 	if ajax_flag in path_array:
-# 		return True
-# 	else:
-# 		return False
-#
-# def is_static_file(file_name):
-# 	name_array = file_name.split('/')
-# 	static_flag = 'static'
-# 	if static_flag in name_array:
-# 		return True
-# 	else:
-# 		return False
-#
-# def delete_headend_slash(strvalue):
-# 	str_start_index = 0
-# 	str_end_index = len(strvalue)
-# 	if strvalue[str_start_index] == '/':
-# 		str_start_index = 1
-# 	if strvalue[str_end_index-1] == '/':
-# 		str_end_index -= 1
-# 	return strvalue[str_start_index:str_end_index]
-#
-# def get_static_file_name(origin_file_name):
-# 	name_array = origin_file_name.split('/')
-# 	index = 0
-# 	static_flag = 'static'
-# 	for value in name_array:
-# 		if value == static_flag:
-# 			break
-# 		index += 1
-# 	trans_file_name = '/'.join(name_array[index:])
-# 	return delete_headend_slash(trans_file_name)
-#
-# def get_html_file_name(path):
-# 	name_array = path.split('/')
-# 	return name_array[len(name_array)-1]
-#
-# def is_empty_html_request(file_name):
-# 	name_array = file_name.split('/')
-# 	last_file_name = name_array[len(name_array)-1]
-# 	if last_file_name.find('.') == -1:
-# 		return True
-# 	else:
-# 		return False
-#
-# def is_html_request(path_name):
-# 	html_flag = '.html'
-# 	flag = False
-# 	if len(path_name) > len(html_flag) and path_name[-len(html_flag):] == html_flag:
-# 		flag = True
-# 	return flag
-#
-# def get_file_name(path):
-# 	file_name = delete_headend_slash(path)
-# 	html_flag = '.html'
-# 	# if is_static_file(file_name):
-# 	# 	file_name = get_static_file_name(file_name)
-# 	if is_empty_html_request(file_name):
-# 		file_name += html_flag
-# 	return file_name
-#
-# def get_ajax_request_name(path):
-# 	name_array = path.split('/')
-# 	ajax_flag = 'AJAX'
-# 	index = 0
-# 	for value in name_array:
-# 		if value == ajax_flag:
-# 			break
-# 		index += 1
-# 	ajax_request_name = '/'.join(name_array[index+1:])
-# 	return delete_headend_slash(ajax_request_name)
-#
-# def get_ajax_func(path):
-# 	ajax_name = get_ajax_request_name(path)
-# 	print 'ajax_name: ' + ajax_name
-# 	ajax_func_dict = {
-# 		'Set_ENV_KEY': g_ajax_func.set_env_key,
-# 		'Request_All_SrvStatus': g_ajax_func.test_all_srvstatus,
-# 		'Request_All_TaskList': g_ajax_func.test_all_tasklist,
-# 		'Request_All_TaskResult': g_ajax_func.test_all_taskresult,
-# 		'Request_All_Version': g_ajax_func.test_all_version,
-#         'Request_Task_Rpc': g_ajax_func.test_task_rpc,
-#         'Request_Task_Ntf': g_ajax_func.test_task_ntf,
-# 		'Set_Chosen_GroupOrUser': g_ajax_func.set_chosen_grouporuser,
-# 		'Upload_File': g_ajax_func.upload_file,
-#
-# 	}
-# 	ajax_func = ajax_func_dict.get(ajax_name, g_ajax_func.default_ajax_request)
-# 	return ajax_func
-#
-# def get_file_object(file_name):
-# 	file_object_dict = {
-# 		'test_req.html': g_get_html_object.get_test_req_object,
-# 		'login.html': g_get_html_object.get_login_object,
-# 		'admin.html': g_get_html_object.get_admin_object,
-# 		'admin/auth.html': g_get_html_object.get_admin_auth_object,
-# 		'admin/logout.html': g_get_html_object.get_admin_logout_object,
-# 		'admin/password_change.html': g_get_html_object.get_admin_password_change_object,
-# 		'admin/auth/group.html': g_get_html_object.get_admin_auth_group_object,
-# 		'admin/auth/group/add.html': g_get_html_object.get_admin_auth_group_add_object,
-# 		'admin/auth/group/change.html': g_get_html_object.get_admin_auth_group_change_object,
-# 		'admin/auth/user.html': g_get_html_object.get_admin_auth_user_object,
-# 		'admin/auth/user/add.html': g_get_html_object.get_admin_auth_user_add_object,
-# 		'admin/auth/user/change.html': g_get_html_object.get_admin_auth_user_change_object,
-# 	}
-# 	object_func = file_object_dict.get(file_name, lambda :{})
-# 	print object_func()
-# 	return object_func()
-#
-# @csrf_exempt
-# def main_query_rsp(request):
-# 	if is_ajax_request(request.path):
-# 		print '\nIs AJAX Request'
-# 		ajax_func = get_ajax_func(request.path)
-# 		return ajax_func(request)
-# 	else:
-# 		print '\nIs not AJAX Request'
-# 		file_name = get_file_name(request.path)
-# 		file_object = {}
-# 		if is_html_request(file_name):
-# 			file_object = get_file_object(file_name)
-# 		print 'file name: ' + file_name + '\n'
-# 		return render(request, file_name, file_object)
-
-# def uploadFile(sock, FileSrc, FileDst):
-# 	try:
-# 		file_md5 = md5sum(FileSrc)
-# 		filename = os.path.basename(FileSrc)
-# 		f = open(FileSrc, 'rb')
-# 		sock.send(genFileHead(filename, file_md5, FileDst))
-# 		bytes = 0
-# 		while 1:
-# 			fileinfo = f.read(cfg.DEFAULT_RECV)
-# 			if not fileinfo:
-# 				break
-# 			bytes = bytes + len(fileinfo)
-# 			#print('Send ' + str(bytes) + ' bytes ...')
-# 			sock.send(fileinfo)
-# 			#time.sleep(0.001)
-# 		sock.send(cfg.TIP_INFO_EOF)
-# 		rtn = cfg.CMD_SUCC
-# 	except Exception as e:
-# 		rtn = cfg.CMD_FAIL
-# 		print(traceback.format_exc())
-# 	finally:
-# 		return rtn
-#
-# def downloadFile(sock, FileSrc, FileDst):
-# 	try:
-# 		sock.send(genFReqHead(FileSrc) + cfg.TIP_INFO_EOF)
-# 		rsp = recv_end(sock)
-# 		head_info, buf = getFRspHead(rsp)
-# 		print(head_info)
-# 		print('++++++++')
-# 		print(buf)
-# 		seq_id, filename, status = getFRspInfo(head_info.strip())
-# 		print(filename, status)
-# 		if int(status) == cfg.CMD_SUCC:
-# 			## dir exsit?
-# 			f = open(FileDst, 'w')
-# 			f.write(buf)
-# 			f.close()
-# 			rtn = cfg.CMD_SUCC
-# 		else:
-# 			rtn = cfg.CMD_FAIL
-# 	except Exception as e:
-# 		rtn = cfg.CMD_FAIL
-# 		print(traceback.format_exc())
-# 	finally:
-# 		return rtn
-#
-# @csrf_protect
-# def upload_file_pro(request):
-# 	rsp = ''
-# 	if request.method == "POST":
-# 		start_time = int(time.time())
-# 		myFile = request.FILES.get("myfile", None)
-# 		if not myFile:
-# 			return HttpResponse("no files for upload!")
-# 		filepath = os.path.join(cfg.WORK_PATH_TEMP, myFile.name)
-# 		filedst = filepath + cfg.DOT + cfg.PID
-# 		destination = open(filepath,'wb+')
-# 		for chunk in myFile.chunks():
-# 			destination.write(chunk)
-# 		destination.close()
-#
-# 		sock = sock_conn(ENV_KEY)
-# 		rtn = uploadFile(sock, filepath, filedst)
-# 		end_time = int(time.time())
-# 		if rtn == cfg.CMD_SUCC:
-# 			rsp = recv_end(sock)
-# 			info = '<br/>File transfer SUCC, cost ' + str(end_time - start_time) + ' secs.'
-# 		else:
-# 			info = '<br/>File transfer FAIL, cost ' + str(end_time - start_time) + ' secs.'
-# 		rsp = rsp + info
-# 		sock.close()
-# 		return HttpResponse(rsp)
-# 	else:
-# 		return index(request)
-
-# g_ajax_func = AjaxReqFunc()
-#
-# g_get_html_object = GetHtmlObject()
+g_get_html_object = GetHtmlObject()
