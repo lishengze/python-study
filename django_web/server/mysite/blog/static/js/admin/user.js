@@ -1,6 +1,5 @@
 $(function () {
-    console.log ('This is class Test!')
-
+    console.log ('This is user.js!')
     var selectedNumb = 0;
     var sum_checkbox_id = 'action-toggle'
   	var setNumbSelector = $('.paginator')
@@ -11,30 +10,21 @@ $(function () {
             if ($(this).is(':checked')) {
                 $('.action-select').each(function() {
                     if (!$(this).is(':checked')) {
-                    // if ($(this).attr('checked') !== 'checked') {
-						// console.log('Is action-toggle checked!')
-						// console.log ('')
                         $(this).attr("checked", true);
                         ++selectedNumb;
-                        setNumbSelector.text(selectedNumb + ' 个被选中');
+                        setNumbSelector.text(selectedNumb + ' 位用户被选中');
                     }
                 });
             } else {
                 $('.action-select').each(function() {
                     if ($(this).is(':checked')) {
-						// console.log('Is action-toggle unchecked!')
-						// console.log ('')
+
                         $(this).attr("checked", false);
                         --selectedNumb;
-                        setNumbSelector.text(selectedNumb + ' 个被选中');
+                        setNumbSelector.text(selectedNumb + ' 位用户被选中');
                     }
                 });
             }
-
-            $('.action-select').each(function() {
-                // console.log ($(this).attr('checked'));
-                // console.log ($(this).is(':checked'));
-            })
         } else {
             if ($(this).is(':checked')) {
                 ++selectedNumb;
@@ -43,27 +33,24 @@ $(function () {
                 --selectedNumb;
                 $(this).attr("checked", false);
             }
-            setNumbSelector.text(selectedNumb + ' 个被选中');
-
-            $('.action-select').each(function() {
-                // console.log ($(this).attr('checked'));
-                // console.log ($(this).is(':checked'));
-            })
+            setNumbSelector.text(selectedNumb + ' 位用户被选中');
+            // $('.action-select').each(function() {
+            //     // console.log ($(this).attr('checked'));
+            //     // console.log ($(this).is(':checked'));
+            // })
         }
     })
 
     $('.hrefJump').click(function(){
-        url = '/admin.html/'
-        group_name = $(this).text();
-        console.log(group_name);
+        user_name = $(this).text();
+        console.log(user_name);
         $.ajax({
-          url: '/AJAX/Set_Chosen_Group/',
-          data: {'req_json': group_name},
+          url: '/AJAX/Set_Chosen_User/',
+          data: {'req_json': user_name},
           dataType: 'json',
           type: 'POST',
           traditional: true,
           success: function (responseJSON) {
-            //   console.log (responseJSON)
               if (responseJSON.error !== '') {
                 alert(responseJSON.error)
               } else {
@@ -72,7 +59,6 @@ $(function () {
               }
           }
         });
-        // window.location.href = url;
     })
 
     $("#execute_selection").click(function(){
@@ -91,7 +77,7 @@ $(function () {
             console.log (delete_group)
 
             $.ajax({
-                url: '/AJAX/Delete_Group/',
+                url: '/AJAX/Delete_User/',
                 data: {'req_json': delete_group},
                 dataType: 'json',
                 type: 'POST',

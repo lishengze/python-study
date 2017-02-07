@@ -4,7 +4,7 @@
 	<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
 	<link rel="stylesheet" type="text/css" href="/static/admin/css/changelists.css">
 	<script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
-	<script src="/static/js/admin/group.js"></script>
+	<script src="/static/js/admin/user.js"></script>
 </head>
 <body class=" app-auth model-user change-list" data-admin-utc-offset="28800">
 	<!-- Container -->
@@ -125,10 +125,10 @@
 											   <div class="text"><a href="?o=2.1">邮件地址</a></div>
 											   <div class="clear"></div>
 											</th>
-											<th scope="col" class="sortable column-first_name">
+											<!-- <th scope="col" class="sortable column-first_name">
 											   <div class="text"><a href="?o=3.1">姓名</a></div>
 											   <div class="clear"></div>
-											</th>
+											</th> -->
 											<th scope="col" class="sortable column-is_staff">
 											   <div class="text"><a href="?o=5.1">用户状态</a></div>
 											   <div class="clear"></div>
@@ -142,16 +142,16 @@
 												<input class="action-select" name="_selected_action" type="checkbox" value="1">
 											</td>
 											<th class="field-username">
-												<a class='hrefJump' style="color:blue">{{user.name}}</a>
+												<a class='hrefJump' style="color:steelblue">{{user.name}}</a>
 											</th>
 											<td class="field-email">{{user.email}}</td>
-											<td class="field-is_staff"><img src="/static/admin/img/icon-yes.svg" alt="True"></td>
+											<!-- <td class="field-is_staff"><img src="/static/admin/img/icon-yes.svg" alt="True"></td> -->
 										</tr>
 										{% endfor %}
 									</tbody>
 								</table>
 							</div>
-							<p class="paginator"> {{user_numb}} user </p>
+							<p class="paginator"> {{user_numb}} 位用户 </p>
 		      	</form>
 	    		</div>
 	  		</div>
