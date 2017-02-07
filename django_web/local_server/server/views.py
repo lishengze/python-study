@@ -26,16 +26,20 @@ g_chosen_user = {}
 g_chosen_group = {}
 g_login_user = {}
 g_env_array = []
+g_group_permission = []
+g_user_permission = []
 
 class User(object):
-	def __init__(self, name = 'tmp', email = 'tmp', permisson = 'all'):
+	def __init__(self, name = 'tmp', email = 'tmp', permisson = 'all', groups = 'all'):
 		self.name = name
 		self.email = email
 		self.permisson = permisson
+		self.groups = groups
 		self.__dict__ = {
 			'name': self.name,
 			'email': self.email,
-			'permisson': self.permisson
+			'permisson': self.permisson,
+			'groups': self.groups
 		}
 
 class Group(object):
@@ -48,7 +52,7 @@ class Group(object):
 		}
 
 def init_globals():
-	global g_users, g_groups, g_login_user, g_chosen_user, g_chosen_group, g_env_array
+	global g_users, g_groups, g_login_user, g_env_array, g_get_html_object
 	Trump = User('Trump', 'Trump@gmail.com')
 	Clinton = User('Clinton', 'Clinton@gmail.com')
 	Obama = User('Obama', 'Obama@gmail.com')
@@ -56,18 +60,36 @@ def init_globals():
 	g_users = [Trump, Clinton, Obama, Bush]
 	g_chosen_user = Trump
 
-	# communist_party = Group('Communist Party')
-	# democratic_party = Group('Democratic Party')
-	# republican_party = Group('Republican Party')
-
-	communist_party = Group('共产党')
-	democratic_party = Group('民主党')
-	republican_party = Group('共和党')
+	# communist_party = Group('共产党')
+	# democratic_party = Group('民主党')
+	# republican_party = Group('共和党')
+	communist_party = Group('Communist Party')
+	democratic_party = Group('Democratic Party')
+	republican_party = Group('Republican Party')
 	g_groups = [communist_party, democratic_party, republican_party]
-	g_chosen_group = republican_party
 
+	g_chosen_group = republican_party
 	g_login_user = User('SHFE.SFIT', 'SHFE.SFIT@hotmail.com')
-	g_env_array = ['TEST_170', 'PTEST_170']
+
+	g_group_permission = ["admin | log entry | Can change log entry", \
+						  "admin | log entry | Can add log entry", \
+						  "admin | log entry | Can delete log entry", \
+						  "auth | group | Can add group", \
+						  "auth | group | Can change group", \
+						  "auth | group | Can delete group", \
+						  "auth | permission | Can add permission", \
+						  "auth | permission | Can change permission", \
+						  "auth | permission | Can delete permission", \
+						  "auth | user | Can add user", \
+						  "auth | user | Can change user", \
+						  "auth | user | Can delete user", \
+						  "contenttypes | content type | Can add content type", \
+						  "contenttypes | content type | Can change content type", \
+						  "contenttypes | content type | Can delete content type", \
+						  "sessions | session | Can add session", \
+						  "sessions | session | Can change session", \
+						  "sessions | session | Can delete session"]
+	g_user_permission = g_group_permission
 
 init_globals()
 
@@ -179,13 +201,17 @@ class ViewMain(object):
 			'Request_All_Version': self._ajax_func.test_all_version,
 	        'Request_Task_Rpc': self._ajax_func.test_task_rpc,
 	        'Request_Task_Ntf': self._ajax_func.test_task_ntf,
-			'Set_Chosen_Group': self._ajax_func.set_chosen_group,
-			'Set_Chosen_User': self._ajax_func.set_chosen_user,
 			'Upload_File': self._ajax_func.upload_file,
 			'Set_DB_Data': self._ajax_func.set_dbdata,
 			'Get_DB_Data': self._ajax_func.get_dbdata,
+			'Set_Chosen_Group': self._ajax_func.set_chosen_group,
+			'Set_Chosen_User': self._ajax_func.set_chosen_user,
 			'Delete_Group': self._ajax_func.delete_group_data,
+			'Delete_User': self._ajax_func.delete_user_data,
+			'Add_User': self._ajax_func.add_user_data,
 			'Add_Group': self._ajax_func.add_group_data,
+			'Change_User': self._ajax_func.change_user_data,
+			'Change_Group': self._ajax_func.change_group_data,
 		}
 		ajax_func = ajax_func_dict.get(ajax_name, self._ajax_func.default_ajax_request)
 		return ajax_func
@@ -242,13 +268,19 @@ class AjaxReqFunc(object):
 		return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
 
 	def set_dbdata(self, request):
-		# tmp_data = Person(name='LSZ', age=27)
-		# tmp_data.save()
+		tmp_data = Person(name='LSZ', age=27)
+		tmp_data.save()
 
-		for group_data in g_groups:
-			db_obj = GroupInfo(name = group_data.name, permission = group_data.permisson)
+		# for group_data in g_groups:
+		# 	print group_data.name
+		# 	print group_data.permisson
+		# 	db_obj = GroupInfo(name = group_data.name, permission = group_data.permisson)
+		# 	db_obj.save()
+
+		for user in g_users:
+			db_obj = UserInfo(name = user.name, email=user.email, \
+			                  permission = user.permisson, groups = user.groups)
 			db_obj.save()
-
 		rsp_data = {'data': 'set database data!'}
 		response = HttpResponse(json.dumps(rsp_data))
 		response["Access-Control-Allow-Origin"] = "*"
@@ -258,11 +290,11 @@ class AjaxReqFunc(object):
 		return response
 
 	def get_dbdata(self, request):
-		person_obj = Person.objects.all()
-		result = {
-			'name': person_obj[0].name,
-			'age': person_obj[0].age
-		}
+		# person_obj = Person.objects.all()
+		# result = {
+		# 	'name': person_obj[0].name,
+		# 	'age': person_obj[0].age
+		# }
 
 		group_array = []
 		group_obj = GroupInfo.objects.all()
@@ -279,7 +311,7 @@ class AjaxReqFunc(object):
 		return response
 
 	def delete_group_data(self, request):
-		delete_data = request.POST.getlist('delete_group')
+		delete_data = request.POST.getlist('req_json')
 		successful_delete_data = []
 		failed_delete_data = []
 		for value in delete_data:
@@ -297,8 +329,27 @@ class AjaxReqFunc(object):
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
 
+	def delete_user_data(self, request):
+		delete_data = request.POST.getlist('req_json')
+		successful_delete_data = []
+		failed_delete_data = []
+		for value in delete_data:
+			if UserInfo.objects.filter(name = value).delete():
+				successful_delete_data.append(value)
+			else:
+				failed_delete_data.append(value)
+
+		rsp_data = {'successful': successful_delete_data,
+					'failed': failed_delete_data}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+
 	def add_group_data(self, request):
-		add_data = request.POST.getlist('req_data')[0]
+		add_data = request.POST.getlist('req_json')[0]
 		trans_add_data = json.loads(add_data)
 		print trans_add_data
 		status = ''
@@ -317,8 +368,71 @@ class AjaxReqFunc(object):
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
 
+	def change_group_data(self, request):
+		change_data = request.POST.getlist('req_json')[0]
+		trans_change_data = json.loads(change_data)
+		print trans_change_data
+		status = ''
+		group = GroupInfo.objects.get(name = trans_change_data['name'])
+		if group:
+			status = 'Successful'
+			group.permission = trans_change_data['permission']
+			group.save()
+		else:
+			status = 'Failed'
+
+		rsp_data = {'status': status}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+
+	def change_user_data(self, request):
+		change_data = request.POST.getlist('req_json')[0]
+		trans_change_data = json.loads(change_data)
+		print trans_change_data
+		status = ''
+		user = UserInfo.objects.get(name = trans_change_data['name'])
+		if user:
+			status = 'Successful'
+			user.permission = trans_change_data['permission']
+			user.email = trans_change_data['email']
+			user.groups = trans_change_data['groups']
+			user.save()
+		else:
+			status = 'Failed'
+
+		rsp_data = {'status': status}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+
+	def add_user_data(self, request):
+		add_data = request.POST.getlist('req_json')[0]
+		trans_add_data = json.loads(add_data)
+		print trans_add_data
+		status = ''
+		if UserInfo.objects.filter(name = trans_add_data['name']):
+			status = 'Failed'
+		else:
+			add_user = UserInfo(name = trans_add_data['name'], permission = trans_add_data['permission'])
+			add_user.save()
+			status = 'Successful'
+
+		rsp_data = {'status': status}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+
 	def set_chosen_group(self, request):
-		global g_users, g_groups, g_chosen_user, g_chosen_group
 		group_name = request.POST.getlist('req_json')[0]
 		group_name = group_name.encode('utf-8')
 		print 'group_name:   ', group_name
@@ -327,7 +441,6 @@ class AjaxReqFunc(object):
 		rsp_url = ''
 		error_info = ''
 		if group:
-			g_chosen_group = group
 			rsp_url = '/admin/auth/group/' + str(group[0].id) + '/change'
 		else:
 			error_info = 'request name does not exit!'
@@ -342,30 +455,16 @@ class AjaxReqFunc(object):
 		return response
 
 	def set_chosen_user(self, request):
-		global g_users, g_groups, g_chosen_user, g_chosen_group
-		test_value = request.POST.getlist('req_json')[0]
-		# print test_value
-		test_value = test_value.encode('utf-8')
-		print test_value
+		user_name = request.POST.getlist('req_json')[0]
+		user_name = user_name.encode('utf-8')
+		print 'user_name:   ', user_name
+		user = UserInfo.objects.filter(name = user_name)[0]
+		print 'user_id:  ', user.id
 		rsp_url = ''
 		error_info = ''
-
-		is_user_request = False
-		is_group_request = False
-		for group in g_groups:
-			if test_value == group.name:
-				g_chosen_group = group
-				is_group_request = True
-		for user in g_users:
-			if test_value == user.name:
-				g_chosen_user = user
-				is_user_request = True
-
-		if is_group_request:
-			rsp_url = '/admin/auth/group/change'
-		elif is_user_request:
-			rsp_url = '/admin/auth/user/change'
-		else :
+		if user:
+			rsp_url = '/admin/auth/user/' + str(user.id) + '/change'
+		else:
 			error_info = 'request name does not exit!'
 
 		rsp_data = {'data': rsp_url,
@@ -561,10 +660,8 @@ class GetHtmlObject(object):
 	def get_admin_auth_group_object(self):
 		group_array = []
 		group_obj = GroupInfo.objects.all()
-
 		for tmp_obj in group_obj:
 			group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
-
 		tmp_object = {
 			'user': g_login_user,
 			'groups': group_array,
@@ -582,22 +679,33 @@ class GetHtmlObject(object):
 		group_json = {}
 		if cur_id !=-1:
 			group = GroupInfo.objects.filter(id = int(cur_id))[0]
-			print group
+			permission_array = []
+			if group.permission == 'all':
+				permission_array = g_group_permission
+			else:
+				permission_array = group.permission.split(';')
+				permission_array.remove('')
+
 			group_json = {
-				'name': group.name,
-				'permission': group.permission
+				'name': group.name
 			}
 		tmp_object = {
 			'login_user': g_login_user,
-			'group': group_json
+			'group': group_json,
+			'permission': permission_array
 		}
 		return tmp_object
 
 	def get_admin_auth_user_object(self):
+		user_array = []
+		user_obj = UserInfo.objects.all()
+		for tmp_obj in user_obj:
+			user_array.append(User(tmp_obj.name, tmp_obj.email, \
+			                  tmp_obj.permission, tmp_obj.groups).__dict__)
 		tmp_object = {
 			'user': g_login_user,
-			'users': g_users,
-			'user_numb': len(g_users)
+			'users': user_array,
+			'user_numb': len(user_array)
 		}
 		return tmp_object
 
@@ -610,16 +718,37 @@ class GetHtmlObject(object):
 	def get_admin_auth_user_change_object(self, cur_id = -1):
 		user_json = {}
 		if cur_id !=-1:
-			cur_user = UserInfo.objects.filter(id = cur_id)[0]
-			user_json = {
-				'name': cur_user['name'],
-				'email': cur_user['email'],
-				'permission': cur_user['permission']
-			}
+			user = UserInfo.objects.filter(id = int(cur_id))[0]
+			permission_array = []
+			user_groups = []
+			available_groups = []
+			group_obj = GroupInfo.objects.all()
 
+			for tmp_obj in group_obj:
+				available_groups.append(Group(tmp_obj.name, tmp_obj.permission).name)
+
+			if user.permission == 'all':
+				permission_array = g_group_permission
+			else:
+				permission_array = user.permission.split(';')
+				permission_array.remove('')
+
+			if user.groups == 'all':
+				user_groups = available_groups
+			else:
+				user_groups = user.groups.split(';')
+				user_groups.remove('')
+
+			user_json = {
+				'name': user.name,
+				'email': user.email
+			}
 		tmp_object = {
 			'login_user': g_login_user,
-			'group': user_json
+			'user': user_json,
+			'permission': permission_array,
+			'available_groups': available_groups,
+			'user_groups': user_groups
 		}
 		return tmp_object
 

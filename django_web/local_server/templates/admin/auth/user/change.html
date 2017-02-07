@@ -4,35 +4,7 @@
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
 		<script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
-		<!-- <script type="text/javascript" src="/admin/jsi18n/"></script>
-		<script type="text/javascript">
-			try {
-				window.AG_onLoad = function(func) { if (window.addEventListener) { window.addEventListener('DOMContentLoaded', func); } };
-				window.AG_removeElementById = function(id) { var element = document.getElementById(id); if (element && element.parentNode) { element.parentNode.removeChild(element); }};
-				window.AG_removeElementBySelector = function(selector) { if (!document.querySelectorAll) { return; } var nodes = document.querySelectorAll(selector); if (nodes) { for (var i = 0; i < nodes.length; i++) { if (nodes[i] && nodes[i].parentNode) { nodes[i].parentNode.removeChild(nodes[i]); } } } };
-				window.AG_each = function(selector, fn) { if (!document.querySelectorAll) return; var elements = document.querySelectorAll(selector); for (var i = 0; i < elements.length; i++) { fn(elements[i]); }; };
-				var AG_removeParent = function(el, fn) { while (el && el.parentNode) { if (fn(el)) { el.parentNode.removeChild(el); return; } el = el.parentNode; } };
-				var AG_onLoad=function(func){if(document.readyState==="complete"||document.readyState==="interactive")func();else if(document.addEventListener)document.addEventListener("DOMContentLoaded",func);else if(document.attachEvent)document.attachEvent("DOMContentLoaded",func)};
-				var AG_removeElementById = function(id) { var element = document.getElementById(id); if (element && element.parentNode) { element.parentNode.removeChild(element); }};
-				var AG_removeElementBySelector = function(selector) { if (!document.querySelectorAll) { return; } var nodes = document.querySelectorAll(selector); if (nodes) { for (var i = 0; i < nodes.length; i++) { if (nodes[i] && nodes[i].parentNode) { nodes[i].parentNode.removeChild(nodes[i]); } } } };
-				var AG_each = function(selector, fn) { if (!document.querySelectorAll) return; var elements = document.querySelectorAll(selector); for (var i = 0; i < elements.length; i++) { fn(elements[i]); }; };
-			} catch (ex) {
-				console.error('Error executing AG js: ' + ex);
-			}
-		</script>
-		<script type="text/javascript" src="/static/admin/js/core.js"></script>
-		<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
-		<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
-		<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
-		<script type="text/javascript" src="/static/admin/js/actions.js"></script>
-		<script type="text/javascript" src="/static/admin/js/urlify.js"></script>
-		<script type="text/javascript" src="/static/admin/js/prepopulate.js"></script>
-		<script type="text/javascript" src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
-		<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
-		<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
-		<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
-		<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>
-		<meta name="robots" content="NONE,NOARCHIVE"> -->
+		<script src="/static/js/admin/user/change.js"></script>
 	</head>
 	<body class=" app-auth model-user change-form" data-admin-utc-offset="28800">
 		<!-- Container -->
@@ -71,7 +43,7 @@
 								<div class="form-row field-username">
 									<div>
 										<label class="required" for="id_username">用户名:</label>
-											<input class="vTextField" id="id_username" maxlength="150" name="username" type="text" value="{{chosen_user.name}}" required="">
+											<input class="vTextField" id="id_username" maxlength="150" name="username" type="text" value="{{user.name}}" required="">
 										<p class="help">要求150个字符以内的数字、字母、符号也只支持 @/./+/-/_.</p>
 									</div>
 								</div>
@@ -95,13 +67,13 @@
 								<div class="form-row field-first_name">
 									<div>
 										<label for="id_first_name">姓名:</label>
-										<input class="vTextField" id="id_first_name" maxlength="30" name="first_name" type="text">
+										<input class="vTextField" id="id_first_name" maxlength="30" name="first_name" type="text", value="{{user.name}}">
 									</div>
 								</div>
 								<div class="form-row field-email">
 									<div>
 										<label for="id_email">邮箱地址:</label>
-										<input class="vTextField" id="id_email" maxlength="254" name="email" type="email" value="{{chosen_user.email}}">
+										<input class="vTextField" id="id_email" maxlength="254" name="email" type="email" value="{{user.email}}">
 									</div>
 								</div>
 							</fieldset>
@@ -144,15 +116,20 @@
 															</label>
 															<input type="text" placeholder="Filter" id="id_groups_input">
 														</p>
-														<select multiple="multiple" class="filtered" data-field-name="groups" data-is-stacked="0" id="id_groups_from" name="groups_old"></select>
+														<select multiple="multiple" class="filtered" data-field-name="groups"
+															data-is-stacked="0" id="id_groups_from" name="groups_old">
+															{% for group in available_groups%}
+															<option title="{{group}}">{{group}}</option>
+															{% endfor %}
+														</select>
 														<a title="Click to choose all groups at once." href="#" id="id_groups_add_all_link" class="selector-chooseall">全选</a>
 													</div>
 													<ul class="selector-chooser">
 														<li>
-															<a title="Choose" href="#" id="id_groups_add_link" class="selector-add">选择</a>
+															<a title="Choose" id="id_groups_add_link" class="selector-add">选择</a>
 														</li>
 														<li>
-															<a title="Remove" href="#" id="id_groups_remove_link" class="selector-remove">删除</a>
+															<a title="Remove" id="id_groups_remove_link" class="selector-remove">删除</a>
 														</li>
 													</ul>
 													<div class="selector-chosen">
@@ -160,7 +137,12 @@
 															<span class="help help-tooltip help-icon" title="This is the list of chosen groups. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes.">
 																</span>
 														</h2>
-														<select id="id_groups_to" multiple="multiple" size="0" name="groups" class="filtered"></select>
+														<select id="id_groups_to" multiple="multiple" size="0" name="groups" class="filtered">
+															{% for group in user_groups%}
+															<option title="{{group}}">{{group}}</option>
+															{% endfor %}
+														</select>
+
 														<a title="Click to remove all chosen groups at once." href="#" id="id_groups_remove_all_link" class="selector-clearall">Remove all</a>
 													</div>
 												</div>
@@ -212,17 +194,21 @@
 													</div>
 													<ul class="selector-chooser">
 														<li>
-															<a title="Choose" href="#" id="id_user_permissions_add_link" class="selector-add">选择</a>
+															<a title="Choose"  id="id_user_permissions_add_link" class="selector-add">选择</a>
 														</li>
 														<li>
-															<a title="Remove" href="#" id="id_user_permissions_remove_link" class="selector-remove">删除</a>
+															<a title="Remove"  id="id_user_permissions_remove_link" class="selector-remove">删除</a>
 														</li>
 													</ul>
 													<div class="selector-chosen">
 														<h2>已选的用户权限
 															<span class="help help-tooltip help-icon" title="This is the list of chosen user permissions. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes."></span>
 														</h2>
-														<select id="id_user_permissions_to" multiple="multiple" size="0" name="user_permissions" class="filtered"></select>
+														<select id="id_user_permissions_to" multiple="multiple" size="0" name="user_permissions" class="filtered">
+															{% for permission_value in permission%}
+															<option title="{{permission_value}}">{{permission_value}}</option>
+															{% endfor %}
+														</select>
 														<a title="Click to remove all chosen user permissions at once." href="#" id="id_user_permissions_remove_all_link" class="selector-clearall">删除所有</a>
 													</div>
 												</div>
@@ -283,7 +269,7 @@
 									</div>
 							</fieldset>
 							<div class="submit-row">
-								<input type="submit" value="保存" class="default" name="_save">
+								<input type="button" value="保存" class="default" name="_save">
 								<p class="deletelink-box">
 									<a href="/admin/auth/user/1/delete/" class="deletelink">删除</a>
 								</p>

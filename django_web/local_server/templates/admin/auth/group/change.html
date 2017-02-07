@@ -4,17 +4,7 @@
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
     <script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
-		<!-- <script type="text/javascript" src="/static/admin/js/core.js"></script>
-		<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
-		<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
-		<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
-		<script type="text/javascript" src="/static/admin/js/actions.js"></script>
-		<script type="text/javascript" src="/static/admin/js/urlify.js"></script>
-		<script type="text/javascript" src="/static/admin/js/prepopulate.js"></script>
-		<script type="text/javascript" src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
-		<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
-		<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
-		<meta name="robots" content="NONE,NOARCHIVE"> -->
+		<script src="/static/js/admin/group/change.js"></script>
 	</head>
 	<body class=" app-auth model-group change-form" data-admin-utc-offset="28800">
 		<!-- Container -->
@@ -106,8 +96,9 @@
 														<span class="help help-tooltip help-icon" title="This is the list of chosen permissions. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes."></span>
 													</h2>
 													<select id="id_permissions_to" multiple="multiple" size="0" name="permissions" class="filtered">
-														<option value="1" title="admin | log entry | Can add log entry">admin | log entry | Can add log entry</option>
-														<option value="7" title="auth | user | Can add user">auth | user | Can add user</option>
+														{% for permission_value in permission %}
+														<option title="{{permission_value}}">{{permission_value}}</option>
+														{% endfor %}
 													</select>
 													<a title="Click to remove all chosen permissions at once." href="#" id="id_permissions_remove_all_link" class="selector-clearall active">删除所有</a>
 												</div>
