@@ -44,8 +44,8 @@
 							<form id="changelist-search" method="get">
 								<div><!-- DIV needed for valid HTML -->
 									<label for="searchbar"><img src="/static/admin/img/search.svg" alt="搜索"></label>
-										<input type="text" size="40" name="q" value="" id="searchbar" autofocus="">
-										<input type="submit" value="搜索">
+										<input type="text" size="40" name="q" value="{{search_username}}" id="searchbar" autofocus="">
+										<input type="button" value="搜索">
 								</div>
 							</form>
 						</div>
@@ -100,7 +100,7 @@
 									</select>
 								</label>
 								<input class="select-across" name="select_across" type="hidden" value="0">
-							    <button type="submit" class="button" title="Run the selected action" name="index" value="0">Go</button>
+							    <button id="execute_selection" type="submit" class="button" title="Run the selected action" name="index" value="0">执行</button>
 							    <span class="action-counter" data-actions-icnt="1" style="display: inline;">0 of 1 selected</span>
 							</div>
 							<div class="results">

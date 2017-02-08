@@ -62,23 +62,19 @@ $(function () {
     })
 
     $("#execute_selection").click(function(){
-        // console.log($("select option:selected").attr('value'))
-        // console.log($("select option:selected").text())
         if ($("select option:selected").attr('value') === "delete_selected") {
-            // console.log($("select option:selected").text());
-            var delete_group = [];
+            var delete_user = [];
             $(":checked").each(function(){
-                group_name = $(this).parent().parent().find(".hrefJump").text()
-                // console.log(group_name)
-                delete_group.push(group_name)
+                user_name = $(this).parent().parent().find(".hrefJump").text()
+                delete_user.push(user_name)
             })
 
-            delete_group.shift();
-            console.log (delete_group)
+            delete_user.shift();
+            console.log (delete_user)
 
             $.ajax({
                 url: '/AJAX/Delete_User/',
-                data: {'req_json': delete_group},
+                data: {'req_json': delete_user},
                 dataType: 'json',
                 type: 'POST',
                 traditional: true,
@@ -90,4 +86,10 @@ $(function () {
         // return false
     })
 
+    $("input[value='搜索']").click(function(){
+      var searchValue = $("#searchbar").val()
+      console.log ('/admin/auth/user/search=' + searchValue + '/')
+      window.location.href = '/admin/auth/user/search=' + searchValue + '/';
+      return false;
+    })
 });

@@ -35,6 +35,42 @@ $(function () {
       return false;
     })
 
+    $("input[value='保存并继续添加']").click(function(){
+      var group_name = $("#id_name").val();
+      var group_group = '';
+
+      $("#id_permissions_to").find("option").each(function(){
+          group_group += $(this).text() + ";"
+      })
+
+      if (group_group === '') {
+        alert('还没选择组群权限!')
+      } else {
+        var req_data = {
+          'name': group_name,
+          'permission':group_group,
+        }
+        console.log (req_data)
+        $.ajax({
+          url: '/AJAX/Add_Group/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log (responseJSON)
+              if (responseJSON.status === "Successful") {
+                window.location.href = '/admin/auth/group/add';
+              } else {
+                alert('添加组群失败!');
+              }
+          }
+        });
+      }
+      return false;
+    })
+
+
     $("#id_permissions_from").find("option").click(function(event){
       // 激活Choose图标, 改变样式.
       if (!event.ctrlKey) {

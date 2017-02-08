@@ -44,8 +44,9 @@
               <form id="changelist-search" method="get">
                 <div><!-- DIV needed for valid HTML -->
                   <label for="searchbar"><img src="/static/admin/img/search.svg" alt="Search"></label>
-                  <input type="text" size="40" name="q" value="" id="searchbar" autofocus="">
-                  <input type="submit" value="Search">
+                  <!-- <input type="text" size="40" name="q" value="" id="searchbar" autofocus=""> -->
+                  <input type="text" size="40" name="q" value="{{search_groupname}}" id="searchbar" autofocus="">
+                  <input type="button" value="搜索">
                 </div>
               </form>
             </div>

@@ -36,6 +36,61 @@ $(function () {
       return false;
     })
 
+    $("input[value='保存并继续添加']").click(function(){
+      var group_name = $("#id_name").val();
+      var group_group = '';
+
+      $("#id_permissions_to").find("option").each(function(){
+          group_group += $(this).text() + ";"
+      })
+
+      if (group_group === '') {
+        alert('还没选择组群权限!')
+      } else {
+        var req_data = {
+          'name': group_name,
+          'permission':group_group,
+        }
+        console.log (req_data)
+        $.ajax({
+          url: '/AJAX/Change_Group/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log (responseJSON)
+              if (responseJSON.status === "Successful") {
+                window.location.href = '/admin/auth/group/add';
+              } else {
+                alert('修改组群失败!');
+              }
+          }
+        });
+      }
+      return false;
+    })
+
+    $(".deletelink").click(function(){
+      var group_name = $("#id_name").val();
+      console.log (group_name)
+      $.ajax({
+          url: '/AJAX/Delete_Group/',
+          data: {'req_json': group_name},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+            console.log (responseJSON)
+              if (responseJSON.failed.length === 0) {
+                window.location.href = '/admin/auth/group';
+              } else {
+                alert(responseJSON.failed)
+              }
+          }
+      });
+    })
+
     $("#id_permissions_from").find("option").click(function(event){
       // 激活Choose图标, 改变样式.
       if (!event.ctrlKey) {
@@ -94,4 +149,18 @@ $(function () {
       })
     })
 
+    $("#id_permissions_add_all_link").click(function(){
+      // 添加选中的权限
+      $("#id_permissions_from").find("option").each(function(){
+            var html_element = '<option value="'+ $(this).attr('value') +'" title="'+ $(this).attr('title') +'"> '+ $(this).text() +' </option>'
+            $("#id_permissions_to").append(html_element);
+      })
+    })
+
+    $("#id_permissions_remove_all_link").click(function(){
+      // 移除选中的权限
+      $("#id_permissions_to").find("option").each(function(){
+            $(this).remove()
+      })
+    })
 });

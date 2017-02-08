@@ -104,4 +104,11 @@ $(function () {
         // return false
     })
 
+    $("input[value='搜索']").click(function(){
+      var searchValue = $("#searchbar").val()
+      console.log ('/admin/auth/group/search=' + searchValue + '/')
+      window.location.href = '/admin/auth/group/search=' + searchValue + '/';
+      return false;
+    })
+
 });

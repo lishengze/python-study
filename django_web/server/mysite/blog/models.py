@@ -15,12 +15,13 @@ class Person(models.Model):
 class UserInfo(models.Model):
     name = models.CharField(max_length=40)
     email = models.EmailField()
-    permission = models.CharField(max_length = 800)
+    permission = models.CharField(max_length = 800, null=True)
     groups = models.CharField(max_length=800, null=True)
+    password = models.CharField(max_length=20, null=True)
 
 class GroupInfo(models.Model):
     name = models.CharField(max_length=40)
-    permission = models.CharField(max_length = 800)
+    permission = models.CharField(max_length = 800, null=True)
 
 
 #用户列表,这个我还没用到

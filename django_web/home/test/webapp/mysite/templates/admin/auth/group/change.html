@@ -81,14 +81,14 @@
 														<option value="17" title="sessions | session | Can change session">sessions | session | Can change session</option>
 														<option value="18" title="sessions | session | Can delete session">sessions | session | Can delete session</option>
 													</select>
-													<a title="Click to choose all permissions at once." href="#" id="id_permissions_add_all_link" class="selector-chooseall active">Choose all</a>
+													<a title="Click to choose all permissions at once." href="#" id="id_permissions_add_all_link" class="selector-chooseall active">选择所有</a>
 												</div>
 												<ul class="selector-chooser">
 													<li>
-														<a title="Choose" href="#" id="id_permissions_add_link" class="selector-add">Choose</a>
+														<a title="Choose" id="id_permissions_add_link" class="selector-add">Choose</a>
 													</li>
 													<li>
-														<a title="Remove" href="#" id="id_permissions_remove_link" class="selector-remove">Remove</a>
+														<a title="Remove"  id="id_permissions_remove_link" class="selector-remove">Remove</a>
 													</li>
 												</ul>
 												<div class="selector-chosen">
@@ -100,7 +100,7 @@
 														<option title="{{permission_value}}">{{permission_value}}</option>
 														{% endfor %}
 													</select>
-													<a title="Click to remove all chosen permissions at once." href="#" id="id_permissions_remove_all_link" class="selector-clearall active">删除所有</a>
+													<a title="Click to remove all chosen permissions at once." id="id_permissions_remove_all_link" class="selector-clearall active">删除所有</a>
 												</div>
 											</div>
 										</div>
@@ -110,12 +110,11 @@
 							</fieldset>
 							<div class="submit-row">
 								<input type="submit" value="保存" class="default" name="_save">
-								    <p class="deletelink-box"><a href="/admin/auth/group/1/delete/" class="deletelink">删除</a></p>
+								    <p class="deletelink-box"><a class="deletelink">删除</a></p>
 								<input type="submit" value="保存并继续添加" name="_addanother">
-								<input type="submit" value="保存并继续编辑" name="_continue">
 							</div>
-					    <script type="text/javascript" id="django-admin-form-add-constants" src="/static/admin/js/change_form.js"> </script>
-							<script type="text/javascript" id="django-admin-prepopulated-fields-constants" src="/static/admin/js/prepopulate_init.js" data-prepopulated-fields="[]"> </script>
+					    <!-- <script type="text/javascript" id="django-admin-form-add-constants" src="/static/admin/js/change_form.js"> </script> -->
+							<!-- <script type="text/javascript" id="django-admin-prepopulated-fields-constants" src="/static/admin/js/prepopulate_init.js" data-prepopulated-fields="[]"> </script> -->
 						</div>
 					</form>
 				</div>

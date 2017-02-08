@@ -17,6 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from blog.models import Essay,EssayType,Archive,Comment
 import config_web as cfg_w
+import types
 
 console_path = cfg_w.CONSOLE_WORK_PATH
 if console_path not in sys.path:
@@ -49,16 +50,18 @@ g_user_permission = []
 ENV_KEY = 'TEST_170'
 
 class User(object):
-	def __init__(self, name = 'tmp', email = 'tmp', permisson = 'all', groups = 'all'):
+	def __init__(self, name = 'tmp', email = 'tmp', permisson = 'all', groups = 'all', password = 'tmp'):
 		self.name = name
 		self.email = email
 		self.permisson = permisson
 		self.groups = groups
+		self.password = password
 		self.__dict__ = {
 			'name': self.name,
 			'email': self.email,
 			'permisson': self.permisson,
-			'groups': self.groups
+			'groups': self.groups,
+			'password': self.password
 		}
 
 class Group(object):
@@ -342,75 +345,11 @@ def query_all_version(request):
 		return index(request)
 
 ### rpc 请求相关代码
-def process_rpc_result(origin_data, data_type):
-	failed_data = get_rpc_failed_data(origin_data, data_type)
-	if failed_data == '':
-		array_data = []
-		if is_version_control_req(data_type):
-			array_data = get_version_ctr_array_result(origin_data)
-		else:
-			array_data = get_task_rpc_array_result(origin_data)
-		print array_data
-		dict_data = get_rpc_dict_result(array_data, data_type)
-		return {'data': dict_data, 'type': data_type}
-	else:
-		return {'data': failed_data, 'type': 'Failed'}
-
-def get_rpc_failed_data(origin_data, data_type):
-	tmpdata = origin_data.split('\n')
-	failed_data = tmpdata
-	if is_version_control_req(data_type):
-		for value in tmpdata:
-			if value.find('---') != -1:
-				failed_data = ''
-				break
-	else:
-		failed_data = ''
-	return failed_data
-
 def is_version_control_req(data_type):
 	if data_type.find('version_control') != -1:
 		return True
 	else:
 		return False
-
-def get_version_ctr_array_result(origin_data):
-	tmpdata = origin_data.split('\n')
-	array_data = []
-	tmpdata = tmpdata[len(tmpdata)-2].split('\t')
-	array_data.append(tmpdata)
-	# print tmpdata
-	# for value in tmpdata:
-	# 	if value != '':
-	# 		array_data.append(value)
-	return array_data
-
-def get_task_rpc_array_result(origin_data):
-	tmpdata = origin_data.split('\n')
-	tmpdata = tmpdata[1:len(tmpdata)-1]
-	index = 0
-	str_head = '[info]xxx: '
-	final_result = []
-	while index < len(tmpdata):
-		tmp_result = []
-		tmpdata[index] = tmpdata[index][len(str_head):]
-		tmpdata[index] = tmpdata[index].split(' ')
-		# print tmpdata[index]
-		for value in tmpdata[index]:
-			if value != '':
-				tmp_result.append(value)
-		final_result.append(tmp_result)
-		index += 1
-	return final_result
-
-def get_rpc_dict_result(array_data, data_type):
-	index = 0
-	dict_data = []
-	while index < len(array_data):
-		tmp_dict_data = RpcResult(data_type, array_data[index])
-		dict_data.append(tmp_dict_data.__dict__)
-		index += 1
-	return dict_data
 
 class ViewMain(object):
 	def __init__(self):
@@ -426,8 +365,8 @@ class ViewMain(object):
 		else:
 			return False
 
-	def is_static_file(self, file_name):
-		name_array = file_name.split('/')
+	def is_static_file(self, fileName):
+		name_array = fileName.split('/')
 		static_flag = 'static'
 		if static_flag in name_array:
 			return True
@@ -443,25 +382,25 @@ class ViewMain(object):
 			str_end_index -= 1
 		return strvalue[str_start_index:str_end_index]
 
-	def get_static_file_name(self, origin_file_name):
-		name_array = origin_file_name.split('/')
+	def get_static_fileName(self, origin_fileName):
+		name_array = origin_fileName.split('/')
 		index = 0
 		static_flag = 'static'
 		for value in name_array:
 			if value == static_flag:
 				break
 			index += 1
-		trans_file_name = '/'.join(name_array[index:])
-		return self.delete_headend_slash(trans_file_name)
+		trans_fileName = '/'.join(name_array[index:])
+		return self.delete_headend_slash(trans_fileName)
 
-	def get_html_file_name(self, path):
+	def get_html_fileName(self, path):
 		name_array = path.split('/')
 		return name_array[len(name_array)-1]
 
-	def is_empty_html_request(self, file_name):
-		name_array = file_name.split('/')
-		last_file_name = name_array[len(name_array)-1]
-		if last_file_name.find('.') == -1:
+	def is_empty_html_request(self, fileName):
+		name_array = fileName.split('/')
+		last_fileName = name_array[len(name_array)-1]
+		if last_fileName.find('.') == -1:
 			return True
 		else:
 			return False
@@ -473,27 +412,36 @@ class ViewMain(object):
 			flag = True
 		return flag
 
-	def get_file_name(self, path):
-		file_name = self.delete_headend_slash(path)
+	def get_fileName(self, path):
+		fileName = self.delete_headend_slash(path)
 		html_flag = '.html'
-		# if is_static_file(file_name):
-		# 	file_name = get_static_file_name(file_name)
-		if self.is_empty_html_request(file_name):
-			file_name += html_flag
-		return file_name
+		# if is_static_file(fileName):
+		# 	fileName = get_static_fileName(fileName)
+		if self.is_empty_html_request(fileName):
+			fileName += html_flag
+		return fileName
 
-	def get_html_file_name_and_id(self, file_name):
+	def get_html_fileName_and_id(self, fileName):
 		html_flag = '.html'
-		file_name = file_name[:len(file_name)-len(html_flag)]
-		file_name_array = file_name.split('/')
-		if file_name_array[len(file_name_array)-1] == 'change' and file_name_array[len(file_name_array)-2].isdigit():
-			data_id = file_name_array[len(file_name_array)-2]
-			file_name_array.remove(file_name_array[len(file_name_array)-2])
-			file_name = '/'.join(file_name_array)
-			file_name = self.delete_headend_slash(file_name) + html_flag
+		fileName = fileName[:len(fileName)-len(html_flag)]
+		fileName_array = fileName.split('/')
+		if fileName_array[len(fileName_array)-1] == 'change' and fileName_array[len(fileName_array)-2].isdigit():
+			data_id = fileName_array[len(fileName_array)-2]
+			fileName_array.remove(fileName_array[len(fileName_array)-2])
+			fileName = '/'.join(fileName_array)
+			fileName = self.delete_headend_slash(fileName) + html_flag
 			return {
 				'id': data_id,
-				'file_name': file_name,
+				'fileName': fileName,
+			}
+		elif fileName_array[len(fileName_array)-1].find('search') != -1:
+			data_id = fileName_array[len(fileName_array)-1][len('search='):]
+			fileName_array.remove(fileName_array[len(fileName_array)-1])
+			fileName = '/'.join(fileName_array)
+			fileName = self.delete_headend_slash(fileName) + html_flag
+			return {
+				'id': data_id,
+				'fileName': fileName,
 			}
 		else:
 			return False
@@ -535,7 +483,7 @@ class ViewMain(object):
 		ajax_func = ajax_func_dict.get(ajax_name, self._ajax_func.default_ajax_request)
 		return ajax_func
 
-	def get_file_object(self, file_name, id = -1):
+	def get_file_object(self, fileName, id = -1):
 		file_object_dict = {
 			'test_req.html': self._get_html_object.get_test_req_object,
 			'login.html': self._get_html_object.get_login_object,
@@ -550,7 +498,7 @@ class ViewMain(object):
 			'admin/auth/user/add.html': self._get_html_object.get_admin_auth_user_add_object,
 			'admin/auth/user/change.html': self._get_html_object.get_admin_auth_user_change_object,
 		}
-		object_func = file_object_dict.get(file_name, lambda :{})
+		object_func = file_object_dict.get(fileName, lambda :{})
 		if id !=-1:
 			print object_func(id)
 			return object_func(id)
@@ -566,18 +514,19 @@ class ViewMain(object):
 			return ajax_func(request)
 		else:
 			print '\nIs not AJAX Request'
-			file_name = self.get_file_name(request.path)
+			print 'request.path: ', request.path
+			fileName = self.get_fileName(request.path)
 			file_object = {}
-			if self.is_html_request(file_name):
-				return_data = self.get_html_file_name_and_id(file_name)
+			if self.is_html_request(fileName):
+				return_data = self.get_html_fileName_and_id(fileName)
 				print return_data
 				if return_data:
-					file_name = return_data['file_name']
-					file_object = self.get_file_object(file_name, return_data['id'])
+					fileName = return_data['fileName']
+					file_object = self.get_file_object(fileName, return_data['id'])
 				else:
-					file_object = self.get_file_object(file_name)
-			print 'file name: ' + file_name + '\n'
-			return render(request, file_name, file_object)
+					file_object = self.get_file_object(fileName)
+			print 'file name: ' + fileName + '\n'
+			return render(request, fileName, file_object)
 
 class AjaxReqFunc(object):
 	def __init__ (self):
@@ -641,13 +590,13 @@ class AjaxReqFunc(object):
 		print 'filename: ', filename
 		if not os.path.exists('upload/'):
 			os.mkdir('upload/')
-		full_file_name = 'upload/' + filename
-		print 'full_file_name: ', full_file_name
-		with open(full_file_name, 'wb+') as destination:
+		full_fileName = 'upload/' + filename
+		print 'full_fileName: ', full_fileName
+		with open(full_fileName, 'wb+') as destination:
 			for chunk in file.chunks():
 				destination.write(chunk)
 		destination.close()
-		return full_file_name
+		return full_fileName
 
 	def set_dbdata(self, request):
 		tmp_data = Person(name='LSZ', age=27)
@@ -694,6 +643,7 @@ class AjaxReqFunc(object):
 
 	def delete_group_data(self, request):
 		delete_data = request.POST.getlist('req_json')
+		print delete_data
 		successful_delete_data = []
 		failed_delete_data = []
 		for value in delete_data:
@@ -704,6 +654,7 @@ class AjaxReqFunc(object):
 
 		rsp_data = {'successful': successful_delete_data,
 					'failed': failed_delete_data}
+		print rsp_data
 		response = HttpResponse(json.dumps(rsp_data))
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
@@ -750,6 +701,29 @@ class AjaxReqFunc(object):
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
 
+	def add_user_data(self, request):
+		add_data = request.POST.getlist('req_json')[0]
+		trans_add_data = json.loads(add_data)
+		print trans_add_data
+		status = ''
+		error = ''
+		if UserInfo.objects.filter(name = trans_add_data['name']):
+			status = 'Failed'
+			error = '用户已经存在！'
+		else:
+			add_user = UserInfo(name = trans_add_data['name'], password = trans_add_data['password'])
+			add_user.save()
+			status = 'Successful'
+
+		rsp_data = {'status': status,
+					'error': error}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+
 	def change_group_data(self, request):
 		change_data = request.POST.getlist('req_json')[0]
 		trans_change_data = json.loads(change_data)
@@ -776,34 +750,15 @@ class AjaxReqFunc(object):
 		trans_change_data = json.loads(change_data)
 		print trans_change_data
 		status = ''
-		user = UserInfo.objects.filter(name = trans_change_data['name'])
+		user = UserInfo.objects.get(name = trans_change_data['name'])
 		if user:
 			status = 'Successful'
 			user.permission = trans_change_data['permission']
 			user.email = trans_change_data['email']
 			user.groups = trans_change_data['groups']
+			user.save()
 		else:
 			status = 'Failed'
-
-		rsp_data = {'status': status}
-		response = HttpResponse(json.dumps(rsp_data))
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
-	def add_user_data(self, request):
-		add_data = request.POST.getlist('req_json')[0]
-		trans_add_data = json.loads(add_data)
-		print trans_add_data
-		status = ''
-		if UserInfo.objects.filter(name = trans_add_data['name']):
-			status = 'Failed'
-		else:
-			add_user = UserInfo(name = trans_add_data['name'], permission = trans_add_data['permission'])
-			add_user.save()
-			status = 'Successful'
 
 		rsp_data = {'status': status}
 		response = HttpResponse(json.dumps(rsp_data))
@@ -836,10 +791,10 @@ class AjaxReqFunc(object):
 		return response
 
 	def set_chosen_user(self, request):
-		user_name = request.POST.getlist('req_json')[0]
-		user_name = user_name.encode('utf-8')
-		print 'user_name:   ', user_name
-		user = UserInfo.objects.filter(name = user_name)[0]
+		userName = request.POST.getlist('req_json')[0]
+		userName = userName.encode('utf-8')
+		print 'userName:   ', userName
+		user = UserInfo.objects.filter(name = userName)[0]
 		print 'user_id:  ', user.id
 		rsp_url = ''
 		error_info = ''
@@ -919,7 +874,7 @@ class AjaxReqFunc(object):
 				original_rsp_data = recv_end(sock)
 				sock.close()
 				print ('The original rsp data is:\n%s' %(original_rsp_data))
-				trans_rsp_data = process_rpc_result(original_rsp_data, data_type)
+				trans_rsp_data = self.process_rpc_result(original_rsp_data, data_type)
 				print 'Transed Rsp Data: '
 				print trans_rsp_data
 			except Exception as e:
@@ -1116,6 +1071,71 @@ class AjaxReqFunc(object):
 		else:
 			return index(request)
 
+	def process_rpc_result(self, origin_data, data_type):
+		failed_data = self.get_rpc_failed_data(origin_data, data_type)
+		if failed_data == '':
+			array_data = []
+			if is_version_control_req(data_type):
+				array_data = self.get_version_ctr_array_result(origin_data)
+			else:
+				array_data = self.get_task_rpc_array_result(origin_data)
+			print array_data
+			dict_data = self.get_rpc_dict_result(array_data, data_type)
+			return {'data': dict_data, 'type': data_type}
+		else:
+			return {'data': failed_data, 'type': 'Failed'}
+
+	def get_rpc_failed_data(self, origin_data, data_type):
+		tmpdata = origin_data.split('\n')
+		failed_data = tmpdata
+		if is_version_control_req(data_type):
+			for value in tmpdata:
+				if value.find('---') != -1:
+					failed_data = ''
+					break
+		else:
+			failed_data = ''
+		return failed_data
+
+	def get_version_ctr_array_result(self, origin_data):
+		tmpdata = origin_data.split('\n')
+		array_data = []
+		tmpdata = tmpdata[len(tmpdata)-2].split('\t')
+		array_data.append(tmpdata)
+		# print tmpdata
+		# for value in tmpdata:
+		# 	if value != '':
+		# 		array_data.append(value)
+		return array_data
+
+	def get_task_rpc_array_result(self, origin_data):
+		tmpdata = origin_data.split('\n')
+		tmpdata = tmpdata[1:len(tmpdata)-1]
+		index = 0
+		str_head = '[info]xxx: '
+		final_result = []
+		while index < len(tmpdata):
+			tmp_result = []
+			tmpdata[index] = tmpdata[index][len(str_head):]
+			tmpdata[index] = tmpdata[index].split(' ')
+			# print tmpdata[index]
+			for value in tmpdata[index]:
+				if value != '':
+					tmp_result.append(value)
+			final_result.append(tmp_result)
+			index += 1
+		return final_result
+
+	def get_rpc_dict_result(self, array_data, data_type):
+		index = 0
+		dict_data = []
+		while index < len(array_data):
+			tmp_dict_data = RpcResult(data_type, array_data[index])
+			dict_data.append(tmp_dict_data.__dict__)
+			index += 1
+		return dict_data
+
+
 class GetHtmlObject(object):
 	def __init__(self):
 		self.name = 'GetHtmlObject'
@@ -1162,15 +1182,22 @@ class GetHtmlObject(object):
 		}
 		return tmp_object
 
-	def get_admin_auth_group_object(self):
+	def get_admin_auth_group_object(self, id =''):
 		group_array = []
-		group_obj = GroupInfo.objects.all()
-		for tmp_obj in group_obj:
-			group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
+		if id =='':
+			group_obj = GroupInfo.objects.all()
+			for tmp_obj in group_obj:
+				group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
+		else:
+			group_obj = GroupInfo.objects.get(name = id)
+			if group_obj:
+				group_array.append(Group(group_obj.name, group_obj.permission).__dict__)
+
 		tmp_object = {
 			'user': g_login_user,
 			'groups': group_array,
-			'group_numbs': len(group_array)
+			'group_numbs': len(group_array),
+			'search_groupname': id
 		}
 		return tmp_object
 
@@ -1187,7 +1214,7 @@ class GetHtmlObject(object):
 			permission_array = []
 			if group.permission == 'all':
 				permission_array = g_group_permission
-			else:
+			elif group.permission != None:
 				permission_array = group.permission.split(';')
 				permission_array.remove('')
 
@@ -1201,16 +1228,23 @@ class GetHtmlObject(object):
 		}
 		return tmp_object
 
-	def get_admin_auth_user_object(self):
+	def get_admin_auth_user_object(self, id=''):
 		user_array = []
-		user_obj = UserInfo.objects.all()
-		for tmp_obj in user_obj:
-			user_array.append(User(tmp_obj.name, tmp_obj.email, \
-			                  tmp_obj.permission, tmp_obj.groups).__dict__)
+		if id == '':
+			user_obj = UserInfo.objects.all()
+			for tmp_obj in user_obj:
+				user_array.append(User(tmp_obj.name, tmp_obj.email, \
+				                  tmp_obj.permission, tmp_obj.groups).__dict__)
+		else:
+			user_obj = UserInfo.objects.get(name = id)
+			if user_obj:
+				user_array.append(User(user_obj.name, user_obj.email, \
+				                  user_obj.permission, user_obj.groups, user_obj.password).__dict__)
 		tmp_object = {
 			'user': g_login_user,
 			'users': user_array,
-			'user_numb': len(user_array)
+			'user_numb': len(user_array),
+			'search_username': id
 		}
 		return tmp_object
 
@@ -1231,16 +1265,17 @@ class GetHtmlObject(object):
 
 			for tmp_obj in group_obj:
 				available_groups.append(Group(tmp_obj.name, tmp_obj.permission).name)
-
+			print type(user.permission)
+			print user.permission
 			if user.permission == 'all':
 				permission_array = g_group_permission
-			else:
-				permission_array = group.permission.split(';')
+			elif user.permission != None:
+				permission_array = user.permission.split(';')
 				permission_array.remove('')
 
 			if user.groups == 'all':
 				user_groups = available_groups
-			else:
+			elif user.groups != None :
 				user_groups = user.groups.split(';')
 				user_groups.remove('')
 
@@ -1258,211 +1293,3 @@ class GetHtmlObject(object):
 		return tmp_object
 
 server_view = ViewMain()
-
-### 请求相关.
-# def is_ajax_request(path):
-# 	path_array = path.split('/')
-# 	ajax_flag = 'AJAX'
-# 	if ajax_flag in path_array:
-# 		return True
-# 	else:
-# 		return False
-#
-# def is_static_file(file_name):
-# 	name_array = file_name.split('/')
-# 	static_flag = 'static'
-# 	if static_flag in name_array:
-# 		return True
-# 	else:
-# 		return False
-#
-# def delete_headend_slash(strvalue):
-# 	str_start_index = 0
-# 	str_end_index = len(strvalue)
-# 	if strvalue[str_start_index] == '/':
-# 		str_start_index = 1
-# 	if strvalue[str_end_index-1] == '/':
-# 		str_end_index -= 1
-# 	return strvalue[str_start_index:str_end_index]
-#
-# def get_static_file_name(origin_file_name):
-# 	name_array = origin_file_name.split('/')
-# 	index = 0
-# 	static_flag = 'static'
-# 	for value in name_array:
-# 		if value == static_flag:
-# 			break
-# 		index += 1
-# 	trans_file_name = '/'.join(name_array[index:])
-# 	return delete_headend_slash(trans_file_name)
-#
-# def get_html_file_name(path):
-# 	name_array = path.split('/')
-# 	return name_array[len(name_array)-1]
-#
-# def is_empty_html_request(file_name):
-# 	name_array = file_name.split('/')
-# 	last_file_name = name_array[len(name_array)-1]
-# 	if last_file_name.find('.') == -1:
-# 		return True
-# 	else:
-# 		return False
-#
-# def is_html_request(path_name):
-# 	html_flag = '.html'
-# 	flag = False
-# 	if len(path_name) > len(html_flag) and path_name[-len(html_flag):] == html_flag:
-# 		flag = True
-# 	return flag
-#
-# def get_file_name(path):
-# 	file_name = delete_headend_slash(path)
-# 	html_flag = '.html'
-# 	# if is_static_file(file_name):
-# 	# 	file_name = get_static_file_name(file_name)
-# 	if is_empty_html_request(file_name):
-# 		file_name += html_flag
-# 	return file_name
-#
-# def get_ajax_request_name(path):
-# 	name_array = path.split('/')
-# 	ajax_flag = 'AJAX'
-# 	index = 0
-# 	for value in name_array:
-# 		if value == ajax_flag:
-# 			break
-# 		index += 1
-# 	ajax_request_name = '/'.join(name_array[index+1:])
-# 	return delete_headend_slash(ajax_request_name)
-#
-# def get_ajax_func(path):
-# 	ajax_name = get_ajax_request_name(path)
-# 	print 'ajax_name: ' + ajax_name
-# 	ajax_func_dict = {
-# 		'Set_ENV_KEY': g_ajax_func.set_env_key,
-# 		'Request_All_SrvStatus': g_ajax_func.test_all_srvstatus,
-# 		'Request_All_TaskList': g_ajax_func.test_all_tasklist,
-# 		'Request_All_TaskResult': g_ajax_func.test_all_taskresult,
-# 		'Request_All_Version': g_ajax_func.test_all_version,
-#         'Request_Task_Rpc': g_ajax_func.test_task_rpc,
-#         'Request_Task_Ntf': g_ajax_func.test_task_ntf,
-# 		'Set_Chosen_GroupOrUser': g_ajax_func.set_chosen_grouporuser,
-# 		'Upload_File': g_ajax_func.upload_file,
-#
-# 	}
-# 	ajax_func = ajax_func_dict.get(ajax_name, g_ajax_func.default_ajax_request)
-# 	return ajax_func
-#
-# def get_file_object(file_name):
-# 	file_object_dict = {
-# 		'test_req.html': g_get_html_object.get_test_req_object,
-# 		'login.html': g_get_html_object.get_login_object,
-# 		'admin.html': g_get_html_object.get_admin_object,
-# 		'admin/auth.html': g_get_html_object.get_admin_auth_object,
-# 		'admin/logout.html': g_get_html_object.get_admin_logout_object,
-# 		'admin/password_change.html': g_get_html_object.get_admin_password_change_object,
-# 		'admin/auth/group.html': g_get_html_object.get_admin_auth_group_object,
-# 		'admin/auth/group/add.html': g_get_html_object.get_admin_auth_group_add_object,
-# 		'admin/auth/group/change.html': g_get_html_object.get_admin_auth_group_change_object,
-# 		'admin/auth/user.html': g_get_html_object.get_admin_auth_user_object,
-# 		'admin/auth/user/add.html': g_get_html_object.get_admin_auth_user_add_object,
-# 		'admin/auth/user/change.html': g_get_html_object.get_admin_auth_user_change_object,
-# 	}
-# 	object_func = file_object_dict.get(file_name, lambda :{})
-# 	print object_func()
-# 	return object_func()
-#
-# @csrf_exempt
-# def main_query_rsp(request):
-# 	if is_ajax_request(request.path):
-# 		print '\nIs AJAX Request'
-# 		ajax_func = get_ajax_func(request.path)
-# 		return ajax_func(request)
-# 	else:
-# 		print '\nIs not AJAX Request'
-# 		file_name = get_file_name(request.path)
-# 		file_object = {}
-# 		if is_html_request(file_name):
-# 			file_object = get_file_object(file_name)
-# 		print 'file name: ' + file_name + '\n'
-# 		return render(request, file_name, file_object)
-
-# def uploadFile(sock, FileSrc, FileDst):
-# 	try:
-# 		file_md5 = md5sum(FileSrc)
-# 		filename = os.path.basename(FileSrc)
-# 		f = open(FileSrc, 'rb')
-# 		sock.send(genFileHead(filename, file_md5, FileDst))
-# 		bytes = 0
-# 		while 1:
-# 			fileinfo = f.read(cfg.DEFAULT_RECV)
-# 			if not fileinfo:
-# 				break
-# 			bytes = bytes + len(fileinfo)
-# 			#print('Send ' + str(bytes) + ' bytes ...')
-# 			sock.send(fileinfo)
-# 			#time.sleep(0.001)
-# 		sock.send(cfg.TIP_INFO_EOF)
-# 		rtn = cfg.CMD_SUCC
-# 	except Exception as e:
-# 		rtn = cfg.CMD_FAIL
-# 		print(traceback.format_exc())
-# 	finally:
-# 		return rtn
-#
-# def downloadFile(sock, FileSrc, FileDst):
-# 	try:
-# 		sock.send(genFReqHead(FileSrc) + cfg.TIP_INFO_EOF)
-# 		rsp = recv_end(sock)
-# 		head_info, buf = getFRspHead(rsp)
-# 		print(head_info)
-# 		print('++++++++')
-# 		print(buf)
-# 		seq_id, filename, status = getFRspInfo(head_info.strip())
-# 		print(filename, status)
-# 		if int(status) == cfg.CMD_SUCC:
-# 			## dir exsit?
-# 			f = open(FileDst, 'w')
-# 			f.write(buf)
-# 			f.close()
-# 			rtn = cfg.CMD_SUCC
-# 		else:
-# 			rtn = cfg.CMD_FAIL
-# 	except Exception as e:
-# 		rtn = cfg.CMD_FAIL
-# 		print(traceback.format_exc())
-# 	finally:
-# 		return rtn
-#
-# @csrf_protect
-# def upload_file_pro(request):
-# 	rsp = ''
-# 	if request.method == "POST":
-# 		start_time = int(time.time())
-# 		myFile = request.FILES.get("myfile", None)
-# 		if not myFile:
-# 			return HttpResponse("no files for upload!")
-# 		filepath = os.path.join(cfg.WORK_PATH_TEMP, myFile.name)
-# 		filedst = filepath + cfg.DOT + cfg.PID
-# 		destination = open(filepath,'wb+')
-# 		for chunk in myFile.chunks():
-# 			destination.write(chunk)
-# 		destination.close()
-#
-# 		sock = sock_conn(ENV_KEY)
-# 		rtn = uploadFile(sock, filepath, filedst)
-# 		end_time = int(time.time())
-# 		if rtn == cfg.CMD_SUCC:
-# 			rsp = recv_end(sock)
-# 			info = '<br/>File transfer SUCC, cost ' + str(end_time - start_time) + ' secs.'
-# 		else:
-# 			info = '<br/>File transfer FAIL, cost ' + str(end_time - start_time) + ' secs.'
-# 		rsp = rsp + info
-# 		sock.close()
-# 		return HttpResponse(rsp)
-# 	else:
-# 		return index(request)
-
-# g_ajax_func = AjaxReqFunc()
-#
-# g_get_html_object = GetHtmlObject()
