@@ -1,6 +1,63 @@
 $(function () {
     console.log ('This is user change!')
 
+    var g_permission_array = []
+    $("#id_user_permissions_from").find("option").each(function(){
+        g_permission_array.push($(this).text());
+    })
+
+    var g_groups_array = []
+    $("#id_groups_from").find("option").each(function(){
+        g_groups_array.push($(this).text());
+    })
+
+    $("#id_groups_input").keyup(function(event){
+      var inputValue = $(this).val()
+      console.log ('inputValue: ' + inputValue);
+      $("#id_groups_from").find("option").each(function(){
+            $(this).remove()
+      })
+      if (inputValue === '') {
+        for(var i =0; i < g_groups_array.length; ++i) {
+          var value = g_groups_array[i];
+          var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+          $("#id_groups_from").append(html_element);
+        }
+      } else {
+        for(var i =0; i < g_groups_array.length; ++i) {
+          var value = g_groups_array[i];
+          if (value.indexOf(inputValue) >= 0) {
+            var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+            $("#id_groups_from").append(html_element);
+          }
+        }
+      }
+    })
+
+    $("#id_user_permissions_input").keyup(function(event){
+      var inputValue = $(this).val()
+      console.log ('inputValue: ' + inputValue);
+      $("#id_user_permissions_from").find("option").each(function(){
+            $(this).remove()
+      })
+
+      if (inputValue === '') {
+        for(var i =0; i < g_permission_array.length; ++i) {
+          var value = g_permission_array[i];
+          var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+          $("#id_user_permissions_from").append(html_element);
+        }
+      } else {
+        for(var i =0; i < g_permission_array.length; ++i) {
+          var value = g_permission_array[i];
+          if (value.indexOf(inputValue) >= 0) {
+            var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+            $("#id_user_permissions_from").append(html_element);
+          }
+        }
+      }
+    })
+
     $("input[value='保存']").click(function(){
       var user_name = $("#id_username").val();
       var user_permission = '';

@@ -91,6 +91,35 @@ $(function () {
       });
     })
 
+    var g_permission_array = []
+    $("#id_permissions_from").find("option").each(function(){
+        g_permission_array.push($(this).text());
+    })
+
+    $("#id_permissions_input").keyup(function(event){
+      var inputValue = $(this).val()
+      console.log ('inputValue: ' + inputValue);
+      $("#id_permissions_from").find("option").each(function(){
+            $(this).remove()
+      })
+
+      if (inputValue === '') {
+        for(var i =0; i < g_permission_array.length; ++i) {
+          var value = g_permission_array[i];
+          var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+          $("#id_permissions_from").append(html_element);
+        }
+      } else {
+        for(var i =0; i < g_permission_array.length; ++i) {
+          var value = g_permission_array[i];
+          if (value.indexOf(inputValue) >= 0) {
+            var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+            $("#id_permissions_from").append(html_element);
+          }
+        }
+      }
+    })
+
     $("#id_permissions_from").find("option").click(function(event){
       // 激活Choose图标, 改变样式.
       if (!event.ctrlKey) {

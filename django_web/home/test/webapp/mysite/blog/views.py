@@ -101,7 +101,10 @@ class RpcResult(object):
 			}
 
 def init_globals():
-	global g_users, g_groups, g_login_user, g_env_array, g_get_html_object
+	global g_users, g_groups, g_login_user, \
+		   g_env_array, g_get_html_object, \
+		   g_group_permission, g_user_permission
+
 	Trump = User('Trump', 'Trump@gmail.com')
 	Clinton = User('Clinton', 'Clinton@gmail.com')
 	Obama = User('Obama', 'Obama@gmail.com')
@@ -425,6 +428,7 @@ class ViewMain(object):
 		html_flag = '.html'
 		fileName = fileName[:len(fileName)-len(html_flag)]
 		fileName_array = fileName.split('/')
+		print fileName_array
 		if fileName_array[len(fileName_array)-1] == 'change' and fileName_array[len(fileName_array)-2].isdigit():
 			data_id = fileName_array[len(fileName_array)-2]
 			fileName_array.remove(fileName_array[len(fileName_array)-2])
@@ -434,7 +438,7 @@ class ViewMain(object):
 				'id': data_id,
 				'fileName': fileName,
 			}
-		elif fileName_array[len(fileName_array)-1].find('search') != -1:
+		elif fileName_array[len(fileName_array)-1].find('search=') != -1:
 			data_id = fileName_array[len(fileName_array)-1][len('search='):]
 			fileName_array.remove(fileName_array[len(fileName_array)-1])
 			fileName = '/'.join(fileName_array)
@@ -1135,7 +1139,6 @@ class AjaxReqFunc(object):
 			index += 1
 		return dict_data
 
-
 class GetHtmlObject(object):
 	def __init__(self):
 		self.name = 'GetHtmlObject'
@@ -1223,6 +1226,7 @@ class GetHtmlObject(object):
 			}
 		tmp_object = {
 			'login_user': g_login_user,
+			'available_permissions': g_group_permission,
 			'group': group_json,
 			'permission': permission_array
 		}
@@ -1286,6 +1290,7 @@ class GetHtmlObject(object):
 		tmp_object = {
 			'login_user': g_login_user,
 			'user': user_json,
+			'available_permissions': g_user_permission,
 			'permission': permission_array,
 			'available_groups': available_groups,
 			'user_groups': user_groups

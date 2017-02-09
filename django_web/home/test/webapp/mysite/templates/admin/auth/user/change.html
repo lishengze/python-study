@@ -17,7 +17,7 @@
 				<div id="user-tools">
 					欢迎,
 					<strong>{{login_user.name}}</strong>.
-					<a href="/">访问主页</a> /
+					<a href="/home/">访问主页</a> /
 					<a href="/admin/password_change/">修改密码</a> /
 					<a href="/admin/logout/">退出</a>
 				</div>
@@ -31,11 +31,11 @@
 			<div id="content" class="colM">
 				<h1>修改用户</h1>
 				<div id="content-main">
-					<ul class="object-tools">
+					<!-- <ul class="object-tools">
 						<li>
 							<a href="/admin/auth/user/1/history/" class="historylink">历史</a>
 						</li>
-					</ul>
+					</ul> -->
 					<form enctype="multipart/form-data" action="" method="post" id="user_form" novalidate="">
 						<input type="hidden" name="csrfmiddlewaretoken" value="JmNLrJc83F0sioGTO0NkJZRt5BdBG8Xifin2AoDgCQFkb8xqiUwfpn6KFrx24Mbz">
 						<div>
@@ -112,7 +112,8 @@
 														</h2>
 														<p id="id_groups_filter" class="selector-filter">
 															<label for="id_groups_input">
-																<span class="help-tooltip search-label-icon" title="Type into this box to filter down the list of available groups."></span>
+																<span class="help-tooltip search-label-icon"
+																title="Type into this box to filter down the list of available groups."></span>
 															</label>
 															<input type="text" placeholder="Filter" id="id_groups_input">
 														</p>
@@ -168,7 +169,7 @@
 														</p>
 														<select multiple="multiple" class="filtered" data-field-name="user permissions"
 															data-is-stacked="0" id="id_user_permissions_from" name="user_permissions_old">
-															<option value="1" title="admin | log entry | Can add log entry">admin | log entry | Can add log entry</option>
+															<!-- <option value="1" title="admin | log entry | Can add log entry">admin | log entry | Can add log entry</option>
 															<option value="2" title="admin | log entry | Can change log entry">admin | log entry | Can change log entry</option>
 															<option value="3" title="admin | log entry | Can delete log entry">admin | log entry | Can delete log entry</option>
 															<option value="10" title="auth | group | Can add group">auth | group | Can add group</option>
@@ -185,7 +186,10 @@
 															<option value="15" title="contenttypes | content type | Can delete content type">contenttypes | content type | Can delete content type</option>
 															<option value="16" title="sessions | session | Can add session">sessions | session | Can add session</option>
 															<option value="17" title="sessions | session | Can change session">sessions | session | Can change session</option>
-															<option value="18" title="sessions | session | Can delete session">sessions | session | Can delete session</option>
+															<option value="18" title="sessions | session | Can delete session">sessions | session | Can delete session</option> -->
+															{% for permission_value in available_permissions%}
+															<option title="{{permission_value}}">{{permission_value}}</option>
+															{% endfor %}
 														</select>
 														<a title="Click to choose all user permissions at once." id="id_user_permissions_add_all_link"
 																class="selector-chooseall active">
