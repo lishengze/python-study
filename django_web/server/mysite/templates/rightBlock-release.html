@@ -4,12 +4,12 @@
     <div class="form-group" style = 'margin-top: 30px'>
      <label for="exampleInputFile" style="float: left">最新文件压缩包：</label>
      <input type="file" style="float: left" id="file">
-     <button id= 'upload' class="btn btn-primary btn-default">上传</button>
+     <button id= 'upload' class="btn btn-primary btn-default">上传并发布</button>
     </div>
-    <div style = 'margin-top: 50px'> 请输入版本号（默认空代表覆盖当前最新版本）：
+    <!-- <div style = 'margin-top: 50px'> 请输入版本号（默认空代表覆盖当前最新版本）：
     </div>
     <input  class="form-control" style= 'margin-top: 20px;width:500px;'  placeholder="OBJ{,OBJ}*:VERSION{;OBJ{,OBJ}*:VERSION}">
-    <button style= 'margin-top: 20px' class="btn btn-primary btn-default" onclick="releaseVersion()">发布版本</button>
+    <button style= 'margin-top: 20px' class="btn btn-primary btn-default" onclick="releaseVersion()">发布版本</button> -->
    </div>
   </div>
   <div class="rightContainer"  style = 'float: right;width: 25%;height:550px;border-left: 1px solid #BDBDBD;'>
@@ -33,11 +33,11 @@
     var formData = new FormData();
     formData.append("file",$("#file")[0].files[0]);
     formData.append("name",name);
-
     var file = document.getElementById('file').files[0];
     if (file) {
       console.log (file.size)
     }
+    releaseVersion();
     $.ajax({
       url : Url,
       type : 'POST',

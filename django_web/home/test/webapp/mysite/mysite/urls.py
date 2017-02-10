@@ -17,8 +17,9 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.views.static import serve
 from feed import LatestEntriesFeed
-from blog import views as blog_views
+# from blog import views as blog_views
 from blog.views import server_view
+from blog import oldView as blog_views
 from django.views.generic.base import RedirectView
 
 import config_web as cfg_w
