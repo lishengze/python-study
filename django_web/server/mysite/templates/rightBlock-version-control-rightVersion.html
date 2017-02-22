@@ -1,19 +1,29 @@
-<div >版本信息(最近5次)：
-  <div style= 'border-top: 1px solid #BDBDBD;' > XML:<br>
-    <table border="1" class = 'xmlContext'>
+<style>
+table{
+  font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+  width:300px;
+  border-collapse:collapse;
+  text-align:center;
+  margin-bottom: 5px;
+}
+</style>
+
+<div ><div style = 'border-bottom: 1px solid #BDBDBD;'>版本信息(最近5次)：</div>
+  <div style= '' > XML:<br>
+    <table border="1" cellpadding="0" class = 'xmlContext' >
     </table>
   </div>
-  <div style= 'border-top: 1px solid #BDBDBD;' > Server:<br>
-    <table border="1" class = 'serverContext'>
+  <div style= ''> Server:<br>
+    <table border="1" cellpadding="10" class = 'serverContext' >
     </table>
   </div>
-  <div style= 'border-top: 1px solid #BDBDBD;' > Client:<br>
-    <table class = 'clientContext'>
+  <div style= '' > Client:<br>
+    <table class = 'clientContext' cellpadding="10">
     </table>
   </div>
 </div>
 <script>
-$.getJSON('/AJAX/Request_All_Version/', function(getData) {
+$.getJSON('http://172.1.128.170:8000/AJAX/Request_All_Version/', function(getData) {
   var data1 = getData;
   console.log(data1)
   var xmlCount = 0;
@@ -22,7 +32,7 @@ $.getJSON('/AJAX/Request_All_Version/', function(getData) {
   var xmlContext = ''
   var serverContext = ''
   var clientContext = ''
-  var title = '<tr><td>version</td><td>datetime</td></tr>'
+  var title = '<tr style = "background-color:#A7C942"><td>version</td><td>datetime</td></tr>'
   for(var i = 0; i < data1.length; i++) {
     if(data1[i].object == 'xml' && xmlCount< 5) {
         if(xmlCount == 0){
@@ -54,13 +64,13 @@ $.getJSON('/AJAX/Request_All_Version/', function(getData) {
 function statusJudge(data) {
   var text = ''
   if(data.status == 'C') {
-    text +='<tr style ="background-color:blue"><td>'+ data.version + '</td>';
+    text +='<tr style ="background-color:blue;margin:110px;"><td>'+ data.version + '</td>';
     text +='<td>'+ data.datetime + '</td></tr>';
   } else if(data.status == 'D'){
-    text +='<tr style ="background-color:gray"><td>'+ data.version + '</td>';
+    text +='<tr style ="background-color:gray;margin:110px;"><td>'+ data.version + '</td>';
     text +='<td>'+ data.datetime + '</td></tr>';
   } else if(data.status == 'H'){
-    text +='<tr style ="background-color:#6699FF"><td>'+ data.version + '</td>';
+    text +='<tr style ="background-color:#6699FF;margin:110px;"><td>'+ data.version + '</td>';
     text +='<td>'+ data.datetime + '</td></tr>';
   }
   return text;

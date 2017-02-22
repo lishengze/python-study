@@ -95,33 +95,33 @@
       });
 
       $('#Request_Task_Rpc').click(function(){
-        //   req_data = {
-        //     'type': 'version_control',
-        //     '--cmd': 'publish',
-        //     '--args':'xml:2.3.114',
-        //     '--grp': '',
-        //     '--ctr': '',
-        //     '--srv': '',
-        //     '--srvno': '',
-        //     '--ictr': '',
-        //     '--isrv': '',
-        //     '--isrvno': '',
-        //   }
+          req_data = {
+            'type': 'version_control',
+            '--cmd': 'drop',
+            '--args':'xml:1111',
+            '--grp': '',
+            '--ctr': '',
+            '--srv': '',
+            '--srvno': '',
+            '--ictr': '',
+            '--isrv': '',
+            '--isrvno': '',
+          }
 
-        req_data = {
-          '--cmd': 'deployServer',
-          // '--cmd': 'undeployServer',
-          // '--cmd': 'deployConsole',
-          // '--cmd': 'undeployConsole',
-          '--args':'',
-          '--grp': '',
-          '--ctr': '',
-          '--srv': '',
-          '--srvno': '',
-          '--ictr': '',
-          '--isrv': '',
-          '--isrvno': '',
-        }
+        // req_data = {
+        //   '--cmd': 'deployServer',
+        //   // '--cmd': 'undeployServer',
+        //   // '--cmd': 'deployConsole',
+        //   // '--cmd': 'undeployConsole',
+        //   '--args':'',
+        //   '--grp': '',
+        //   '--ctr': '',
+        //   '--srv': '',
+        //   '--srvno': '',
+        //   '--ictr': '',
+        //   '--isrv': '',
+        //   '--isrvno': '',
+        // }
 
         $.ajax({
           url: '/AJAX/Request_Task_Rpc/',

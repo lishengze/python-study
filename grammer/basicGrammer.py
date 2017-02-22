@@ -111,6 +111,23 @@ def testStrFind():
     tmp = "abcde"
     print tmp.find("abd")
 
+def testDictStr():
+    a = "{'a': 'hi', 'b': 'there'}"
+    print a
+    print type(a)    
+
+    b = eval(a)
+    print b
+    print type(b)    
+
+    c = str(b)
+    print c
+    print type(c)
+
+    d = eval(c)
+    print d
+    print type(d)
+
 def testFunProgram ():
     # testMapReduce()
     # testFilter()
@@ -118,7 +135,8 @@ def testFunProgram ():
     # testWorkSpace()
     # testFor()
     # testForin()
-    testStrFind()
+    # testStrFind()
+    testDictStr()
     # testClosure()
 
 

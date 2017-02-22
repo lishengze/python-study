@@ -1,0 +1,480 @@
+Daemon pid [25007] start
+************
+106
+************
+before add 0
+<taskinfo.TaskInfo instance at 0xa1d830>
+after add 1
+[START] ontime task [--cmd alive] [148775178824554] [1487751789]
+************
+107
+************
+************
+41
+************
+************
+7975
+************
+SET:PD.monquery.1 0 1487751818
+LEN(srv_status_map):[1]
+SET:ZJ.monevent.2 0 1487751818
+LEN(srv_status_map):[2]
+SET:ZJ.monfibclient.2 0 1487751818
+LEN(srv_status_map):[3]
+SET:ZJ.monprobe.2 0 1487751818
+LEN(srv_status_map):[4]
+SET:ZJ.monquery.2 0 1487751818
+LEN(srv_status_map):[5]
+SET:ZJ.monfront.3 0 1487751818
+LEN(srv_status_map):[6]
+SET:ZJ.monagent.21 0 1487751818
+LEN(srv_status_map):[7]
+SET:ZJ.monagent.22 0 1487751818
+LEN(srv_status_map):[8]
+SET:ZJ.monagent.23 0 1487751818
+LEN(srv_status_map):[9]
+SET:ZJ.monagent.24 0 1487751818
+LEN(srv_status_map):[10]
+SET:ZJ.monagent.25 0 1487751818
+LEN(srv_status_map):[11]
+SET:ZJ.monagent.26 0 1487751818
+LEN(srv_status_map):[12]
+SET:ZJ.monagent.27 0 1487751818
+LEN(srv_status_map):[13]
+SET:ZJ.monagent.28 0 1487751818
+LEN(srv_status_map):[14]
+SET:ZJ.monagent.29 0 1487751818
+LEN(srv_status_map):[15]
+SET:ZJ.monagent.4 0 1487751818
+LEN(srv_status_map):[16]
+SET:ZJ.monagent.5 0 1487751818
+LEN(srv_status_map):[17]
+SET:ZJ.monagent.6 0 1487751818
+LEN(srv_status_map):[18]
+SET:ZJ.monslog.2 0 1487751818
+LEN(srv_status_map):[19]
+SET:BJ.monevent.3 0 1487751818
+LEN(srv_status_map):[20]
+SET:BJ.monfibclient.3 0 1487751818
+LEN(srv_status_map):[21]
+SET:BJ.monprobe.1 0 1487751818
+LEN(srv_status_map):[22]
+SET:BJ.monprobe.10 0 1487751818
+LEN(srv_status_map):[23]
+SET:BJ.monprobe.100 0 1487751818
+LEN(srv_status_map):[24]
+SET:BJ.monprobe.101 0 1487751818
+LEN(srv_status_map):[25]
+SET:BJ.monprobe.102 0 1487751818
+LEN(srv_status_map):[26]
+SET:BJ.monprobe.103 0 1487751818
+LEN(srv_status_map):[27]
+SET:BJ.monprobe.104 0 1487751818
+LEN(srv_status_map):[28]
+SET:BJ.monprobe.105 0 1487751818
+LEN(srv_status_map):[29]
+SET:BJ.monprobe.106 0 1487751818
+LEN(srv_status_map):[30]
+SET:BJ.monprobe.107 0 1487751818
+LEN(srv_status_map):[31]
+SET:BJ.monprobe.108 0 1487751818
+LEN(srv_status_map):[32]
+SET:BJ.monprobe.109 0 1487751818
+LEN(srv_status_map):[33]
+SET:BJ.monprobe.11 0 1487751818
+LEN(srv_status_map):[34]
+SET:BJ.monprobe.110 0 1487751818
+LEN(srv_status_map):[35]
+SET:BJ.monprobe.12 0 1487751818
+LEN(srv_status_map):[36]
+SET:BJ.monprobe.13 0 1487751818
+LEN(srv_status_map):[37]
+SET:BJ.monprobe.14 0 1487751818
+LEN(srv_status_map):[38]
+SET:BJ.monprobe.15 0 1487751818
+LEN(srv_status_map):[39]
+SET:BJ.monprobe.16 0 1487751818
+LEN(srv_status_map):[40]
+SET:BJ.monprobe.17 0 1487751818
+LEN(srv_status_map):[41]
+SET:BJ.monprobe.18 0 1487751818
+LEN(srv_status_map):[42]
+SET:BJ.monprobe.19 0 1487751818
+LEN(srv_status_map):[43]
+SET:BJ.monprobe.2 0 1487751818
+LEN(srv_status_map):[44]
+SET:BJ.monprobe.20 0 1487751818
+LEN(srv_status_map):[45]
+SET:BJ.monprobe.21 0 1487751818
+LEN(srv_status_map):[46]
+SET:BJ.monprobe.22 0 1487751818
+LEN(srv_status_map):[47]
+SET:BJ.monprobe.23 0 1487751818
+LEN(srv_status_map):[48]
+SET:BJ.monprobe.24 0 1487751818
+LEN(srv_status_map):[49]
+SET:BJ.monprobe.25 0 1487751818
+LEN(srv_status_map):[50]
+SET:BJ.monprobe.26 0 1487751818
+LEN(srv_status_map):[51]
+SET:BJ.monprobe.27 0 1487751818
+LEN(srv_status_map):[52]
+SET:BJ.monprobe.28 0 1487751818
+LEN(srv_status_map):[53]
+SET:BJ.monprobe.29 0 1487751818
+LEN(srv_status_map):[54]
+SET:BJ.monprobe.3 0 1487751818
+LEN(srv_status_map):[55]
+SET:BJ.monprobe.30 0 1487751818
+LEN(srv_status_map):[56]
+SET:BJ.monprobe.31 0 1487751818
+LEN(srv_status_map):[57]
+SET:BJ.monprobe.32 0 1487751818
+LEN(srv_status_map):[58]
+SET:BJ.monprobe.33 0 1487751818
+LEN(srv_status_map):[59]
+SET:BJ.monprobe.34 0 1487751818
+LEN(srv_status_map):[60]
+SET:BJ.monprobe.35 0 1487751818
+LEN(srv_status_map):[61]
+SET:BJ.monprobe.36 0 1487751818
+LEN(srv_status_map):[62]
+SET:BJ.monprobe.37 0 1487751818
+LEN(srv_status_map):[63]
+SET:BJ.monprobe.38 0 1487751818
+LEN(srv_status_map):[64]
+SET:BJ.monprobe.39 0 1487751818
+LEN(srv_status_map):[65]
+SET:BJ.monprobe.4 0 1487751818
+LEN(srv_status_map):[66]
+SET:BJ.monprobe.40 0 1487751818
+LEN(srv_status_map):[67]
+SET:BJ.monprobe.41 0 1487751818
+LEN(srv_status_map):[68]
+SET:BJ.monprobe.42 0 1487751818
+LEN(srv_status_map):[69]
+SET:BJ.monprobe.43 0 1487751818
+LEN(srv_status_map):[70]
+SET:BJ.monprobe.44 0 1487751818
+LEN(srv_status_map):[71]
+SET:BJ.monprobe.45 0 1487751818
+LEN(srv_status_map):[72]
+SET:BJ.monprobe.46 0 1487751818
+LEN(srv_status_map):[73]
+SET:BJ.monprobe.47 0 1487751818
+LEN(srv_status_map):[74]
+SET:BJ.monprobe.48 0 1487751818
+LEN(srv_status_map):[75]
+SET:BJ.monprobe.49 0 1487751818
+LEN(srv_status_map):[76]
+SET:BJ.monprobe.5 0 1487751818
+LEN(srv_status_map):[77]
+SET:BJ.monprobe.50 0 1487751818
+LEN(srv_status_map):[78]
+SET:BJ.monprobe.51 0 1487751818
+LEN(srv_status_map):[79]
+SET:BJ.monprobe.52 0 1487751818
+LEN(srv_status_map):[80]
+SET:BJ.monprobe.53 0 1487751818
+LEN(srv_status_map):[81]
+SET:BJ.monprobe.54 0 1487751818
+LEN(srv_status_map):[82]
+SET:BJ.monprobe.55 0 1487751818
+LEN(srv_status_map):[83]
+SET:BJ.monprobe.56 0 1487751818
+LEN(srv_status_map):[84]
+SET:BJ.monprobe.57 0 1487751818
+LEN(srv_status_map):[85]
+SET:BJ.monprobe.58 0 1487751818
+LEN(srv_status_map):[86]
+SET:BJ.monprobe.59 0 1487751818
+LEN(srv_status_map):[87]
+SET:BJ.monprobe.6 0 1487751818
+LEN(srv_status_map):[88]
+SET:BJ.monprobe.60 0 1487751818
+LEN(srv_status_map):[89]
+SET:BJ.monprobe.61 0 1487751818
+LEN(srv_status_map):[90]
+SET:BJ.monprobe.62 0 1487751818
+LEN(srv_status_map):[91]
+SET:BJ.monprobe.63 0 1487751818
+LEN(srv_status_map):[92]
+SET:BJ.monprobe.64 0 1487751818
+LEN(srv_status_map):[93]
+SET:BJ.monprobe.65 0 1487751818
+LEN(srv_status_map):[94]
+SET:BJ.monprobe.66 0 1487751818
+LEN(srv_status_map):[95]
+SET:BJ.monprobe.67 0 1487751818
+LEN(srv_status_map):[96]
+SET:BJ.monprobe.68 0 1487751818
+LEN(srv_status_map):[97]
+SET:BJ.monprobe.69 0 1487751818
+LEN(srv_status_map):[98]
+SET:BJ.monprobe.7 0 1487751818
+LEN(srv_status_map):[99]
+SET:BJ.monprobe.70 0 1487751818
+LEN(srv_status_map):[100]
+SET:BJ.monprobe.71 0 1487751818
+LEN(srv_status_map):[101]
+SET:BJ.monprobe.72 0 1487751818
+LEN(srv_status_map):[102]
+SET:BJ.monprobe.73 0 1487751818
+LEN(srv_status_map):[103]
+SET:BJ.monprobe.74 0 1487751818
+LEN(srv_status_map):[104]
+SET:BJ.monprobe.75 0 1487751818
+LEN(srv_status_map):[105]
+SET:BJ.monprobe.76 0 1487751818
+LEN(srv_status_map):[106]
+SET:BJ.monprobe.77 0 1487751818
+LEN(srv_status_map):[107]
+SET:BJ.monprobe.78 0 1487751818
+LEN(srv_status_map):[108]
+SET:BJ.monprobe.79 0 1487751818
+LEN(srv_status_map):[109]
+SET:BJ.monprobe.8 0 1487751818
+LEN(srv_status_map):[110]
+SET:BJ.monprobe.80 0 1487751818
+LEN(srv_status_map):[111]
+SET:BJ.monprobe.81 0 1487751818
+LEN(srv_status_map):[112]
+SET:BJ.monprobe.82 0 1487751818
+LEN(srv_status_map):[113]
+SET:BJ.monprobe.83 0 1487751818
+LEN(srv_status_map):[114]
+SET:BJ.monprobe.84 0 1487751818
+LEN(srv_status_map):[115]
+SET:BJ.monprobe.85 0 1487751818
+LEN(srv_status_map):[116]
+SET:BJ.monprobe.86 0 1487751818
+LEN(srv_status_map):[117]
+SET:BJ.monprobe.87 0 1487751818
+LEN(srv_status_map):[118]
+SET:BJ.monprobe.88 0 1487751818
+LEN(srv_status_map):[119]
+SET:BJ.monprobe.89 0 1487751818
+LEN(srv_status_map):[120]
+SET:BJ.monprobe.9 0 1487751818
+LEN(srv_status_map):[121]
+SET:BJ.monprobe.90 0 1487751818
+LEN(srv_status_map):[122]
+SET:BJ.monprobe.91 0 1487751818
+LEN(srv_status_map):[123]
+SET:BJ.monprobe.92 0 1487751818
+LEN(srv_status_map):[124]
+SET:BJ.monprobe.93 0 1487751818
+LEN(srv_status_map):[125]
+SET:BJ.monprobe.94 0 1487751818
+LEN(srv_status_map):[126]
+SET:BJ.monprobe.95 0 1487751818
+LEN(srv_status_map):[127]
+SET:BJ.monprobe.96 0 1487751818
+LEN(srv_status_map):[128]
+SET:BJ.monprobe.97 0 1487751818
+LEN(srv_status_map):[129]
+SET:BJ.monprobe.98 0 1487751818
+LEN(srv_status_map):[130]
+SET:BJ.monprobe.99 0 1487751818
+LEN(srv_status_map):[131]
+SET:BJ.monquery.3 0 1487751818
+LEN(srv_status_map):[132]
+SET:BJ.monfront.5 0 1487751818
+LEN(srv_status_map):[133]
+SET:BJ.monagent.7 0 1487751818
+LEN(srv_status_map):[134]
+SET:BJ.monagent.8 0 1487751818
+LEN(srv_status_map):[135]
+SET:BJ.monagent.9 0 1487751818
+LEN(srv_status_map):[136]
+SET:BJ.monslog.3 0 1487751818
+LEN(srv_status_map):[137]
+SET:PD.monagent.1 2 1487751818
+LEN(srv_status_map):[138]
+SET:PD.monagent.2 2 1487751818
+LEN(srv_status_map):[139]
+SET:PD.monagent.3 2 1487751818
+LEN(srv_status_map):[140]
+SET:PD.monprobe.1 3 1487751818
+LEN(srv_status_map):[141]
+SET:PD.monagent.11 2 1487751818
+LEN(srv_status_map):[142]
+SET:PD.monagent.12 2 1487751818
+LEN(srv_status_map):[143]
+SET:PD.monagent.13 2 1487751818
+LEN(srv_status_map):[144]
+SET:PD.monagent.14 2 1487751818
+LEN(srv_status_map):[145]
+SET:PD.monagent.15 2 1487751818
+LEN(srv_status_map):[146]
+SET:PD.monagent.16 2 1487751818
+LEN(srv_status_map):[147]
+SET:PD.monagent.17 2 1487751818
+LEN(srv_status_map):[148]
+SET:PD.monagent.18 2 1487751818
+LEN(srv_status_map):[149]
+SET:PD.monagent.19 2 1487751818
+LEN(srv_status_map):[150]
+SET:PD.sysagent.1 3 1487751818
+LEN(srv_status_map):[151]
+SET:PD.monfront.1 2 1487751818
+LEN(srv_status_map):[152]
+SET:PD.monprobe.7 3 1487751818
+LEN(srv_status_map):[153]
+SET:PD.monprobe.5 3 1487751818
+LEN(srv_status_map):[154]
+SET:PD.monprobe.6 3 1487751818
+LEN(srv_status_map):[155]
+SET:PD.monprobe.7 3 1487751818
+LEN(srv_status_map):[155]
+SET:PD.monprobe.5 3 1487751818
+LEN(srv_status_map):[155]
+SET:PD.monprobe.6 3 1487751818
+LEN(srv_status_map):[155]
+SET:PD.monprobe.6 3 1487751818
+LEN(srv_status_map):[155]
+alive::172.18.128.153::ZJ.monagent.21::Conn err
+alive::172.23.128.153::BJ.monagent.7::Conn err
+alive::172.11.128.152::PD.monquery.1::Conn err
+alive::172.18.128.153::ZJ.monagent.22::Conn err
+alive::172.23.128.153::BJ.monagent.8::Conn err
+alive::172.18.128.153::ZJ.monagent.23::Conn err
+alive::172.23.128.153::BJ.monagent.9::Conn err
+alive::172.18.128.153::ZJ.monagent.24::Conn err
+alive::172.18.128.153::ZJ.monagent.25::Conn err
+alive::172.18.128.153::ZJ.monagent.26::Conn err
+alive::172.23.128.153::BJ.monevent.3::Conn err
+alive::172.18.128.153::ZJ.monagent.27::Conn err
+alive::172.23.128.153::BJ.monfibclient.3::Conn err
+alive::172.18.128.153::ZJ.monagent.28::Conn err
+alive::172.23.128.153::BJ.monfront.5::Conn err
+alive::172.18.128.153::ZJ.monagent.29::Conn err
+alive::172.23.128.153::BJ.monprobe.100::Conn err
+alive::172.18.128.153::ZJ.monagent.4::Conn err
+alive::172.23.128.153::BJ.monprobe.101::Conn err
+alive::172.18.128.153::ZJ.monagent.5::Conn err
+alive::172.23.128.153::BJ.monprobe.102::Conn err
+alive::172.18.128.153::ZJ.monagent.6::Conn err
+alive::172.23.128.153::BJ.monprobe.103::Conn err
+alive::172.18.128.153::ZJ.monevent.2::Conn err
+alive::172.23.128.153::BJ.monprobe.104::Conn err
+alive::172.18.128.153::ZJ.monfibclient.2::Conn err
+alive::172.23.128.153::BJ.monprobe.105::Conn err
+alive::172.18.128.153::ZJ.monfront.3::Conn err
+alive::172.23.128.153::BJ.monprobe.106::Conn err
+alive::172.18.128.153::ZJ.monprobe.2::Conn err
+alive::172.23.128.153::BJ.monprobe.107::Conn err
+alive::172.18.128.153::ZJ.monquery.2::Conn err
+alive::172.23.128.153::BJ.monprobe.108::Conn err
+alive::172.18.128.153::ZJ.monslog.2::Conn err
+alive::172.23.128.153::BJ.monprobe.109::Conn err
+alive::172.23.128.153::BJ.monprobe.10::Conn err
+alive::172.23.128.153::BJ.monprobe.110::Conn err
+alive::172.23.128.153::BJ.monprobe.11::Conn err
+alive::172.23.128.153::BJ.monprobe.12::Conn err
+alive::172.23.128.153::BJ.monprobe.13::Conn err
+alive::172.23.128.153::BJ.monprobe.14::Conn err
+alive::172.23.128.153::BJ.monprobe.15::Conn err
+alive::172.23.128.153::BJ.monprobe.16::Conn err
+alive::172.23.128.153::BJ.monprobe.17::Conn err
+alive::172.23.128.153::BJ.monprobe.18::Conn err
+alive::172.23.128.153::BJ.monprobe.19::Conn err
+alive::172.23.128.153::BJ.monprobe.1::Conn err
+alive::172.23.128.153::BJ.monprobe.20::Conn err
+alive::172.23.128.153::BJ.monprobe.21::Conn err
+alive::172.23.128.153::BJ.monprobe.22::Conn err
+alive::172.23.128.153::BJ.monprobe.23::Conn err
+alive::172.23.128.153::BJ.monprobe.24::Conn err
+alive::172.23.128.153::BJ.monprobe.25::Conn err
+alive::172.23.128.153::BJ.monprobe.26::Conn err
+alive::172.23.128.153::BJ.monprobe.27::Conn err
+alive::172.23.128.153::BJ.monprobe.28::Conn err
+alive::172.23.128.153::BJ.monprobe.29::Conn err
+alive::172.23.128.153::BJ.monprobe.2::Conn err
+alive::172.23.128.153::BJ.monprobe.30::Conn err
+alive::172.23.128.153::BJ.monprobe.31::Conn err
+alive::172.23.128.153::BJ.monprobe.32::Conn err
+alive::172.23.128.153::BJ.monprobe.33::Conn err
+alive::172.23.128.153::BJ.monprobe.34::Conn err
+alive::172.23.128.153::BJ.monprobe.35::Conn err
+alive::172.23.128.153::BJ.monprobe.36::Conn err
+alive::172.23.128.153::BJ.monprobe.37::Conn err
+alive::172.23.128.153::BJ.monprobe.38::Conn err
+alive::172.23.128.153::BJ.monprobe.39::Conn err
+alive::172.23.128.153::BJ.monprobe.3::Conn err
+alive::172.23.128.153::BJ.monprobe.40::Conn err
+alive::172.23.128.153::BJ.monprobe.41::Conn err
+alive::172.23.128.153::BJ.monprobe.42::Conn err
+alive::172.23.128.153::BJ.monprobe.43::Conn err
+alive::172.23.128.153::BJ.monprobe.44::Conn err
+alive::172.23.128.153::BJ.monprobe.45::Conn err
+alive::172.23.128.153::BJ.monprobe.46::Conn err
+alive::172.23.128.153::BJ.monprobe.47::Conn err
+alive::172.23.128.153::BJ.monprobe.48::Conn err
+alive::172.23.128.153::BJ.monprobe.49::Conn err
+alive::172.23.128.153::BJ.monprobe.4::Conn err
+alive::172.23.128.153::BJ.monprobe.50::Conn err
+alive::172.23.128.153::BJ.monprobe.51::Conn err
+alive::172.23.128.153::BJ.monprobe.52::Conn err
+alive::172.23.128.153::BJ.monprobe.53::Conn err
+alive::172.23.128.153::BJ.monprobe.54::Conn err
+alive::172.23.128.153::BJ.monprobe.55::Conn err
+alive::172.23.128.153::BJ.monprobe.56::Conn err
+alive::172.23.128.153::BJ.monprobe.57::Conn err
+alive::172.23.128.153::BJ.monprobe.58::Conn err
+alive::172.23.128.153::BJ.monprobe.59::Conn err
+alive::172.23.128.153::BJ.monprobe.5::Conn err
+alive::172.23.128.153::BJ.monprobe.60::Conn err
+alive::172.23.128.153::BJ.monprobe.61::Conn err
+alive::172.23.128.153::BJ.monprobe.62::Conn err
+alive::172.23.128.153::BJ.monprobe.63::Conn err
+alive::172.23.128.153::BJ.monprobe.64::Conn err
+alive::172.23.128.153::BJ.monprobe.65::Conn err
+alive::172.23.128.153::BJ.monprobe.66::Conn err
+alive::172.23.128.153::BJ.monprobe.67::Conn err
+alive::172.23.128.153::BJ.monprobe.68::Conn err
+alive::172.23.128.153::BJ.monprobe.69::Conn err
+alive::172.23.128.153::BJ.monprobe.6::Conn err
+alive::172.23.128.153::BJ.monprobe.70::Conn err
+alive::172.23.128.153::BJ.monprobe.71::Conn err
+alive::172.23.128.153::BJ.monprobe.72::Conn err
+alive::172.23.128.153::BJ.monprobe.73::Conn err
+alive::172.23.128.153::BJ.monprobe.74::Conn err
+alive::172.23.128.153::BJ.monprobe.75::Conn err
+alive::172.23.128.153::BJ.monprobe.76::Conn err
+alive::172.23.128.153::BJ.monprobe.77::Conn err
+alive::172.23.128.153::BJ.monprobe.78::Conn err
+alive::172.23.128.153::BJ.monprobe.79::Conn err
+alive::172.23.128.153::BJ.monprobe.7::Conn err
+alive::172.23.128.153::BJ.monprobe.80::Conn err
+alive::172.23.128.153::BJ.monprobe.81::Conn err
+alive::172.23.128.153::BJ.monprobe.82::Conn err
+alive::172.23.128.153::BJ.monprobe.83::Conn err
+alive::172.23.128.153::BJ.monprobe.84::Conn err
+alive::172.23.128.153::BJ.monprobe.85::Conn err
+alive::172.23.128.153::BJ.monprobe.86::Conn err
+alive::172.23.128.153::BJ.monprobe.87::Conn err
+alive::172.23.128.153::BJ.monprobe.88::Conn err
+alive::172.23.128.153::BJ.monprobe.89::Conn err
+alive::172.23.128.153::BJ.monprobe.8::Conn err
+alive::172.23.128.153::BJ.monprobe.90::Conn err
+alive::172.23.128.153::BJ.monprobe.91::Conn err
+alive::172.23.128.153::BJ.monprobe.92::Conn err
+alive::172.23.128.153::BJ.monprobe.93::Conn err
+alive::172.23.128.153::BJ.monprobe.94::Conn err
+alive::172.23.128.153::BJ.monprobe.95::Conn err
+alive::172.23.128.153::BJ.monprobe.96::Conn err
+alive::172.23.128.153::BJ.monprobe.97::Conn err
+alive::172.23.128.153::BJ.monprobe.98::Conn err
+alive::172.23.128.153::BJ.monprobe.99::Conn err
+alive::172.23.128.153::BJ.monprobe.9::Conn err
+alive::172.23.128.153::BJ.monquery.3::Conn err
+alive::172.23.128.153::BJ.monslog.3::Conn err
+alive::172.1.128.170::PD.monagent.1::25154  16:23 ./monagent 1
+alive::172.1.128.170::PD.monagent.2::25188  16:23 ./monagent 2
+alive::172.1.128.170::PD.monagent.3::25222  16:23 ./monagent 3
+alive::172.1.128.151::PD.monagent.11:: 1468  16:23 ./monagent 11
+alive::172.1.128.151::PD.monagent.12:: 1502  16:23 ./monagent 12
+alive::172.1.128.151::PD.monagent.13:: 1536  16:23 ./monagent 13
+alive::172.1.128.151::PD.monagent.14:: 1570  16:23 ./monagent 14
+al

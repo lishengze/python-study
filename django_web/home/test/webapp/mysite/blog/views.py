@@ -32,6 +32,7 @@ import json
 from models import Person
 from models import GroupInfo
 from models import UserInfo
+import shutil
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -93,12 +94,17 @@ class RpcResult(object):
 				'host_name': data_array[2]
 			}
 		if is_version_control_req(data_type):
-			self.__dict__ = {
-				'SEQ': data_array[0],
-				'version': data_array[1],
-				'datetime': data_array[2],
-				'status': data_array[3]
-			}
+			if data_type.find('show')!= -1:
+				self.__dict__ = {
+					'SEQ': data_array[0],
+					'version': data_array[1],
+					'datetime': data_array[2],
+					'status': data_array[3]
+				}
+			else:
+				self.__dict__ = {
+					'info': data_array
+				}
 
 def init_globals():
 	global g_users, g_groups, g_login_user, \
@@ -153,6 +159,8 @@ init_globals()
 def sock_conn(key):
 	daemaon_ip = cfg_w.ENV_DICT[key][1]
 	# daemon_port = cfg_w.ENV_DICT[key][2]
+	# print 'key', key
+	# print 'daemaon_ip', daemaon_ip
 	daemon_port = 18888
 	print(daemaon_ip, daemon_port)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -164,6 +172,142 @@ def is_version_control_req(data_type):
 		return True
 	else:
 		return False
+
+def uploadFile(sock, FileSrc, FileDst):
+	try:
+		file_md5 = md5sum(FileSrc)
+		filename = os.path.basename(FileSrc)
+		f = open(FileSrc, 'rb')
+		sock.send(genFileHead(filename, file_md5, FileDst))
+		bytes = 0
+		while 1:
+			fileinfo = f.read(cfg.DEFAULT_RECV)
+			if not fileinfo:
+				break
+			bytes = bytes + len(fileinfo)
+			#print('Send ' + str(bytes) + ' bytes ...')
+			sock.send(fileinfo)
+			#time.sleep(0.001)
+		sock.send(cfg.TIP_INFO_EOF)
+		rtn = cfg.CMD_SUCC
+	except Exception as e:
+		rtn = cfg.CMD_FAIL
+		print(traceback.format_exc())
+	finally:
+		return rtn
+
+def downloadFile(sock, FileSrc, FileDst):
+	try:
+		sock.send(genFReqHead(FileSrc) + cfg.TIP_INFO_EOF)
+		rsp = recv_end(sock)
+		head_info, buf = getFRspHead(rsp)
+		print(head_info)
+		print('++++++++')
+		print(buf)
+		seq_id, filename, status = getFRspInfo(head_info.strip())
+		print(filename, status)
+		if int(status) == cfg.CMD_SUCC:
+			## dir exsit?
+			f = open(FileDst, 'w')
+			f.write(buf)
+			f.close()
+			rtn = cfg.CMD_SUCC
+		else:
+			rtn = cfg.CMD_FAIL
+	except Exception as e:
+		rtn = cfg.CMD_FAIL
+		print(traceback.format_exc())
+	finally:
+		return rtn
+
+@csrf_protect
+def update_srv(request):
+	rsp = ''
+	if request.method == "POST":
+		start_time = int(time.time())
+		myFile = request.FILES.get("myfile", None)
+		if not myFile:
+			return HttpResponse("no files for upload!")
+		filepath = os.path.join(cfg.WORK_PATH_TEMP, myFile.name)
+		filedst = os.path.join(cfg.WORK_PATH_UPDATE, myFile.name)
+		destination = open(filepath,'wb+')
+		for chunk in myFile.chunks():
+			destination.write(chunk)
+		destination.close()
+		sock = sock_conn(ENV_KEY)
+		rtn = uploadFile(sock, filepath, filedst)
+		end_time = int(time.time())
+		if rtn == cfg.CMD_SUCC:
+			rsp = recv_end(sock)
+			info = '<br/>File transfer SUCC, cost ' + str(end_time - start_time) + ' secs.'
+		else:
+			info = '<br/>File transfer FAIL, cost ' + str(end_time - start_time) + ' secs.'
+		rsp = rsp + info
+		sock.close()
+		return HttpResponse(rsp)
+	else:
+		return index(request)
+
+@csrf_protect
+def upload_file(request):
+	rsp = ''
+	if request.method == "POST":
+		start_time = int(time.time())
+		myFile = request.FILES.get("myfile", None)
+		if not myFile:
+			return HttpResponse("no files for upload!")
+		filepath = os.path.join(cfg.WORK_PATH_TEMP, myFile.name)
+		filedst = filepath + cfg.DOT + cfg.PID
+		destination = open(filepath,'wb+')
+		for chunk in myFile.chunks():
+			destination.write(chunk)
+		destination.close()
+		sock = sock_conn(ENV_KEY)
+		rtn = uploadFile(sock, filepath, filedst)
+		end_time = int(time.time())
+		if rtn == cfg.CMD_SUCC:
+			rsp = recv_end(sock)
+			info = '<br/>File transfer SUCC, cost ' + str(end_time - start_time) + ' secs.'
+		else:
+			info = '<br/>File transfer FAIL, cost ' + str(end_time - start_time) + ' secs.'
+		rsp = rsp + info
+		sock.close()
+		return HttpResponse(rsp)
+	else:
+		return index(request)
+
+@csrf_protect
+###执行即时任务
+def download_file(request):
+	#if request.method == 'POST':
+	if request.method != '':
+
+		#从POST请求中获取查询关键字
+		FileName = request.POST.get('filename',None)
+		if not FileName:
+			return HttpResponse("no files for request!")
+		sock = sock_conn(ENV_KEY)
+		FileSrc = FileName
+		FileDst = os.path.join(cfg.WORK_PATH_TEMP, FileName)
+		FileNew = FileDst + cfg.DOT +cfg.PID
+		FileNewDst = os.path.join(cfg.WORK_PATH_CFG, FileName + cfg.DOT + cfg.PID)
+		rtn = downloadFile(sock, FileSrc, FileDst)
+		sock.close()
+		if rtn == cfg.CMD_SUCC:
+			sock = sock_conn(ENV_KEY)
+			shutil.copyfile(FileDst, FileNew)
+			f = open(FileNew, "a+")
+			f.write("## Add Test Info by " + str(cfg.PID) + ' \n')
+			f.close()
+			uploadFile(sock, FileNew, FileNewDst)
+			result_info = " SUCC"
+			sock.close()
+		else:
+			result_info = " FAILED"
+
+		return HttpResponse("Download " + FileName + result_info)
+	else:
+		return index(request)
 
 class ViewMain(object):
 	def __init__(self):
@@ -711,9 +855,9 @@ class AjaxReqFunc(object):
 			#从POST请求中获取查询关键字
 			rsp = ''
 			#cmdline=request.POST.get('keyword',None)
-			cmdline = '--cmd info'
-			cmd = 'info'
-			tasktime = int(time.time()) + 1800
+			cmdline = '--cmd show'
+			cmd = 'show'
+			tasktime = int(time.time()) + 1
 
 			print('web req cmd :%s'%(cmdline))
 			if cmdline.find(cfg.SEMICOLON) != -1:
@@ -727,14 +871,16 @@ class AjaxReqFunc(object):
 				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 				sock = sock_conn(ENV_KEY)
 				sock.send(genNtfHead() + task_info.encode() + cfg.TIP_INFO_EOF)
-				rsp = recv_end(sock)
-				print rsp
+				# rsp = recv_end(sock)
+				# print rsp
+				print task_info.encode()
+				print task_info.TID
 				sock.close()
 			except Exception as e:
 				print('notifyDaemon failed!')
 				print((traceback.format_exc()))
-			rsp_data = task_info.__dict__
-			# rsp_data = {'data': 'test_task_rpc!'}
+			# rsp_data = task_info.__dict__
+			rsp_data = {'task_tid': task_info.TID}
 			response = HttpResponse(json.dumps(rsp_data))
 			response["Access-Control-Allow-Origin"] = "*"
 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
@@ -832,9 +978,18 @@ class AjaxReqFunc(object):
 				sock = sock_conn(ENV_KEY)
 				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
 				task_result = recv_end(sock)
-				task_result.split('\n')
-				print task_result
 				sock.close()
+
+				task_result = task_result.split('\n')
+				print 'Original Rsp Data:'
+				print task_result[1]
+				print type(task_result[1])
+
+				trans_result = eval(task_result[1])
+				print 'Transed Rsp Data:'
+				print trans_result
+				print type(trans_result)
+
 			except Exception as e:
 				print('notifyDaemon failed!')
 				print(traceback.format_exc())
@@ -891,32 +1046,43 @@ class AjaxReqFunc(object):
 		if failed_data == '':
 			array_data = []
 			if is_version_control_req(data_type):
-				array_data = self.get_version_ctr_array_result(origin_data)
+				array_data = self.get_version_ctr_array_result(origin_data, data_type)
 			else:
 				array_data = self.get_task_rpc_array_result(origin_data)
-			# print array_data
+			print 'array_data: '
+			print array_data
+
 			dict_data = self.get_rpc_dict_result(array_data, data_type)
+			# dict_data = self.get_rpc_dict_result(data_type, array_data)
+
 			return {'data': dict_data, 'type': data_type}
 		else:
 			return {'data': failed_data, 'type': 'Failed'}
 
 	def get_rpc_failed_data(self, origin_data, data_type):
 		tmpdata = origin_data.split('\n')
-		failed_data = tmpdata
-		if is_version_control_req(data_type):
-			for value in tmpdata:
-				if value.find('---') != -1:
-					failed_data = ''
-					break
-		else:
-			failed_data = ''
+		failed_data = ''
+		if tmpdata[1].find('verControl Usage:') != -1:
+			failed_data = 'verControl Failed'
+
+		# failed_data = tmpdata
+		# if is_version_control_req(data_type):
+		# 	for value in tmpdata:
+		# 		if value.find('---') != -1:
+		# 			failed_data = ''
+		# 			break
+		# else:
+		# 	failed_data = ''
 		return failed_data
 
-	def get_version_ctr_array_result(self, origin_data):
+	def get_version_ctr_array_result(self, origin_data, data_type):
 		tmpdata = origin_data.split('\n')
 		array_data = []
-		tmpdata = tmpdata[len(tmpdata)-2].split('\t')
-		array_data.append(tmpdata)
+		if data_type.find('show')!= -1:
+			tmpdata = tmpdata[len(tmpdata)-2].split('\t')
+			array_data.append(tmpdata)
+		else:
+			array_data.append(tmpdata[1:])
 		# print tmpdata
 		# for value in tmpdata:
 		# 	if value != '':
