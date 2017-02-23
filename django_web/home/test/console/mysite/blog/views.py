@@ -403,6 +403,37 @@ def query_all_tasklist(request):
 	else:
 		return index(request)
 
+###查询所有计划任务
+@csrf_protect
+def query_all_task(request):
+	#if request.method == 'POST':
+	if request.method != '':
+		#从POST请求中获取查询关键字
+		req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKMAP)
+		rsp = ''
+		try:
+			sock = sock_conn(ENV_KEY)
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			rsp_list = rsp.split("\n")
+			task_list = []
+			for token in rsp_list:
+				if token.startswith(cfg.TIP_INFO_TASK):
+					info = token[len(cfg.TIP_INFO_TASK):]
+					task_info = TaskInfo()
+					task_info.decode(info)
+					task_list.append(task_info)
+			for info in task_list:
+				print(info.encode())
+			sock.close()
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		return HttpResponse(rsp.replace("\n", "<br/>"))
+	else:
+		return index(request)
+
+
 ###查询计划任务列表结果
 @csrf_protect
 def query_all_taskresult(request):

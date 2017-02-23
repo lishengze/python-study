@@ -80,10 +80,9 @@
       </div>
     </div>
   </div>
-  <!-- <button  onclick ='submitReq()' class="btn btn-primary btn-default">提交</button> -->
-
-  <div  id= 'getarg' style="">执行结果：<br>
-    <div id= 'result' style="height:500px"> </div>
+  <button  onclick ='submitReq()' class="btn btn-primary btn-default" style="float:left">提交</button>
+  <div  id= 'getarg' style="font-size:20px;">执行结果：<br>
+    <div id= 'result' style="height:450px"> </div>
   </div>
 </div>
 <style>
@@ -97,7 +96,15 @@
  }
 </style>
 <script>
+  var str = sessionStorage.getItem('infoSearch');
+  console.log(str);
+  var obj = JSON.parse(str);
+  console.log(obj);
+  if(obj){
+    console.log('obj');
 
+    showResult(obj);
+  }
   $('#instruction').click(function(){
     $(this).find('p').is(':hidden') ? $(this).find('p').show() :  $(this).find('p').hide()
   })
@@ -127,6 +134,8 @@
       type: 'POST',
       traditional: true,
       success: function(responseJSON) {
+        var str = JSON.stringify(responseJSON);
+        sessionStorage.setItem('infoSearch',str);
         showResult(responseJSON);
       }
     });

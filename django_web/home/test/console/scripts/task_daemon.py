@@ -193,6 +193,8 @@ def doTask(task_info):
 			print("process[%d] doTask start at %s"%(pid, startTime))
 		if task_info.task_type == cfg.TASK_TYPE_ECALL:
 			cmdline = "python %s --tid %d %s"%(cfg.FILE_NAME_MAIN, task_info.TID, task_info.cmdline)
+			print ('cmdline')
+			print (cmdline)
 		elif task_info.task_type == cfg.TASK_TYPE_VERCONTROL:
 			#cmdline = "python %s --tid %d %s"%(cfg.FILE_NAME_VERCTRL, task_info.TID, task_info.cmdline)
 			cmdline = "python %s %s"%(cfg.FILE_NAME_VERCTRL, task_info.cmdline)
@@ -295,6 +297,7 @@ def genRspBody(req_info):
 	Args:
 		req_info:ReqInfo的实例
 	"""
+	global TaskList
 	try:
 		TID = req_info.TID
 		#请求类型为查看任务列表
@@ -331,10 +334,11 @@ def genRspBody(req_info):
 		#请求类型为查看计划任务列表
 		elif req_info.req_type == cfg.FLAG_REQTYPE_TASKLIST:
 			task_info_str = cfg.FLAG_NULL
+			print ("+++++ TaskList ++++ ")
+			print (TaskList)
 			for task_info in TaskList:
 				task_info_str += task_info.encode()
 			return task_info_str
-
 		elif req_info.req_type == cfg.FLAG_REQTYPE_VERSION:
 			ver_info_str = cfg.FLAG_NULL
 			ver_map = loadVersionMap()
@@ -512,6 +516,7 @@ class MyDaemon(Daemon):
 		1.Create Child to scan task_list
 		2.
 		"""
+		global TaskList
 		try:
 			if os.path.exists(cfg.FILE_DAEMON_TASK_LIST):
 				TaskList = loadPickle(cfg.FILE_DAEMON_TASK_LIST)

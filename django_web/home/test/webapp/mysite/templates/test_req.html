@@ -26,6 +26,8 @@
   <p id="Request_All_TaskList_Rsp"></p>
   <input type="button" id="Request_All_TaskResult" value="Request All TaskResult">
   <p id="Request_All_TaskResult_Rsp"></p>
+  <input type="button" id="Request_Task_Info" value="Request All TaskInfo">
+  <p id="Request_Task_Info_Rsp"></p>
   <input type="button" id="Request_All_Version" value="Request All Version">
   <p id="Request_All_Version_Rsp"></p>
 
@@ -158,6 +160,13 @@
 
       $('#Request_All_TaskResult').click(function(){
           $.getJSON('/AJAX/Request_All_TaskResult/',function(rsp_result){
+              console.log (rsp_result)
+              // $('#Request_All_TaskResult_Rsp').append(rsp_result.twz + '<br>');
+          })
+      })
+
+      $('#Request_Task_Info').click(function(){
+          $.getJSON('/AJAX/Request_Task_Info/',function(rsp_result){
               console.log (rsp_result)
               // $('#Request_All_TaskResult_Rsp').append(rsp_result.twz + '<br>');
           })

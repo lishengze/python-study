@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "task_daemon.py", line 643, in <module>
+    daemon.start()
+  File "task_daemon.py", line 132, in start
+    self._run()
+  File "task_daemon.py", line 635, in _run
+    raise e
+TypeError: cannot concatenate 'str' and 'NoneType' objects

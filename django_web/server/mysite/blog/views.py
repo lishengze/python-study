@@ -158,11 +158,8 @@ init_globals()
 
 def sock_conn(key):
 	daemaon_ip = cfg_w.ENV_DICT[key][1]
-	# daemon_port = cfg_w.ENV_DICT[key][2]
-	# print 'key', key
-	# print 'daemaon_ip', daemaon_ip
-	daemon_port = 18888
-	print(daemaon_ip, daemon_port)
+	daemon_port = cfg_w.ENV_DICT[key][2]
+	print(key, daemaon_ip, daemon_port)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.connect((daemaon_ip, daemon_port))
 	return sock
@@ -427,6 +424,7 @@ class ViewMain(object):
 			'Request_All_Version': self._ajax_func.test_all_version,
 	        'Request_Task_Rpc': self._ajax_func.test_task_rpc,
 	        'Request_Task_Ntf': self._ajax_func.test_task_ntf,
+			'Request_Task_Info': self._ajax_func.test_all_task_info,
 			'Upload_File': self._ajax_func.upload_file,
 			'Set_DB_Data': self._ajax_func.set_dbdata,
 			'Get_DB_Data': self._ajax_func.get_dbdata,
@@ -470,6 +468,7 @@ class ViewMain(object):
 		if self.is_ajax_request(request.path):
 			print '\nIs AJAX Request'
 			ajax_func = self.get_ajax_func(request.path)
+			# print '\nGet AJAX Request'
 			return ajax_func(request)
 		else:
 			print '\nIs not AJAX Request'
@@ -790,6 +789,33 @@ class AjaxReqFunc(object):
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
 
+	def get_task_info(self, trans_req_json):
+		task_type = cfg.TASK_TYPE_ECALL
+		cmdline = ''
+		if 'type' in trans_req_json and trans_req_json['type'] == 'version_control':
+			data_type = 'version_control_' + trans_req_json['--cmd']
+			task_type = cfg.TASK_TYPE_VERCONTROL
+		elif '--args' not in trans_req_json or trans_req_json['--args'] == '' or \
+			trans_req_json['--args'] =='app':
+			data_type = 'default'
+		else:
+			data_type = trans_req_json['--args']
+		req_para = ['--cmd', '--args', '--grp', \
+					'--ctr', '--srv', '--srvno',\
+					'--ictr', '--isrv', '--isrvno']
+		for value in req_para:
+			if value in req_para and value in trans_req_json and trans_req_json[value] !='':
+				cmdline += value + ' ' + trans_req_json[value] + ' '
+
+		print 'data_type: ', data_type
+		print 'task_type: ', task_type
+		print ('\nThe REQUEST command line is: %s\n' %(cmdline))
+		return {
+			'data_type': data_type,
+			'task_type': task_type,
+			'cmdline': cmdline
+		}
+
 	@csrf_exempt
 	def test_task_rpc(self, request):
 		if request.method != '':
@@ -798,36 +824,17 @@ class AjaxReqFunc(object):
 			trans_req_json = json.loads(req_json)
 			print trans_req_json
 
-			task_type = cfg.TASK_TYPE_ECALL
-			cmdline = ''
-			if 'type' in trans_req_json and trans_req_json['type'] == 'version_control':
-				data_type = 'version_control_' + trans_req_json['--cmd']
-				task_type = cfg.TASK_TYPE_VERCONTROL
-			elif '--args' not in trans_req_json or trans_req_json['--args'] == '' or \
-				trans_req_json['--args'] =='app':
-				data_type = 'default'
-			else:
-				data_type = trans_req_json['--args']
-
-			print 'data_type: ', data_type
-			print 'task_type: ', task_type
-			req_para = ['--cmd', '--args', '--grp', \
-						'--ctr', '--srv', '--srvno',\
-						'--ictr', '--isrv', '--isrvno']
-			for value in req_para:
-				if value in req_para and value in trans_req_json and trans_req_json[value] !='':
-					cmdline += value + ' ' + trans_req_json[value] + ' '
-			print ('\nThe REQUEST command line is: %s\n' %(cmdline))
+			req_data = self.get_task_info(trans_req_json)
+			data_type = req_data['data_type']
+			task_type = req_data['task_type']
+			cmdline = req_data['cmdline']
 
 			original_rsp_data = ''
 			cmd = 'info'
-
 			task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=0, \
 						cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
 			trans_rsp_data = {}
 			try:
-				# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 				sock = sock_conn(ENV_KEY)
 				sock.send(genRpcHead() + task_info.encode() + cfg.TIP_INFO_EOF)
 				original_rsp_data = recv_end(sock)
@@ -841,7 +848,6 @@ class AjaxReqFunc(object):
 				print(traceback.format_exc())
 			rsp_data = trans_rsp_data
 			response = HttpResponse(json.dumps(rsp_data))
-			# response = HttpResponse(req_json)
 			response["Access-Control-Allow-Origin"] = "*"
 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
 			response["Access-Control-Max-Age"] = "1000"
@@ -1038,6 +1044,52 @@ class AjaxReqFunc(object):
 			response["Access-Control-Max-Age"] = "1000"
 			response["Access-Control-Allow-Headers"] = "*"
 			return response
+		else:
+			return index(request)
+
+	###查询所有计划任务
+	def test_all_task_info(self, request):
+		# response = HttpResponse(json.dumps({'data': 0}))
+		# return response
+		if request.method != '':
+			#从POST请求中获取查询关键字
+			# req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKMAP)
+			req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKINFO)
+			rsp = ''
+			print '--- 0 ---'
+			try:
+				print '--- 1 ---'
+				sock = sock_conn(ENV_KEY)
+				print '--- 2 ---'
+				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+				print '--- 3 ---'
+				rsp = recv_end(sock)
+				print rsp
+				print '--- 4 ---'
+				# rsp_list = rsp.split("\n")
+				# task_list = []
+				# for token in rsp_list:
+				# 	if token.startswith(cfg.TIP_INFO_TASK):
+				# 		info = token[len(cfg.TIP_INFO_TASK):]
+				# 		task_info = TaskInfo()
+				# 		task_info.decode(info)
+				# 		task_list.append(task_info)
+				# for info in task_list:
+				# 	print(info.encode())
+				rsp_data = {'data': 'task_info'}
+				sock.close()
+				print '--- 5 ---'
+			except Exception as e:
+				print('notifyDaemon failed!')
+				print(traceback.format_exc())
+
+			response = HttpResponse(json.dumps(rsp_data))
+			response["Access-Control-Allow-Origin"] = "*"
+			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+			response["Access-Control-Max-Age"] = "1000"
+			response["Access-Control-Allow-Headers"] = "*"
+			return response
+			# return HttpResponse(rsp.replace("\n", "<br/>"))
 		else:
 			return index(request)
 

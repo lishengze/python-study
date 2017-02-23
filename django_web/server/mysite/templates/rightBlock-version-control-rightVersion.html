@@ -6,19 +6,22 @@ table{
   text-align:center;
   margin-bottom: 5px;
 }
+th,td {
+  padding: 0.2em 1em;
+}
 </style>
 
 <div ><div style = 'border-bottom: 1px solid #BDBDBD;'>版本信息(最近5次)：</div>
   <div style= '' > XML:<br>
-    <table border="1" cellpadding="0" class = 'xmlContext' >
+    <table border="1"  class = 'xmlContext' >
     </table>
   </div>
   <div style= ''> Server:<br>
-    <table border="1" cellpadding="10" class = 'serverContext' >
+    <table border="1"  class = 'serverContext' >
     </table>
   </div>
   <div style= '' > Client:<br>
-    <table class = 'clientContext' cellpadding="10">
+    <table class = 'clientContext'>
     </table>
   </div>
 </div>
@@ -64,7 +67,7 @@ $.getJSON('http://172.1.128.170:8000/AJAX/Request_All_Version/', function(getDat
 function statusJudge(data) {
   var text = ''
   if(data.status == 'C') {
-    text +='<tr style ="background-color:blue;margin:110px;"><td>'+ data.version + '</td>';
+    text +='<tr style ="background-color:#0066ff;margin:110px;"><td>'+ data.version + '</td>';
     text +='<td>'+ data.datetime + '</td></tr>';
   } else if(data.status == 'D'){
     text +='<tr style ="background-color:gray;margin:110px;"><td>'+ data.version + '</td>';

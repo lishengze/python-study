@@ -1,480 +1,1217 @@
-Daemon pid [25007] start
+Daemon pid [23990] start
+************
+104
+************
+before add 0
+<taskinfo.TaskInfo instance at 0xb3d7e8>
+after add 1
+[START] ontime task [--cmd show] [148783625524013] [1487836256]
+cmdline
+python main.py --tid 148783625524013 --cmd show
 ************
 106
 ************
-before add 0
-<taskinfo.TaskInfo instance at 0xa1d830>
-after add 1
-[START] ontime task [--cmd alive] [148775178824554] [1487751789]
 ************
 107
 ************
+get {148783626324013::1::1487836263::0::24013::info::--cmd info --args host::0} from getTaskInfo
+cmdline
+python main.py --tid 148783626324013 --cmd info --args host
+[info]001: 172.1.128.151        linux64 mon-blade01
+[info]002: 172.1.128.152        (unknown) (unknown)
+[info]003: 172.1.128.153        linux64 mon-blade03
+[info]004: 172.1.128.154        linux64 mon-blade04
+[info]005: 172.1.128.155        linux64 mon-blade05
+[info]006: 172.1.128.156        linux64 mon-blade06
+[info]007: 172.1.128.157        linux64 mon-blade07
+[info]008: 172.1.128.158        linux64 mon-blade08
+[info]009: 172.1.128.170        linux64 mon-console
+[info]010: 172.11.128.152       (unknown) (unknown)
+[info]011: 172.18.128.153       (unknown) (unknown)
+[info]012: 172.23.128.153       (unknown) (unknown)
+
+tastInfo cmd is [info]
+get {[info]001: 172.1.128.151        linux64 mon-blade01
+[info]002: 172.1.128.152        (unknown) (unknown)
+[info]003: 172.1.128.153        linux64 mon-blade03
+[info]004: 172.1.128.154        linux64 mon-blade04
+[info]005: 172.1.128.155        linux64 mon-blade05
+[info]006: 172.1.128.156        linux64 mon-blade06
+[info]007: 172.1.128.157        linux64 mon-blade07
+[info]008: 172.1.128.158        linux64 mon-blade08
+[info]009: 172.1.128.170        linux64 mon-console
+[info]010: 172.11.128.152       (unknown) (unknown)
+[info]011: 172.18.128.153       (unknown) (unknown)
+[info]012: 172.23.128.153       (unknown) (unknown)
+} from doTask
+************
+95
+************
+get {148783627524013::1::1487836275::0::24013::info::--cmd info::0} from getTaskInfo
+cmdline
+python main.py --tid 148783627524013 --cmd info
+[info]001: BJ.monagent.007                172.23.128.153       ./monagent 7
+[info]002: BJ.monagent.008                172.23.128.153       ./monagent 8
+[info]003: BJ.monagent.009                172.23.128.153       ./monagent 9
+[info]004: BJ.monevent.003                172.23.128.153       ./monevent 3
+[info]005: BJ.monfibclient.003            172.23.128.153       ./monfibclient 3 off
+[info]006: BJ.monfront.005                172.23.128.153       ./monfront 5
+[info]007: BJ.monprobe.001                172.23.128.153       ./monprobe 1
+[info]008: BJ.monprobe.002                172.23.128.153       ./monprobe 2
+[info]009: BJ.monprobe.003                172.23.128.153       ./monprobe 3
+[info]010: BJ.monprobe.004                172.23.128.153       ./monprobe 4
+[info]011: BJ.monprobe.005                172.23.128.153       ./monprobe 5
+[info]012: BJ.monprobe.006                172.23.128.153       ./monprobe 6
+[info]013: BJ.monprobe.007                172.23.128.153       ./monprobe 7
+[info]014: BJ.monprobe.008                172.23.128.153       ./monprobe 8
+[info]015: BJ.monprobe.009                172.23.128.153       ./monprobe 9
+[info]016: BJ.monprobe.010                172.23.128.153       ./monprobe 10
+[info]017: BJ.monprobe.011                172.23.128.153       ./monprobe 11
+[info]018: BJ.monprobe.012                172.23.128.153       ./monprobe 12
+[info]019: BJ.monprobe.013                172.23.128.153       ./monprobe 13
+[info]020: BJ.monprobe.014                172.23.128.153       ./monprobe 14
+[info]021: BJ.monprobe.015                172.23.128.153       ./monprobe 15
+[info]022: BJ.monprobe.016                172.23.128.153       ./monprobe 16
+[info]023: BJ.monprobe.017                172.23.128.153       ./monprobe 17
+[info]024: BJ.monprobe.018                172.23.128.153       ./monprobe 18
+[info]025: BJ.monprobe.019                172.23.128.153       ./monprobe 19
+[info]026: BJ.monprobe.020                172.23.128.153       ./monprobe 20
+[info]027: BJ.monprobe.021                172.23.128.153       ./monprobe 21
+[info]028: BJ.monprobe.022                172.23.128.153       ./monprobe 22
+[info]029: BJ.monprobe.023                172.23.128.153       ./monprobe 23
+[info]030: BJ.monprobe.024                172.23.128.153       ./monprobe 24
+[info]031: BJ.monprobe.025                172.23.128.153       ./monprobe 25
+[info]032: BJ.monprobe.026                172.23.128.153       ./monprobe 26
+[info]033: BJ.monprobe.027                172.23.128.153       ./monprobe 27
+[info]034: BJ.monprobe.028                172.23.128.153       ./monprobe 28
+[info]035: BJ.monprobe.029                172.23.128.153       ./monprobe 29
+[info]036: BJ.monprobe.030                172.23.128.153       ./monprobe 30
+[info]037: BJ.monprobe.031                172.23.128.153       ./monprobe 31
+[info]038: BJ.monprobe.032                172.23.128.153       ./monprobe 32
+[info]039: BJ.monprobe.033                172.23.128.153       ./monprobe 33
+[info]040: BJ.monprobe.034                172.23.128.153       ./monprobe 34
+[info]041: BJ.monprobe.035                172.23.128.153       ./monprobe 35
+[info]042: BJ.monprobe.036                172.23.128.153       ./monprobe 36
+[info]043: BJ.monprobe.037                172.23.128.153       ./monprobe 37
+[info]044: BJ.monprobe.038                172.23.128.153       ./monprobe 38
+[info]045: BJ.monprobe.039                172.23.128.153       ./monprobe 39
+[info]046: BJ.monprobe.040                172.23.128.153       ./monprobe 40
+[info]047: BJ.monprobe.041                172.23.128.153       ./monprobe 41
+[info]048: BJ.monprobe.042                172.23.128.153       ./monprobe 42
+[info]049: BJ.monprobe.043                172.23.128.153       ./monprobe 43
+[info]050: BJ.monprobe.044                172.23.128.153       ./monprobe 44
+[info]051: BJ.monprobe.045                172.23.128.153       ./monprobe 45
+[info]052: BJ.monprobe.046                172.23.128.153       ./monprobe 46
+[info]053: BJ.monprobe.047                172.23.128.153       ./monprobe 47
+[info]054: BJ.monprobe.048                172.23.128.153       ./monprobe 48
+[info]055: BJ.monprobe.049                172.23.128.153       ./monprobe 49
+[info]056: BJ.monprobe.050                172.23.128.153       ./monprobe 50
+[info]057: BJ.monprobe.051                172.23.128.153       ./monprobe 51
+[info]058: BJ.monprobe.052                172.23.128.153       ./monprobe 52
+[info]059: BJ.monprobe.053                172.23.128.153       ./monprobe 53
+[info]060: BJ.monprobe.054                172.23.128.153       ./monprobe 54
+[info]061: BJ.monprobe.055                172.23.128.153       ./monprobe 55
+[info]062: BJ.monprobe.056                172.23.128.153       ./monprobe 56
+[info]063: BJ.monprobe.057                172.23.128.153       ./monprobe 57
+[info]064: BJ.monprobe.058                172.23.128.153       ./monprobe 58
+[info]065: BJ.monprobe.059                172.23.128.153       ./monprobe 59
+[info]066: BJ.monprobe.060                172.23.128.153       ./monprobe 60
+[info]067: BJ.monprobe.061                172.23.128.153       ./monprobe 61
+[info]068: BJ.monprobe.062                172.23.128.153       ./monprobe 62
+[info]069: BJ.monprobe.063                172.23.128.153       ./monprobe 63
+[info]070: BJ.monprobe.064                172.23.128.153       ./monprobe 64
+[info]071: BJ.monprobe.065                172.23.128.153       ./monprobe 65
+[info]072: BJ.monprobe.066                172.23.128.153       ./monprobe 66
+[info]073: BJ.monprobe.067                172.23.128.153       ./monprobe 67
+[info]074: BJ.monprobe.068                172.23.128.153       ./monprobe 68
+[info]075: BJ.monprobe.069                172.23.128.153       ./monprobe 69
+[info]076: BJ.monprobe.070                172.23.128.153       ./monprobe 70
+[info]077: BJ.monprobe.071                172.23.128.153       ./monprobe 71
+[info]078: BJ.monprobe.072                172.23.128.153       ./monprobe 72
+[info]079: BJ.monprobe.073                172.23.128.153       ./monprobe 73
+[info]080: BJ.monprobe.074                172.23.128.153       ./monprobe 74
+[info]081: BJ.monprobe.075                172.23.128.153       ./monprobe 75
+[info]082: BJ.monprobe.076                172.23.128.153       ./monprobe 76
+[info]083: BJ.monprobe.077                172.23.128.153       ./monprobe 77
+[info]084: BJ.monprobe.078                172.23.128.153       ./monprobe 78
+[info]085: BJ.monprobe.079                172.23.128.153       ./monprobe 79
+[info]086: BJ.monprobe.080                172.23.128.153       ./monprobe 80
+[info]087: BJ.monprobe.081                172.23.128.153       ./monprobe 81
+[info]088: BJ.monprobe.082                172.23.128.153       ./monprobe 82
+[info]089: BJ.monprobe.083                172.23.128.153       ./monprobe 83
+[info]090: BJ.monprobe.084                172.23.128.153       ./monprobe 84
+[info]091: BJ.monprobe.085                172.23.128.153       ./monprobe 85
+[info]092: BJ.monprobe.086                172.23.128.153       ./monprobe 86
+[info]093: BJ.monprobe.087                172.23.128.153       ./monprobe 87
+[info]094: BJ.monprobe.088                172.23.128.153       ./monprobe 88
+[info]095: BJ.monprobe.089                172.23.128.153       ./monprobe 89
+[info]096: BJ.monprobe.090                172.23.128.153       ./monprobe 90
+[info]097: BJ.monprobe.091                172.23.128.153       ./monprobe 91
+[info]098: BJ.monprobe.092                172.23.128.153       ./monprobe 92
+[info]099: BJ.monprobe.093                172.23.128.153       ./monprobe 93
+[info]100: BJ.monprobe.094                172.23.128.153       ./monprobe 94
+[info]101: BJ.monprobe.095                172.23.128.153       ./monprobe 95
+[info]102: BJ.monprobe.096                172.23.128.153       ./monprobe 96
+[info]103: BJ.monprobe.097                172.23.128.153       ./monprobe 97
+[info]104: BJ.monprobe.098                172.23.128.153       ./monprobe 98
+[info]105: BJ.monprobe.099                172.23.128.153       ./monprobe 99
+[info]106: BJ.monprobe.100                172.23.128.153       ./monprobe 100
+[info]107: BJ.monprobe.101                172.23.128.153       ./monprobe 101
+[info]108: BJ.monprobe.102                172.23.128.153       ./monprobe 102
+[info]109: BJ.monprobe.103                172.23.128.153       ./monprobe 103
+[info]110: BJ.monprobe.104                172.23.128.153       ./monprobe 104
+[info]111: BJ.monprobe.105                172.23.128.153       ./monprobe 105
+[info]112: BJ.monprobe.106                172.23.128.153       ./monprobe 106
+[info]113: BJ.monprobe.107                172.23.128.153       ./monprobe 107
+[info]114: BJ.monprobe.108                172.23.128.153       ./monprobe 108
+[info]115: BJ.monprobe.109                172.23.128.153       ./monprobe 109
+[info]116: BJ.monprobe.110                172.23.128.153       ./monprobe 110
+[info]117: BJ.monquery.003                172.23.128.153       ./monquery 3 off
+[info]118: BJ.monslog.003                 172.23.128.153       ./monslog 3
+[info]119: PD.monagent.001                172.1.128.170        ./monagent 1
+[info]120: PD.monagent.002                172.1.128.170        ./monagent 2
+[info]121: PD.monagent.003                172.1.128.170        ./monagent 3
+[info]122: PD.monagent.011                172.1.128.151        ./monagent 11
+[info]123: PD.monagent.012                172.1.128.151        ./monagent 12
+[info]124: PD.monagent.013                172.1.128.151        ./monagent 13
+[info]125: PD.monagent.014                172.1.128.151        ./monagent 14
+[info]126: PD.monagent.015                172.1.128.151        ./monagent 15
+[info]127: PD.monagent.016                172.1.128.151        ./monagent 16
+[info]128: PD.monagent.017                172.1.128.151        ./monagent 17
+[info]129: PD.monagent.018                172.1.128.151        ./monagent 18
+[info]130: PD.monagent.019                172.1.128.151        ./monagent 19
+[info]131: PD.monagent.030                172.1.128.152        ./monagent 30
+[info]132: PD.monevent.001                172.1.128.155        ./monevent 1
+[info]133: PD.monfibclient.001            172.1.128.154        ./monfibclient 1 off
+[info]134: PD.monfront.001                172.1.128.151        ./monfront 1
+[info]135: PD.monmanager.001              172.1.128.151        ./monmanager 1
+[info]136: PD.monprobe.001                172.1.128.151        ./monprobe 1
+[info]137: PD.monprobe.002                172.1.128.153        ./monprobe 2
+[info]138: PD.monprobe.003                172.1.128.154        ./monprobe 3
+[info]139: PD.monprobe.004                172.1.128.155        ./monprobe 4
+[info]140: PD.monprobe.005                172.1.128.156        ./monprobe 5
+[info]141: PD.monprobe.006                172.1.128.157        ./monprobe 6
+[info]142: PD.monprobe.007                172.1.128.158        ./monprobe 7
+[info]143: PD.monquery.001                172.11.128.152       ./monquery 1 off
+[info]144: PD.monslog.001                 172.1.128.153        ./monslog 1
+[info]145: PD.sysagent.001                172.1.128.151        ./sysagent 1
+[info]146: ZJ.monagent.004                172.18.128.153       ./monagent 4
+[info]147: ZJ.monagent.005                172.18.128.153       ./monagent 5
+[info]148: ZJ.monagent.006                172.18.128.153       ./monagent 6
+[info]149: ZJ.monagent.021                172.18.128.153       ./monagent 21
+[info]150: ZJ.monagent.022                172.18.128.153       ./monagent 22
+[info]151: ZJ.monagent.023                172.18.128.153       ./monagent 23
+[info]152: ZJ.monagent.024                172.18.128.153       ./monagent 24
+[info]153: ZJ.monagent.025                172.18.128.153       ./monagent 25
+[info]154: ZJ.monagent.026                172.18.128.153       ./monagent 26
+[info]155: ZJ.monagent.027                172.18.128.153       ./monagent 27
+[info]156: ZJ.monagent.028                172.18.128.153       ./monagent 28
+[info]157: ZJ.monagent.029                172.18.128.153       ./monagent 29
+[info]158: ZJ.monevent.002                172.18.128.153       ./monevent 2
+[info]159: ZJ.monfibclient.002            172.18.128.153       ./monfibclient 2 off
+[info]160: ZJ.monfront.003                172.18.128.153       ./monfront 3
+[info]161: ZJ.monmanager.002              172.1.128.153        ./monmanager 2
+[info]162: ZJ.monprobe.002                172.18.128.153       ./monprobe 2
+[info]163: ZJ.monquery.002                172.18.128.153       ./monquery 2 off
+[info]164: ZJ.monslog.002                 172.18.128.153       ./monslog 2
+
+tastInfo cmd is [info]
+get {[info]001: BJ.monagent.007                172.23.128.153       ./monagent 7
+[info]002: BJ.monagent.008                172.23.128.153       ./monagent 8
+[info]003: BJ.monagent.009                172.23.128.153       ./monagent 9
+[info]004: BJ.monevent.003                172.23.128.153       ./monevent 3
+[info]005: BJ.monfibclient.003            172.23.128.153       ./monfibclient 3 off
+[info]006: BJ.monfront.005                172.23.128.153       ./monfront 5
+[info]007: BJ.monprobe.001                172.23.128.153       ./monprobe 1
+[info]008: BJ.monprobe.002                172.23.128.153       ./monprobe 2
+[info]009: BJ.monprobe.003                172.23.128.153       ./monprobe 3
+[info]010: BJ.monprobe.004                172.23.128.153       ./monprobe 4
+[info]011: BJ.monprobe.005                172.23.128.153       ./monprobe 5
+[info]012: BJ.monprobe.006                172.23.128.153       ./monprobe 6
+[info]013: BJ.monprobe.007                172.23.128.153       ./monprobe 7
+[info]014: BJ.monprobe.008                172.23.128.153       ./monprobe 8
+[info]015: BJ.monprobe.009                172.23.128.153       ./monprobe 9
+[info]016: BJ.monprobe.010                172.23.128.153       ./monprobe 10
+[info]017: BJ.monprobe.011                172.23.128.153       ./monprobe 11
+[info]018: BJ.monprobe.012                172.23.128.153       ./monprobe 12
+[info]019: BJ.monprobe.013                172.23.128.153       ./monprobe 13
+[info]020: BJ.monprobe.014                172.23.128.153       ./monprobe 14
+[info]021: BJ.monprobe.015                172.23.128.153       ./monprobe 15
+[info]022: BJ.monprobe.016                172.23.128.153       ./monprobe 16
+[info]023: BJ.monprobe.017                172.23.128.153       ./monprobe 17
+[info]024: BJ.monprobe.018                172.23.128.153       ./monprobe 18
+[info]025: BJ.monprobe.019                172.23.128.153       ./monprobe 19
+[info]026: BJ.monprobe.020                172.23.128.153       ./monprobe 20
+[info]027: BJ.monprobe.021                172.23.128.153       ./monprobe 21
+[info]028: BJ.monprobe.022                172.23.128.153       ./monprobe 22
+[info]029: BJ.monprobe.023                172.23.128.153       ./monprobe 23
+[info]030: BJ.monprobe.024                172.23.128.153       ./monprobe 24
+[info]031: BJ.monprobe.025                172.23.128.153       ./monprobe 25
+[info]032: BJ.monprobe.026                172.23.128.153       ./monprobe 26
+[info]033: BJ.monprobe.027                172.23.128.153       ./monprobe 27
+[info]034: BJ.monprobe.028                172.23.128.153       ./monprobe 28
+[info]035: BJ.monprobe.029                172.23.128.153       ./monprobe 29
+[info]036: BJ.monprobe.030                172.23.128.153       ./monprobe 30
+[info]037: BJ.monprobe.031                172.23.128.153       ./monprobe 31
+[info]038: BJ.monprobe.032                172.23.128.153       ./monprobe 32
+[info]039: BJ.monprobe.033                172.23.128.153       ./monprobe 33
+[info]040: BJ.monprobe.034                172.23.128.153       ./monprobe 34
+[info]041: BJ.monprobe.035                172.23.128.153       ./monprobe 35
+[info]042: BJ.monprobe.036                172.23.128.153       ./monprobe 36
+[info]043: BJ.monprobe.037                172.23.128.153       ./monprobe 37
+[info]044: BJ.monprobe.038                172.23.128.153       ./monprobe 38
+[info]045: BJ.monprobe.039                172.23.128.153       ./monprobe 39
+[info]046: BJ.monprobe.040                172.23.128.153       ./monprobe 40
+[info]047: BJ.monprobe.041                172.23.128.153       ./monprobe 41
+[info]048: BJ.monprobe.042                172.23.128.153       ./monprobe 42
+[info]049: BJ.monprobe.043                172.23.128.153       ./monprobe 43
+[info]050: BJ.monprobe.044                172.23.128.153       ./monprobe 44
+[info]051: BJ.monprobe.045                172.23.128.153       ./monprobe 45
+[info]052: BJ.monprobe.046                172.23.128.153       ./monprobe 46
+[info]053: BJ.monprobe.047                172.23.128.153       ./monprobe 47
+[info]054: BJ.monprobe.048                172.23.128.153       ./monprobe 48
+[info]055: BJ.monprobe.049                172.23.128.153       ./monprobe 49
+[info]056: BJ.monprobe.050                172.23.128.153       ./monprobe 50
+[info]057: BJ.monprobe.051                172.23.128.153       ./monprobe 51
+[info]058: BJ.monprobe.052                172.23.128.153       ./monprobe 52
+[info]059: BJ.monprobe.053                172.23.128.153       ./monprobe 53
+[info]060: BJ.monprobe.054                172.23.128.153       ./monprobe 54
+[info]061: BJ.monprobe.055                172.23.128.153       ./monprobe 55
+[info]062: BJ.monprobe.056                172.23.128.153       ./monprobe 56
+[info]063: BJ.monprobe.057                172.23.128.153       ./monprobe 57
+[info]064: BJ.monprobe.058                172.23.128.153       ./monprobe 58
+[info]065: BJ.monprobe.059                172.23.128.153       ./monprobe 59
+[info]066: BJ.monprobe.060                172.23.128.153       ./monprobe 60
+[info]067: BJ.monprobe.061                172.23.128.153       ./monprobe 61
+[info]068: BJ.monprobe.062                172.23.128.153       ./monprobe 62
+[info]069: BJ.monprobe.063                172.23.128.153       ./monprobe 63
+[info]070: BJ.monprobe.064                172.23.128.153       ./monprobe 64
+[info]071: BJ.monprobe.065                172.23.128.153       ./monprobe 65
+[info]072: BJ.monprobe.066                172.23.128.153       ./monprobe 66
+[info]073: BJ.monprobe.067                172.23.128.153       ./monprobe 67
+[info]074: BJ.monprobe.068                172.23.128.153       ./monprobe 68
+[info]075: BJ.monprobe.069                172.23.128.153       ./monprobe 69
+[info]076: BJ.monprobe.070                172.23.128.153       ./monprobe 70
+[info]077: BJ.monprobe.071                172.23.128.153       ./monprobe 71
+[info]078: BJ.monprobe.072                172.23.128.153       ./monprobe 72
+[info]079: BJ.monprobe.073                172.23.128.153       ./monprobe 73
+[info]080: BJ.monprobe.074                172.23.128.153       ./monprobe 74
+[info]081: BJ.monprobe.075                172.23.128.153       ./monprobe 75
+[info]082: BJ.monprobe.076                172.23.128.153       ./monprobe 76
+[info]083: BJ.monprobe.077                172.23.128.153       ./monprobe 77
+[info]084: BJ.monprobe.078                172.23.128.153       ./monprobe 78
+[info]085: BJ.monprobe.079                172.23.128.153       ./monprobe 79
+[info]086: BJ.monprobe.080                172.23.128.153       ./monprobe 80
+[info]087: BJ.monprobe.081                172.23.128.153       ./monprobe 81
+[info]088: BJ.monprobe.082                172.23.128.153       ./monprobe 82
+[info]089: BJ.monprobe.083                172.23.128.153       ./monprobe 83
+[info]090: BJ.monprobe.084                172.23.128.153       ./monprobe 84
+[info]091: BJ.monprobe.085                172.23.128.153       ./monprobe 85
+[info]092: BJ.monprobe.086                172.23.128.153       ./monprobe 86
+[info]093: BJ.monprobe.087                172.23.128.153       ./monprobe 87
+[info]094: BJ.monprobe.088                172.23.128.153       ./monprobe 88
+[info]095: BJ.monprobe.089                172.23.128.153       ./monprobe 89
+[info]096: BJ.monprobe.090                172.23.128.153       ./monprobe 90
+[info]097: BJ.monprobe.091                172.23.128.153       ./monprobe 91
+[info]098: BJ.monprobe.092                172.23.128.153       ./monprobe 92
+[info]099: BJ.monprobe.093                172.23.128.153       ./monprobe 93
+[info]100: BJ.monprobe.094                172.23.128.153       ./monprobe 94
+[info]101: BJ.monprobe.095                172.23.128.153       ./monprobe 95
+[info]102: BJ.monprobe.096                172.23.128.153       ./monprobe 96
+[info]103: BJ.monprobe.097                172.23.128.153       ./monprobe 97
+[info]104: BJ.monprobe.098                172.23.128.153       ./monprobe 98
+[info]105: BJ.monprobe.099                172.23.128.153       ./monprobe 99
+[info]106: BJ.monprobe.100                172.23.128.153       ./monprobe 100
+[info]107: BJ.monprobe.101                172.23.128.153       ./monprobe 101
+[info]108: BJ.monprobe.102                172.23.128.153       ./monprobe 102
+[info]109: BJ.monprobe.103                172.23.128.153       ./monprobe 103
+[info]110: BJ.monprobe.104                172.23.128.153       ./monprobe 104
+[info]111: BJ.monprobe.105                172.23.128.153       ./monprobe 105
+[info]112: BJ.monprobe.106                172.23.128.153       ./monprobe 106
+[info]113: BJ.monprobe.107                172.23.128.153       ./monprobe 107
+[info]114: BJ.monprobe.108                172.23.128.153       ./monprobe 108
+[info]115: BJ.monprobe.109                172.23.128.153       ./monprobe 109
+[info]116: BJ.monprobe.110                172.23.128.153       ./monprobe 110
+[info]117: BJ.monquery.003                172.23.128.153       ./monquery 3 off
+[info]118: BJ.monslog.003                 172.23.128.153       ./monslog 3
+[info]119: PD.monagent.001                172.1.128.170        ./monagent 1
+[info]120: PD.monagent.002                172.1.128.170        ./monagent 2
+[info]121: PD.monagent.003                172.1.128.170        ./monagent 3
+[info]122: PD.monagent.011                172.1.128.151        ./monagent 11
+[info]123: PD.monagent.012                172.1.128.151        ./monagent 12
+[info]124: PD.monagent.013                172.1.128.151        ./monagent 13
+[info]125: PD.monagent.014                172.1.128.151        ./monagent 14
+[info]126: PD.monagent.015                172.1.128.151        ./monagent 15
+[info]127: PD.monagent.016                172.1.128.151        ./monagent 16
+[info]128: PD.monagent.017                172.1.128.151        ./monagent 17
+[info]129: PD.monagent.018                172.1.128.151        ./monagent 18
+[info]130: PD.monagent.019                172.1.128.151        ./monagent 19
+[info]131: PD.monagent.030                172.1.128.152        ./monagent 30
+[info]132: PD.monevent.001                172.1.128.155        ./monevent 1
+[info]133: PD.monfibclient.001            172.1.128.154        ./monfibclient 1 off
+[info]134: PD.monfront.001                172.1.128.151        ./monfront 1
+[info]135: PD.monmanager.001              172.1.128.151        ./monmanager 1
+[info]136: PD.monprobe.001                172.1.128.151        ./monprobe 1
+[info]137: PD.monprobe.002                172.1.128.153        ./monprobe 2
+[info]138: PD.monprobe.003                172.1.128.154        ./monprobe 3
+[info]139: PD.monprobe.004                172.1.128.155        ./monprobe 4
+[info]140: PD.monprobe.005                172.1.128.156        ./monprobe 5
+[info]141: PD.monprobe.006                172.1.128.157        ./monprobe 6
+[info]142: PD.monprobe.007                172.1.128.158        ./monprobe 7
+[info]143: PD.monquery.001                172.11.128.152       ./monquery 1 off
+[info]144: PD.monslog.001                 172.1.128.153        ./monslog 1
+[info]145: PD.sysagent.001                172.1.128.151        ./sysagent 1
+[info]146: ZJ.monagent.004                172.18.128.153       ./monagent 4
+[info]147: ZJ.monagent.005                172.18.128.153       ./monagent 5
+[info]148: ZJ.monagent.006                172.18.128.153       ./monagent 6
+[info]149: ZJ.monagent.021                172.18.128.153       ./monagent 21
+[info]150: ZJ.monagent.022                172.18.128.153       ./monagent 22
+[info]151: ZJ.monagent.023                172.18.128.153       ./monagent 23
+[info]152: ZJ.monagent.024                172.18.128.153       ./monagent 24
+[info]153: ZJ.monagent.025                172.18.128.153       ./monagent 25
+[info]154: ZJ.monagent.026                172.18.128.153       ./monagent 26
+[info]155: ZJ.monagent.027                172.18.128.153       ./monagent 27
+[info]156: ZJ.monagent.028                172.18.128.153       ./monagent 28
+[info]157: ZJ.monagent.029                172.18.128.153       ./monagent 29
+[info]158: ZJ.monevent.002                172.18.128.153       ./monevent 2
+[info]159: ZJ.monfibclient.002            172.18.128.153       ./monfibclient 2 off
+[info]160: ZJ.monfront.003                172.18.128.153       ./monfront 3
+[info]161: ZJ.monmanager.002              172.1.128.153        ./monmanager 2
+[info]162: ZJ.monprobe.002                172.18.128.153       ./monprobe 2
+[info]163: ZJ.monquery.002                172.18.128.153       ./monquery 2 off
+[info]164: ZJ.monslog.002                 172.18.128.153       ./monslog 2
+} from doTask
+************
+7851
+************
+SET:PD.monagent.1 3 1487836285
+LEN(srv_status_map):[1]
+SET:PD.monagent.2 3 1487836285
+LEN(srv_status_map):[2]
+SET:PD.monagent.3 3 1487836285
+LEN(srv_status_map):[3]
+SET:ZJ.monmanager.2 1 1487836285
+LEN(srv_status_map):[4]
+SET:PD.monprobe.2 3 1487836285
+LEN(srv_status_map):[5]
+SET:PD.monslog.1 2 1487836285
+LEN(srv_status_map):[6]
+SET:PD.monquery.1 0 1487836285
+LEN(srv_status_map):[7]
+SET:ZJ.monevent.2 0 1487836285
+LEN(srv_status_map):[8]
+SET:ZJ.monfibclient.2 0 1487836285
+LEN(srv_status_map):[9]
+SET:ZJ.monprobe.2 0 1487836285
+LEN(srv_status_map):[10]
+SET:ZJ.monquery.2 0 1487836285
+LEN(srv_status_map):[11]
+SET:ZJ.monfront.3 0 1487836285
+LEN(srv_status_map):[12]
+SET:ZJ.monagent.21 0 1487836285
+LEN(srv_status_map):[13]
+SET:ZJ.monagent.22 0 1487836285
+LEN(srv_status_map):[14]
+SET:ZJ.monagent.23 0 1487836285
+LEN(srv_status_map):[15]
+SET:ZJ.monagent.24 0 1487836285
+LEN(srv_status_map):[16]
+SET:ZJ.monagent.25 0 1487836285
+LEN(srv_status_map):[17]
+SET:ZJ.monagent.26 0 1487836285
+LEN(srv_status_map):[18]
+SET:ZJ.monagent.27 0 1487836285
+LEN(srv_status_map):[19]
+SET:ZJ.monagent.28 0 1487836285
+LEN(srv_status_map):[20]
+SET:ZJ.monagent.29 0 1487836285
+LEN(srv_status_map):[21]
+SET:ZJ.monagent.4 0 1487836285
+LEN(srv_status_map):[22]
+SET:ZJ.monagent.5 0 1487836285
+LEN(srv_status_map):[23]
+SET:ZJ.monagent.6 0 1487836285
+LEN(srv_status_map):[24]
+SET:ZJ.monslog.2 0 1487836285
+LEN(srv_status_map):[25]
+SET:BJ.monevent.3 0 1487836285
+LEN(srv_status_map):[26]
+SET:BJ.monfibclient.3 0 1487836285
+LEN(srv_status_map):[27]
+SET:BJ.monprobe.1 0 1487836285
+LEN(srv_status_map):[28]
+SET:BJ.monprobe.10 0 1487836285
+LEN(srv_status_map):[29]
+SET:BJ.monprobe.100 0 1487836285
+LEN(srv_status_map):[30]
+SET:BJ.monprobe.101 0 1487836285
+LEN(srv_status_map):[31]
+SET:BJ.monprobe.102 0 1487836285
+LEN(srv_status_map):[32]
+SET:BJ.monprobe.103 0 1487836285
+LEN(srv_status_map):[33]
+SET:BJ.monprobe.104 0 1487836285
+LEN(srv_status_map):[34]
+SET:BJ.monprobe.105 0 1487836285
+LEN(srv_status_map):[35]
+SET:BJ.monprobe.106 0 1487836285
+LEN(srv_status_map):[36]
+SET:BJ.monprobe.107 0 1487836285
+LEN(srv_status_map):[37]
+SET:BJ.monprobe.108 0 1487836285
+LEN(srv_status_map):[38]
+SET:BJ.monprobe.109 0 1487836285
+LEN(srv_status_map):[39]
+SET:BJ.monprobe.11 0 1487836285
+LEN(srv_status_map):[40]
+SET:BJ.monprobe.110 0 1487836285
+LEN(srv_status_map):[41]
+SET:BJ.monprobe.12 0 1487836285
+LEN(srv_status_map):[42]
+SET:BJ.monprobe.13 0 1487836285
+LEN(srv_status_map):[43]
+SET:BJ.monprobe.14 0 1487836285
+LEN(srv_status_map):[44]
+SET:BJ.monprobe.15 0 1487836285
+LEN(srv_status_map):[45]
+SET:BJ.monprobe.16 0 1487836285
+LEN(srv_status_map):[46]
+SET:BJ.monprobe.17 0 1487836285
+LEN(srv_status_map):[47]
+SET:BJ.monprobe.18 0 1487836285
+LEN(srv_status_map):[48]
+SET:BJ.monprobe.19 0 1487836285
+LEN(srv_status_map):[49]
+SET:BJ.monprobe.2 0 1487836285
+LEN(srv_status_map):[50]
+SET:BJ.monprobe.20 0 1487836285
+LEN(srv_status_map):[51]
+SET:BJ.monprobe.21 0 1487836285
+LEN(srv_status_map):[52]
+SET:BJ.monprobe.22 0 1487836285
+LEN(srv_status_map):[53]
+SET:BJ.monprobe.23 0 1487836285
+LEN(srv_status_map):[54]
+SET:BJ.monprobe.24 0 1487836285
+LEN(srv_status_map):[55]
+SET:BJ.monprobe.25 0 1487836285
+LEN(srv_status_map):[56]
+SET:BJ.monprobe.26 0 1487836285
+LEN(srv_status_map):[57]
+SET:BJ.monprobe.27 0 1487836285
+LEN(srv_status_map):[58]
+SET:BJ.monprobe.28 0 1487836285
+LEN(srv_status_map):[59]
+SET:BJ.monprobe.29 0 1487836285
+LEN(srv_status_map):[60]
+SET:BJ.monprobe.3 0 1487836285
+LEN(srv_status_map):[61]
+SET:BJ.monprobe.30 0 1487836285
+LEN(srv_status_map):[62]
+SET:BJ.monprobe.31 0 1487836285
+LEN(srv_status_map):[63]
+SET:BJ.monprobe.32 0 1487836285
+LEN(srv_status_map):[64]
+SET:BJ.monprobe.33 0 1487836285
+LEN(srv_status_map):[65]
+SET:BJ.monprobe.34 0 1487836285
+LEN(srv_status_map):[66]
+SET:BJ.monprobe.35 0 1487836285
+LEN(srv_status_map):[67]
+SET:BJ.monprobe.36 0 1487836285
+LEN(srv_status_map):[68]
+SET:BJ.monprobe.37 0 1487836285
+LEN(srv_status_map):[69]
+SET:BJ.monprobe.38 0 1487836285
+LEN(srv_status_map):[70]
+SET:BJ.monprobe.39 0 1487836285
+LEN(srv_status_map):[71]
+SET:BJ.monprobe.4 0 1487836285
+LEN(srv_status_map):[72]
+SET:BJ.monprobe.40 0 1487836285
+LEN(srv_status_map):[73]
+SET:BJ.monprobe.41 0 1487836285
+LEN(srv_status_map):[74]
+SET:BJ.monprobe.42 0 1487836285
+LEN(srv_status_map):[75]
+SET:BJ.monprobe.43 0 1487836285
+LEN(srv_status_map):[76]
+SET:BJ.monprobe.44 0 1487836285
+LEN(srv_status_map):[77]
+SET:BJ.monprobe.45 0 1487836285
+LEN(srv_status_map):[78]
+SET:BJ.monprobe.46 0 1487836285
+LEN(srv_status_map):[79]
+SET:BJ.monprobe.47 0 1487836285
+LEN(srv_status_map):[80]
+SET:BJ.monprobe.48 0 1487836285
+LEN(srv_status_map):[81]
+SET:BJ.monprobe.49 0 1487836285
+LEN(srv_status_map):[82]
+SET:BJ.monprobe.5 0 1487836285
+LEN(srv_status_map):[83]
+SET:BJ.monprobe.50 0 1487836285
+LEN(srv_status_map):[84]
+SET:BJ.monprobe.51 0 1487836285
+LEN(srv_status_map):[85]
+SET:BJ.monprobe.52 0 1487836285
+LEN(srv_status_map):[86]
+SET:BJ.monprobe.53 0 1487836285
+LEN(srv_status_map):[87]
+SET:BJ.monprobe.54 0 1487836285
+LEN(srv_status_map):[88]
+SET:BJ.monprobe.55 0 1487836285
+LEN(srv_status_map):[89]
+SET:BJ.monprobe.56 0 1487836285
+LEN(srv_status_map):[90]
+SET:BJ.monprobe.57 0 1487836285
+LEN(srv_status_map):[91]
+SET:BJ.monprobe.58 0 1487836285
+LEN(srv_status_map):[92]
+SET:BJ.monprobe.59 0 1487836285
+LEN(srv_status_map):[93]
+SET:BJ.monprobe.6 0 1487836285
+LEN(srv_status_map):[94]
+SET:BJ.monprobe.60 0 1487836285
+LEN(srv_status_map):[95]
+SET:BJ.monprobe.61 0 1487836285
+LEN(srv_status_map):[96]
+SET:BJ.monprobe.62 0 1487836285
+LEN(srv_status_map):[97]
+SET:BJ.monprobe.63 0 1487836285
+LEN(srv_status_map):[98]
+SET:BJ.monprobe.64 0 1487836285
+LEN(srv_status_map):[99]
+SET:BJ.monprobe.65 0 1487836285
+LEN(srv_status_map):[100]
+SET:BJ.monprobe.66 0 1487836285
+LEN(srv_status_map):[101]
+SET:BJ.monprobe.67 0 1487836285
+LEN(srv_status_map):[102]
+SET:BJ.monprobe.68 0 1487836285
+LEN(srv_status_map):[103]
+SET:BJ.monprobe.69 0 1487836285
+LEN(srv_status_map):[104]
+SET:BJ.monprobe.7 0 1487836285
+LEN(srv_status_map):[105]
+SET:BJ.monprobe.70 0 1487836285
+LEN(srv_status_map):[106]
+SET:BJ.monprobe.71 0 1487836285
+LEN(srv_status_map):[107]
+SET:BJ.monprobe.72 0 1487836285
+LEN(srv_status_map):[108]
+SET:BJ.monprobe.73 0 1487836285
+LEN(srv_status_map):[109]
+SET:BJ.monprobe.74 0 1487836285
+LEN(srv_status_map):[110]
+SET:BJ.monprobe.75 0 1487836285
+LEN(srv_status_map):[111]
+SET:BJ.monprobe.76 0 1487836285
+LEN(srv_status_map):[112]
+SET:BJ.monprobe.77 0 1487836285
+LEN(srv_status_map):[113]
+SET:BJ.monprobe.78 0 1487836285
+LEN(srv_status_map):[114]
+SET:BJ.monprobe.79 0 1487836285
+LEN(srv_status_map):[115]
+SET:BJ.monprobe.8 0 1487836285
+LEN(srv_status_map):[116]
+SET:BJ.monprobe.80 0 1487836285
+LEN(srv_status_map):[117]
+SET:BJ.monprobe.81 0 1487836285
+LEN(srv_status_map):[118]
+SET:BJ.monprobe.82 0 1487836285
+LEN(srv_status_map):[119]
+SET:BJ.monprobe.83 0 1487836285
+LEN(srv_status_map):[120]
+SET:BJ.monprobe.84 0 1487836285
+LEN(srv_status_map):[121]
+SET:BJ.monprobe.85 0 1487836285
+LEN(srv_status_map):[122]
+SET:BJ.monprobe.86 0 1487836285
+LEN(srv_status_map):[123]
+SET:BJ.monprobe.87 0 1487836285
+LEN(srv_status_map):[124]
+SET:BJ.monprobe.88 0 1487836285
+LEN(srv_status_map):[125]
+SET:BJ.monprobe.89 0 1487836285
+LEN(srv_status_map):[126]
+SET:BJ.monprobe.9 0 1487836285
+LEN(srv_status_map):[127]
+SET:BJ.monprobe.90 0 1487836285
+LEN(srv_status_map):[128]
+SET:BJ.monprobe.91 0 1487836285
+LEN(srv_status_map):[129]
+SET:BJ.monprobe.92 0 1487836285
+LEN(srv_status_map):[130]
+SET:BJ.monprobe.93 0 1487836285
+LEN(srv_status_map):[131]
+SET:BJ.monprobe.94 0 1487836285
+LEN(srv_status_map):[132]
+SET:BJ.monprobe.95 0 1487836285
+LEN(srv_status_map):[133]
+SET:BJ.monprobe.96 0 1487836285
+LEN(srv_status_map):[134]
+SET:BJ.monprobe.97 0 1487836285
+LEN(srv_status_map):[135]
+SET:BJ.monprobe.98 0 1487836285
+LEN(srv_status_map):[136]
+SET:BJ.monprobe.99 0 1487836285
+LEN(srv_status_map):[137]
+SET:BJ.monquery.3 0 1487836285
+LEN(srv_status_map):[138]
+SET:BJ.monfront.5 0 1487836285
+LEN(srv_status_map):[139]
+SET:BJ.monagent.7 0 1487836285
+LEN(srv_status_map):[140]
+SET:BJ.monagent.8 0 1487836285
+LEN(srv_status_map):[141]
+SET:BJ.monagent.9 0 1487836285
+LEN(srv_status_map):[142]
+SET:BJ.monslog.3 0 1487836285
+LEN(srv_status_map):[143]
+SET:PD.monmanager.1 2 1487836285
+LEN(srv_status_map):[144]
+SET:PD.monprobe.1 3 1487836285
+LEN(srv_status_map):[145]
+SET:PD.monagent.11 3 1487836285
+LEN(srv_status_map):[146]
+SET:PD.monagent.12 3 1487836285
+LEN(srv_status_map):[147]
+SET:PD.monagent.13 3 1487836285
+LEN(srv_status_map):[148]
+SET:PD.monagent.14 3 1487836285
+LEN(srv_status_map):[149]
+SET:PD.monagent.15 3 1487836285
+LEN(srv_status_map):[150]
+SET:PD.monagent.16 3 1487836285
+LEN(srv_status_map):[151]
+SET:PD.monagent.17 3 1487836285
+LEN(srv_status_map):[152]
+SET:PD.monagent.18 3 1487836285
+LEN(srv_status_map):[153]
+SET:PD.monagent.19 3 1487836285
+LEN(srv_status_map):[154]
+SET:PD.sysagent.1 3 1487836285
+LEN(srv_status_map):[155]
+SET:PD.monfront.1 3 1487836285
+LEN(srv_status_map):[156]
+SET:PD.monprobe.7 3 1487836285
+LEN(srv_status_map):[157]
+SET:PD.monprobe.5 3 1487836285
+LEN(srv_status_map):[158]
+SET:PD.monprobe.6 3 1487836285
+LEN(srv_status_map):[159]
+SET:PD.monprobe.7 3 1487836285
+LEN(srv_status_map):[159]
+SET:PD.monprobe.5 3 1487836285
+LEN(srv_status_map):[159]
+SET:PD.monprobe.6 3 1487836285
+LEN(srv_status_map):[159]
+SET:PD.monprobe.6 3 1487836285
+LEN(srv_status_map):[159]
+show::172.1.128.170::PD.monagent.1::App Not run
+show::172.1.128.170::PD.monagent.2::App Not run
+show::172.1.128.170::PD.monagent.3::App Not run
+show::172.1.128.153::PD.monprobe.2::App Not run
+show::172.1.128.153::PD.monslog.1::26781  Jan19 ./monslog 1
+show::172.1.128.153::ZJ.monmanager.2::Path Not found
+show::172.11.128.152::PD.monquery.1::Conn err
+show::172.18.128.153::ZJ.monagent.21::Conn err
+show::172.23.128.153::BJ.monagent.7::Conn err
+show::172.18.128.153::ZJ.monagent.22::Conn err
+show::172.23.128.153::BJ.monagent.8::Conn err
+show::172.18.128.153::ZJ.monagent.23::Conn err
+show::172.23.128.153::BJ.monagent.9::Conn err
+show::172.18.128.153::ZJ.monagent.24::Conn err
+show::172.23.128.153::BJ.monevent.3::Conn err
+show::172.18.128.153::ZJ.monagent.25::Conn err
+show::172.23.128.153::BJ.monfibclient.3::Conn err
+show::172.18.128.153::ZJ.monagent.26::Conn err
+show::172.23.128.153::BJ.monfront.5::Conn err
+show::172.18.128.153::ZJ.monagent.27::Conn err
+show::172.23.128.153::BJ.monprobe.100::Conn err
+show::172.18.128.153::ZJ.monagent.28::Conn err
+show::172.23.128.153::BJ.monprobe.101::Conn err
+show::172.18.128.153::ZJ.monagent.29::Conn err
+show::172.23.128.153::BJ.monprobe.102::Conn err
+show::172.18.128.153::ZJ.monagent.4::Conn err
+show::172.23.128.153::BJ.monprobe.103::Conn err
+show::172.18.128.153::ZJ.monagent.5::Conn err
+show::172.23.128.153::BJ.monprobe.104::Conn err
+show::172.18.128.153::ZJ.monagent.6::Conn err
+show::172.23.128.153::BJ.monprobe.105::Conn err
+show::172.18.128.153::ZJ.monevent.2::Conn err
+show::172.23.128.153::BJ.monprobe.106::Conn err
+show::172.18.128.153::ZJ.monfibclient.2::Conn err
+show::172.23.128.153::BJ.monprobe.107::Conn err
+show::172.18.128.153::ZJ.monfront.3::Conn err
+show::172.23.128.153::BJ.monprobe.108::Conn err
+show::172.18.128.153::ZJ.monprobe.2::Conn err
+show::172.23.128.153::BJ.monprobe.109::Conn err
+show::172.18.128.153::ZJ.monquery.2::Conn err
+show::172.23.128.153::BJ.monprobe.10::Conn err
+show::172.18.128.153::ZJ.monslog.2::Conn err
+show::172.23.128.153::BJ.monprobe.110::Conn err
+show::172.23.128.153::BJ.monprobe.11::Conn err
+show::172.23.128.153::BJ.monprobe.12::Conn err
+show::172.23.128.153::BJ.monprobe.13::Conn err
+show::172.23.128.153::BJ.monprobe.14::Conn err
+show::172.23.128.153::BJ.monprobe.15::Conn err
+show::172.23.128.153::BJ.monprobe.16::Conn err
+show::172.23.128.153::BJ.monprobe.17::Conn err
+show::172.23.128.153::BJ.monprobe.18::Conn err
+show::172.23.128.153::BJ.monprobe.19::Conn err
+show::172.23.128.153::BJ.monprobe.1::Conn err
+show::172.23.128.153::BJ.monprobe.20::Conn err
+show::172.23.128.153::BJ.monprobe.21::Conn err
+show::172.23.128.153::BJ.monprobe.22::Conn err
+show::172.23.128.153::BJ.monprobe.23::Conn err
+show::172.23.128.153::BJ.monprobe.24::Conn err
+show::172.23.128.153::BJ.monprobe.25::Conn err
+show::172.23.128.153::BJ.monprobe.26::Conn err
+show::172.23.128.153::BJ.monprobe.27::Conn err
+show::172.23.128.153::BJ.monprobe.28::Conn err
+show::172.23.128.153::BJ.monprobe.29::Conn err
+show::172.23.128.153::BJ.monprobe.2::Conn err
+show::172.23.128.153::BJ.monprobe.30::Conn err
+show::172.23.128.153::BJ.monprobe.31::Conn err
+show::172.23.128.153::BJ.monprobe.32::Conn err
+show::172.23.128.153::BJ.monprobe.33::Conn err
+show::172.23.128.153::BJ.monprobe.34::Conn err
+show::172.23.128.153::BJ.monprobe.35::Conn err
+show::172.23.128.153::BJ.monprobe.36::Conn err
+show::172.23.128.153::BJ.monprobe.37::Conn err
+show::172.23.128.153::BJ.monprobe.38::Conn err
+show::172.23.128.153::BJ.monprobe.39::Conn err
+show::172.23.128.153::BJ.monprobe.3::Conn err
+show::172.23.128.153::BJ.monprobe.40::Conn err
+show::172.23.128.153::BJ.monprobe.41::Conn err
+show::172.23.128.153::BJ.monprobe.42::Conn err
+show::172.23.128.153::BJ.monprobe.43::Conn err
+show::172.23.128.153::BJ.monprobe.44::Conn err
+show::172.23.128.153::BJ.monprobe.45::Conn err
+show::172.23.128.153::BJ.monprobe.46::Conn err
+show::172.23.128.153::BJ.monprobe.47::Conn err
+show::172.23.128.153::BJ.monprobe.48::Conn err
+show::172.23.128.153::BJ.monprobe.49::Conn err
+show::172.23.128.153::BJ.monprobe.4::Conn err
+show::172.23.128.153::BJ.monprobe.50::Conn err
+show::172.23.128.153::BJ.monprobe.51::Conn err
+show::172.23.128.153::BJ.monprobe.52::Conn err
+show::172.23.128.153::BJ.monprobe.53::Conn err
+show::172.23.128.153::BJ.monprobe.54::Conn err
+show::172.23.128.153::BJ.monprobe.55::Conn err
+show::172.23.128.153::BJ.monprobe.56::Conn err
+show::172.23.128.153::BJ.monprobe.57::Conn err
+show::172.23.128.153::BJ.monprobe.58::Conn err
+show::172.23.128.153::BJ.monprobe.59::Conn err
+show::172.23.128.153::BJ.monprobe.5::Conn err
+show::172.23.128.153::BJ.monprobe.60::Conn err
+show::172.23.128.153::BJ.monprobe.61::Conn err
+show::172.23.128.153::BJ.monprobe.62::Conn err
+show::172.23.128.153::BJ.monprobe.63::Conn err
+show::172.23.128.153::BJ.monprobe.64::Conn err
+show::172.23.128.153::BJ.monprobe.65::Conn err
+show::172.23.128.153::BJ.monprobe.66::Conn err
+show::172.23.128.153::BJ.monprobe.67::Conn err
+show::172.23.128.153::BJ.monprobe.68::Conn err
+show::172.23.128.153::BJ.monprobe.69::Conn err
+show::172.23.128.153::BJ.monprobe.6::Conn err
+show::172.23.128.153::BJ.monprobe.70::Conn err
+show::172.23.128.153::BJ.monprobe.71::Conn err
+show::172.23.128.153::BJ.monprobe.72::Conn err
+show::172.23.128.153::BJ.monprobe.73::Conn err
+show::172.23.128.153::BJ.monprobe.74::Conn err
+show::172.23.128.153::BJ.monprobe.75::Conn err
+show::172.23.128.153::BJ.monprobe.76::Conn err
+show::172.23.128.153::BJ.monprobe.77::Conn err
+show::172.23.128.153::BJ.monprobe.78::Conn err
+show::172.23.128.153::BJ.monprobe.79::Conn err
+show::172.23.128.153::BJ.monprobe.7::Conn err
+show::172.23.128.153::BJ.monprobe.80::Conn err
+show::172.23.128.153::BJ.monprobe.81::Conn err
+show::172.23.128.153::BJ.monprobe.82::Conn err
+show::172.23.128.153::BJ.monprobe.83::Conn err
+show::172.23.128.153::BJ.monprobe.84::Conn err
+show::172.23.128.153::BJ.monprobe.85::Conn err
+show::172.23.128.153::BJ.monprobe.86::Conn err
+show::172.23.128.153::BJ.monprobe.87::Conn err
+show::172.23.128.153::BJ.monprobe.88::Conn err
+show::172.23.128.153::BJ.monprobe.89::Conn err
+show::172.23.128.153::BJ.monprobe.8::Conn err
+show::172.23.128.153::BJ.monprobe.90::Conn err
+show::172.23.128.153::BJ.monprobe.91::Conn err
+show::172.23.128.153::BJ.monprobe.92::Conn err
+show::172.23.128.153::BJ.monprobe.93::Conn err
+show::172.23.128.153::BJ.monprobe.94::Conn err
+show::172.23.128.153::BJ.monprobe.95::Conn err
+show::172.23.128.153::BJ.monprobe.96::Conn err
+show::172.23.128.153::BJ.monprobe.97::Conn err
+show::172.23.128.153::BJ.monprobe.98::Conn err
+show::172.23.128.153::BJ.monprobe.99::Conn err
+show::172.23.128.153::BJ.monprobe.9::Conn err
+show::172.23.128.153::BJ.monquery.3::Conn err
+show::172.23.128.153::BJ.monslog.3::Conn err
+show::172.1.128.151::PD.monagent.11::App Not run
+show::172.1.128.151::PD.monagent.12::App Not run
+show::172.1.128.151::PD.monagent.13::App Not run
+show::172.1.128.151::PD.monagent.14::App Not run
+show::172.1.128.151::PD.monagent.15::App Not run
+show::172.1.128.151::PD.monagent.16::App Not run
+show::172.1.128.151::PD.monagent.17::App Not run
+show::172.1.128.151::PD.monagent.18::App Not run
+show::172.1.128.151::PD.monagent.19::App Not run
+show::172.1.128.151::PD.monfront.1::App Not run
+show::172.1.128.151::PD.monmanager.1::28302  Feb22 ./monmanager 1
+show::172.1.128.151::PD.monprobe.1::App Not run
+show::172.1.128.151::PD.sysagent.1::App Not run
+show::172.1.128.156::PD.monprobe.5::App Not run
+show::172.1.128.157::PD.monprobe.6::App Not run
+show::172.1.128.158::PD.monprobe.7::App Not run
+
+************
+95
+************
+get {148783632024013::1::1487836320::0::24013::info::--cmd info::0} from getTaskInfo
+cmdline
+python main.py --tid 148783632024013 --cmd info
+[info]001: BJ.monagent.007                172.23.128.153       ./monagent 7
+[info]002: BJ.monagent.008                172.23.128.153       ./monagent 8
+[info]003: BJ.monagent.009                172.23.128.153       ./monagent 9
+[info]004: BJ.monevent.003                172.23.128.153       ./monevent 3
+[info]005: BJ.monfibclient.003            172.23.128.153       ./monfibclient 3 off
+[info]006: BJ.monfront.005                172.23.128.153       ./monfront 5
+[info]007: BJ.monprobe.001                172.23.128.153       ./monprobe 1
+[info]008: BJ.monprobe.002                172.23.128.153       ./monprobe 2
+[info]009: BJ.monprobe.003                172.23.128.153       ./monprobe 3
+[info]010: BJ.monprobe.004                172.23.128.153       ./monprobe 4
+[info]011: BJ.monprobe.005                172.23.128.153       ./monprobe 5
+[info]012: BJ.monprobe.006                172.23.128.153       ./monprobe 6
+[info]013: BJ.monprobe.007                172.23.128.153       ./monprobe 7
+[info]014: BJ.monprobe.008                172.23.128.153       ./monprobe 8
+[info]015: BJ.monprobe.009                172.23.128.153       ./monprobe 9
+[info]016: BJ.monprobe.010                172.23.128.153       ./monprobe 10
+[info]017: BJ.monprobe.011                172.23.128.153       ./monprobe 11
+[info]018: BJ.monprobe.012                172.23.128.153       ./monprobe 12
+[info]019: BJ.monprobe.013                172.23.128.153       ./monprobe 13
+[info]020: BJ.monprobe.014                172.23.128.153       ./monprobe 14
+[info]021: BJ.monprobe.015                172.23.128.153       ./monprobe 15
+[info]022: BJ.monprobe.016                172.23.128.153       ./monprobe 16
+[info]023: BJ.monprobe.017                172.23.128.153       ./monprobe 17
+[info]024: BJ.monprobe.018                172.23.128.153       ./monprobe 18
+[info]025: BJ.monprobe.019                172.23.128.153       ./monprobe 19
+[info]026: BJ.monprobe.020                172.23.128.153       ./monprobe 20
+[info]027: BJ.monprobe.021                172.23.128.153       ./monprobe 21
+[info]028: BJ.monprobe.022                172.23.128.153       ./monprobe 22
+[info]029: BJ.monprobe.023                172.23.128.153       ./monprobe 23
+[info]030: BJ.monprobe.024                172.23.128.153       ./monprobe 24
+[info]031: BJ.monprobe.025                172.23.128.153       ./monprobe 25
+[info]032: BJ.monprobe.026                172.23.128.153       ./monprobe 26
+[info]033: BJ.monprobe.027                172.23.128.153       ./monprobe 27
+[info]034: BJ.monprobe.028                172.23.128.153       ./monprobe 28
+[info]035: BJ.monprobe.029                172.23.128.153       ./monprobe 29
+[info]036: BJ.monprobe.030                172.23.128.153       ./monprobe 30
+[info]037: BJ.monprobe.031                172.23.128.153       ./monprobe 31
+[info]038: BJ.monprobe.032                172.23.128.153       ./monprobe 32
+[info]039: BJ.monprobe.033                172.23.128.153       ./monprobe 33
+[info]040: BJ.monprobe.034                172.23.128.153       ./monprobe 34
+[info]041: BJ.monprobe.035                172.23.128.153       ./monprobe 35
+[info]042: BJ.monprobe.036                172.23.128.153       ./monprobe 36
+[info]043: BJ.monprobe.037                172.23.128.153       ./monprobe 37
+[info]044: BJ.monprobe.038                172.23.128.153       ./monprobe 38
+[info]045: BJ.monprobe.039                172.23.128.153       ./monprobe 39
+[info]046: BJ.monprobe.040                172.23.128.153       ./monprobe 40
+[info]047: BJ.monprobe.041                172.23.128.153       ./monprobe 41
+[info]048: BJ.monprobe.042                172.23.128.153       ./monprobe 42
+[info]049: BJ.monprobe.043                172.23.128.153       ./monprobe 43
+[info]050: BJ.monprobe.044                172.23.128.153       ./monprobe 44
+[info]051: BJ.monprobe.045                172.23.128.153       ./monprobe 45
+[info]052: BJ.monprobe.046                172.23.128.153       ./monprobe 46
+[info]053: BJ.monprobe.047                172.23.128.153       ./monprobe 47
+[info]054: BJ.monprobe.048                172.23.128.153       ./monprobe 48
+[info]055: BJ.monprobe.049                172.23.128.153       ./monprobe 49
+[info]056: BJ.monprobe.050                172.23.128.153       ./monprobe 50
+[info]057: BJ.monprobe.051                172.23.128.153       ./monprobe 51
+[info]058: BJ.monprobe.052                172.23.128.153       ./monprobe 52
+[info]059: BJ.monprobe.053                172.23.128.153       ./monprobe 53
+[info]060: BJ.monprobe.054                172.23.128.153       ./monprobe 54
+[info]061: BJ.monprobe.055                172.23.128.153       ./monprobe 55
+[info]062: BJ.monprobe.056                172.23.128.153       ./monprobe 56
+[info]063: BJ.monprobe.057                172.23.128.153       ./monprobe 57
+[info]064: BJ.monprobe.058                172.23.128.153       ./monprobe 58
+[info]065: BJ.monprobe.059                172.23.128.153       ./monprobe 59
+[info]066: BJ.monprobe.060                172.23.128.153       ./monprobe 60
+[info]067: BJ.monprobe.061                172.23.128.153       ./monprobe 61
+[info]068: BJ.monprobe.062                172.23.128.153       ./monprobe 62
+[info]069: BJ.monprobe.063                172.23.128.153       ./monprobe 63
+[info]070: BJ.monprobe.064                172.23.128.153       ./monprobe 64
+[info]071: BJ.monprobe.065                172.23.128.153       ./monprobe 65
+[info]072: BJ.monprobe.066                172.23.128.153       ./monprobe 66
+[info]073: BJ.monprobe.067                172.23.128.153       ./monprobe 67
+[info]074: BJ.monprobe.068                172.23.128.153       ./monprobe 68
+[info]075: BJ.monprobe.069                172.23.128.153       ./monprobe 69
+[info]076: BJ.monprobe.070                172.23.128.153       ./monprobe 70
+[info]077: BJ.monprobe.071                172.23.128.153       ./monprobe 71
+[info]078: BJ.monprobe.072                172.23.128.153       ./monprobe 72
+[info]079: BJ.monprobe.073                172.23.128.153       ./monprobe 73
+[info]080: BJ.monprobe.074                172.23.128.153       ./monprobe 74
+[info]081: BJ.monprobe.075                172.23.128.153       ./monprobe 75
+[info]082: BJ.monprobe.076                172.23.128.153       ./monprobe 76
+[info]083: BJ.monprobe.077                172.23.128.153       ./monprobe 77
+[info]084: BJ.monprobe.078                172.23.128.153       ./monprobe 78
+[info]085: BJ.monprobe.079                172.23.128.153       ./monprobe 79
+[info]086: BJ.monprobe.080                172.23.128.153       ./monprobe 80
+[info]087: BJ.monprobe.081                172.23.128.153       ./monprobe 81
+[info]088: BJ.monprobe.082                172.23.128.153       ./monprobe 82
+[info]089: BJ.monprobe.083                172.23.128.153       ./monprobe 83
+[info]090: BJ.monprobe.084                172.23.128.153       ./monprobe 84
+[info]091: BJ.monprobe.085                172.23.128.153       ./monprobe 85
+[info]092: BJ.monprobe.086                172.23.128.153       ./monprobe 86
+[info]093: BJ.monprobe.087                172.23.128.153       ./monprobe 87
+[info]094: BJ.monprobe.088                172.23.128.153       ./monprobe 88
+[info]095: BJ.monprobe.089                172.23.128.153       ./monprobe 89
+[info]096: BJ.monprobe.090                172.23.128.153       ./monprobe 90
+[info]097: BJ.monprobe.091                172.23.128.153       ./monprobe 91
+[info]098: BJ.monprobe.092                172.23.128.153       ./monprobe 92
+[info]099: BJ.monprobe.093                172.23.128.153       ./monprobe 93
+[info]100: BJ.monprobe.094                172.23.128.153       ./monprobe 94
+[info]101: BJ.monprobe.095                172.23.128.153       ./monprobe 95
+[info]102: BJ.monprobe.096                172.23.128.153       ./monprobe 96
+[info]103: BJ.monprobe.097                172.23.128.153       ./monprobe 97
+[info]104: BJ.monprobe.098                172.23.128.153       ./monprobe 98
+[info]105: BJ.monprobe.099                172.23.128.153       ./monprobe 99
+[info]106: BJ.monprobe.100                172.23.128.153       ./monprobe 100
+[info]107: BJ.monprobe.101                172.23.128.153       ./monprobe 101
+[info]108: BJ.monprobe.102                172.23.128.153       ./monprobe 102
+[info]109: BJ.monprobe.103                172.23.128.153       ./monprobe 103
+[info]110: BJ.monprobe.104                172.23.128.153       ./monprobe 104
+[info]111: BJ.monprobe.105                172.23.128.153       ./monprobe 105
+[info]112: BJ.monprobe.106                172.23.128.153       ./monprobe 106
+[info]113: BJ.monprobe.107                172.23.128.153       ./monprobe 107
+[info]114: BJ.monprobe.108                172.23.128.153       ./monprobe 108
+[info]115: BJ.monprobe.109                172.23.128.153       ./monprobe 109
+[info]116: BJ.monprobe.110                172.23.128.153       ./monprobe 110
+[info]117: BJ.monquery.003                172.23.128.153       ./monquery 3 off
+[info]118: BJ.monslog.003                 172.23.128.153       ./monslog 3
+[info]119: PD.monagent.001                172.1.128.170        ./monagent 1
+[info]120: PD.monagent.002                172.1.128.170        ./monagent 2
+[info]121: PD.monagent.003                172.1.128.170        ./monagent 3
+[info]122: PD.monagent.011                172.1.128.151        ./monagent 11
+[info]123: PD.monagent.012                172.1.128.151        ./monagent 12
+[info]124: PD.monagent.013                172.1.128.151        ./monagent 13
+[info]125: PD.monagent.014                172.1.128.151        ./monagent 14
+[info]126: PD.monagent.015                172.1.128.151        ./monagent 15
+[info]127: PD.monagent.016                172.1.128.151        ./monagent 16
+[info]128: PD.monagent.017                172.1.128.151        ./monagent 17
+[info]129: PD.monagent.018                172.1.128.151        ./monagent 18
+[info]130: PD.monagent.019                172.1.128.151        ./monagent 19
+[info]131: PD.monagent.030                172.1.128.152        ./monagent 30
+[info]132: PD.monevent.001                172.1.128.155        ./monevent 1
+[info]133: PD.monfibclient.001            172.1.128.154        ./monfibclient 1 off
+[info]134: PD.monfront.001                172.1.128.151        ./monfront 1
+[info]135: PD.monmanager.001              172.1.128.151        ./monmanager 1
+[info]136: PD.monprobe.001                172.1.128.151        ./monprobe 1
+[info]137: PD.monprobe.002                172.1.128.153        ./monprobe 2
+[info]138: PD.monprobe.003                172.1.128.154        ./monprobe 3
+[info]139: PD.monprobe.004                172.1.128.155        ./monprobe 4
+[info]140: PD.monprobe.005                172.1.128.156        ./monprobe 5
+[info]141: PD.monprobe.006                172.1.128.157        ./monprobe 6
+[info]142: PD.monprobe.007                172.1.128.158        ./monprobe 7
+[info]143: PD.monquery.001                172.11.128.152       ./monquery 1 off
+[info]144: PD.monslog.001                 172.1.128.153        ./monslog 1
+[info]145: PD.sysagent.001                172.1.128.151        ./sysagent 1
+[info]146: ZJ.monagent.004                172.18.128.153       ./monagent 4
+[info]147: ZJ.monagent.005                172.18.128.153       ./monagent 5
+[info]148: ZJ.monagent.006                172.18.128.153       ./monagent 6
+[info]149: ZJ.monagent.021                172.18.128.153       ./monagent 21
+[info]150: ZJ.monagent.022                172.18.128.153       ./monagent 22
+[info]151: ZJ.monagent.023                172.18.128.153       ./monagent 23
+[info]152: ZJ.monagent.024                172.18.128.153       ./monagent 24
+[info]153: ZJ.monagent.025                172.18.128.153       ./monagent 25
+[info]154: ZJ.monagent.026                172.18.128.153       ./monagent 26
+[info]155: ZJ.monagent.027                172.18.128.153       ./monagent 27
+[info]156: ZJ.monagent.028                172.18.128.153       ./monagent 28
+[info]157: ZJ.monagent.029                172.18.128.153       ./monagent 29
+[info]158: ZJ.monevent.002                172.18.128.153       ./monevent 2
+[info]159: ZJ.monfibclient.002            172.18.128.153       ./monfibclient 2 off
+[info]160: ZJ.monfront.003                172.18.128.153       ./monfront 3
+[info]161: ZJ.monmanager.002              172.1.128.153        ./monmanager 2
+[info]162: ZJ.monprobe.002                172.18.128.153       ./monprobe 2
+[info]163: ZJ.monquery.002                172.18.128.153       ./monquery 2 off
+[info]164: ZJ.monslog.002                 172.18.128.153       ./monslog 2
+
+tastInfo cmd is [info]
+get {[info]001: BJ.monagent.007                172.23.128.153       ./monagent 7
+[info]002: BJ.monagent.008                172.23.128.153       ./monagent 8
+[info]003: BJ.monagent.009                172.23.128.153       ./monagent 9
+[info]004: BJ.monevent.003                172.23.128.153       ./monevent 3
+[info]005: BJ.monfibclient.003            172.23.128.153       ./monfibclient 3 off
+[info]006: BJ.monfront.005                172.23.128.153       ./monfront 5
+[info]007: BJ.monprobe.001                172.23.128.153       ./monprobe 1
+[info]008: BJ.monprobe.002                172.23.128.153       ./monprobe 2
+[info]009: BJ.monprobe.003                172.23.128.153       ./monprobe 3
+[info]010: BJ.monprobe.004                172.23.128.153       ./monprobe 4
+[info]011: BJ.monprobe.005                172.23.128.153       ./monprobe 5
+[info]012: BJ.monprobe.006                172.23.128.153       ./monprobe 6
+[info]013: BJ.monprobe.007                172.23.128.153       ./monprobe 7
+[info]014: BJ.monprobe.008                172.23.128.153       ./monprobe 8
+[info]015: BJ.monprobe.009                172.23.128.153       ./monprobe 9
+[info]016: BJ.monprobe.010                172.23.128.153       ./monprobe 10
+[info]017: BJ.monprobe.011                172.23.128.153       ./monprobe 11
+[info]018: BJ.monprobe.012                172.23.128.153       ./monprobe 12
+[info]019: BJ.monprobe.013                172.23.128.153       ./monprobe 13
+[info]020: BJ.monprobe.014                172.23.128.153       ./monprobe 14
+[info]021: BJ.monprobe.015                172.23.128.153       ./monprobe 15
+[info]022: BJ.monprobe.016                172.23.128.153       ./monprobe 16
+[info]023: BJ.monprobe.017                172.23.128.153       ./monprobe 17
+[info]024: BJ.monprobe.018                172.23.128.153       ./monprobe 18
+[info]025: BJ.monprobe.019                172.23.128.153       ./monprobe 19
+[info]026: BJ.monprobe.020                172.23.128.153       ./monprobe 20
+[info]027: BJ.monprobe.021                172.23.128.153       ./monprobe 21
+[info]028: BJ.monprobe.022                172.23.128.153       ./monprobe 22
+[info]029: BJ.monprobe.023                172.23.128.153       ./monprobe 23
+[info]030: BJ.monprobe.024                172.23.128.153       ./monprobe 24
+[info]031: BJ.monprobe.025                172.23.128.153       ./monprobe 25
+[info]032: BJ.monprobe.026                172.23.128.153       ./monprobe 26
+[info]033: BJ.monprobe.027                172.23.128.153       ./monprobe 27
+[info]034: BJ.monprobe.028                172.23.128.153       ./monprobe 28
+[info]035: BJ.monprobe.029                172.23.128.153       ./monprobe 29
+[info]036: BJ.monprobe.030                172.23.128.153       ./monprobe 30
+[info]037: BJ.monprobe.031                172.23.128.153       ./monprobe 31
+[info]038: BJ.monprobe.032                172.23.128.153       ./monprobe 32
+[info]039: BJ.monprobe.033                172.23.128.153       ./monprobe 33
+[info]040: BJ.monprobe.034                172.23.128.153       ./monprobe 34
+[info]041: BJ.monprobe.035                172.23.128.153       ./monprobe 35
+[info]042: BJ.monprobe.036                172.23.128.153       ./monprobe 36
+[info]043: BJ.monprobe.037                172.23.128.153       ./monprobe 37
+[info]044: BJ.monprobe.038                172.23.128.153       ./monprobe 38
+[info]045: BJ.monprobe.039                172.23.128.153       ./monprobe 39
+[info]046: BJ.monprobe.040                172.23.128.153       ./monprobe 40
+[info]047: BJ.monprobe.041                172.23.128.153       ./monprobe 41
+[info]048: BJ.monprobe.042                172.23.128.153       ./monprobe 42
+[info]049: BJ.monprobe.043                172.23.128.153       ./monprobe 43
+[info]050: BJ.monprobe.044                172.23.128.153       ./monprobe 44
+[info]051: BJ.monprobe.045                172.23.128.153       ./monprobe 45
+[info]052: BJ.monprobe.046                172.23.128.153       ./monprobe 46
+[info]053: BJ.monprobe.047                172.23.128.153       ./monprobe 47
+[info]054: BJ.monprobe.048                172.23.128.153       ./monprobe 48
+[info]055: BJ.monprobe.049                172.23.128.153       ./monprobe 49
+[info]056: BJ.monprobe.050                172.23.128.153       ./monprobe 50
+[info]057: BJ.monprobe.051                172.23.128.153       ./monprobe 51
+[info]058: BJ.monprobe.052                172.23.128.153       ./monprobe 52
+[info]059: BJ.monprobe.053                172.23.128.153       ./monprobe 53
+[info]060: BJ.monprobe.054                172.23.128.153       ./monprobe 54
+[info]061: BJ.monprobe.055                172.23.128.153       ./monprobe 55
+[info]062: BJ.monprobe.056                172.23.128.153       ./monprobe 56
+[info]063: BJ.monprobe.057                172.23.128.153       ./monprobe 57
+[info]064: BJ.monprobe.058                172.23.128.153       ./monprobe 58
+[info]065: BJ.monprobe.059                172.23.128.153       ./monprobe 59
+[info]066: BJ.monprobe.060                172.23.128.153       ./monprobe 60
+[info]067: BJ.monprobe.061                172.23.128.153       ./monprobe 61
+[info]068: BJ.monprobe.062                172.23.128.153       ./monprobe 62
+[info]069: BJ.monprobe.063                172.23.128.153       ./monprobe 63
+[info]070: BJ.monprobe.064                172.23.128.153       ./monprobe 64
+[info]071: BJ.monprobe.065                172.23.128.153       ./monprobe 65
+[info]072: BJ.monprobe.066                172.23.128.153       ./monprobe 66
+[info]073: BJ.monprobe.067                172.23.128.153       ./monprobe 67
+[info]074: BJ.monprobe.068                172.23.128.153       ./monprobe 68
+[info]075: BJ.monprobe.069                172.23.128.153       ./monprobe 69
+[info]076: BJ.monprobe.070                172.23.128.153       ./monprobe 70
+[info]077: BJ.monprobe.071                172.23.128.153       ./monprobe 71
+[info]078: BJ.monprobe.072                172.23.128.153       ./monprobe 72
+[info]079: BJ.monprobe.073                172.23.128.153       ./monprobe 73
+[info]080: BJ.monprobe.074                172.23.128.153       ./monprobe 74
+[info]081: BJ.monprobe.075                172.23.128.153       ./monprobe 75
+[info]082: BJ.monprobe.076                172.23.128.153       ./monprobe 76
+[info]083: BJ.monprobe.077                172.23.128.153       ./monprobe 77
+[info]084: BJ.monprobe.078                172.23.128.153       ./monprobe 78
+[info]085: BJ.monprobe.079                172.23.128.153       ./monprobe 79
+[info]086: BJ.monprobe.080                172.23.128.153       ./monprobe 80
+[info]087: BJ.monprobe.081                172.23.128.153       ./monprobe 81
+[info]088: BJ.monprobe.082                172.23.128.153       ./monprobe 82
+[info]089: BJ.monprobe.083                172.23.128.153       ./monprobe 83
+[info]090: BJ.monprobe.084                172.23.128.153       ./monprobe 84
+[info]091: BJ.monprobe.085                172.23.128.153       ./monprobe 85
+[info]092: BJ.monprobe.086                172.23.128.153       ./monprobe 86
+[info]093: BJ.monprobe.087                172.23.128.153       ./monprobe 87
+[info]094: BJ.monprobe.088                172.23.128.153       ./monprobe 88
+[info]095: BJ.monprobe.089                172.23.128.153       ./monprobe 89
+[info]096: BJ.monprobe.090                172.23.128.153       ./monprobe 90
+[info]097: BJ.monprobe.091                172.23.128.153       ./monprobe 91
+[info]098: BJ.monprobe.092                172.23.128.153       ./monprobe 92
+[info]099: BJ.monprobe.093                172.23.128.153       ./monprobe 93
+[info]100: BJ.monprobe.094                172.23.128.153       ./monprobe 94
+[info]101: BJ.monprobe.095                172.23.128.153       ./monprobe 95
+[info]102: BJ.monprobe.096                172.23.128.153       ./monprobe 96
+[info]103: BJ.monprobe.097                172.23.128.153       ./monprobe 97
+[info]104: BJ.monprobe.098                172.23.128.153       ./monprobe 98
+[info]105: BJ.monprobe.099                172.23.128.153       ./monprobe 99
+[info]106: BJ.monprobe.100                172.23.128.153       ./monprobe 100
+[info]107: BJ.monprobe.101                172.23.128.153       ./monprobe 101
+[info]108: BJ.monprobe.102                172.23.128.153       ./monprobe 102
+[info]109: BJ.monprobe.103                172.23.128.153       ./monprobe 103
+[info]110: BJ.monprobe.104                172.23.128.153       ./monprobe 104
+[info]111: BJ.monprobe.105                172.23.128.153       ./monprobe 105
+[info]112: BJ.monprobe.106                172.23.128.153       ./monprobe 106
+[info]113: BJ.monprobe.107                172.23.128.153       ./monprobe 107
+[info]114: BJ.monprobe.108                172.23.128.153       ./monprobe 108
+[info]115: BJ.monprobe.109                172.23.128.153       ./monprobe 109
+[info]116: BJ.monprobe.110                172.23.128.153       ./monprobe 110
+[info]117: BJ.monquery.003                172.23.128.153       ./monquery 3 off
+[info]118: BJ.monslog.003                 172.23.128.153       ./monslog 3
+[info]119: PD.monagent.001                172.1.128.170        ./monagent 1
+[info]120: PD.monagent.002                172.1.128.170        ./monagent 2
+[info]121: PD.monagent.003                172.1.128.170        ./monagent 3
+[info]122: PD.monagent.011                172.1.128.151        ./monagent 11
+[info]123: PD.monagent.012                172.1.128.151        ./monagent 12
+[info]124: PD.monagent.013                172.1.128.151        ./monagent 13
+[info]125: PD.monagent.014                172.1.128.151        ./monagent 14
+[info]126: PD.monagent.015                172.1.128.151        ./monagent 15
+[info]127: PD.monagent.016                172.1.128.151        ./monagent 16
+[info]128: PD.monagent.017                172.1.128.151        ./monagent 17
+[info]129: PD.monagent.018                172.1.128.151        ./monagent 18
+[info]130: PD.monagent.019                172.1.128.151        ./monagent 19
+[info]131: PD.monagent.030                172.1.128.152        ./monagent 30
+[info]132: PD.monevent.001                172.1.128.155        ./monevent 1
+[info]133: PD.monfibclient.001            172.1.128.154        ./monfibclient 1 off
+[info]134: PD.monfront.001                172.1.128.151        ./monfront 1
+[info]135: PD.monmanager.001              172.1.128.151        ./monmanager 1
+[info]136: PD.monprobe.001                172.1.128.151        ./monprobe 1
+[info]137: PD.monprobe.002                172.1.128.153        ./monprobe 2
+[info]138: PD.monprobe.003                172.1.128.154        ./monprobe 3
+[info]139: PD.monprobe.004                172.1.128.155        ./monprobe 4
+[info]140: PD.monprobe.005                172.1.128.156        ./monprobe 5
+[info]141: PD.monprobe.006                172.1.128.157        ./monprobe 6
+[info]142: PD.monprobe.007                172.1.128.158        ./monprobe 7
+[info]143: PD.monquery.001                172.11.128.152       ./monquery 1 off
+[info]144: PD.monslog.001                 172.1.128.153        ./monslog 1
+[info]145: PD.sysagent.001                172.1.128.151        ./sysagent 1
+[info]146: ZJ.monagent.004                172.18.128.153       ./monagent 4
+[info]147: ZJ.monagent.005                172.18.128.153       ./monagent 5
+[info]148: ZJ.monagent.006                172.18.128.153       ./monagent 6
+[info]149: ZJ.monagent.021                172.18.128.153       ./monagent 21
+[info]150: ZJ.monagent.022                172.18.128.153       ./monagent 22
+[info]151: ZJ.monagent.023                172.18.128.153       ./monagent 23
+[info]152: ZJ.monagent.024                172.18.128.153       ./monagent 24
+[info]153: ZJ.monagent.025                172.18.128.153       ./monagent 25
+[info]154: ZJ.monagent.026                172.18.128.153       ./monagent 26
+[info]155: ZJ.monagent.027                172.18.128.153       ./monagent 27
+[info]156: ZJ.monagent.028                172.18.128.153       ./monagent 28
+[info]157: ZJ.monagent.029                172.18.128.153       ./monagent 29
+[info]158: ZJ.monevent.002                172.18.128.153       ./monevent 2
+[info]159: ZJ.monfibclient.002            172.18.128.153       ./monfibclient 2 off
+[info]160: ZJ.monfront.003                172.18.128.153       ./monfront 3
+[info]161: ZJ.monmanager.002              172.1.128.153        ./monmanager 2
+[info]162: ZJ.monprobe.002                172.18.128.153       ./monprobe 2
+[info]163: ZJ.monquery.002                172.18.128.153       ./monquery 2 off
+[info]164: ZJ.monslog.002                 172.18.128.153       ./monslog 2
+} from doTask
 ************
 41
 ************
-************
-7975
-************
-SET:PD.monquery.1 0 1487751818
-LEN(srv_status_map):[1]
-SET:ZJ.monevent.2 0 1487751818
-LEN(srv_status_map):[2]
-SET:ZJ.monfibclient.2 0 1487751818
-LEN(srv_status_map):[3]
-SET:ZJ.monprobe.2 0 1487751818
-LEN(srv_status_map):[4]
-SET:ZJ.monquery.2 0 1487751818
-LEN(srv_status_map):[5]
-SET:ZJ.monfront.3 0 1487751818
-LEN(srv_status_map):[6]
-SET:ZJ.monagent.21 0 1487751818
-LEN(srv_status_map):[7]
-SET:ZJ.monagent.22 0 1487751818
-LEN(srv_status_map):[8]
-SET:ZJ.monagent.23 0 1487751818
-LEN(srv_status_map):[9]
-SET:ZJ.monagent.24 0 1487751818
-LEN(srv_status_map):[10]
-SET:ZJ.monagent.25 0 1487751818
-LEN(srv_status_map):[11]
-SET:ZJ.monagent.26 0 1487751818
-LEN(srv_status_map):[12]
-SET:ZJ.monagent.27 0 1487751818
-LEN(srv_status_map):[13]
-SET:ZJ.monagent.28 0 1487751818
-LEN(srv_status_map):[14]
-SET:ZJ.monagent.29 0 1487751818
-LEN(srv_status_map):[15]
-SET:ZJ.monagent.4 0 1487751818
-LEN(srv_status_map):[16]
-SET:ZJ.monagent.5 0 1487751818
-LEN(srv_status_map):[17]
-SET:ZJ.monagent.6 0 1487751818
-LEN(srv_status_map):[18]
-SET:ZJ.monslog.2 0 1487751818
-LEN(srv_status_map):[19]
-SET:BJ.monevent.3 0 1487751818
-LEN(srv_status_map):[20]
-SET:BJ.monfibclient.3 0 1487751818
-LEN(srv_status_map):[21]
-SET:BJ.monprobe.1 0 1487751818
-LEN(srv_status_map):[22]
-SET:BJ.monprobe.10 0 1487751818
-LEN(srv_status_map):[23]
-SET:BJ.monprobe.100 0 1487751818
-LEN(srv_status_map):[24]
-SET:BJ.monprobe.101 0 1487751818
-LEN(srv_status_map):[25]
-SET:BJ.monprobe.102 0 1487751818
-LEN(srv_status_map):[26]
-SET:BJ.monprobe.103 0 1487751818
-LEN(srv_status_map):[27]
-SET:BJ.monprobe.104 0 1487751818
-LEN(srv_status_map):[28]
-SET:BJ.monprobe.105 0 1487751818
-LEN(srv_status_map):[29]
-SET:BJ.monprobe.106 0 1487751818
-LEN(srv_status_map):[30]
-SET:BJ.monprobe.107 0 1487751818
-LEN(srv_status_map):[31]
-SET:BJ.monprobe.108 0 1487751818
-LEN(srv_status_map):[32]
-SET:BJ.monprobe.109 0 1487751818
-LEN(srv_status_map):[33]
-SET:BJ.monprobe.11 0 1487751818
-LEN(srv_status_map):[34]
-SET:BJ.monprobe.110 0 1487751818
-LEN(srv_status_map):[35]
-SET:BJ.monprobe.12 0 1487751818
-LEN(srv_status_map):[36]
-SET:BJ.monprobe.13 0 1487751818
-LEN(srv_status_map):[37]
-SET:BJ.monprobe.14 0 1487751818
-LEN(srv_status_map):[38]
-SET:BJ.monprobe.15 0 1487751818
-LEN(srv_status_map):[39]
-SET:BJ.monprobe.16 0 1487751818
-LEN(srv_status_map):[40]
-SET:BJ.monprobe.17 0 1487751818
-LEN(srv_status_map):[41]
-SET:BJ.monprobe.18 0 1487751818
-LEN(srv_status_map):[42]
-SET:BJ.monprobe.19 0 1487751818
-LEN(srv_status_map):[43]
-SET:BJ.monprobe.2 0 1487751818
-LEN(srv_status_map):[44]
-SET:BJ.monprobe.20 0 1487751818
-LEN(srv_status_map):[45]
-SET:BJ.monprobe.21 0 1487751818
-LEN(srv_status_map):[46]
-SET:BJ.monprobe.22 0 1487751818
-LEN(srv_status_map):[47]
-SET:BJ.monprobe.23 0 1487751818
-LEN(srv_status_map):[48]
-SET:BJ.monprobe.24 0 1487751818
-LEN(srv_status_map):[49]
-SET:BJ.monprobe.25 0 1487751818
-LEN(srv_status_map):[50]
-SET:BJ.monprobe.26 0 1487751818
-LEN(srv_status_map):[51]
-SET:BJ.monprobe.27 0 1487751818
-LEN(srv_status_map):[52]
-SET:BJ.monprobe.28 0 1487751818
-LEN(srv_status_map):[53]
-SET:BJ.monprobe.29 0 1487751818
-LEN(srv_status_map):[54]
-SET:BJ.monprobe.3 0 1487751818
-LEN(srv_status_map):[55]
-SET:BJ.monprobe.30 0 1487751818
-LEN(srv_status_map):[56]
-SET:BJ.monprobe.31 0 1487751818
-LEN(srv_status_map):[57]
-SET:BJ.monprobe.32 0 1487751818
-LEN(srv_status_map):[58]
-SET:BJ.monprobe.33 0 1487751818
-LEN(srv_status_map):[59]
-SET:BJ.monprobe.34 0 1487751818
-LEN(srv_status_map):[60]
-SET:BJ.monprobe.35 0 1487751818
-LEN(srv_status_map):[61]
-SET:BJ.monprobe.36 0 1487751818
-LEN(srv_status_map):[62]
-SET:BJ.monprobe.37 0 1487751818
-LEN(srv_status_map):[63]
-SET:BJ.monprobe.38 0 1487751818
-LEN(srv_status_map):[64]
-SET:BJ.monprobe.39 0 1487751818
-LEN(srv_status_map):[65]
-SET:BJ.monprobe.4 0 1487751818
-LEN(srv_status_map):[66]
-SET:BJ.monprobe.40 0 1487751818
-LEN(srv_status_map):[67]
-SET:BJ.monprobe.41 0 1487751818
-LEN(srv_status_map):[68]
-SET:BJ.monprobe.42 0 1487751818
-LEN(srv_status_map):[69]
-SET:BJ.monprobe.43 0 1487751818
-LEN(srv_status_map):[70]
-SET:BJ.monprobe.44 0 1487751818
-LEN(srv_status_map):[71]
-SET:BJ.monprobe.45 0 1487751818
-LEN(srv_status_map):[72]
-SET:BJ.monprobe.46 0 1487751818
-LEN(srv_status_map):[73]
-SET:BJ.monprobe.47 0 1487751818
-LEN(srv_status_map):[74]
-SET:BJ.monprobe.48 0 1487751818
-LEN(srv_status_map):[75]
-SET:BJ.monprobe.49 0 1487751818
-LEN(srv_status_map):[76]
-SET:BJ.monprobe.5 0 1487751818
-LEN(srv_status_map):[77]
-SET:BJ.monprobe.50 0 1487751818
-LEN(srv_status_map):[78]
-SET:BJ.monprobe.51 0 1487751818
-LEN(srv_status_map):[79]
-SET:BJ.monprobe.52 0 1487751818
-LEN(srv_status_map):[80]
-SET:BJ.monprobe.53 0 1487751818
-LEN(srv_status_map):[81]
-SET:BJ.monprobe.54 0 1487751818
-LEN(srv_status_map):[82]
-SET:BJ.monprobe.55 0 1487751818
-LEN(srv_status_map):[83]
-SET:BJ.monprobe.56 0 1487751818
-LEN(srv_status_map):[84]
-SET:BJ.monprobe.57 0 1487751818
-LEN(srv_status_map):[85]
-SET:BJ.monprobe.58 0 1487751818
-LEN(srv_status_map):[86]
-SET:BJ.monprobe.59 0 1487751818
-LEN(srv_status_map):[87]
-SET:BJ.monprobe.6 0 1487751818
-LEN(srv_status_map):[88]
-SET:BJ.monprobe.60 0 1487751818
-LEN(srv_status_map):[89]
-SET:BJ.monprobe.61 0 1487751818
-LEN(srv_status_map):[90]
-SET:BJ.monprobe.62 0 1487751818
-LEN(srv_status_map):[91]
-SET:BJ.monprobe.63 0 1487751818
-LEN(srv_status_map):[92]
-SET:BJ.monprobe.64 0 1487751818
-LEN(srv_status_map):[93]
-SET:BJ.monprobe.65 0 1487751818
-LEN(srv_status_map):[94]
-SET:BJ.monprobe.66 0 1487751818
-LEN(srv_status_map):[95]
-SET:BJ.monprobe.67 0 1487751818
-LEN(srv_status_map):[96]
-SET:BJ.monprobe.68 0 1487751818
-LEN(srv_status_map):[97]
-SET:BJ.monprobe.69 0 1487751818
-LEN(srv_status_map):[98]
-SET:BJ.monprobe.7 0 1487751818
-LEN(srv_status_map):[99]
-SET:BJ.monprobe.70 0 1487751818
-LEN(srv_status_map):[100]
-SET:BJ.monprobe.71 0 1487751818
-LEN(srv_status_map):[101]
-SET:BJ.monprobe.72 0 1487751818
-LEN(srv_status_map):[102]
-SET:BJ.monprobe.73 0 1487751818
-LEN(srv_status_map):[103]
-SET:BJ.monprobe.74 0 1487751818
-LEN(srv_status_map):[104]
-SET:BJ.monprobe.75 0 1487751818
-LEN(srv_status_map):[105]
-SET:BJ.monprobe.76 0 1487751818
-LEN(srv_status_map):[106]
-SET:BJ.monprobe.77 0 1487751818
-LEN(srv_status_map):[107]
-SET:BJ.monprobe.78 0 1487751818
-LEN(srv_status_map):[108]
-SET:BJ.monprobe.79 0 1487751818
-LEN(srv_status_map):[109]
-SET:BJ.monprobe.8 0 1487751818
-LEN(srv_status_map):[110]
-SET:BJ.monprobe.80 0 1487751818
-LEN(srv_status_map):[111]
-SET:BJ.monprobe.81 0 1487751818
-LEN(srv_status_map):[112]
-SET:BJ.monprobe.82 0 1487751818
-LEN(srv_status_map):[113]
-SET:BJ.monprobe.83 0 1487751818
-LEN(srv_status_map):[114]
-SET:BJ.monprobe.84 0 1487751818
-LEN(srv_status_map):[115]
-SET:BJ.monprobe.85 0 1487751818
-LEN(srv_status_map):[116]
-SET:BJ.monprobe.86 0 1487751818
-LEN(srv_status_map):[117]
-SET:BJ.monprobe.87 0 1487751818
-LEN(srv_status_map):[118]
-SET:BJ.monprobe.88 0 1487751818
-LEN(srv_status_map):[119]
-SET:BJ.monprobe.89 0 1487751818
-LEN(srv_status_map):[120]
-SET:BJ.monprobe.9 0 1487751818
-LEN(srv_status_map):[121]
-SET:BJ.monprobe.90 0 1487751818
-LEN(srv_status_map):[122]
-SET:BJ.monprobe.91 0 1487751818
-LEN(srv_status_map):[123]
-SET:BJ.monprobe.92 0 1487751818
-LEN(srv_status_map):[124]
-SET:BJ.monprobe.93 0 1487751818
-LEN(srv_status_map):[125]
-SET:BJ.monprobe.94 0 1487751818
-LEN(srv_status_map):[126]
-SET:BJ.monprobe.95 0 1487751818
-LEN(srv_status_map):[127]
-SET:BJ.monprobe.96 0 1487751818
-LEN(srv_status_map):[128]
-SET:BJ.monprobe.97 0 1487751818
-LEN(srv_status_map):[129]
-SET:BJ.monprobe.98 0 1487751818
-LEN(srv_status_map):[130]
-SET:BJ.monprobe.99 0 1487751818
-LEN(srv_status_map):[131]
-SET:BJ.monquery.3 0 1487751818
-LEN(srv_status_map):[132]
-SET:BJ.monfront.5 0 1487751818
-LEN(srv_status_map):[133]
-SET:BJ.monagent.7 0 1487751818
-LEN(srv_status_map):[134]
-SET:BJ.monagent.8 0 1487751818
-LEN(srv_status_map):[135]
-SET:BJ.monagent.9 0 1487751818
-LEN(srv_status_map):[136]
-SET:BJ.monslog.3 0 1487751818
-LEN(srv_status_map):[137]
-SET:PD.monagent.1 2 1487751818
-LEN(srv_status_map):[138]
-SET:PD.monagent.2 2 1487751818
-LEN(srv_status_map):[139]
-SET:PD.monagent.3 2 1487751818
-LEN(srv_status_map):[140]
-SET:PD.monprobe.1 3 1487751818
-LEN(srv_status_map):[141]
-SET:PD.monagent.11 2 1487751818
-LEN(srv_status_map):[142]
-SET:PD.monagent.12 2 1487751818
-LEN(srv_status_map):[143]
-SET:PD.monagent.13 2 1487751818
-LEN(srv_status_map):[144]
-SET:PD.monagent.14 2 1487751818
-LEN(srv_status_map):[145]
-SET:PD.monagent.15 2 1487751818
-LEN(srv_status_map):[146]
-SET:PD.monagent.16 2 1487751818
-LEN(srv_status_map):[147]
-SET:PD.monagent.17 2 1487751818
-LEN(srv_status_map):[148]
-SET:PD.monagent.18 2 1487751818
-LEN(srv_status_map):[149]
-SET:PD.monagent.19 2 1487751818
-LEN(srv_status_map):[150]
-SET:PD.sysagent.1 3 1487751818
-LEN(srv_status_map):[151]
-SET:PD.monfront.1 2 1487751818
-LEN(srv_status_map):[152]
-SET:PD.monprobe.7 3 1487751818
-LEN(srv_status_map):[153]
-SET:PD.monprobe.5 3 1487751818
-LEN(srv_status_map):[154]
-SET:PD.monprobe.6 3 1487751818
-LEN(srv_status_map):[155]
-SET:PD.monprobe.7 3 1487751818
-LEN(srv_status_map):[155]
-SET:PD.monprobe.5 3 1487751818
-LEN(srv_status_map):[155]
-SET:PD.monprobe.6 3 1487751818
-LEN(srv_status_map):[155]
-SET:PD.monprobe.6 3 1487751818
-LEN(srv_status_map):[155]
-alive::172.18.128.153::ZJ.monagent.21::Conn err
-alive::172.23.128.153::BJ.monagent.7::Conn err
-alive::172.11.128.152::PD.monquery.1::Conn err
-alive::172.18.128.153::ZJ.monagent.22::Conn err
-alive::172.23.128.153::BJ.monagent.8::Conn err
-alive::172.18.128.153::ZJ.monagent.23::Conn err
-alive::172.23.128.153::BJ.monagent.9::Conn err
-alive::172.18.128.153::ZJ.monagent.24::Conn err
-alive::172.18.128.153::ZJ.monagent.25::Conn err
-alive::172.18.128.153::ZJ.monagent.26::Conn err
-alive::172.23.128.153::BJ.monevent.3::Conn err
-alive::172.18.128.153::ZJ.monagent.27::Conn err
-alive::172.23.128.153::BJ.monfibclient.3::Conn err
-alive::172.18.128.153::ZJ.monagent.28::Conn err
-alive::172.23.128.153::BJ.monfront.5::Conn err
-alive::172.18.128.153::ZJ.monagent.29::Conn err
-alive::172.23.128.153::BJ.monprobe.100::Conn err
-alive::172.18.128.153::ZJ.monagent.4::Conn err
-alive::172.23.128.153::BJ.monprobe.101::Conn err
-alive::172.18.128.153::ZJ.monagent.5::Conn err
-alive::172.23.128.153::BJ.monprobe.102::Conn err
-alive::172.18.128.153::ZJ.monagent.6::Conn err
-alive::172.23.128.153::BJ.monprobe.103::Conn err
-alive::172.18.128.153::ZJ.monevent.2::Conn err
-alive::172.23.128.153::BJ.monprobe.104::Conn err
-alive::172.18.128.153::ZJ.monfibclient.2::Conn err
-alive::172.23.128.153::BJ.monprobe.105::Conn err
-alive::172.18.128.153::ZJ.monfront.3::Conn err
-alive::172.23.128.153::BJ.monprobe.106::Conn err
-alive::172.18.128.153::ZJ.monprobe.2::Conn err
-alive::172.23.128.153::BJ.monprobe.107::Conn err
-alive::172.18.128.153::ZJ.monquery.2::Conn err
-alive::172.23.128.153::BJ.monprobe.108::Conn err
-alive::172.18.128.153::ZJ.monslog.2::Conn err
-alive::172.23.128.153::BJ.monprobe.109::Conn err
-alive::172.23.128.153::BJ.monprobe.10::Conn err
-alive::172.23.128.153::BJ.monprobe.110::Conn err
-alive::172.23.128.153::BJ.monprobe.11::Conn err
-alive::172.23.128.153::BJ.monprobe.12::Conn err
-alive::172.23.128.153::BJ.monprobe.13::Conn err
-alive::172.23.128.153::BJ.monprobe.14::Conn err
-alive::172.23.128.153::BJ.monprobe.15::Conn err
-alive::172.23.128.153::BJ.monprobe.16::Conn err
-alive::172.23.128.153::BJ.monprobe.17::Conn err
-alive::172.23.128.153::BJ.monprobe.18::Conn err
-alive::172.23.128.153::BJ.monprobe.19::Conn err
-alive::172.23.128.153::BJ.monprobe.1::Conn err
-alive::172.23.128.153::BJ.monprobe.20::Conn err
-alive::172.23.128.153::BJ.monprobe.21::Conn err
-alive::172.23.128.153::BJ.monprobe.22::Conn err
-alive::172.23.128.153::BJ.monprobe.23::Conn err
-alive::172.23.128.153::BJ.monprobe.24::Conn err
-alive::172.23.128.153::BJ.monprobe.25::Conn err
-alive::172.23.128.153::BJ.monprobe.26::Conn err
-alive::172.23.128.153::BJ.monprobe.27::Conn err
-alive::172.23.128.153::BJ.monprobe.28::Conn err
-alive::172.23.128.153::BJ.monprobe.29::Conn err
-alive::172.23.128.153::BJ.monprobe.2::Conn err
-alive::172.23.128.153::BJ.monprobe.30::Conn err
-alive::172.23.128.153::BJ.monprobe.31::Conn err
-alive::172.23.128.153::BJ.monprobe.32::Conn err
-alive::172.23.128.153::BJ.monprobe.33::Conn err
-alive::172.23.128.153::BJ.monprobe.34::Conn err
-alive::172.23.128.153::BJ.monprobe.35::Conn err
-alive::172.23.128.153::BJ.monprobe.36::Conn err
-alive::172.23.128.153::BJ.monprobe.37::Conn err
-alive::172.23.128.153::BJ.monprobe.38::Conn err
-alive::172.23.128.153::BJ.monprobe.39::Conn err
-alive::172.23.128.153::BJ.monprobe.3::Conn err
-alive::172.23.128.153::BJ.monprobe.40::Conn err
-alive::172.23.128.153::BJ.monprobe.41::Conn err
-alive::172.23.128.153::BJ.monprobe.42::Conn err
-alive::172.23.128.153::BJ.monprobe.43::Conn err
-alive::172.23.128.153::BJ.monprobe.44::Conn err
-alive::172.23.128.153::BJ.monprobe.45::Conn err
-alive::172.23.128.153::BJ.monprobe.46::Conn err
-alive::172.23.128.153::BJ.monprobe.47::Conn err
-alive::172.23.128.153::BJ.monprobe.48::Conn err
-alive::172.23.128.153::BJ.monprobe.49::Conn err
-alive::172.23.128.153::BJ.monprobe.4::Conn err
-alive::172.23.128.153::BJ.monprobe.50::Conn err
-alive::172.23.128.153::BJ.monprobe.51::Conn err
-alive::172.23.128.153::BJ.monprobe.52::Conn err
-alive::172.23.128.153::BJ.monprobe.53::Conn err
-alive::172.23.128.153::BJ.monprobe.54::Conn err
-alive::172.23.128.153::BJ.monprobe.55::Conn err
-alive::172.23.128.153::BJ.monprobe.56::Conn err
-alive::172.23.128.153::BJ.monprobe.57::Conn err
-alive::172.23.128.153::BJ.monprobe.58::Conn err
-alive::172.23.128.153::BJ.monprobe.59::Conn err
-alive::172.23.128.153::BJ.monprobe.5::Conn err
-alive::172.23.128.153::BJ.monprobe.60::Conn err
-alive::172.23.128.153::BJ.monprobe.61::Conn err
-alive::172.23.128.153::BJ.monprobe.62::Conn err
-alive::172.23.128.153::BJ.monprobe.63::Conn err
-alive::172.23.128.153::BJ.monprobe.64::Conn err
-alive::172.23.128.153::BJ.monprobe.65::Conn err
-alive::172.23.128.153::BJ.monprobe.66::Conn err
-alive::172.23.128.153::BJ.monprobe.67::Conn err
-alive::172.23.128.153::BJ.monprobe.68::Conn err
-alive::172.23.128.153::BJ.monprobe.69::Conn err
-alive::172.23.128.153::BJ.monprobe.6::Conn err
-alive::172.23.128.153::BJ.monprobe.70::Conn err
-alive::172.23.128.153::BJ.monprobe.71::Conn err
-alive::172.23.128.153::BJ.monprobe.72::Conn err
-alive::172.23.128.153::BJ.monprobe.73::Conn err
-alive::172.23.128.153::BJ.monprobe.74::Conn err
-alive::172.23.128.153::BJ.monprobe.75::Conn err
-alive::172.23.128.153::BJ.monprobe.76::Conn err
-alive::172.23.128.153::BJ.monprobe.77::Conn err
-alive::172.23.128.153::BJ.monprobe.78::Conn err
-alive::172.23.128.153::BJ.monprobe.79::Conn err
-alive::172.23.128.153::BJ.monprobe.7::Conn err
-alive::172.23.128.153::BJ.monprobe.80::Conn err
-alive::172.23.128.153::BJ.monprobe.81::Conn err
-alive::172.23.128.153::BJ.monprobe.82::Conn err
-alive::172.23.128.153::BJ.monprobe.83::Conn err
-alive::172.23.128.153::BJ.monprobe.84::Conn err
-alive::172.23.128.153::BJ.monprobe.85::Conn err
-alive::172.23.128.153::BJ.monprobe.86::Conn err
-alive::172.23.128.153::BJ.monprobe.87::Conn err
-alive::172.23.128.153::BJ.monprobe.88::Conn err
-alive::172.23.128.153::BJ.monprobe.89::Conn err
-alive::172.23.128.153::BJ.monprobe.8::Conn err
-alive::172.23.128.153::BJ.monprobe.90::Conn err
-alive::172.23.128.153::BJ.monprobe.91::Conn err
-alive::172.23.128.153::BJ.monprobe.92::Conn err
-alive::172.23.128.153::BJ.monprobe.93::Conn err
-alive::172.23.128.153::BJ.monprobe.94::Conn err
-alive::172.23.128.153::BJ.monprobe.95::Conn err
-alive::172.23.128.153::BJ.monprobe.96::Conn err
-alive::172.23.128.153::BJ.monprobe.97::Conn err
-alive::172.23.128.153::BJ.monprobe.98::Conn err
-alive::172.23.128.153::BJ.monprobe.99::Conn err
-alive::172.23.128.153::BJ.monprobe.9::Conn err
-alive::172.23.128.153::BJ.monquery.3::Conn err
-alive::172.23.128.153::BJ.monslog.3::Conn err
-alive::172.1.128.170::PD.monagent.1::25154  16:23 ./monagent 1
-alive::172.1.128.170::PD.monagent.2::25188  16:23 ./monagent 2
-alive::172.1.128.170::PD.monagent.3::25222  16:23 ./monagent 3
-alive::172.1.128.151::PD.monagent.11:: 1468  16:23 ./monagent 11
-alive::172.1.128.151::PD.monagent.12:: 1502  16:23 ./monagent 12
-alive::172.1.128.151::PD.monagent.13:: 1536  16:23 ./monagent 13
-alive::172.1.128.151::PD.monagent.14:: 1570  16:23 ./monagent 14
-al
+Traceback (most recent call last):
+  File "task_daemon.py", line 559, in _run
+    conn.send(rsp_head + rsp_body + cfg.TIP_INFO_EOF)
+TypeError: cannot concatenate 'str' and 'NoneType' objects
+
