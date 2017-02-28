@@ -4,6 +4,8 @@ import os
 import sys
 import socket
 import datetime
+import time
+import threading
 
 from django.shortcuts import render,get_object_or_404
 from django.template import RequestContext
@@ -161,7 +163,26 @@ def sock_conn(key):
 	daemon_port = cfg_w.ENV_DICT[key][2]
 	print(key, daemaon_ip, daemon_port)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.connect((daemaon_ip, daemon_port))
+	try:
+		sock.connect((daemaon_ip, daemon_port))
+	except Exception:
+		print(traceback.format_exc())
+		sock = sock_conn(key)
+	return sock
+
+def getKey(key):
+	daemaon_ip = cfg_w.ENV_DICT[key][1]
+	daemon_port = cfg_w.ENV_DICT[key][2]
+	print(key, daemaon_ip, daemon_port)
+	return daemaon_ip, daemon_port
+
+def sock_conn(daemaon_ip, daemon_port):
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	try:
+		sock.connect((daemaon_ip, daemon_port))
+	except Exception:
+		print(traceback.format_exc())
+		sock = sock_conn(daemaon_ip, daemon_port)
 	return sock
 
 def is_version_control_req(data_type):
@@ -217,6 +238,13 @@ def downloadFile(sock, FileSrc, FileDst):
 	finally:
 		return rtn
 
+def output_msg(description, info, *other_info):
+	print description
+	print info
+	for value in other_info:
+		print value
+	print ''
+
 @csrf_protect
 def update_srv(request):
 	rsp = ''
@@ -231,7 +259,8 @@ def update_srv(request):
 		for chunk in myFile.chunks():
 			destination.write(chunk)
 		destination.close()
-		sock = sock_conn(ENV_KEY)
+		daemaon_ip, daemon_port = getKey(ENV_KEY)
+		sock = sock_conn(daemaon_ip, daemon_port)
 		rtn = uploadFile(sock, filepath, filedst)
 		end_time = int(time.time())
 		if rtn == cfg.CMD_SUCC:
@@ -259,7 +288,8 @@ def upload_file(request):
 		for chunk in myFile.chunks():
 			destination.write(chunk)
 		destination.close()
-		sock = sock_conn(ENV_KEY)
+		daemaon_ip, daemon_port = getKey(ENV_KEY)
+		sock = sock_conn(daemaon_ip, daemon_port)
 		rtn = uploadFile(sock, filepath, filedst)
 		end_time = int(time.time())
 		if rtn == cfg.CMD_SUCC:
@@ -283,7 +313,8 @@ def download_file(request):
 		FileName = request.POST.get('filename',None)
 		if not FileName:
 			return HttpResponse("no files for request!")
-		sock = sock_conn(ENV_KEY)
+		daemaon_ip, daemon_port = getKey(ENV_KEY)
+		sock = sock_conn(daemaon_ip, daemon_port)
 		FileSrc = FileName
 		FileDst = os.path.join(cfg.WORK_PATH_TEMP, FileName)
 		FileNew = FileDst + cfg.DOT +cfg.PID
@@ -291,7 +322,8 @@ def download_file(request):
 		rtn = downloadFile(sock, FileSrc, FileDst)
 		sock.close()
 		if rtn == cfg.CMD_SUCC:
-			sock = sock_conn(ENV_KEY)
+			daemaon_ip, daemon_port = getKey(ENV_KEY)
+			sock = sock_conn(daemaon_ip, daemon_port)
 			shutil.copyfile(FileDst, FileNew)
 			f = open(FileNew, "a+")
 			f.write("## Add Test Info by " + str(cfg.PID) + ' \n')
@@ -424,7 +456,9 @@ class ViewMain(object):
 			'Request_All_Version': self._ajax_func.test_all_version,
 	        'Request_Task_Rpc': self._ajax_func.test_task_rpc,
 	        'Request_Task_Ntf': self._ajax_func.test_task_ntf,
-			'Request_Task_Info': self._ajax_func.test_all_task_info,
+			'Request_Info':self._ajax_func.request_info,
+			'Get_NTF_Task_Result': self._ajax_func.get_all_ntf_task_result,
+			'Get_NTF_Task_State': self._ajax_func.get_all_ntf_task_state,
 			'Upload_File': self._ajax_func.upload_file,
 			'Set_DB_Data': self._ajax_func.set_dbdata,
 			'Get_DB_Data': self._ajax_func.get_dbdata,
@@ -468,7 +502,6 @@ class ViewMain(object):
 		if self.is_ajax_request(request.path):
 			print '\nIs AJAX Request'
 			ajax_func = self.get_ajax_func(request.path)
-			# print '\nGet AJAX Request'
 			return ajax_func(request)
 		else:
 			print '\nIs not AJAX Request'
@@ -509,7 +542,8 @@ class AjaxReqFunc(object):
 				for chunk in upload_file.chunks():
 					destination.write(chunk)
 				destination.close()
-				sock = sock_conn(ENV_KEY)
+				daemaon_ip, daemon_port = getKey(ENV_KEY)
+				sock = sock_conn(daemaon_ip, daemon_port)
 				rtn = uploadFile(sock, filepath, filedst)
 				end_time = int(time.time())
 
@@ -807,13 +841,14 @@ class AjaxReqFunc(object):
 			if value in req_para and value in trans_req_json and trans_req_json[value] !='':
 				cmdline += value + ' ' + trans_req_json[value] + ' '
 
-		print 'data_type: ', data_type
+		print '\ndata_type: ', data_type
 		print 'task_type: ', task_type
-		print ('\nThe REQUEST command line is: %s\n' %(cmdline))
+		print ('The REQUEST command line is: %s\n' %(cmdline))
 		return {
 			'data_type': data_type,
 			'task_type': task_type,
-			'cmdline': cmdline
+			'cmdline': cmdline,
+			'cmd': trans_req_json['--cmd']
 		}
 
 	@csrf_exempt
@@ -835,7 +870,8 @@ class AjaxReqFunc(object):
 						cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
 			trans_rsp_data = {}
 			try:
-				sock = sock_conn(ENV_KEY)
+				daemaon_ip, daemon_port = getKey(ENV_KEY)
+				sock = sock_conn(daemaon_ip, daemon_port)
 				sock.send(genRpcHead() + task_info.encode() + cfg.TIP_INFO_EOF)
 				original_rsp_data = recv_end(sock)
 				sock.close()
@@ -856,37 +892,98 @@ class AjaxReqFunc(object):
 		else:
 			return index(request)
 
+	@csrf_exempt
+	def request_info(self, request):
+		if request.method != '':
+			req_json = request.POST.getlist('req_json')[0]
+			trans_req_json = json.loads(req_json)
+			output_msg('Original Req_json!', req_json)
+			output_msg('Transed Req_Json!', trans_req_json)
+
+			compact_req_json = {}
+			for key in trans_req_json:
+				if key != 'ENV_KEY' and trans_req_json[key] != '':
+					if key.find('--') == 0:
+						trans_key = key[2:]
+						compact_req_json[trans_key] = trans_req_json[key]
+					else:
+						compact_req_json[key] = trans_req_json[key]
+			# compact_req_json = json.dumps(compact_req_json)
+			compact_req_json = str(compact_req_json)
+			eval_req_json = eval(compact_req_json)
+			output_msg('Str Compact Req_JSON', compact_req_json)
+
+			ENV_KEY = trans_req_json['ENV_KEY']
+			req_data = self.get_task_info(trans_req_json)
+			data_type = req_data['data_type']
+			task_type = req_data['task_type']
+			rsp = ''
+			original_rsp_data = ''
+			trans_rsp_data = {}
+			args = 'relay'
+
+			try:
+				daemaon_ip, daemon_port = getKey(ENV_KEY)
+				sock = sock_conn(daemaon_ip, daemon_port)
+				# sock.send(genCmdInfoHead() + args + cfg.TIP_INFO_EOF)
+				sock.send(genCmdInfoHead() + compact_req_json + cfg.TIP_INFO_EOF)
+				original_rsp_data = recv_end(sock)
+				sock.close()
+				trans_rsp_data = self.process_rpc_result(original_rsp_data, data_type)
+
+				output_msg('The original rsp data is: ', original_rsp_data)
+				output_msg('Transed Rsp Data: ', trans_rsp_data)
+			except Exception as e:
+				print('notifyDaemon failed!')
+				print(traceback.format_exc())
+
+			response = HttpResponse(json.dumps(trans_rsp_data))
+			response["Access-Control-Allow-Origin"] = "*"
+			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+			response["Access-Control-Max-Age"] = "1000"
+			response["Access-Control-Allow-Headers"] = "*"
+			return response
+		else:
+			return index(request)
+
 	def test_task_ntf(self, request):
 		if request.method != '':
-			#从POST请求中获取查询关键字
-			rsp = ''
-			#cmdline=request.POST.get('keyword',None)
-			cmdline = '--cmd show'
-			cmd = 'show'
-			tasktime = int(time.time()) + 1
+			req_json = request.POST.getlist('req_json')[0]
+			trans_req_json = json.loads(req_json)
 
-			print('web req cmd :%s'%(cmdline))
-			if cmdline.find(cfg.SEMICOLON) != -1:
-				task_type, cmdline = cmdline.split(cfg.SEMICOLON)  ##命令行中有分号
-			else:
-				task_type = cfg.TASK_TYPE_ECALL
-				task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=tasktime, \
-									 cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
+			ENV_KEY = trans_req_json['ENV_KEY']
+			req_data = self.get_task_info(trans_req_json)
+			data_type = req_data['data_type']
+			cmdline = req_data['cmdline']
+			task_type = req_data['task_type']
+			cmd = req_data['cmd']
+
+			output_msg('Original Req_json!', req_json)
+			output_msg('Transed Req_Json!', trans_req_json)
+
+			tasktime = int(time.time()) + 1
+			task_info = TaskInfo(state = cfg.FLAG_TASK_READY, TID = 0, PID = int(cfg.PID), exec_time=tasktime, \
+								 cmd = cmd.strip(), cmdline = cmdline.strip(), task_type = int(task_type))
+			# if cmdline.find(cfg.SEMICOLON) != -1:
+			# 	task_type, cmdline = cmdline.split(cfg.SEMICOLON)  ##命令行中有分号
+			# else:
+			# 	task_type = cfg.TASK_TYPE_ECALL
+			# 	task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=tasktime, \
+			# 						 cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
 			try:
-				# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
-				sock = sock_conn(ENV_KEY)
+				daemaon_ip, daemon_port = getKey(ENV_KEY)
+				sock = sock_conn(daemaon_ip, daemon_port)
 				sock.send(genNtfHead() + task_info.encode() + cfg.TIP_INFO_EOF)
-				# rsp = recv_end(sock)
-				# print rsp
-				print task_info.encode()
-				print task_info.TID
 				sock.close()
+
+				output_msg('task_info: ', task_info.__dict__)
 			except Exception as e:
 				print('notifyDaemon failed!')
 				print((traceback.format_exc()))
-			# rsp_data = task_info.__dict__
-			rsp_data = {'task_tid': task_info.TID}
+
+			rsp_data = {'task_info': task_info.__dict__,
+						'data_type': data_type}
+			rsp_data = [task_info.TID, data_type]
 			response = HttpResponse(json.dumps(rsp_data))
 			response["Access-Control-Allow-Origin"] = "*"
 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
@@ -903,7 +1000,8 @@ class AjaxReqFunc(object):
 			try:
 				# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
-				sock = sock_conn(ENV_KEY)
+				daemaon_ip, daemon_port = getKey(ENV_KEY)
+				sock = sock_conn(daemaon_ip, daemon_port)
 				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
 				rsp = recv_end(sock)
 				print 'Test_all_srvstatus'
@@ -944,7 +1042,8 @@ class AjaxReqFunc(object):
 			try:
 				# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
-				sock = sock_conn(ENV_KEY)
+				daemaon_ip, daemon_port = getKey(ENV_KEY)
+				sock = sock_conn(daemaon_ip, daemon_port)
 				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
 				rsp = recv_end(sock)
 				print rsp
@@ -978,47 +1077,48 @@ class AjaxReqFunc(object):
 			print 'test_all_taskresult!'
 			req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKRESULT)
 			task_result = ''
+			trans_result = {}
 			try:
 				# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
-				sock = sock_conn(ENV_KEY)
+				daemaon_ip, daemon_port = getKey(ENV_KEY)
+				sock = sock_conn(daemaon_ip, daemon_port)
 				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
 				task_result = recv_end(sock)
 				sock.close()
 
 				task_result = task_result.split('\n')
-				print 'Original Rsp Data:'
-				print task_result[1]
-				print type(task_result[1])
-
 				trans_result = eval(task_result[1])
-				print 'Transed Rsp Data:'
-				print trans_result
-				print type(trans_result)
 
+				output_msg('Original Rsp Data:', task_result[1], type(task_result[1]))
+				output_msg('Transed Rsp Data:', trans_result, type(trans_result))
 			except Exception as e:
 				print('notifyDaemon failed!')
 				print(traceback.format_exc())
-			return HttpResponse(task_result)
+			rsp_data = {'task_result': trans_result}
+			response = HttpResponse(json.dumps(rsp_data))
+			response["Access-Control-Allow-Origin"] = "*"
+			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+			response["Access-Control-Max-Age"] = "1000"
+			response["Access-Control-Allow-Headers"] = "*"
+			return response
 		else:
 			return index(request)
 
 	def test_all_version(self, request):
 		if request.method != '':
-			print '\n+++++ Test_all_version START! +++++'
-			print request
+			req_data = request.POST.getlist('req_json')[0]
+			req_data = json.loads(req_data)
+			ENV_KEY = req_data['ENV_KEY']
+
 			req_info = ReqInfo(0, cfg.FLAG_REQTYPE_VERSION)
 			rsp = ''
 			rsp_data = ''
 			try:
-				# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
-				sock = sock_conn(ENV_KEY)
+				daemaon_ip, daemon_port = getKey(ENV_KEY)
+				sock = sock_conn(daemaon_ip, daemon_port)
 				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
 				tcp_send_head = genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF
-
-				print 'sock send info: '
-				print tcp_send_head + '\n'
 
 				rsp = recv_end(sock)
 				sock.close()
@@ -1031,8 +1131,8 @@ class AjaxReqFunc(object):
 						version_info = VersionInfo()
 						version_info.decode(info)
 						version_list.append(version_info.__dict__)
-				# if info in version_list:
-				# 	print info
+				if info in version_list:
+					print info
 				rsp_data = version_list
 			except Exception as e:
 				print('notifyDaemon failed!')
@@ -1047,41 +1147,127 @@ class AjaxReqFunc(object):
 		else:
 			return index(request)
 
+	def get_task_result(taskID):
+		req_info = ReqInfo(taskID, cfg.FLAG_REQTYPE_TASKRESULT)
+		task_result = ''
+		try:
+			daemaon_ip, daemon_port = getKey(ENV_KEY)
+			sock = sock_conn(daemaon_ip, daemon_port)
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			task_result = recv_end(sock)
+			sock.close()
+
+			task_result = task_result.split('\n')
+			print 'Original Rsp Data:'
+			print task_result[1]
+			print type(task_result[1])
+
+			trans_result = eval(task_result[1])
+			print 'Transed Rsp Data:'
+			print trans_result
+			print type(trans_result)
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+
+		return trans_result
+
+	def get_nft_task_state(self, ENV_KEY, task_id = 0):
+		req_info = ReqInfo(task_id, cfg.FLAG_REQTYPE_TASKINFO)
+		rsp = ''
+		task_list = []
+		try:
+			daemaon_ip, daemon_port = getKey(ENV_KEY)
+			sock = sock_conn(daemaon_ip, daemon_port)
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			print rsp
+			rsp_list = rsp.split("\n")
+			for token in rsp_list:
+				if token.startswith(cfg.TIP_INFO_TASK):
+					info = token[len(cfg.TIP_INFO_TASK):]
+					task_info = TaskInfo()
+					task_info.decode(info)
+					if task_id == 0:
+						task_list.append(task_info.__dict__)
+					else:
+						task_list = task_info.__dict__
+
+			if task_id == 0:
+				for info in task_list:
+					print info
+			else:
+				print task_list
+
+			sock.close()
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		return task_list
+
+	def get_nft_task_result(self, ENV_KEY, task_id = 0):
+		req_info = ReqInfo(task_id, cfg.FLAG_REQTYPE_TASKRESULT)
+		task_result = ''
+		trans_result = {}
+		try:
+			daemaon_ip, daemon_port = getKey(ENV_KEY)
+			sock = sock_conn(daemaon_ip, daemon_port)
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			task_result = recv_end(sock)
+			sock.close()
+			if task_id == 0:
+				task_result = task_result.split('\n')
+				trans_result = eval(task_result[1])
+				output_msg('Transed Rsp Data:', trans_result, type(trans_result))
+				output_msg('Original Rsp Data:', task_result, type(task_result))
+			else:
+				trans_result = task_result
+				output_msg('Transed Rsp Data:', trans_result)
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		return trans_result
+
 	###查询所有计划任务
-	def test_all_task_info(self, request):
-		# response = HttpResponse(json.dumps({'data': 0}))
-		# return response
+	def get_all_ntf_task_result(self, request):
 		if request.method != '':
-			#从POST请求中获取查询关键字
-			# req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKMAP)
-			req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKINFO)
-			rsp = ''
-			print '--- 0 ---'
-			try:
-				print '--- 1 ---'
-				sock = sock_conn(ENV_KEY)
-				print '--- 2 ---'
-				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
-				print '--- 3 ---'
-				rsp = recv_end(sock)
-				print rsp
-				print '--- 4 ---'
-				# rsp_list = rsp.split("\n")
-				# task_list = []
-				# for token in rsp_list:
-				# 	if token.startswith(cfg.TIP_INFO_TASK):
-				# 		info = token[len(cfg.TIP_INFO_TASK):]
-				# 		task_info = TaskInfo()
-				# 		task_info.decode(info)
-				# 		task_list.append(task_info)
-				# for info in task_list:
-				# 	print(info.encode())
-				rsp_data = {'data': 'task_info'}
-				sock.close()
-				print '--- 5 ---'
-			except Exception as e:
-				print('notifyDaemon failed!')
-				print(traceback.format_exc())
+			req_data = request.POST.getlist('req_json')[0]
+			req_data = json.loads(req_data)
+
+			task_data = req_data['task_data']
+			ENV_KEY = req_data['ENV_KEY']
+
+			output_msg('req_json', req_data)
+			output_msg('task_data', task_data)
+
+			task_type = {}
+			task_result = {}
+
+			# 遍历客户请求
+			index  = 0
+			while index < len(task_data):
+				# task_data[index] = task_data[index].split(',')
+				task_id = task_data[index][0]
+				task_type[task_id] = task_data[index][1]
+				task_info = self.get_nft_task_state(ENV_KEY, task_id)
+				if task_info == []:
+					break
+				if task_info['state'] == 3:
+					task_result[task_id] = self.get_nft_task_result(ENV_KEY, task_id)
+					task_result[task_id] = self.process_rpc_result(task_result[task_id], task_type[task_id])
+				else:
+					task_result[task_id] = 'Empty'
+				index += 1
+			output_msg('task_result', task_result)
+
+			# 全遍历
+			# task_info = self.get_nft_task_state()
+			# for task in task_info:
+			# 	task_id = task['TID']
+			# 	if task['state'] == 3:
+			# 		task_result[task_id] = self.get_nft_task_result(task_id)
+
+			rsp_data = {'task_result': task_result}
 
 			response = HttpResponse(json.dumps(rsp_data))
 			response["Access-Control-Allow-Origin"] = "*"
@@ -1089,9 +1275,27 @@ class AjaxReqFunc(object):
 			response["Access-Control-Max-Age"] = "1000"
 			response["Access-Control-Allow-Headers"] = "*"
 			return response
-			# return HttpResponse(rsp.replace("\n", "<br/>"))
 		else:
-			return index(request)
+			response = HttpResponse(json.dumps('wrong!'))
+			return response
+
+	def get_all_ntf_task_state(self, request):
+		if request.method != '':
+			req_data = request.POST.getlist('req_json')[0]
+			req_data = json.loads(req_data)
+			ENV_KEY = req_data['ENV_KEY']
+
+			task_info = self.get_nft_task_state(ENV_KEY)
+			rsp_data = {'task_info': task_info}
+			response = HttpResponse(json.dumps(rsp_data))
+			response["Access-Control-Allow-Origin"] = "*"
+			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+			response["Access-Control-Max-Age"] = "1000"
+			response["Access-Control-Allow-Headers"] = "*"
+			return response
+		else:
+			response = HttpResponse(json.dumps('wrong!'))
+			return response
 
 	def process_rpc_result(self, origin_data, data_type):
 		failed_data = self.get_rpc_failed_data(origin_data, data_type)
@@ -1101,8 +1305,8 @@ class AjaxReqFunc(object):
 				array_data = self.get_version_ctr_array_result(origin_data, data_type)
 			else:
 				array_data = self.get_task_rpc_array_result(origin_data)
-			print 'array_data: '
-			print array_data
+			# print 'array_data: '
+			# print array_data
 
 			dict_data = self.get_rpc_dict_result(array_data, data_type)
 			# dict_data = self.get_rpc_dict_result(data_type, array_data)
@@ -1336,3 +1540,18 @@ class GetHtmlObject(object):
 		return tmp_object
 
 server_view = ViewMain()
+
+# def timer_start():
+# 	t = threading.Timer(3, test_func, ("Timer_Start", ))
+# 	t.start()
+#
+# def test_func(msg1):
+# 	print ("I'm test_func, ", msg1)
+# 	rsp_data = {'data': 'This is Timer'}
+# 	response = HttpResponse(json.dumps(rsp_data))
+# 	response["Access-Control-Allow-Origin"] = "*"
+# 	response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+# 	response["Access-Control-Max-Age"] = "1000"
+# 	response["Access-Control-Allow-Headers"] = "*"
+# 	return response
+# 	# timer_start()

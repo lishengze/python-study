@@ -1,27 +1,47 @@
-
 <div id="header" style="overflow:hidden;">
-    <div class = 'row' style="background-image: url('/static/images/nav2.jpg') ;
+    <div class = 'row' style="background-image: url('/static/images/nav2.jpg');
     background-size: 100% 100%;
     margin-bottom:10px">
     <div class="col-md-10">
-      <h1><a href="/home.html/">上期技术监控组版本控制系统<span>
+      <h1><a href="/home.html">上期技术监控组版本控制系统<span>
       </span></a></h1>
     </div>
     <div class="col-md-2"  style=" border-style: solid; border-width: 2px">
       <div id="userMessage" >
         <div>
           <div style = 'float:left'>用户信息：</div><div  class = 'username_nav' style = 'float:left'></div>
+          <div style = 'float:right'><a href = '/login.html'>退出登录</a></div>
         </div>
-        <div style = 'clear:left'>
-          <div style = 'clear:left;float:left'>当前环境： </div><div class = 'envr_nav' style = 'float:left'></div>
+        <div>
+          <div style = 'clear:both;float:left'>当前环境： </div><div  id = 'currentEvr' style = 'float:left'></div>
+          <div style = 'clear: both;float:left'>环境选择： </div>
+          <select class = 'EvrKeySelect' id = 'keySelect' style = 'float:left'>
+          </select>
         </div>
       </div>
     </div>
   </div>
 </div>
 <script>
-  // console.log (getCookie('logName'))
-  // alert(localStorage.getItem('logName'))
-  $(".username_nav").text(localStorage.getItem('logName'))
-  $(".envr_nav").text(localStorage.getItem('ENV_KEY'))
+//ENV_KEY 为当前环境值， ENV_KEY_SET为后台给的可选择环境集合
+  initEnv();
+  getEnvKeySet();
+  $("#keySelect").change(function(){
+    $("#currentEvr").text($('#keySelect').val());
+    localStorage.setItem('ENV_KEY', $('#keySelect').val());
+  })
+  function initEnv() {
+    $(".username_nav").text(localStorage.getItem('logName'));
+    $("#currentEvr").text(localStorage.getItem('ENV_KEY'));
+  }
+  function getEnvKeySet() {
+    var str  = localStorage.getItem('ENV_KEY_SET');
+    var obj = JSON.parse(str);
+    if(obj === null) {
+      return;
+    }
+    for(var i = 0; i < obj.length; i++) {
+      $("#keySelect").append("<option>" + obj[i] + "</option>")
+    }
+  }
 </script>

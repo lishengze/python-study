@@ -14,22 +14,26 @@
       <li> {{user_name}} </li>
     {% endfor %}
   </ul>
-  <input type="button" id="Set_ENV_KEY" value="Set ENV_KEY">
-  <p id="Set_ENV_KEY_Rsp"></p>
-  <input type="button" id="Request_Task_Rpc" value="Request Task Rpc">
-  <p id="Request_Task_Rpc_Rsp"></p>
-  <input type="button" id="Request_Task_Ntf" value="Request_Task_Ntf">
-  <p id="Request_Task_Ntf_Rsp"></p>
-  <input type="button" id="Request_All_SrvStatus" value="Request All SrvStatus">
-  <p id="Request_All_SrvStatus_Rsp"></p>
-  <input type="button" id="Request_All_TaskList" value="Request All TaskList">
-  <p id="Request_All_TaskList_Rsp"></p>
-  <input type="button" id="Request_All_TaskResult" value="Request All TaskResult">
-  <p id="Request_All_TaskResult_Rsp"></p>
-  <input type="button" id="Request_Task_Info" value="Request All TaskInfo">
-  <p id="Request_Task_Info_Rsp"></p>
-  <input type="button" id="Request_All_Version" value="Request All Version">
-  <p id="Request_All_Version_Rsp"></p>
+
+  <input type="button" id="Request_Info" value="Request Info"> <br><br>
+
+  <input type="button" id="Request_Task_Ntf" value="Request_Task_Ntf"> <br><br>
+
+  <input type="button" id="Get_NTF_Task_State" value="Get Ntf Task State"> <br><br>
+
+  <input type="button" id="Get_NTF_Task_Result" value="Get Ntf Task Result"> <br><br>
+
+  <input type="button" id="Set_ENV_KEY" value="Set ENV_KEY"> <br><br>
+
+  <input type="button" id="Request_Task_Rpc" value="Request Task Rpc"> <br><br>
+
+  <input type="button" id="Request_All_SrvStatus" value="Request All SrvStatus"> <br><br>
+
+  <input type="button" id="Request_All_TaskList" value="Request All TaskList"> <br><br>
+
+  <input type="button" id="Request_All_TaskResult" value="Request All TaskResult"> <br><br>
+
+  <input type="button" id="Request_All_Version" value="Request All Version"> <br><br>
 
   <form id="uploadForm" enctype="multipart/form-data">
       <input id="file" type="file" name="file"/>
@@ -38,6 +42,7 @@
   <br>
 
   <input type="button" id="Set_DB_Data" value="Set DB Data"> <br><br>
+
   <input type="button" id="Get_DB_Data" value="Get DB Data"> <br><br>
 
   <label for="searchbar"><img src="/static/admin/img/search.svg" alt="Search"></label> <br><br>
@@ -48,6 +53,110 @@
     <path fill="#555555" d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z"/>
   </svg>
 	<script>
+      var ntf_task_data = []
+
+      $('#Request_Info').click(function(){
+        req_data = {
+          'ENV_KEY':'TEST_170',
+          'type': '',
+          '--cmd': 'info',
+          '--args':'',
+          '--grp': '',
+          '--ctr': '',
+          '--srv': '',
+          '--srvno': '',
+          '--ictr': '',
+          '--isrv': '',
+          '--isrvno': '',
+        }
+        $.ajax({
+          url: '/AJAX/Request_Info/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log (responseJSON)
+          }
+        });
+
+      })
+
+      $('#Request_Task_Ntf').click(function(){
+        req_data = {
+          'ENV_KEY':'TEST_170',
+          'type': '',
+          '--cmd': 'show',
+          '--args':'',
+          '--grp': '',
+          '--ctr': '',
+          '--srv': '',
+          '--srvno': '',
+          '--ictr': '',
+          '--isrv': '',
+          '--isrvno': '',
+        }
+        $.ajax({
+          url: '/AJAX/Request_Task_Ntf/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log ('Task_data: ')
+              console.log (responseJSON)
+              ntf_task_data.push(responseJSON);
+          }
+        });
+      })
+
+      $('#Get_NTF_Task_Result').click(function(){
+          task_data = ntf_task_data;
+          req_data = {
+            'ENV_KEY': 'TEST_170',
+            'task_data': task_data
+          }
+
+        $.ajax({
+          url: '/AJAX/Get_NTF_Task_Result/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (result) {
+              console.log (result)
+              task_result = result.task_result
+              for (var value in task_result) {
+                task_id = value
+                if (task_result[task_id] !== 'Empty') {
+                  for ( var i = 0 ; i < ntf_task_data.length; ++i) {
+                    if (ntf_task_data[i][0] === task_id) {
+                      // ntf_task_data.remove()
+                    }
+                  }
+                }
+              }
+
+          }
+        });
+      })
+
+      $('#Get_NTF_Task_State').click(function(){
+        req_data = {
+          'ENV_KEY':'TEST_170'
+        }
+        $.ajax({
+          url: '/AJAX/Get_NTF_Task_State/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log (responseJSON)
+          }
+        });
+      })
+
       $('#upload').click(function(){
         var Url = '/AJAX/Upload_File/';
 
@@ -99,8 +208,8 @@
       $('#Request_Task_Rpc').click(function(){
           req_data = {
             'type': 'version_control',
-            '--cmd': 'drop',
-            '--args':'xml:1111',
+            '--cmd': 'show',
+            '--args':'',
             '--grp': '',
             '--ctr': '',
             '--srv': '',
@@ -137,13 +246,6 @@
         });
       })
 
-      $('#Request_Task_Ntf').click(function(){
-          $.getJSON('/AJAX/Request_Task_Ntf/',function(rsp_result){
-              console.log (rsp_result)
-              // $('#Request_All_TaskList_Rsp').append(rsp_result.twz + '<br>');
-          })
-      })
-
       $('#Request_All_SrvStatus').click(function(){
           $.getJSON('/AJAX/Request_All_SrvStatus/',function(rsp_result){
               console.log (rsp_result)
@@ -165,18 +267,20 @@
           })
       })
 
-      $('#Request_Task_Info').click(function(){
-          $.getJSON('/AJAX/Request_Task_Info/',function(rsp_result){
-              console.log (rsp_result)
-              // $('#Request_All_TaskResult_Rsp').append(rsp_result.twz + '<br>');
-          })
-      })
-
       $('#Request_All_Version').click(function(){
-          $.getJSON('/AJAX/Request_All_Version/',function(rsp_result){
-              console.log (rsp_result)
-              // $('#Request_All_Version_Rsp').append(rsp_result.twz + '<br>');
-          })
+          req_data = {
+            'ENV_KEY':'TEST_170'
+          }
+          $.ajax({
+            url: '/AJAX/Request_All_Version/',
+            data: {'req_json': JSON.stringify(req_data)},
+            dataType: 'json',
+            type: 'POST',
+            traditional: true,
+            success: function (responseJSON) {
+                console.log (responseJSON)
+            }
+          });
       })
 
       $('#Set_DB_Data').click(function(){

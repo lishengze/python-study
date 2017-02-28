@@ -38,7 +38,7 @@
           <div class="row">
             <div class="col-xs-3">进程名:</div>
             <div class="col-xs-7">
-              <input type="text" class="form-control inputValue" id = 'srv' placeholder="monprobe，monproxy">
+              <input type="text" class="form-control inputValue" id = 'srv' placeholder="monprobe,monproxy">
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@
           <div class="row">
             <div class="col-xs-3">进程名:</div>
             <div class="col-xs-7">
-              <input type="text" class="form-control inputValue" id = 'isrv' placeholder="monprobe，monproxy">
+              <input type="text" class="form-control inputValue" id = 'isrv' placeholder="monprobe,monproxy">
             </div>
           </div>
         </div>
@@ -80,10 +80,10 @@
       </div>
     </div>
   </div>
-  <button  onclick ='submitReq()' class="btn btn-primary btn-default">提交</button>
-
-  <div  id= 'getarg'>执行结果：<br>
-    <div id= 'result' style="height: 400px"> </div>
+  <button  onclick ='submitReq()' class="btn btn-primary btn-default" style="float:left">提交</button>
+  <div>
+   <div id= 'getarg' style="font-size:20px;">执行结果：<br></div>
+   <div id= 'result' style="height:450px"> </div>
   </div>
 </div>
 <style>
@@ -106,16 +106,14 @@
   $('#instruction').click(function(){
     $(this).find('p').is(':hidden') ? $(this).find('p').show() :  $(this).find('p').hide()
   })
-  // var optionSelectTips = "请选择参数类型";
   $('#parameter').kendoDropDownList({
-    // optionLabel: optionSelectTips,
     dataSource : ['deployConsole','undeployConsole','deployServer','undeployServer']
   })
   document.onkeydown=function(){
     if (event.keyCode == 13){
        submitReq();
     }
-    else{    }
+    else{}
    }
   $('.inputValue').focus(function() {
     var selectNow = $(this).parents('.parameterSelect');
@@ -124,29 +122,81 @@
   })
   function submitReq() {
     $('#result').hide();
-    var req_data = getReq_data()
+    var req_data = getReq_data();
     $.ajax({
-      url: 'http://172.1.128.170:8000/AJAX/Request_Task_Rpc/',
+      url: '/AJAX/Request_Task_Ntf/',
       data: {'req_json': JSON.stringify(req_data)},
       dataType: 'json',
       type: 'POST',
       traditional: true,
       success: function(responseJSON) {
-        showResult(responseJSON);
+        var ntf_task_data = getNtfSessionStorage();
+        ntf_task_data.push(responseJSON);
+        setNtfSessionStorage(ntf_task_data);
+        intervalReq(ntf_task_data);
       }
     });
   }
+  function setNtfSessionStorage(ntfdata) {
+    var str = JSON.stringify(ntfdata);
+    sessionStorage.setItem('ntf_task_data',str);
+  }
+
+  function getNtfSessionStorage() {
+    var str = sessionStorage.getItem('ntf_task_data');
+    var ntf_task_data = JSON.parse(str);
+    return ntf_task_data;
+  }
+
+  function intervalReq(ntf_task_data) {
+    var interval = setInterval(function(){
+      task_data = ntf_task_data;
+      reqResult_data = {
+        'ENV_KEY': localStorage.getItem('ENV_KEY'),
+        'task_data': task_data
+      }
+      console.log(task_data);
+      if(task_data != null) {
+        $.ajax({
+          url: '/AJAX/Get_NTF_Task_Result/',
+          data: {'req_json': JSON.stringify(reqResult_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (result) {
+              task_result = result.task_result;
+              for (var value in task_result) {
+                task_id = value;
+                if (task_result[task_id] !== 'Empty') {
+                  for ( var i = 0 ; i < ntf_task_data.length; ++i) {
+                    if (ntf_task_data[i][0] == task_id) {
+                      console.log(task_id);
+                      console.log(result);
+                      showResult(result.task_result[task_id]);
+                      clearInterval(interval);
+                    }
+                  }
+                }
+              }
+          }
+        });
+      }
+    },3000);
+  }
+
   function getReq_data(){
-    var array = $('.parameterSelect')
+    var array = $('.parameterSelect');
     var select = $('#parameter').data("kendoDropDownList").text();
     console.log(select);
     if ($(array[0]).hasClass('onSelect')) {
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': select,
         '--grp': $('#grp').val()
       }
     }else if ($(array[1]).hasClass('onSelect')) {
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': select,
         '--ctr': $('#ctr').val(),
         '--srv': $('#srv').val(),
@@ -157,6 +207,7 @@
       }
     } else {
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': 'deployConsole',
         '--args': '',
         '--grp': '',
@@ -170,6 +221,7 @@
     }
     return req_data;
   }
+
   function showResult(data)  {
     var titles = getTitles(data);
     $('#result').show();

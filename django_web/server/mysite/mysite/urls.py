@@ -37,7 +37,7 @@ urlpatterns = [
     # {'document_root': cfg_w.TEMPLATES_PATH}),
     # url(r'^',blog_views.index),
 
- 	url(r'^task1/$',blog_views.task_rpc),
+ 	#url(r'^task1/$',blog_views.task_rpc),
  	url(r'^task2/$',blog_views.task_ntf),
     url(r'^req1/$',blog_views.query_all_srvstatus),
     url(r'^req2/$',blog_views.query_all_tasklist),

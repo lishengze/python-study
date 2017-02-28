@@ -119,6 +119,19 @@
   </form>
 </div>
  <script>
+    var env_keySet = [];
+    $('#EvrKeySelect option').each(function() {
+      env_keySet.push(this.value);
+    })
+    console.log(env_keySet);
+    var str = JSON.stringify(env_keySet);
+    localStorage.setItem('ENV_KEY_SET', str);
+      $('input').keyup(function(e){
+      var keyCode = e.which;
+      if( keyCode === 13){
+        loginFunction();
+      }
+    })
     function loginFunction() {
       var logName = $('#loginName').val();
       var logPassword = $('#loginPassword').val();
@@ -131,8 +144,7 @@
         localStorage.setItem('logName', logName)
         localStorage.setItem('ENV_KEY', getType)
         var ENV_KEY = getType;
-        console.log(ENV_KEY)
-        // alert(ENV_KEY)
+        console.log(ENV_KEY);
         $.ajax({
           url: '/AJAX/Set_ENV_KEY/',
           data: {'env_key_value': ENV_KEY},
@@ -140,26 +152,13 @@
           type: 'POST',
           traditional: true,
           success: function (responseJSON) {
-              //  alert(responseJSON)
               window.location.href="/home.html";
-
           }
         });
-          // alert('aaa')
-        // window.location.href="/home/";
       } else {
         alert('用户名或者密码错误！');
       }
     }
-    // $('#loginDrop').kendoDropDownList({//该函数嵌套在 ajax 函数里面
-    //     dataSource : ['xml','server','client']
-    // });
-    $('input').keyup(function(e){
-      var keyCode = e.which;
-      if( keyCode === 13){
-        loginFunction()
-      }
-    })
  </script>
 </body>
 </html>

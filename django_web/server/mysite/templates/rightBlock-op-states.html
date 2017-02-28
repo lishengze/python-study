@@ -38,7 +38,7 @@
           <div class="row">
             <div class="col-xs-3">进程名:</div>
             <div class="col-xs-7">
-              <input type="text" class="form-control inputValue" id = 'srv' placeholder="monprobe，monproxy">
+              <input type="text" class="form-control inputValue" id = 'srv' placeholder="monprobe,monproxy">
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@
           <div class="row">
             <div class="col-xs-3">进程名:</div>
             <div class="col-xs-7">
-              <input type="text" class="form-control inputValue" id = 'isrv' placeholder="monprobe，monproxy">
+              <input type="text" class="form-control inputValue" id = 'isrv' placeholder="monprobe,monproxy">
             </div>
           </div>
         </div>
@@ -81,7 +81,7 @@
     </div>
   </div>
   <button  onclick ='submitReq()' class="btn btn-primary btn-default" style="float:left">提交</button>
-  <div  id= 'getarg' style="font-size:20px;">执行结果：<br>
+   <div><div  id= 'getarg' style="font-size:20px;">执行结果：<br></div>
     <div id= 'result' style="height:450px"> </div>
   </div>
 </div>
@@ -89,22 +89,14 @@
  .parameterSelect {
    border:2px solid gray;
    margin-top:5px;
-   background-color: 		#C0C0C0;
+   background-color: #C0C0C0;
  }
  .onSelect {
-   background-color:	#FF6347;
+   background-color: #FF6347;
  }
 </style>
 <script>
-  var str = sessionStorage.getItem('infoSearch');
-  console.log(str);
-  var obj = JSON.parse(str);
-  console.log(obj);
-  if(obj){
-    console.log('obj');
-
-    showResult(obj);
-  }
+  initResult();
   $('#instruction').click(function(){
     $(this).find('p').is(':hidden') ? $(this).find('p').show() :  $(this).find('p').hide()
   })
@@ -125,10 +117,18 @@
     else{
     }
    }
+  function initResult() { //保存之前查询的信息
+    var str = sessionStorage.getItem('infoSearch');
+    var obj = JSON.parse(str);
+    console.log(obj);
+    if(obj !== null){
+      showResult(obj);
+    }
+  }
   function submitReq() {
     var req_data = getReq_data()
     $.ajax({
-      url: '/AJAX/Request_Task_Rpc/',
+      url: '/AJAX/Request_Info/',
       data: {'req_json': JSON.stringify(req_data)},
       dataType: 'json',
       type: 'POST',
@@ -144,16 +144,19 @@
     var array = $('.parameterSelect')
     if($(array[0]).hasClass('onSelect')){
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': 'info',
         '--args': $('#parameter').data("kendoDropDownList").text() == optionSelectTips ? '' : $('#parameter').data("kendoDropDownList").text()
       }
     }else if ($(array[1]).hasClass('onSelect')) {
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': 'info',
         '--grp': $('#grp').val()
       }
     }else if ($(array[2]).hasClass('onSelect')) {
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': 'info',
         '--ctr': $('#ctr').val(),
         '--srv': $('#srv').val(),
@@ -164,6 +167,7 @@
       }
     } else {
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': 'info',
         '--args': '',
         '--grp': '',

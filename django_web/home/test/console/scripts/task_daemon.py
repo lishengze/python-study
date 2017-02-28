@@ -12,7 +12,6 @@ import socket
 import traceback
 import threading
 import shutil
-from json import *
 
 from multiprocessing import Process, Manager
 from signal import SIGTERM
@@ -21,6 +20,8 @@ import config as cfg
 from taskinfo import recv_end, getTaskInfo, getReqInfo, getHeadInfo, getTaskResult, getSeqId, \
 	genRpcHead, genRspHead, genFRspHead, ReqInfo, TaskInfo, SrvStatus, VersionInfo
 from tools import loadPickle, dumpPickle, loadVersionMap, md5sum_buf
+from genUpdate import loadUpdatePkg, genUpdateFile
+from ecall import showInfoCmd
 
 taskmap = {}			## 用于保存各任务信息{TaskID:TaskInfo}
 task_reuslt_map = {}	## 用于保存已结束任务的结果信息{TaskID:TaskResults}
@@ -191,21 +192,24 @@ def doTask(task_info):
 		startTime = time.time()
 		if cfg.FLAG_DEBUG:
 			print("process[%d] doTask start at %s"%(pid, startTime))
+		os.chdir(cfg.WORK_PATH_SCR)
 		if task_info.task_type == cfg.TASK_TYPE_ECALL:
 			cmdline = "python %s --tid %d %s"%(cfg.FILE_NAME_MAIN, task_info.TID, task_info.cmdline)
-			print ('cmdline')
-			print (cmdline)
 		elif task_info.task_type == cfg.TASK_TYPE_VERCONTROL:
-			#cmdline = "python %s --tid %d %s"%(cfg.FILE_NAME_VERCTRL, task_info.TID, task_info.cmdline)
 			cmdline = "python %s %s"%(cfg.FILE_NAME_VERCTRL, task_info.cmdline)
+		else:
+			###执行doupdate.py
+			print("python %s %s"%(task_info.cmd, task_info.cmdline))
+			os.chdir(cfg.WORK_PATH_TASK)
+			cmdline = "python %s %s"%(task_info.cmd, task_info.cmdline)
 		if cfg.FLAG_DEBUG:
 			print("cmdline[%s]"%(cmdline))
-		os.chdir(cfg.WORK_PATH_SCR)
+
 		result = os.popen(cmdline,'r').read()
+		print("++++++++result++++++++++")
 		print(result)
 		endTime = time.time()
 		if task_info.cmd in cfg.CMDS_APP_BASE:
-			#updateSrvStatusFromDoTask(result)
 			showSrvStatus()
 		else:
 			print('tastInfo cmd is [%s]'%(task_info.cmd))
@@ -297,7 +301,6 @@ def genRspBody(req_info):
 	Args:
 		req_info:ReqInfo的实例
 	"""
-	global TaskList
 	try:
 		TID = req_info.TID
 		#请求类型为查看任务列表
@@ -320,11 +323,8 @@ def genRspBody(req_info):
 			task_result_str = cfg.FLAG_NULL
 			if TID == 0:
 				## Get all taskinfo
-				task_keys = sorted(task_reuslt_map.keys())
+				###!!!2.22修改
 				task_result_str = str(task_reuslt_map)
-				#task_result_str = JSONEncoder().encode(task_reuslt_map)
-				# for tid in task_keys:
-				# 	task_result_str += str(tid) + cfg.COLON + cfg.NEWLINE +task_reuslt_map[tid]
 			else:
 				if task_reuslt_map.get(TID):
 					task_result_str = task_reuslt_map[TID]
@@ -334,8 +334,6 @@ def genRspBody(req_info):
 		#请求类型为查看计划任务列表
 		elif req_info.req_type == cfg.FLAG_REQTYPE_TASKLIST:
 			task_info_str = cfg.FLAG_NULL
-			print ("+++++ TaskList ++++ ")
-			print (TaskList)
 			for task_info in TaskList:
 				task_info_str += task_info.encode()
 			return task_info_str
@@ -479,6 +477,20 @@ def ScanTaskList():
 				dumpPickle(TaskList, cfg.FILE_DAEMON_TASK_LIST)
 		time.sleep(0.5)
 
+def ScanTaskMap():
+	"""
+	扫描任务结果，验证任务状态，并删除过期任务结果
+	"""
+	global task_reuslt_map
+	timestamp = int(time.time())
+	if cfg.FLAG_DEBUG:
+		print("ScanTaskMap at %d Length of task_reuslt_map is [%d]"%(timestamp, len(task_reuslt_map)))
+
+	for TID in task_reuslt_map.keys():
+		if timestamp - task_map[TID].exec_time > cfg.TIMEOUT_TASK_RESULT:
+			print("[DROP] timeout task_result [%d]"%(TID))
+			del task_reuslt_map[TID]
+
 def ScanSrvStatusMap():
 	"""
 	查看服务状态Map，以剔除过期信息
@@ -499,9 +511,9 @@ def AddTask(task_info):
 	"""
 	global TaskList
 	print("before add %d"%(len(TaskList)))
-	print(task_info)
+	#print(task_info)
 	TaskList.append(task_info)
-	dumpPickle(TaskList, cfg.FILE_DAEMON_TASK_LIST)		## 计划任务信息列表落地到文件，以应对进程重启
+	dumpPickle(TaskList, cfg.FILE_DAEMON_TASK_LIST)
 	print("after add %d"%(len(TaskList)))
 
 class MyDaemon(Daemon):
@@ -516,28 +528,32 @@ class MyDaemon(Daemon):
 		1.Create Child to scan task_list
 		2.
 		"""
-		global TaskList
 		try:
-			if os.path.exists(cfg.FILE_DAEMON_TASK_LIST):
-				TaskList = loadPickle(cfg.FILE_DAEMON_TASK_LIST)
-			sub_thread_scantask = threading.Thread(target=ScanTaskList)
-			sub_thread_scansrv = threading.Thread(target=ScanSrvStatusMap)
-			sub_thread_scantask.start()		## 扫描计划任务列表，以开始到期任务
-			sub_thread_scansrv.start()		## 扫描服务状态列表，以删除过期信息
-
 			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 			s.bind((cfg.DAEMON_IP, cfg.DAEMON_PORT))
 			s.listen(5)
-			while 1:
+
+			if os.path.exists(cfg.FILE_DAEMON_TASK_LIST):
+				TaskList = loadPickle(cfg.FILE_DAEMON_TASK_LIST)
+			sub_thread_scantask = threading.Thread(target=ScanTaskList)
+			sub_thread_scantaskmap = threading.Thread(target=ScanTaskMap)
+			sub_thread_scansrv = threading.Thread(target=ScanSrvStatusMap)
+
+			sub_thread_scantask.start()		## 扫描计划任务列表，以开始到期任务
+			sub_thread_scantaskmap.start()	## 扫描任务状态字典，以删除过期信息
+			sub_thread_scansrv.start()		## 扫描服务状态列表，以删除过期信息
+
+			while True:
 				conn, addr = s.accept()
 				if cfg.FLAG_DEBUG:
 					print("Accept connection from ", conn.getpeername())
 				buf = recv_end(conn)
-				print('************')
-				print(len(buf))
-				print('************')
-				if buf:
+				if cfg.FLAG_DEBUG:
+					print('************')
+					print(len(buf))
+					print('************')
+				if buf.strip():
 					head_info, buf = getHeadInfo(buf)
 					if cfg.FLAG_DEBUG:
 						print('get {%s} from getHeadInfo'%(head_info))
@@ -586,8 +602,25 @@ class MyDaemon(Daemon):
 						if cfg.FLAG_DEBUG:
 							print(rpc_head + result_info + cfg.TIP_INFO_EOF)
 						conn.send(rpc_head + result_info + cfg.TIP_INFO_EOF)
+					###
+					elif head_info.startswith(cfg.TIP_HEAD_DOCMD):
+						print ('***** req_json *****')
+						# args = buf
+						# args_map = {'cmd':'info', 'args':args}
+						# result_info = showInfoCmd(**args_map)
+
+						req_json = eval(buf)
+						print (type(req_json))
+						print (req_json)
+						result_info = showInfoCmd(**req_json)
+
+						rpc_head = genRpcHead()
+						if cfg.FLAG_DEBUG:
+							print(result_info)
+							print(rpc_head + result_info + cfg.TIP_INFO_EOF)
+						conn.send(rpc_head + result_info + cfg.TIP_INFO_EOF)
 					###!!!文件上传
-					elif head_info.startswith(cfg.TIP_HEAD_FILE):
+					elif head_info.startswith(cfg.TIP_HEAD_UPLOAD):
 						head_info_str = head_info.strip()
 						file_info = head_info_str[head_info_str.find(cfg.CLOSE_BRACKET)+len(cfg.CLOSE_BRACKET):]
 						filename, file_md5, FileDst = file_info.split(cfg.DCOLON)
@@ -607,7 +640,7 @@ class MyDaemon(Daemon):
 						else:
 							result = '  file transfer failed!'
 						conn.send(head_info + result + cfg.TIP_INFO_EOF)
-					## 文件下载
+					# 文件下载
 					elif head_info.startswith(cfg.TIP_HEAD_FREQ):
 						filename = 'unknown'
 						req_id = 0
@@ -615,7 +648,7 @@ class MyDaemon(Daemon):
 						try:
 							head_info_str = head_info.strip()
 							filename = head_info_str[head_info_str.rfind(cfg.DCOLON)+len(cfg.DCOLON):]
-							req_id = head_info_str[head_info_str.rfind(cfg.CLOSE_BRACKET)+len(cfg.DCOLON):head_info_str.rfind(cfg.DCOLON)]
+							req_id = head_info_str[head_info_str.rfind(cfg.CLOSE_BRACKET)+len(cfg.CLOSE_BRACKET):head_info_str.rfind(cfg.DCOLON)]
 							status = cfg.CMD_SUCC
 							filepath = os.path.join(cfg.WORK_PATH_CFG, filename)
 							f = open(filepath, 'rb')
@@ -625,6 +658,38 @@ class MyDaemon(Daemon):
 							status = cfg.CMD_FAIL
 						finally:
 							conn.send(genFRspHead(req_id, filename, status) + result + cfg.TIP_INFO_EOF)
+					elif head_info.startswith(cfg.TIP_HEAD_FILE):
+						head_info_str = head_info.strip()
+						file_info = head_info_str[head_info_str.find(cfg.CLOSE_BRACKET)+len(cfg.CLOSE_BRACKET):]
+						file_tar, file_md5 = file_info.split(cfg.DCOLON)
+						filepath = cfg.WORK_PATH_TEMP + cfg.SEP_COMM + file_tar
+
+						file_md5_new = md5sum_buf(buf)
+						print("filemd5_new_file: " + file_md5_new)
+						print("filemd5_file: " + file_md5)
+						if file_md5 == file_md5_new:
+							f = open(filepath, 'wb+')
+							f.write(buf)
+							f.close()
+
+							pkgpath, dic_cfg = loadUpdatePkg(filepath)
+							update_file_py = genUpdateFile(pkgpath, dic_cfg)
+
+							task_info = TaskInfo()
+							#task_info.exec_time = time.time() + 1200
+							task_info.task_type = cfg.TASK_TYPE_PYTHON
+							task_info.cmd = update_file_py
+							if task_info.state == cfg.FLAG_TASK_READY:
+								print('addtask ')
+								AddTask(task_info)##加到任务队列
+							else:
+								result_info = doTask(task_info)  ## 执行即时任务并返回
+								print('get {%s} from doTask'%(result_info))
+
+							result = '  file transfer succ!'
+						else:
+							result = '  file transfer failed!'
+						conn.send(head_info + result + cfg.TIP_INFO_EOF)
 					else:
 						print('Get invalid info_head[%s]'%(head_info))
 

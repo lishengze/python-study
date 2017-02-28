@@ -35,6 +35,7 @@ function reqRollBack() {
   var versionInfo = $('#rollBackInputVersion').val();
   var args = objType + "=" + versionInfo
   var req_data = {
+    'ENV_KEY':localStorage.getItem('ENV_KEY'),
     'type': 'version_control',
     "--cmd" :"rollback",
     "--agrs":args

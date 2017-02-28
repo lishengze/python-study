@@ -39,6 +39,7 @@
       alert('请输入版本信息！！')
     } else {
       var req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         'type': 'version_control',
         "--cmd" : "drop",
         "--args": args

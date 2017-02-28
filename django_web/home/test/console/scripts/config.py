@@ -22,7 +22,7 @@ DAEMON_PORT = 18888
 USER = 'test'
 USER_PSWD = 'shanghai'
 
-FLAG_DEBUG = False
+FLAG_DEBUG = True
 
 WORK_DIR = 'console'
 WORK_BIN = 'bin'
@@ -35,6 +35,7 @@ WORK_LOG = 'log'
 WORK_TEMP = 'temp'
 WORK_FLOW = 'flow'
 WORK_UPDATE = 'update'
+WORK_TASK = 'task'
 
 SYS_WINDOWS = 'Windows'
 SYS_WIN = 'Win'
@@ -77,7 +78,6 @@ else:
 	HOME = os.getenv('HOME')
 
 SSH_PORT = 22
-#SSH_KEY = '/home/test/.ssh/id_rsa'
 SSH_KEY = HOME + '/.ssh/id_rsa'
 SSH_CASE_KEY = 0
 SSH_CASE_PSWD = 1
@@ -85,7 +85,6 @@ SSH_CASE_IGN = 0
 SSH_CASE_NIGN = 1
 SSH_TIMEOUT = 30
 SSH_THREADS = 10
-
 
 FLAG_TREADPOOL = True
 
@@ -100,15 +99,18 @@ FLAG_SRV_NOTALIVE = 3
 
 TIMEOUT_SRV_STATUS = 60*10
 TIMEOUT_SCHDL_TASK = 60*60*12
+TIMEOUT_TASK_RESULT = 60*60*12*3
 
 TIP_HEAD = '[HEAD]'
 TIP_HEAD_FILE = '[FILE]'
+TIP_HEAD_UPLOAD = '[UPLOAD]'
 TIP_HEAD_FREQ = '[FREQ]'
 TIP_HEAD_FRSP = '[FRSP]'
 TIP_HEAD_REQ = '[REQ]'
 TIP_HEAD_RSP = '[RSP]'
 TIP_HEAD_NTF = '[NTF]'
 TIP_HEAD_RPC = '[RPC]'
+TIP_HEAD_DOCMD = '[CMD_INFO]'
 TIP_INFO_EOF = '[EOF]'
 TIP_INFO_TASK = '[TASK]'
 TIP_BODY_REQ = '[REQBODY]'
@@ -117,8 +119,9 @@ TIP_BODY_VERINFO = '[VERINFO]'
 TIP_RESULT_START = '[RESULT]<<<'
 TIP_RESULT_END = '[RESULT]>>>'
 
-TASK_TYPE_ECALL = 0
-TASK_TYPE_VERCONTROL = 1
+TASK_TYPE_ECALL = 1
+TASK_TYPE_VERCONTROL = 2
+TASK_TYPE_PYTHON = 0
 
 FLAG_REQTYPE_TASKINFO = 0
 FLAG_REQTYPE_TASKRESULT = 1
@@ -129,24 +132,6 @@ FLAG_REQTYPE_TASKMAP = 5
 
 FLAG_SSH_ORIG = 0
 FLAG_SSH_PARA = 1
-
-CMD_SUCC = 0
-CMD_FAIL = 1
-
-CMD_SUCC_TIP = 'SUCC'
-CMD_FAIL_TIP = 'FAILED'
-CMD_CONNERR_TIP = 'Conn err'
-CMD_UNDEPLOY_TIP = 'Path Not found'
-CMD_NOALIVE_TIP = 'App Not run'
-CMD_RUNNING_TIP = 'Already running'
-CMD_STOPPED_TIP = 'App stopped'
-
-CMD_INFO = 'info'
-CMDS_BASE = 'run, run_r, put, get'
-CMDS_APP_BASE = "start, stop, show, alive"
-CMDS_APP = CMDS_APP_BASE + ', ' + 'clean, stopcln, version'
-CMDS_TOP = 'deployServer, undeployServer, deployConsole, undeployConsole, copyXml' + ', ' + CMDS_APP + ', ' + CMDS_BASE
-
 
 EXEC_ALL = 0
 ##target IP exec
@@ -169,6 +154,8 @@ POUND = '#'
 DASH = '~'
 COLON = ':'
 DCOLON = '::'
+SQUOTE = "'"
+DQUOTE = '"'
 SEMICOLON = ';'
 EXCLAMATION = '!'
 OPEN_BRACKET = '['
@@ -184,8 +171,8 @@ FLAG_BLANK = ' '
 FLAG_ARGS = '@'
 FLAG_TIPS = '@@'
 FLAG_TAB = '\t'
-
 DMINUS = '--'
+
 CMD = 'cmd'
 SUFF_CMD = 'Cmd'
 CTR = 'ctr'
@@ -193,6 +180,8 @@ SRV = 'srv'
 SRVNO = 'srvno'
 GRP = 'grp'
 OPT = 'opt'
+OS = 'os'
+IOS = 'ios'
 ICTR = 'ictr'
 ISRV = 'isrv'
 ISRVNO = 'isrvno'
@@ -207,11 +196,25 @@ DST = 'dst'
 REGEX_CONSOLEZIP = '^' + WORK_DIR + '.zip.*'
 REGEX_OPTMAP = '^opt_map.*'
 
+CMD_SUCC = 0
+CMD_FAIL = 1
+
+CMD_SUCC_TIP = 'SUCC'
+CMD_FAIL_TIP = 'FAILED'
+CMD_CONNERR_TIP = 'Conn err'
+CMD_UNDEPLOY_TIP = 'Path Not found'
+CMD_NOALIVE_TIP = 'App Not run'
+CMD_RUNNING_TIP = 'Already running'
+CMD_STOPPED_TIP = 'App stopped'
+
 CMD_DEPLOYCONSOLE = 'deployConsole'
 CMD_UNDEPLOYCONSOLE = 'undeployConsole'
 CMD_DEPLOYSERVER = 'deployServer'
 CMD_UNDEPLOYSERVER = 'undeployServer'
+CMD_REDEPLOYSERVER = 'redeployServer'
 CMD_COPYXML = 'copyXml'
+CMD_STOPCLN = 'stopcln'
+CMD_START = 'start'
 CMD_RUN = 'run'
 CMD_RUN_R = 'run_r'
 CMD_PUT = 'put'
@@ -220,9 +223,16 @@ CMD_ZIP = 'zip'
 CMD_EXECCMD = 'execCmd'
 
 CMDS_HOSTLEVEL = (CMD_DEPLOYCONSOLE, CMD_UNDEPLOYCONSOLE, CMD_RUN, CMD_RUN_R, CMD_PUT, CMD_GET)
+CMDS_DEPLOY = (CMD_DEPLOYCONSOLE, CMD_UNDEPLOYCONSOLE, CMD_DEPLOYSERVER, CMD_UNDEPLOYSERVER, CMD_REDEPLOYSERVER, CMD_COPYXML)
+
+CMD_INFO = 'info'
+CMDS_BASE = 'run, run_r, put, get'
+CMDS_APP_BASE = "start, stop, show, alive"
+CMDS_APP = CMDS_APP_BASE + ', ' + 'clean, stopcln, version, restart'
+CMDS_TOP = COMMA.join(CMDS_DEPLOY) + COMMA + CMDS_APP + COMMA + CMDS_BASE
 
 OPTION_OPTS = 'r:v::'
-OPTION_ARGS = ['cmd=', 'ctr=','srv=','srvno=','grp=',	'opt=', 'ictr=',\
+OPTION_ARGS = ['cmd=', 'ctr=','srv=','srvno=','grp=', 'opt=', 'ictr=', 'os=', 'ios=', \
 		 'isrv=', 'isrvno=', 'iopt=', 'args=', 'file=', 'ip=', 'cmd2=', 'tid=', 'src=', 'dst=']
 
 
@@ -233,10 +243,14 @@ XML_CONFIG = 'config'
 XML_SRVNAME = 'monmanager'
 XML_SRVS = {XML_CONFIG : (XML_SRVNAME,)}
 
+WORK_BACKUP = "pkg_backup"
+WORK_FILES = "pkg_files"
+
 WORK_BASE = HOME
 WORK_PATH = WORK_BASE + SEP_COMM + WORK_DIR
 ###添加存放update服务的目录
 WORK_PATH_UPDATE = WORK_PATH + SEP_COMM + WORK_UPDATE
+WORK_PATH_UPDATE_BAK = WORK_PATH_UPDATE + SEP_COMM + WORK_BACKUP
 WORK_PATH_UPDATE_TEMP = WORK_PATH + SEP_COMM + WORK_UPDATE + SEP_COMM + WORK_TEMP
 WORK_PATH_BIN = WORK_PATH + SEP_COMM + WORK_BIN
 WORK_PATH_CFG = WORK_PATH + SEP_COMM + WORK_CFG
@@ -246,6 +260,8 @@ WORK_PATH_PACKAGE = WORK_PATH + SEP_COMM + WORK_PACKAGE
 WORK_PATH_MODULES = WORK_PATH + SEP_COMM + WORK_MODULES
 WORK_PATH_LOG = WORK_PATH + SEP_COMM + WORK_LOG
 WORK_PATH_TEMP = WORK_PATH + SEP_COMM + WORK_TEMP
+WORK_PATH_TASK = WORK_PATH + SEP_COMM + WORK_TASK
+
 
 DEPLOY_DIR = 'app'
 ##[主控]最新的发布文件
@@ -259,7 +275,7 @@ DEPLOY_UPDATE = 'update'
 
 DEPLOY_PATH = WORK_BASE + SEP_COMM + DEPLOY_DIR
 DEPLOY_PATH_LATEST = DEPLOY_PATH + SEP_COMM + DEPLOY_LATEST
-DEPLOY_PATH_RELEASE	= DEPLOY_PATH + SEP_COMM + DEPLOY_RELEASE
+DEPLOY_PATH_RELEASE = DEPLOY_PATH + SEP_COMM + DEPLOY_RELEASE
 DEPLOY_PATH_UPDATE = DEPLOY_PATH + SEP_COMM + DEPLOY_UPDATE
 DEPLOY_PATH_RUN = DEPLOY_PATH + SEP_COMM + DEPLOY_RUN
 
@@ -295,6 +311,7 @@ FILE_NAME_SRVCTRL = 'srvControl.py'
 FILE_NAME_VERCTRL = 'verControl.py'
 FILE_NAME_DAEMON = 'task_daemon.py'
 FILE_NAME_MAIN = 'main.py'
+FILE_NAME_UPDATE = 'do_update.py'
 
 FILE_NAME_PKGZIP = WORK_DIR + FILE_SUF_ZIP + DOT + PID
 FILE_NAME_TRANSZIP = 'transfer' + FILE_SUF_ZIP + DOT + PID
@@ -346,6 +363,8 @@ APPNAME = 'AppName'
 APPNO = 'AppNO'
 TIP_OSTYPE = 'OSType'
 
+VL_DEL = 'del'
+
 DEF_VERSION_DELTA='+1'
 VL_DATETIME='datetime'
 VL_VERSION = 'version'
@@ -372,4 +391,18 @@ RE_VERSION = '^\d+(\.\d+)*$'
 DEFAULT_GRP = 'AllServices'
 DEFAULT_RECV = 8192
 
+UPDATE_DEL = 'del'
+UPDATE_COPY = 'copy'
+UPDATE_PUB = 'publish'
+UPDATE_CFGFILE = 'update.cfg'
 
+VAL_RESTART = 0
+VAL_UNDEPLOY = 1
+VAL_DEPLOY = 2
+VAL_REDEPLOY = 3
+
+KEY_STOP = 'stop'
+KEY_START = 'start'
+KEY_DEPLOY = 'deploy'
+KEY_REDEPLOY = 'redeploy'
+KEY_UNDEPLOY = 'undeploy'

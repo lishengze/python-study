@@ -1,3 +1,9 @@
+<style>
+ .diff {
+   width: 500px;
+ }
+</style>
+
 <div  class="col-md-9" > <p>请选择要比较的版本：</p>
   <div style = 'float: left;width: 49%' >
      <div>
@@ -19,8 +25,10 @@
 		&nbsp; &nbsp;
 		<input type="radio" name="_viewtype" id="inline" onclick="diffUsingJS(1);" /> <label for="inline">Inline Diff</label>
 	</div>
-  <!-- <button onclick="diffUsingJS()"> 提交</button> -->
-<div id="diffoutput" class="col-md-11"> </div>
+  <div style=" overflow:scroll">
+    <div id="diffoutput" > </div>
+
+  </div>
 </div>
 
 <script>

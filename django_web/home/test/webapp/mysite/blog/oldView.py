@@ -30,6 +30,30 @@ from taskinfo import *
 
 import json
 @csrf_protect
+def exeCmdInfo(request):
+	#if request.method == 'POST':
+	if request.method != '':
+
+		#从POST请求中获取查询关键字
+		rsp = ''
+		#args = request.POST.get('keyword',None)
+		args = 'relay'
+
+		print('web req args :%s'%(args))
+		try:
+			daemaon_ip, daemon_port = getKey(ENV_KEY)
+			sock = sock_conn(daemaon_ip, daemon_port)
+			sock.send(genCmdInfoHead() + args + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			sock.close()
+		except Exception as e:
+			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		return HttpResponse(rsp.replace("\n", "<br/>"))
+	else:
+		return index(request)
+
+@csrf_protect
 ###执行即时任务
 def task_rpc(request):
 	#if request.method == 'POST':

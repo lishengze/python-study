@@ -7,6 +7,7 @@
 
 import time
 import socket
+import random
 
 import config as cfg
 
@@ -103,8 +104,11 @@ def getFRspInfo(head_info):
 	status = head_info[head_info.rfind(cfg.DCOLON)+len(cfg.DCOLON):]
 	return seq_id, filename, status
 
+#def genUploadHead(filename, file_md5, FileDst):
+#	return cfg.TIP_HEAD + cfg.TIP_HEAD_UPLOAD + filename + cfg.DCOLON + file_md5 + cfg.DCOLON + FileDst + cfg.NEWLINE
+
 def genFileHead(filename, file_md5, FileDst):
-	return cfg.TIP_HEAD + cfg.TIP_HEAD_FILE + filename + cfg.DCOLON + file_md5 + cfg.DCOLON + FileDst + cfg.NEWLINE
+	return cfg.TIP_HEAD + cfg.TIP_HEAD_FILE + filename + cfg.DCOLON + file_md5 + cfg.NEWLINE
 
 def genFReqHead(filename):
 	return cfg.TIP_HEAD + cfg.TIP_HEAD_FREQ + str(genSeqId()) + cfg.DCOLON + filename + cfg.NEWLINE
@@ -117,6 +121,9 @@ def genReqHead():
 
 def genRpcHead():
 	return cfg.TIP_HEAD + cfg.TIP_HEAD_RPC + str(genSeqId()) + cfg.NEWLINE
+
+def genCmdInfoHead():
+	return cfg.TIP_HEAD + cfg.TIP_HEAD_DOCMD + str(genSeqId()) + cfg.NEWLINE
 
 def genNtfHead():
 	return cfg.TIP_HEAD + cfg.TIP_HEAD_NTF + str(genSeqId()) + cfg.NEWLINE
@@ -158,7 +165,8 @@ class TaskInfo:
 		self.exec_time = exec_time
 		self.state = state
 		self.PID = PID
-		self.TID = TID if (TID > 0) else self.info_time * 100000 + self.PID
+		###！！！1
+		self.TID = TID if (TID > 0) else self.info_time * 100000 + random.randint(10000, 99999)
 		self.cmd = cmd
 		self.cmdline = cmdline
 		self.task_type = task_type

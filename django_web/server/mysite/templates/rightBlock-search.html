@@ -53,6 +53,7 @@
     var args = objType + ':' + versionName
     console.log(args)
     var req_data = {
+      'ENV_KEY':localStorage.getItem('ENV_KEY'),
       'type': 'version_control',
       "--cmd" : "show",
       "--args": args

@@ -38,7 +38,7 @@
           <div class="row">
             <div class="col-xs-3">进程名:</div>
             <div class="col-xs-7">
-              <input type="text" class="form-control inputValue" id = 'srv' placeholder="monprobe，monproxy">
+              <input type="text" class="form-control inputValue" id = 'srv' placeholder="monprobe,monproxy">
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@
           <div class="row">
             <div class="col-xs-3">进程名:</div>
             <div class="col-xs-7">
-              <input type="text" class="form-control inputValue" id = 'isrv' placeholder="monprobe，monproxy">
+              <input type="text" class="form-control inputValue" id = 'isrv' placeholder="monprobe,monproxy">
             </div>
           </div>
         </div>
@@ -80,11 +80,11 @@
       </div>
     </div>
   </div>
-  <button  onclick ='submitReq()' class="btn btn-primary btn-default">提交</button>
-
-  <div  id= 'getarg' style="font: bold">执行结果：<br>
-    <div id= 'result' style="height: 400px"> </div>
-  </div>
+  <button  onclick ='submitReq()' class="btn btn-primary btn-default" style="float:left">提交</button>
+  <div>
+     <div  id= 'getarg' style="font-size:20px;">执行结果：<br></div>
+     <div id= 'result' style="height:450px"> </div>
+   </div>
 </div>
 <style>
  .deploySelect {
@@ -127,7 +127,7 @@
     var req_data = getReq_data();
     $('#result').hide();
     $.ajax({
-      url: 'http://172.1.128.170:8000/AJAX/Request_Task_Rpc/',
+      url: '/AJAX/Request_Task_Rpc/',
       data: {'req_json': JSON.stringify(req_data)},
       dataType: 'json',
       type: 'POST',
@@ -143,11 +143,13 @@
     console.log(select);
     if ($(array[0]).hasClass('onSelect')) {
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': select,
         '--grp': $('#grp').val()
       }
     }else if ($(array[1]).hasClass('onSelect')) {
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': select,
         '--ctr': $('#ctr').val(),
         '--srv': $('#srv').val(),
@@ -158,6 +160,7 @@
       }
     } else {
       req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
         '--cmd': 'deployConsole',
         '--args': '',
         '--grp': '',
