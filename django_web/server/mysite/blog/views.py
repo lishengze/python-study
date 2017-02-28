@@ -519,77 +519,7 @@ class ViewMain(object):
 			print 'file name: ' + fileName + '\n'
 			return render(request, fileName, file_object)
 
-class AjaxReqFunc(object):
-	def __init__ (self):
-		self.name = 'AjaxReqFunc'
-
-	def default_ajax_request(self, request):
-		return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
-
-	def upload_file(self, request):
-		rsp_data = {}
-		if request.method == 'POST':
-			start_time = int(time.time())
-			upload_file = request.FILES['file']
-			if upload_file:
-				filename = str(upload_file).encode('utf-8')
-				filepath = os.path.join(cfg.WORK_PATH_TEMP, filename)
-				filedst = filepath + cfg.DOT + cfg.PID
-				print 'filepath: ', filepath
-				print 'filedest: ', filedst
-
-				destination = open(filepath,'wb+')
-				for chunk in upload_file.chunks():
-					destination.write(chunk)
-				destination.close()
-				daemaon_ip, daemon_port = getKey(ENV_KEY)
-				sock = sock_conn(daemaon_ip, daemon_port)
-				rtn = uploadFile(sock, filepath, filedst)
-				end_time = int(time.time())
-
-				status = ''
-				upload_time = str(end_time - start_time)
-				print 'rtn: ', rtn
-				if rtn == cfg.CMD_SUCC:
-					rsp = recv_end(sock)
-					info = '<br/>File transfer SUCC, cost ' + str(end_time - start_time) + ' secs.'
-					status = "Successful"
-				else:
-					info = '<br/>File transfer FAIL, cost ' + str(end_time - start_time) + ' secs.'
-					status = 'Failed'
-				rsp = rsp + info
-				print rsp
-				print 'status: ', status
-				sock.close()
-				rsp_data = {
-					'type': status,
-					'upload_time': upload_time
-				}
-			else:
-				rsp_data = {
-					'type': 'Failed',
-					'info': 'No upload file'
-				}
-		else:
-			rsp_data = {
-				'type': 'Failed',
-				'info': 'Is Not POST Requset!'
-			}
-		return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
-
-	def handle_uploaded_file(self, file, filename):
-		filename = filename.encode('utf-8')
-		print 'filename: ', filename
-		if not os.path.exists('upload/'):
-			os.mkdir('upload/')
-		full_fileName = 'upload/' + filename
-		print 'full_fileName: ', full_fileName
-		with open(full_fileName, 'wb+') as destination:
-			for chunk in file.chunks():
-				destination.write(chunk)
-		destination.close()
-		return full_fileName
-
+class AdminDataAjaxFunc(object):
 	def set_dbdata(self, request):
 		tmp_data = Person(name='LSZ', age=27)
 		tmp_data.save()
@@ -760,69 +690,7 @@ class AjaxReqFunc(object):
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
 
-	def set_chosen_group(self, request):
-		group_name = request.POST.getlist('req_json')[0]
-		group_name = group_name.encode('utf-8')
-		print 'group_name:   ', group_name
-		group = GroupInfo.objects.filter(name = group_name)
-		print 'group_id:  ', group[0].id
-		rsp_url = ''
-		error_info = ''
-		if group:
-			rsp_url = '/admin/auth/group/' + str(group[0].id) + '/change'
-		else:
-			error_info = 'request name does not exit!'
-
-		rsp_data = {'data': rsp_url,
-					'error': error_info}
-		response = HttpResponse(json.dumps(rsp_data))
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
-	def set_chosen_user(self, request):
-		userName = request.POST.getlist('req_json')[0]
-		userName = userName.encode('utf-8')
-		print 'userName:   ', userName
-		user = UserInfo.objects.filter(name = userName)[0]
-		print 'user_id:  ', user.id
-		rsp_url = ''
-		error_info = ''
-		if user:
-			rsp_url = '/admin/auth/user/' + str(user.id) + '/change'
-		else:
-			error_info = 'request name does not exit!'
-
-		rsp_data = {'data': rsp_url,
-					'error': error_info}
-		response = HttpResponse(json.dumps(rsp_data))
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
-	def set_env_key(self, request):
-		global ENV_KEY
-		print 'This is AjaxReqFunc.set_env_key!'
-		req_env_key_value = request.POST.getlist('env_key_value')[0]
-
-		ENV_KEY = req_env_key_value
-		print 'ENV_KEY: ', ENV_KEY
-
-		rsp_data = {
-			'data': req_env_key_value
-		}
-		response = HttpResponse(json.dumps(rsp_data))
-		# response = HttpResponse(req_json)
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
+class TaskAjaxFunc(object):
 	def get_task_info(self, trans_req_json):
 		task_type = cfg.TASK_TYPE_ECALL
 		cmdline = ''
@@ -1380,6 +1248,141 @@ class AjaxReqFunc(object):
 			dict_data.append(tmp_dict_data.__dict__)
 			index += 1
 		return dict_data
+
+class AjaxReqFunc(AdminDataAjaxFunc, TaskAjaxFunc):
+	def __init__ (self):
+		self.name = 'AjaxReqFunc'
+
+	def default_ajax_request(self, request):
+		return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
+
+	def upload_file(self, request):
+		rsp_data = {}
+		if request.method == 'POST':
+			start_time = int(time.time())
+			upload_file = request.FILES['file']
+			if upload_file:
+				filename = str(upload_file).encode('utf-8')
+				filepath = os.path.join(cfg.WORK_PATH_TEMP, filename)
+				filedst = filepath + cfg.DOT + cfg.PID
+				print 'filepath: ', filepath
+				print 'filedest: ', filedst
+
+				destination = open(filepath,'wb+')
+				for chunk in upload_file.chunks():
+					destination.write(chunk)
+				destination.close()
+				daemaon_ip, daemon_port = getKey(ENV_KEY)
+				sock = sock_conn(daemaon_ip, daemon_port)
+				rtn = uploadFile(sock, filepath, filedst)
+				end_time = int(time.time())
+
+				status = ''
+				upload_time = str(end_time - start_time)
+				print 'rtn: ', rtn
+				if rtn == cfg.CMD_SUCC:
+					rsp = recv_end(sock)
+					info = '<br/>File transfer SUCC, cost ' + str(end_time - start_time) + ' secs.'
+					status = "Successful"
+				else:
+					info = '<br/>File transfer FAIL, cost ' + str(end_time - start_time) + ' secs.'
+					status = 'Failed'
+				rsp = rsp + info
+				print rsp
+				print 'status: ', status
+				sock.close()
+				rsp_data = {
+					'type': status,
+					'upload_time': upload_time
+				}
+			else:
+				rsp_data = {
+					'type': 'Failed',
+					'info': 'No upload file'
+				}
+		else:
+			rsp_data = {
+				'type': 'Failed',
+				'info': 'Is Not POST Requset!'
+			}
+		return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
+
+	def handle_uploaded_file(self, file, filename):
+		filename = filename.encode('utf-8')
+		print 'filename: ', filename
+		if not os.path.exists('upload/'):
+			os.mkdir('upload/')
+		full_fileName = 'upload/' + filename
+		print 'full_fileName: ', full_fileName
+		with open(full_fileName, 'wb+') as destination:
+			for chunk in file.chunks():
+				destination.write(chunk)
+		destination.close()
+		return full_fileName
+
+
+	def set_chosen_group(self, request):
+		group_name = request.POST.getlist('req_json')[0]
+		group_name = group_name.encode('utf-8')
+		print 'group_name:   ', group_name
+		group = GroupInfo.objects.filter(name = group_name)
+		print 'group_id:  ', group[0].id
+		rsp_url = ''
+		error_info = ''
+		if group:
+			rsp_url = '/admin/auth/group/' + str(group[0].id) + '/change'
+		else:
+			error_info = 'request name does not exit!'
+
+		rsp_data = {'data': rsp_url,
+					'error': error_info}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+
+	def set_chosen_user(self, request):
+		userName = request.POST.getlist('req_json')[0]
+		userName = userName.encode('utf-8')
+		print 'userName:   ', userName
+		user = UserInfo.objects.filter(name = userName)[0]
+		print 'user_id:  ', user.id
+		rsp_url = ''
+		error_info = ''
+		if user:
+			rsp_url = '/admin/auth/user/' + str(user.id) + '/change'
+		else:
+			error_info = 'request name does not exit!'
+
+		rsp_data = {'data': rsp_url,
+					'error': error_info}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+
+	def set_env_key(self, request):
+		global ENV_KEY
+		print 'This is AjaxReqFunc.set_env_key!'
+		req_env_key_value = request.POST.getlist('env_key_value')[0]
+
+		ENV_KEY = req_env_key_value
+		print 'ENV_KEY: ', ENV_KEY
+
+		rsp_data = {
+			'data': req_env_key_value
+		}
+		response = HttpResponse(json.dumps(rsp_data))
+		# response = HttpResponse(req_json)
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
 
 class GetHtmlObject(object):
 	def __init__(self):
