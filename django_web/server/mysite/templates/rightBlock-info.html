@@ -6,9 +6,9 @@
   </div>
   <div class="col-md-12" style="border:2px solid gray; background-color: 	#F0F8ff;margin-top:10px;padding-bottom:10px">
     <div style="font: bold 25px arial;">参数设定</div>
-    <div  class = 'deploySelect'>
+    <div class = 'parameterSelect' >
       <div class = 'row'>
-        <div  class="col-xs-2" > 安装部署选择</div>
+        <div  class="col-xs-2" > 类型参数：</div>
         <div class="col-xs-3">
           <div id = 'parameter' class = 'inputValue'></div>
         </div>
@@ -23,7 +23,7 @@
       </div>
 
     </div>
-    <div  class = 'parameterSelect'>
+    <div class = 'parameterSelect' >
       <div style = 'font: bold 20px arial '>对象参数：</div>
       <div  class="row">
         <div class="col-xs-4">
@@ -80,140 +80,84 @@
       </div>
     </div>
   </div>
-  <button id ='reqBtn' onclick ='submitReq()' class="btn btn-primary btn-default" style="float:left">提交</button>
-  <div>
-   <div id= 'getarg' style="font-size:20px;">执行结果：<br></div>
-   <div id= 'result' style="height:450px"> </div>
+  <button  onclick ='submitReq()' class="btn btn-primary btn-default" style="float:left">提交</button>
+   <div><div  id= 'getarg' style="font-size:20px;">执行结果：<br></div>
+    <div id= 'result' style="height:450px;"> </div>
   </div>
 </div>
 <style>
- .deploySelect {
-   border:2px solid gray;
-   margin-top:5px;
-   background-color:	#FF9900;
- }
  .parameterSelect {
    border:2px solid gray;
    margin-top:5px;
-   background-color: 		#C0C0C0;
+   background-color: #C0C0C0;
  }
  .onSelect {
-   background-color:	#FF6347;
+   background-color: #FF6347;
  }
 </style>
 <script>
-  var data = []
-  setNtfSessionStorage(data);
-  keyDownEvent();
+  initResult();
   $('#instruction').click(function(){
     $(this).find('p').is(':hidden') ? $(this).find('p').show() :  $(this).find('p').hide()
   })
+  var optionSelectTips = "请选择参数类型";
   $('#parameter').kendoDropDownList({
-    dataSource : ['deployConsole','undeployConsole','deployServer','undeployServer']
+    optionLabel: optionSelectTips,
+    dataSource : ['host','relay','app']
   })
-  function keyDownEvent() {
-    $(document).bind('keydown', function(event) {
-      if (event.keyCode == 13){
-         submitReq();
-         $(document).unbind('keydown');
-      }
-      else{}
-    })
-  }
   $('.inputValue').focus(function() {
     var selectNow = $(this).parents('.parameterSelect');
     selectNow.addClass('onSelect');
     selectNow.siblings().removeClass('onSelect')
-  })
-
+  });
+  document.onkeydown=function(){
+    if (event.keyCode == 13){
+       submitReq();
+    }
+    else{
+    }
+   }
+  function initResult() { //保存之前查询的信息
+    var str = sessionStorage.getItem('infoSearch');
+    var obj = JSON.parse(str);
+    console.log(obj);
+    if(obj !== null){
+      showResult(obj);
+    }
+  }
   function submitReq() {
-    $('#reqBtn').attr('disabled', 'disabled');
-    $('#result').hide();
-    var req_data = getReq_data();
+    var req_data = getReq_data()
     $.ajax({
-      url: '/AJAX/Request_Task_Ntf/',
+      url: '/AJAX/Request_Real_Time_Info_Task/',
       data: {'req_json': JSON.stringify(req_data)},
       dataType: 'json',
       type: 'POST',
       traditional: true,
       success: function(responseJSON) {
-        var ntf_task_data = getNtfSessionStorage();
-        ntf_task_data.push(responseJSON);
-        setNtfSessionStorage(ntf_task_data);
-        intervalReq(ntf_task_data);
+        var str = JSON.stringify(responseJSON);
+        sessionStorage.setItem('infoSearch',str);
+        showResult(responseJSON);
       }
     });
   }
-
-  function setNtfSessionStorage(ntfdata) {
-    var str = JSON.stringify(ntfdata);
-    sessionStorage.setItem('ntf_task_data',str);
-  }
-
-  function getNtfSessionStorage() {
-    var str = sessionStorage.getItem('ntf_task_data');
-    var ntf_task_data = JSON.parse(str);
-    return ntf_task_data;
-  }
-
-  function intervalReq(ntf_task_data) {
-    var times = 0;
-    var interval = setInterval(function(){
-      times ++ ;
-      console.log(times);
-      if(times == 20) {
-        clearInterval(interval);
-      }
-      task_data = ntf_task_data;
-      reqResult_data = {
-        'ENV_KEY': localStorage.getItem('ENV_KEY'),
-        'task_data': task_data
-      }
-      console.log(task_data);
-      if(task_data != null) {
-        $.ajax({
-          url: '/AJAX/Get_NTF_Task_Result/',
-          data: {'req_json': JSON.stringify(reqResult_data)},
-          dataType: 'json',
-          type: 'POST',
-          traditional: true,
-          success: function (result) {
-              task_result = result.task_result;
-              for (var value in task_result) {
-                task_id = value;
-                if (task_result[task_id] !== 'Empty') {
-                  for ( var i = 0 ; i < ntf_task_data.length; ++i) {
-                    if (ntf_task_data[i][0] == task_id) {
-                      showResult(result.task_result[task_id]);
-                      ntf_task_data.splice(i,1);
-                      setNtfSessionStorage(ntf_task_data);
-                      $('#reqBtn').removeAttr('disabled');
-                      keyDownEvent();
-                      clearInterval(interval);
-                    }
-                  }
-                }
-              }
-          }
-        });
-      }
-    },6000);
-  }
-
   function getReq_data(){
-    var array = $('.parameterSelect');
-    var select = $('#parameter').data("kendoDropDownList").text();
-    console.log(select);
-    if ($(array[0]).hasClass('onSelect')) {
+    var array = $('.parameterSelect')
+    if($(array[0]).hasClass('onSelect')){
       req_data = {
         'ENV_KEY':localStorage.getItem('ENV_KEY'),
-        '--cmd': select,
-        '--grp': $('#grp').val()
+        '--cmd': 'info',
+        '--args': $('#parameter').data("kendoDropDownList").text() == optionSelectTips ? '' : $('#parameter').data("kendoDropDownList").text()
       }
     }else if ($(array[1]).hasClass('onSelect')) {
       req_data = {
         'ENV_KEY':localStorage.getItem('ENV_KEY'),
-        '--cmd': select,
+        '--cmd': 'info',
+        '--grp': $('#grp').val()
+      }
+    }else if ($(array[2]).hasClass('onSelect')) {
+      req_data = {
+        'ENV_KEY':localStorage.getItem('ENV_KEY'),
+        '--cmd': 'info',
         '--ctr': $('#ctr').val(),
         '--srv': $('#srv').val(),
         '--srvno': $('#srvno').val(),
@@ -224,7 +168,7 @@
     } else {
       req_data = {
         'ENV_KEY':localStorage.getItem('ENV_KEY'),
-        '--cmd': select,
+        '--cmd': 'info',
         '--args': '',
         '--grp': '',
         '--ctr': '',
@@ -237,14 +181,12 @@
     }
     return req_data;
   }
-
   function showResult(data)  {
-    var titles = getTitles(data);
-    $('#result').show();
+    var titles = getTitles(data)
     $('#result').kendoGrid({
      selectable: "multiple cell",
      allowCopy: true,
-     scrollable: true
+     scrollable: true,
     });
     $('#result').data("kendoGrid").setOptions({
       columns:titles
@@ -254,7 +196,6 @@
     })
     $('#result').data("kendoGrid").setDataSource(dataSource);
   }
-
   function getTitles(data){
     if(data.type === 'relay'){
       return [

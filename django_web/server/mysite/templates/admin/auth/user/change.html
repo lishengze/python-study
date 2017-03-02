@@ -16,7 +16,7 @@
 				</div>
 				<div id="user-tools">
 					欢迎,
-					<strong>{{login_user.name}}</strong>.
+					<strong id='username_nav'></strong>
 					<a href="/home/">访问主页</a> /
 					<a href="/admin/password_change/">修改密码</a> /
 					<a href="/admin/logout/">退出</a>
@@ -469,5 +469,8 @@
 				<a href="#">Cancel</a>
 			</p>
 		</div>
+		<script>
+			$("#username_nav").text(localStorage.getItem('logName'));
+		</script>
 	</body>
 </html>

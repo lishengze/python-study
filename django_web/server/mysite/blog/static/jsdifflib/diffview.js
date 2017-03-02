@@ -191,7 +191,7 @@ diffview = {
 
 		tdata.push(node = document.createElement("tbody"));
 		for (var idx in rows) rows.hasOwnProperty(idx) && node.appendChild(rows[idx]);
-		console.log('test')
+		// console.log('test')
 		node = celt("table", "diff" + (inline ? " inlinediff" : ""));
 		for (var idx in tdata) tdata.hasOwnProperty(idx) && node.appendChild(tdata[idx]);
 		return node;

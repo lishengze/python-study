@@ -3,8 +3,14 @@
     <div style = 'border-top: 1px solid #BDBDBD;'>
     <div class="form-group" style = 'margin-top: 30px'>
      <label for="exampleInputFile" style="float: left">最新文件压缩包：</label>
-     <input type="file" style="float: left" id="file">
+     <input type="file" style="float: left" id="file_upload">
      <button id= 'upload' class="btn btn-primary btn-default">上传并发布</button>
+    </div>
+    <div class="form-group" style = 'margin-top: 30px'>
+     <label for="exampleInputFile" style="float: left">最新文件压缩包：</label>
+     <input type="file" style="float: left" id="file_update">
+     <input style ='float:left;margin-right:10px' id = 'exec_time' placeholder="执行时间(延长执行秒数)">
+     <button id= 'update_srv' class="btn btn-primary btn-default">一键发布</button>
     </div>
     <!-- <div style = 'margin-top: 50px'> 请输入版本号（默认空代表覆盖当前最新版本）：
     </div>
@@ -26,37 +32,73 @@
 </div>
 <script>
   $('#upload').click(function(){
-    var Url = '/AJAX/Upload_File/';
-
-    var name = $("#file").val();
-    console.log ('name: ' + name)
+    var Url = '/AJAX/Upload_File/' + localStorage.getItem('ENV_KEY');
+    var name = $("#file_upload").val();
+    console.log ('name: ' + name);
     var formData = new FormData();
-    formData.append("file",$("#file")[0].files[0]);
+    formData.append("file",$("#file_upload")[0].files[0]);
     formData.append("name",name);
-    var file = document.getElementById('file').files[0];
-    if (file) {
-      console.log (file.size)
+    var file = document.getElementById('file_upload').files[0];
+    console.log(file);
+    if(file != null && file.size != 0) {
+      $.ajax({
+        url : Url,
+        type : 'POST',
+        cache: false,
+        data : formData,
+        processData : false,   // 告诉jQuery不要去处理发送的数据
+        contentType : false,   // 告诉jQuery不要去设置Content-Type请求头
+        dataType: 'json',
+        beforeSend:function(){
+          // console.log("正在进行，请稍候");
+        },
+        success : function(responseStr) {
+          console.log (responseStr)
+        },
+        error : function(responseStr) {
+          console.log("error");
+        }
+      });
     }
-    releaseVersion();
-    $.ajax({
-      url : Url,
-      type : 'POST',
-      cache: false,
-      data : formData,
-      processData : false,   // 告诉jQuery不要去处理发送的数据
-      contentType : false,   // 告诉jQuery不要去设置Content-Type请求头
-      dataType: 'json',
-      beforeSend:function(){
-      console.log("正在进行，请稍候");
-      },
-      success : function(responseStr) {
-        console.log (responseStr)
-      },
-      error : function(responseStr) {
-        console.log("error");
-      }
-    });
   })
+
+  $('#update_srv').click(function(){
+    var formData = new FormData();
+    formData.append("file",$("#file_update")[0].files[0]);
+
+    var exec_time = $('#exec_time').val();
+    if (isNaN(exec_time)) {
+      console.log (exec_time)
+      exec_time = 5;
+    } else {
+      console.log ('是数字');
+    }
+    var Url = '/AJAX/Update_Srv/' + localStorage.getItem('ENV_KEY') + '/' + exec_time;
+    console.log ('exec_time: ' + exec_time)
+    var file = document.getElementById('file_update').files[0];
+    if(file != null && file.size != 0) {
+      $.ajax({
+        url : Url,
+        type : 'POST',
+        cache: false,
+        data : formData,
+        processData : false,   // 告诉jQuery不要去处理发送的数据
+        contentType : false,   // 告诉jQuery不要去设置Content-Type请求头
+        dataType: 'json',
+        beforeSend:function(){
+          // console.log("正在进行，请稍候");
+        },
+        success : function(responseStr) {
+          console.log (responseStr)
+        },
+        error : function(responseStr) {
+          console.log("error");
+        }
+      });
+    }
+  })
+
+
   function releaseVersion() {
     if(confirm('确认要发布吗？')) {
       alert('yes!')

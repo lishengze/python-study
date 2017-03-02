@@ -49,8 +49,8 @@
 
   <div id="update_srv_form">
       <input id="file_update" type="file" name="file"/>
-      <input id="exec_time" value="è¾“å…¥æ‰§è¡Œæ—¶é—´" />
-      <button id="update_srv" type="button">ä¸€é”®å‘å¸ƒ</button>
+      <input id="exec_time" value="ÊäÈëÖ´ĞĞÊ±¼ä" />
+      <button id="update_srv" type="button">Ò»¼ü·¢²¼</button>
   </div>
 
   <br>
@@ -217,11 +217,11 @@
           type : 'POST',
           cache: false,
           data : formData,
-          processData : false,   // å‘Šè¯‰jQueryä¸è¦å»å¤„ç†å‘é€çš„æ•°æ®
-          contentType : false,   // å‘Šè¯‰jQueryä¸è¦å»è®¾ç½®Content-Typeè¯·æ±‚å¤´
+          processData : false,   // ¸æËßjQuery²»ÒªÈ¥´¦Àí·¢ËÍµÄÊı¾İ
+          contentType : false,   // ¸æËßjQuery²»ÒªÈ¥ÉèÖÃContent-TypeÇëÇóÍ·
           dataType: 'json',
           beforeSend:function(){
-            // console.log("æ­£åœ¨è¿›è¡Œï¼Œè¯·ç¨å€™");
+            // console.log("ÕıÔÚ½øĞĞ£¬ÇëÉÔºò");
           },
           success : function(responseStr) {
             console.log (responseStr)
@@ -238,36 +238,30 @@
 
         var ENV_KEY = "TEST_170"
         var exec_time = $('#exec_time').val();
-        if (isNaN(exec_time)) {
-          console.log (exec_time)
-          exec_time = 5;
-        } else {
-          console.log ('æ˜¯æ•°å­—')
-        }
         var Url = '/AJAX/Update_Srv/' + ENV_KEY + '/' + exec_time;
         console.log ('exec_time: ' + exec_time)
         var file = document.getElementById('file_update').files[0];
         if (file) {
-          console.log ('fileSize: ' + file.size)
+          console.log (file.size)
         }
-        $.ajax({
-          url : Url,
-          type : 'POST',
-          cache: false,
-          data : formData,
-          processData : false,   // å‘Šè¯‰jQueryä¸è¦å»å¤„ç†å‘é€çš„æ•°æ®
-          contentType : false,   // å‘Šè¯‰jQueryä¸è¦å»è®¾ç½®Content-Typeè¯·æ±‚å¤´
-          dataType: 'json',
-          beforeSend:function(){
-            // console.log("æ­£åœ¨è¿›è¡Œï¼Œè¯·ç¨å€™");
-          },
-          success : function(responseStr) {
-            console.log (responseStr)
-          },
-          error : function(responseStr) {
-            console.log("error");
-          }
-        });
+        // $.ajax({
+        //   url : Url,
+        //   type : 'POST',
+        //   cache: false,
+        //   data : formData,
+        //   processData : false,   // ¸æËßjQuery²»ÒªÈ¥´¦Àí·¢ËÍµÄÊı¾İ
+        //   contentType : false,   // ¸æËßjQuery²»ÒªÈ¥ÉèÖÃContent-TypeÇëÇóÍ·
+        //   dataType: 'json',
+        //   beforeSend:function(){
+        //     // console.log("ÕıÔÚ½øĞĞ£¬ÇëÉÔºò");
+        //   },
+        //   success : function(responseStr) {
+        //     console.log (responseStr)
+        //   },
+        //   error : function(responseStr) {
+        //     console.log("error");
+        //   }
+        // });
       })
 
       $('#Set_ENV_KEY').click(function(){
