@@ -1,6 +1,6 @@
 $(function () {
     console.log ('This is group change!')
-
+    console.log ($('#group_id').attr('value'))
     $("input[value='保存']").click(function(){
       var group_name = $("#id_name").val();
       var group_group = '';
@@ -15,6 +15,7 @@ $(function () {
         var req_data = {
           'name': group_name,
           'permission':group_group,
+          'group_id': $('#group_id').attr('value')
         }
         console.log (req_data)
         $.ajax({
@@ -28,7 +29,7 @@ $(function () {
               if (responseJSON.status === "Successful") {
                 window.location.href = '/admin/auth/group';
               } else {
-                alert('修改组群失败!');
+                alert(responseJSON.info);
               }
           }
         });

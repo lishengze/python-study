@@ -6,14 +6,15 @@
     </div>
     <div style="margin-top: 20px">
       <label style= 'width:150px;float:left'><h4>版本信息:</h4></label>
-      <input  class="form-control" style= 'width:400px' id="rollBackInputVersion" placeholder=" ver=VERSION | dt=DATE_TIME | seq=number">
+      <input  class="form-control" style= 'width:200px; float:left' id="rollBackInputObject2" >
+      <input  class="form-control" style= ' margin-left:10px;width:300px' id="rollBackInputVersion" placeholder=" VERSION | DATE_TIME | number">
       <div style="width:700px;margin-top:20px;border:2px solid gray;"> <span style= 'font: bold 25px arial;'>版本信息输入提示：</span><br>
         <br><span style= 'font-weight: bold'>ver =VERSION</span>&nbsp&nbsp&nbsp&nbsp-- 回退到指定版本，VERSION like: 1.1.0  1.0.0.1 ...
         <br><span style= 'font-weight: bold'>dt= DATE_TIME</span>	&nbsp-- 回退到用时间日期指定版本，DATE_TIME like 20121011_153026；
         <br><span style= 'font-weight: bold'>seq=number</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	-- 回退至倒数第number个版本，number必须是一个正数。
       </div>
     </div>
-    <button  onclick ='submitRollBack()' class="btn btn-primary btn-default">回退</button>
+    <button  onclick ='submitRollBack()' class="btn btn-primary btn-default" style="margin-top:5px">回退</button>
 
   </div>
   <div class="rightContainer"  style = 'float: right;width: 25%;height:550px;border-left: 1px solid #BDBDBD;'>
@@ -24,6 +25,9 @@
 $('#rollBackInputObject').kendoDropDownList({
     dataSource : ['xml','server','client']
 });
+$('#rollBackInputObject2').kendoDropDownList({
+    dataSource : ['ver','dt','seq']
+});
 function submitRollBack(){
   if(confirm('确实要回退吗?')){
     reqRollBack()
@@ -33,12 +37,13 @@ function submitRollBack(){
 function reqRollBack() {
   var objType = $('#rollBackInputObject').val();
   var versionInfo = $('#rollBackInputVersion').val();
-  var args = objType + "=" + versionInfo
+  var type = $('#rollBackInputObject2').val();
+  var args = objType + ":" + type + "=" + versionInfo;
   var req_data = {
     'ENV_KEY':localStorage.getItem('ENV_KEY'),
     'type': 'version_control',
     "--cmd" :"rollback",
-    "--agrs":args
+    "--args":args
   }
   $.ajax({
     url: '/AJAX/Request_Real_Time_VersionCtr_Task/',

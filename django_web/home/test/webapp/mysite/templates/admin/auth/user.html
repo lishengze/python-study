@@ -19,14 +19,14 @@
 					<strong id='username_nav'></strong>
 					<a href="/home/">访问主页</a> /
 					<a href="/admin/password_change/">修改密码</a> /
-					<a href="/admin/logout/">退出登录</a>
+					<a href="/login/">退出登录</a>
 				</div>
 		</div>
 		<!-- END Header -->
 		<div class="breadcrumbs">
 			<a href="/admin/">主页</a>
-			›
-			身份认证与授权管理
+			›<a href="/admin/auth/">身份认证与授权管理</a>
+			› 用户
 		</div>
 	    <!-- Content -->
 	    <div id="content" class="flex">
@@ -133,10 +133,10 @@
 											   <div class="text"><a href="?o=3.1">姓名</a></div>
 											   <div class="clear"></div>
 											</th> -->
-											<th scope="col" class="sortable column-is_staff">
+											<!-- <th scope="col" class="sortable column-is_staff">
 											   <div class="text"><a href="?o=5.1">用户状态</a></div>
 											   <div class="clear"></div>
-											</th>
+											</th> -->
 										</tr>
 									</thead>
 									<tbody>
@@ -146,7 +146,7 @@
 												<input class="action-select" name="_selected_action" type="checkbox" value="1">
 											</td>
 											<th class="field-username">
-												<a class='hrefJump' style="color:steelblue">{{user.name}}</a>
+												<a class='hrefJump' style="color:steelblue;cursor:hand">{{user.name}}</a>
 											</th>
 											<td class="field-email">{{user.email}}</td>
 											<!-- <td class="field-is_staff"><img src="/static/admin/img/icon-yes.svg" alt="True"></td> -->

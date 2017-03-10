@@ -128,6 +128,9 @@ def testDictStr():
     print d
     print type(d)
 
+def testString():
+    
+
 def testFunProgram ():
     # testMapReduce()
     # testFilter()

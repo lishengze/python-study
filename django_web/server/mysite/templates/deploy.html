@@ -2,7 +2,7 @@
 <html >
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <title>上期技术分发管理系统</title>
+  <title>上期技术监控专用版本控制系统</title>
   {% include 'dependence.html' %}
 </head>
 <body>
@@ -20,7 +20,8 @@
           $("#panelbar").kendoPanelBar({
               // expandMode: "single"
           });
-          // $("#calendar").kendoCalendar();
+          $("a").removeClass('k-state-selected');
+          $('#deploy').addClass('k-state-selected');
       });
     </script>
 </body>

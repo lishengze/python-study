@@ -1,6 +1,6 @@
 $(function () {
     console.log ('This is user change!')
-
+    console.log ($('#user_id').attr('value'))
     var g_permission_array = []
     $("#id_user_permissions_from").find("option").each(function(){
         g_permission_array.push($(this).text());
@@ -20,14 +20,14 @@ $(function () {
       if (inputValue === '') {
         for(var i =0; i < g_groups_array.length; ++i) {
           var value = g_groups_array[i];
-          var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+          var html_element = '<option " title="'+ value +'">'+ value + '</option>'
           $("#id_groups_from").append(html_element);
         }
       } else {
         for(var i =0; i < g_groups_array.length; ++i) {
           var value = g_groups_array[i];
           if (value.indexOf(inputValue) >= 0) {
-            var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+            var html_element = '<option " title="'+ value +'">'+ value + '</option>'
             $("#id_groups_from").append(html_element);
           }
         }
@@ -44,14 +44,14 @@ $(function () {
       if (inputValue === '') {
         for(var i =0; i < g_permission_array.length; ++i) {
           var value = g_permission_array[i];
-          var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+          var html_element = '<option " title="'+ value +'">'+ value + '</option>'
           $("#id_user_permissions_from").append(html_element);
         }
       } else {
         for(var i =0; i < g_permission_array.length; ++i) {
           var value = g_permission_array[i];
           if (value.indexOf(inputValue) >= 0) {
-            var html_element = '<option " title="'+ value +'"> '+ value + ' </option>'
+            var html_element = '<option " title="'+ value +'">'+ value + '</option>'
             $("#id_user_permissions_from").append(html_element);
           }
         }
@@ -63,40 +63,36 @@ $(function () {
       var user_permission = '';
       var user_groups = '';
       var email = $("#id_email").val();
-      $("#id_user_permissions_to").find("option").each(function(){
-          user_permission += $(this).text() + ";"
-      })
+      // $("#id_user_permissions_to").find("option").each(function(){
+      //     user_permission += $(this).text() + ";"
+      // })
 
       $("#id_groups_to").find("option").each(function(){
           user_groups += $(this).text() + ";"
       })
 
-      if (user_permission === '') {
-        alert('还没选择用户权限!')
-      } else {
-        var req_data = {
-          'name': user_name,
-          'email': email,
-          'permission':user_permission,
-          'groups': user_groups
-        }
-        console.log (req_data)
-        $.ajax({
-          url: '/AJAX/Change_User/',
-          data: {'req_json': JSON.stringify(req_data)},
-          dataType: 'json',
-          type: 'POST',
-          traditional: true,
-          success: function (responseJSON) {
-              console.log (responseJSON)
-              if (responseJSON.status === "Successful") {
-                window.location.href = '/admin/auth/user';
-              } else {
-                alert('修改用户失败!');
-              }
-          }
-        });
+      var req_data = {
+        'name': user_name,
+        'email': email,
+        'groups': user_groups,
+        'user_id': $('#user_id').attr('value')
       }
+      console.log (req_data)
+      $.ajax({
+        url: '/AJAX/Change_User/',
+        data: {'req_json': JSON.stringify(req_data)},
+        dataType: 'json',
+        type: 'POST',
+        traditional: true,
+        success: function (responseJSON) {
+            console.log (responseJSON)
+            if (responseJSON.status === "Successful") {
+              window.location.href = '/admin/auth/user';
+            } else {
+              alert(responseJSON.info);
+            }
+        }
+      });
       return false;
     })
 
@@ -105,40 +101,35 @@ $(function () {
       var user_permission = '';
       var user_groups = '';
       var email = $("#id_email").val();
-      $("#id_user_permissions_to").find("option").each(function(){
-          user_permission += $(this).text() + ";"
-      })
+      // $("#id_user_permissions_to").find("option").each(function(){
+      //     user_permission += $(this).text() + ";"
+      // })
 
       $("#id_groups_to").find("option").each(function(){
           user_groups += $(this).text() + ";"
       })
 
-      if (user_permission === '') {
-        alert('还没选择用户权限!')
-      } else {
-        var req_data = {
-          'name': user_name,
-          'email': email,
-          'permission':user_permission,
-          'groups': user_groups
-        }
-        console.log (req_data)
-        $.ajax({
-          url: '/AJAX/Change_User/',
-          data: {'req_json': JSON.stringify(req_data)},
-          dataType: 'json',
-          type: 'POST',
-          traditional: true,
-          success: function (responseJSON) {
-              console.log (responseJSON)
-              if (responseJSON.status === "Successful") {
-                window.location.href = '/admin/auth/user/add';
-              } else {
-                alert('修改组群失败!');
-              }
-          }
-        });
+      var req_data = {
+        'name': user_name,
+        'email': email,
+        'groups': user_groups
       }
+      console.log (req_data)
+      $.ajax({
+        url: '/AJAX/Change_User/',
+        data: {'req_json': JSON.stringify(req_data)},
+        dataType: 'json',
+        type: 'POST',
+        traditional: true,
+        success: function (responseJSON) {
+            console.log (responseJSON)
+            if (responseJSON.status === "Successful") {
+              window.location.href = '/admin/auth/user/add';
+            } else {
+              alert('修改组群失败!');
+            }
+        }
+      });
       return false;
     })
 
@@ -160,76 +151,76 @@ $(function () {
       });
     })
 
-    $("#id_user_permissions_from").find("option").click(function(event){
-      // 激活Choose图标, 改变样式.
-      if (!event.ctrlKey) {
-        $("#id_user_permissions_from").find("option").each(function(){
-            $(this).attr('selected', false);
-        })
-      }else {
-        console.log ('Control Key!')
-      }
-
-      $(this).attr('selected', true);
-
-      $("#id_user_permissions_from").find("option").each(function(){
-          if ($(this).attr('selected')) {
-              console.log ($(this).attr('title'));
-          }
-      })
-    })
-
-    $("#id_user_permissions_to").find("option").click(function(event){
-      // 激活Choose图标, 改变样式.
-      if (!event.ctrlKey) {
-        $("#id_user_permissions_to").find("option").each(function(){
-            $(this).attr('selected', false);
-        })
-      }else {
-        console.log ('Control Key!')
-      }
-
-      $(this).attr('selected', true);
-
-      $("#id_user_permissions_to").find("option").each(function(){
-          if ($(this).attr('selected')) {
-              console.log ($(this).attr('title'));
-          }
-      })
-    })
-
-    $("#id_user_permissions_add_link").click(function(){
-      // 添加选中的权限
-      $("#id_user_permissions_from").find("option").each(function(){
-          if ($(this).attr('selected')) {
-              var html_element = '<option value="'+ $(this).attr('value') +'" title="'+ $(this).attr('title') +'"> '+ $(this).text() +' </option>'
-              $("#id_user_permissions_to").append(html_element);
-          }
-      })
-    })
-
-    $("#id_user_permissions_add_all_link").click(function(){
-      $("#id_user_permissions_from").find("option").each(function(){
-          var html_element = '<option value="'+ $(this).attr('value') +'" title="'+ $(this).attr('title') +'"> '+ $(this).text() +' </option>'
-          $("#id_user_permissions_to").append(html_element);
-      })
-    })
-
-    $("#id_user_permissions_remove_all_link").click(function(){
-      // 移除选中的权限
-      $("#id_user_permissions_to").find("option").each(function(){
-            $(this).remove()
-      })
-    })
-
-    $("#id_user_permissions_remove_link").click(function(){
-      // 移除选中的权限
-      $("#id_user_permissions_to").find("option").each(function(){
-          if ($(this).attr('selected')) {
-              $(this).remove()
-          }
-      })
-    })
+    // $("#id_user_permissions_from").find("option").click(function(event){
+    //   // 激活Choose图标, 改变样式.
+    //   if (!event.ctrlKey) {
+    //     $("#id_user_permissions_from").find("option").each(function(){
+    //         $(this).attr('selected', false);
+    //     })
+    //   }else {
+    //     console.log ('Control Key!')
+    //   }
+    //
+    //   $(this).attr('selected', true);
+    //
+    //   $("#id_user_permissions_from").find("option").each(function(){
+    //       if ($(this).attr('selected')) {
+    //           console.log ($(this).attr('title'));
+    //       }
+    //   })
+    // })
+    //
+    // $("#id_user_permissions_to").find("option").click(function(event){
+    //   // 激活Choose图标, 改变样式.
+    //   if (!event.ctrlKey) {
+    //     $("#id_user_permissions_to").find("option").each(function(){
+    //         $(this).attr('selected', false);
+    //     })
+    //   }else {
+    //     console.log ('Control Key!')
+    //   }
+    //
+    //   $(this).attr('selected', true);
+    //
+    //   $("#id_user_permissions_to").find("option").each(function(){
+    //       if ($(this).attr('selected')) {
+    //           console.log ($(this).attr('title'));
+    //       }
+    //   })
+    // })
+    //
+    // $("#id_user_permissions_add_link").click(function(){
+    //   // 添加选中的权限
+    //   $("#id_user_permissions_from").find("option").each(function(){
+    //       if ($(this).attr('selected')) {
+    //           var html_element = '<option value="'+ $(this).attr('value') +'" title="'+ $(this).attr('title') +'">'+ $(this).text() +'</option>'
+    //           $("#id_user_permissions_to").append(html_element);
+    //       }
+    //   })
+    // })
+    //
+    // $("#id_user_permissions_add_all_link").click(function(){
+    //   $("#id_user_permissions_from").find("option").each(function(){
+    //       var html_element = '<option value="'+ $(this).attr('value') +'" title="'+ $(this).attr('title') +'">'+ $(this).text() +'</option>'
+    //       $("#id_user_permissions_to").append(html_element);
+    //   })
+    // })
+    //
+    // $("#id_user_permissions_remove_all_link").click(function(){
+    //   // 移除选中的权限
+    //   $("#id_user_permissions_to").find("option").each(function(){
+    //         $(this).remove()
+    //   })
+    // })
+    //
+    // $("#id_user_permissions_remove_link").click(function(){
+    //   // 移除选中的权限
+    //   $("#id_user_permissions_to").find("option").each(function(){
+    //       if ($(this).attr('selected')) {
+    //           $(this).remove()
+    //       }
+    //   })
+    // })
 
     $("#id_groups_from").find("option").click(function(event){
       // 激活Choose图标, 改变样式.
@@ -272,7 +263,7 @@ $(function () {
     $("#id_groups_add_all_link").click(function(){
       // 添加选中的权限
       $("#id_groups_from").find("option").each(function(){
-          var html_element = '<option value="'+ $(this).attr('value') +'" title="'+ $(this).attr('title') +'"> '+ $(this).text() +' </option>'
+          var html_element = '<option value="'+ $(this).attr('value') +'" title="'+ $(this).attr('title') +'">'+ $(this).text() +'</option>'
           $("#id_groups_to").append(html_element);
       })
     })
@@ -282,7 +273,7 @@ $(function () {
       $("#id_groups_from").find("option").each(function(){
           if ($(this).attr('selected')) {
               console.log ($(this).attr('title'));
-              var html_element = '<option value="'+ $(this).attr('value') +'" title="'+ $(this).attr('title') +'"> '+ $(this).text() +' </option>'
+              var html_element = '<option value="'+ $(this).attr('value') +'" title="'+ $(this).attr('title') +'">'+ $(this).text() +'</option>'
               $("#id_groups_to").append(html_element);
           }
       })

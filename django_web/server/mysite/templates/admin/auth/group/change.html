@@ -19,7 +19,7 @@
 	        <strong id='username_nav'></strong>
 	      	<a href="/home/">访问主页</a> /
 	        <a href="/admin/password_change/">修改密码</a> /
-	        <a href="/admin/logout/">退出登录</a>
+	        <a href="/login/">退出登录</a>
 	      </div>
 	    </div>
 	    <!-- END Header -->
@@ -32,6 +32,7 @@
 	    <!-- Content -->
 	    <div id="content" class="colM">
 	      <h1>修改群组</h1>
+        <span id='group_id' value={{group_id}}><span>
 	      <div id="content-main">
 				  <!-- <ul class="object-tools">
 				    <li>
@@ -57,29 +58,13 @@
 													<h2>已有权限
 														<span class="help help-tooltip help-icon" title="This is the list of available permissions. You may choose some by selecting them in the box below and then clicking the &quot;Choose&quot; arrow between the two boxes."></span>
 													</h2>
-													<p id="id_permissions_filter" class="selector-filter">
+													<!-- <p id="id_permissions_filter" class="selector-filter">
 														<label for="id_permissions_input">
 															<span class="help-tooltip search-label-icon" title="Type into this box to filter down the list of available permissions."></span>
 														</label>
 														<input type="text" placeholder="Filter" id="id_permissions_input">
-													</p>
+													</p> -->
 													<select multiple="multiple" class="filtered" data-field-name="permissions" data-is-stacked="0" id="id_permissions_from" name="permissions_old">
-														<!-- <option value="2" title="admin | log entry | Can change log entry">admin | log entry | Can change log entry</option>
-														<option value="3" title="admin | log entry | Can delete log entry">admin | log entry | Can delete log entry</option>
-														<option value="10" title="auth | group | Can add group">auth | group | Can add group</option>
-														<option value="11" title="auth | group | Can change group">auth | group | Can change group</option>
-														<option value="12" title="auth | group | Can delete group">auth | group | Can delete group</option>
-														<option value="4" title="auth | permission | Can add permission">auth | permission | Can add permission</option>
-														<option value="5" title="auth | permission | Can change permission">auth | permission | Can change permission</option>
-														<option value="6" title="auth | permission | Can delete permission">auth | permission | Can delete permission</option>
-														<option value="8" title="auth | user | Can change user">auth | user | Can change user</option>
-														<option value="9" title="auth | user | Can delete user">auth | user | Can delete user</option>
-														<option value="13" title="contenttypes | content type | Can add content type">contenttypes | content type | Can add content type</option>
-														<option value="14" title="contenttypes | content type | Can change content type">contenttypes | content type | Can change content type</option>
-														<option value="15" title="contenttypes | content type | Can delete content type">contenttypes | content type | Can delete content type</option>
-														<option value="16" title="sessions | session | Can add session">sessions | session | Can add session</option>
-														<option value="17" title="sessions | session | Can change session">sessions | session | Can change session</option>
-														<option value="18" title="sessions | session | Can delete session">sessions | session | Can delete session</option> -->
 														{% for permission_value in available_permissions%}
 														<option title="{{permission_value}}">{{permission_value}}</option>
 														{% endfor %}
@@ -89,10 +74,11 @@
 												<ul class="selector-chooser">
 													<li>
 														<!-- <a title="Choose" id="id_permissions_add_link" class="selector-add">Choose</a> -->
-														<a title="Choose" id="id_permissions_add_link" >添加</a>
+														<a title="Choose" style="cursor:hand" id="id_permissions_add_link" >增</a>
 													</li>
 													<li>
-														<a title="Remove"  id="id_permissions_remove_link" class="selector-remove">Remove</a>
+														<!-- <a title="Remove"  id="id_permissions_remove_link" class="selector-remove">Remove</a> -->
+														<a title="Remove"  style="cursor:hand" id="id_permissions_remove_link">减</a>
 													</li>
 												</ul>
 												<div class="selector-chosen">
@@ -104,7 +90,7 @@
 														<option title="{{permission_value}}">{{permission_value}}</option>
 														{% endfor %}
 													</select>
-													<a title="Click to remove all chosen permissions at once." id="id_permissions_remove_all_link" class="selector-clearall active">删除所有</a>
+													<a title="Click to remove all chosen permissions at once." id="id_permissions_remove_all_link" class="selector-clearall active" style="cursor:hand">删除所有</a>
 												</div>
 											</div>
 										</div>
@@ -114,7 +100,7 @@
 							</fieldset>
 							<div class="submit-row">
 								<input type="submit" value="保存" class="default" name="_save">
-								    <p class="deletelink-box"><a class="deletelink">删除</a></p>
+								    <p class="deletelink-box"><a class="deletelink" style="cursor:hand">删除</a></p>
 								<input type="submit" value="保存并继续添加" name="_addanother">
 							</div>
 					    <!-- <script type="text/javascript" id="django-admin-form-add-constants" src="/static/admin/js/change_form.js"> </script> -->
@@ -129,7 +115,7 @@
 		</div>
 		<script>
 			$("#username_nav").text(localStorage.getItem('logName'));
-		</script>		
+		</script>
 		<!-- END Container -->
 	</body>
 </html>

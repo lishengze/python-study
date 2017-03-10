@@ -194,7 +194,6 @@ class ViewMain(object):
 		ajax_name = self.get_ajax_request_name(path)
 		print 'ajax_name: ' + ajax_name
 		ajax_func_dict = {
-			'Set_ENV_KEY': self._ajax_func.set_env_key,
 			'Request_All_SrvStatus': self._ajax_func.test_all_srvstatus,
 			'Request_All_TaskList': self._ajax_func.test_all_tasklist,
 			'Request_All_TaskResult': self._ajax_func.test_all_taskresult,
@@ -260,13 +259,7 @@ class ViewMain(object):
 			print 'file name: ' + file_name + '\n'
 			return render(request, file_name, file_object)
 
-class AjaxReqFunc(object):
-	def __init__ (self):
-		self.name = 'AjaxReqFunc'
-
-	def default_ajax_request(self, request):
-		return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
-
+class AdminDataAjaxFunc(object):
 	def set_dbdata(self, request):
 		tmp_data = Person(name='LSZ', age=27)
 		tmp_data.save()
@@ -476,6 +469,9 @@ class AjaxReqFunc(object):
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
 
+
+
+class HandleFileAjaxFunc(object):
 	def upload_file(self, request):
 		rsp_data = {}
 		if request.method == 'POST':
@@ -535,27 +531,9 @@ class AjaxReqFunc(object):
 		with open(full_file_name, 'wb+') as destination:
 			for chunk in file.chunks():
 				destination.write(chunk)
-		destination.close()
+		destination.close()		
 
-	def set_env_key(self, request):
-		global ENV_KEY
-		print 'This is AjaxReqFunc.set_env_key!'
-		req_env_key_value = request.POST.getlist('env_key_value')[0]
-
-		ENV_KEY = req_env_key_value
-		print 'ENV_KEY: ', ENV_KEY
-
-		rsp_data = {
-			'data': req_env_key_value
-		}
-		response = HttpResponse(json.dumps(rsp_data))
-		# response = HttpResponse(req_json)
-		response["Access-Control-Allow-Origin"] = "*"
-		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-		response["Access-Control-Max-Age"] = "1000"
-		response["Access-Control-Allow-Headers"] = "*"
-		return response
-
+class TaskAjaxFunc(object):
 	@csrf_exempt
 	def test_task_rpc(self, request):
 		rsp_data = {'data': 'test_task_rpc!'}
@@ -609,7 +587,14 @@ class AjaxReqFunc(object):
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
 		response["Access-Control-Max-Age"] = "1000"
 		response["Access-Control-Allow-Headers"] = "*"
-		return response
+		return response	
+
+class AjaxReqFunc(AdminDataAjaxFunc, HandleFileAjaxFunc, TaskAjaxFunc):
+	def __init__ (self):
+		self.name = 'AjaxReqFunc'
+
+	def default_ajax_request(self, request):
+		return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
 
 class GetHtmlObject(object):
 	def __init__(self):

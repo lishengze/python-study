@@ -25,6 +25,7 @@
   </div>
 </div>
 <script>
+  keyDownEvent();
   $('#inputObject').kendoDropDownList({
       dataSource : ['xml','server','client']
   });
@@ -40,7 +41,10 @@
     var objType = $('#inputObject').val();
     var versionName = $('#inputVersion').val();
     var args = objType + ':' + versionName
-    console.log(args)
+    console.log(args);
+    if(isRightversionType(versionName) === false) {
+      return;
+    }
     var req_data = {
       'ENV_KEY':localStorage.getItem('ENV_KEY'),
       'type': 'version_control',
@@ -54,11 +58,13 @@
       type: 'POST',
       traditional: true,
       success: function (responseJSON) {
-        console.log(responseJSON)
-        responseReleaseResult(responseJSON)
+        console.log(responseJSON);
+        responseReleaseResult(responseJSON);
+        keyDownEvent();
       }
     });
   }
+
   function responseReleaseResult(responseJSON) {
     if(responseJSON.type != 'Fail') {
       $('#releaseResult').kendoGrid({
@@ -79,5 +85,31 @@
     } else {
       alert('Fail!');
     }
+  }
+
+  function isRightversionType(data) {
+    if(data.length === 0) {
+      alert("请输入版本号！");
+      return false;
+    }
+    if(allVersionData.length === 0) {
+      alert("获取版本信息失败");
+    }
+    for(var i = 0; i < allVersionData.length; i ++) {
+      if(allVersionData[i].version == data) {
+        return true;
+      }
+    }
+    alert("输入的版本号不存在");
+    return false;
+  }
+
+  function keyDownEvent() {
+    $(document).bind('keydown', function(event) {
+      if (event.keyCode == 13){
+         reqSearchResult();
+      }
+      else{}
+    })
   }
 </script>

@@ -14,8 +14,6 @@
       <li> {{user_name}} </li>
     {% endfor %}
   </ul>
-  <input type="button" id="Set_ENV_KEY" value="Set ENV_KEY">
-  <p id="Set_ENV_KEY_Rsp"></p>
   <input type="button" id="Request_Task_Rpc" value="Request Task Rpc">
   <p id="Request_Task_Rpc_Rsp"></p>
   <input type="button" id="Request_Task_Ntf" value="Request_Task_Ntf">
@@ -71,21 +69,6 @@
           }
         });
       })
-
-      $('#Set_ENV_KEY').click(function(){
-        var ENV_KEY = 'PTEST_170'
-        // var ENV_KEY = 'TEST_170'
-        $.ajax({
-          url: '/AJAX/Set_ENV_KEY/',
-          data: {'env_key_value': ENV_KEY},
-          dataType: 'json',
-          type: 'POST',
-          traditional: true,
-          success: function (responseJSON) {
-              console.log (responseJSON)
-          }
-        });
-      });
 
       $('#Request_Task_Rpc').click(function(){
         //   req_data = {

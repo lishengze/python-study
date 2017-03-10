@@ -1,29 +1,30 @@
-<div id="header" style="overflow:hidden;">
-    <div class = 'row' style="background-image: url('/static/images/nav2.jpg');
-    background-size: 100% 100%;
-    margin-bottom:10px">
-    <div class="col-md-10">
-      <h1><a href="/home.html">上期技术监控组版本控制系统<span>
-      </span></a></h1>
+<div id="header" style="background-color:#417690; height:60px;margin-bottom:20px;padding:10px 40px;line-height:40px">
+    <div  style= 'float:left;'>
+      <div style= 'font-size:24px;font-weigth:300'>
+        <a href="/home.html" style="color: #f5dd5d">上期技术监控专用版本控制系统</a></div>
     </div>
-    <div class="col-md-2"  style=" border-style: solid; border-width: 2px">
-      <div id="userMessage" >
-        <div>
-          <div style = 'float:left'>用户信息：</div><div  class = 'username_nav' style = 'float:left'></div>
-          <div style = 'float:right'><a href = '/login.html'>退出登录</a></div>
-          <div style="clear:both"></div>
+    <div  style=" float:right;">
+      <div id="userMessage" style = 'color:white;font-size:15px;'>
+        <div >
+          <span style = ''>用户信息：</span>
+          <span  class = 'username_nav' style = 'font-weight:bold;color:#ffc'></span>
+          <span style=""> &nbsp/&nbsp </span >
+          <span >环境选择： </span>
+          <select class = 'EvrKeySelect' id = 'keySelect' style = 'color:black'>
+          </select>
+          <span style=""> &nbsp/&nbsp </span >
+          <a href = '/login.html' style = 'color:white;'>退出登录</a>
 
+          <!-- <div style="clear:both"></div> -->
         </div>
-        <div style=" margin:10px 0;">
-          <!-- <div style = 'clear:both;float:left'>当前环境： </div><div  id = 'currentEvr' style = 'float:left'></div> -->
-          <div style = 'clear: both;float:left'>环境选择： </div>
-          <select class = 'EvrKeySelect' id = 'keySelect' style = 'float:left;'>
+        <!-- <div style=" margin:10px 0;">
+          <div style = 'clear: both;float:left;'>环境选择： </div>
+          <select class = 'EvrKeySelect' id = 'keySelect' style = 'float:left;color:black'>
           </select>
           <div style="clear:both"></div>
-        </div>
+        </div> -->
       </div>
     </div>
-  </div>
 </div>
 <script>
 //ENV_KEY 为当前环境值， ENV_KEY_SET为后台给的可选择环境集合

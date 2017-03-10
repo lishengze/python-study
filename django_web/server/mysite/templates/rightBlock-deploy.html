@@ -1,14 +1,14 @@
 <div class="col-md-9 op-states" >
-  <div id = 'instruction'  style="border:4px dashed gray;" class="col-md-12"><div style="font: bold 25px arial;">使用说明(点击显示隐藏):</div>
+  <div id = 'instruction'  style="border:4px dashed gray;" class="col-md-12"><div style="font: bold 25px arial;">使用说明(点击显示/隐藏):</div>
     <p  style='display: none' id = 'instructionContent'>Usage for ecall:<br>
      python main.py --cmd CMD_OPTION [--grp GROUP] [--ctr CTR] [--srv SRV] [--srvno SRVNO] [--ictr CTR] [--isrv SRV] [--isrvno SRVNO]
-         <br>CMD_OPTION as:<br>info [--args host|relay|app]  -- -- Show server apps infos</p>
+         <br>CMD_OPTION as:<br>deployConsole &nbsp&nbsp&nbsp&nbsp&nbsp  -- -- Deploy console toolkits</p>
   </div>
   <div class="col-md-12" style="border:2px solid gray; background-color: 	#F0F8ff;margin-top:10px;padding-bottom:10px">
     <div style="font: bold 25px arial;">参数设定</div>
     <div  class = 'deploySelect'>
       <div class = 'row'>
-        <div  class="col-xs-2" > 安装部署选择</div>
+        <div  class="col-xs-2" > 命令选择</div>
         <div class="col-xs-3">
           <div id = 'parameter' class = 'inputValue'></div>
         </div>
@@ -80,11 +80,10 @@
       </div>
     </div>
   </div>
-  <button id ='reqBtn' onclick ='submitReq()' class="btn btn-primary btn-default" style="float:left">提交</button>
-  <div>
-   <div id= 'getarg' style="font-size:20px;">执行结果：<br></div>
-   <div id= 'result' style="height:450px"> </div>
-  </div>
+  <button id = 'reqBtn' onclick ='submitReq()' class="btn btn-primary btn-default" style="margin-top:5px;float:left">提交</button>
+  <div id= 'getarg' style=" margin-top:5px;margin-left:100px;float:left;font-size:20px;">执行结果：<br></div>
+  <div style="clear:both"></div>
+  <div id= 'result' style="margin-top:5px;height:450px;"> </div>
 </div>
 <style>
  .deploySelect {
@@ -102,7 +101,7 @@
  }
 </style>
 <script>
-  var data = []
+  var data = [];
   setNtfSessionStorage(data);
   keyDownEvent();
   $('#instruction').click(function(){
@@ -204,15 +203,17 @@
     var array = $('.parameterSelect');
     var select = $('#parameter').data("kendoDropDownList").text();
     console.log(select);
-    if ($(array[0]).hasClass('onSelect')) {
+    if ($(array[1]).hasClass('onSelect')) {
       req_data = {
         'ENV_KEY':localStorage.getItem('ENV_KEY'),
+        'exec_time': 1, // 预留接口，计划任务延迟执行时间。
         '--cmd': select,
         '--grp': $('#grp').val()
-      }
-    }else if ($(array[1]).hasClass('onSelect')) {
+        }
+    } else if ($(array[2]).hasClass('onSelect')) {
       req_data = {
         'ENV_KEY':localStorage.getItem('ENV_KEY'),
+        'exec_time': 1,
         '--cmd': select,
         '--ctr': $('#ctr').val(),
         '--srv': $('#srv').val(),
@@ -224,6 +225,7 @@
     } else {
       req_data = {
         'ENV_KEY':localStorage.getItem('ENV_KEY'),
+        'exec_time': 1,
         '--cmd': select,
         '--args': '',
         '--grp': '',

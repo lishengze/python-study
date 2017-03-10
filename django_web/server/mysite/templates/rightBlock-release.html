@@ -39,6 +39,14 @@
     formData.append("file",$("#file_upload")[0].files[0]);
     formData.append("name",name);
     var file = document.getElementById('file_upload').files[0];
+    if(file == undefined) {
+      alert("请选择文件");
+      return;
+    }
+    if(file.size === 0) {
+      alert("请不要上传空文件");
+      return;
+    }
     console.log(file);
     if(file != null && file.size != 0) {
       $.ajax({

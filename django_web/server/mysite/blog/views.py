@@ -53,27 +53,27 @@ g_user_permission = []
 ENV_KEY = 'TEST_170'
 
 class User(object):
-	def __init__(self, name = 'tmp', email = 'tmp', permisson = 'all', groups = 'all', password = 'tmp'):
+	def __init__(self, name = 'tmp', email = 'tmp', permission = 'all', groups = 'all', password = 'tmp'):
 		self.name = name
 		self.email = email
-		self.permisson = permisson
+		self.permission = permission
 		self.groups = groups
 		self.password = password
 		self.__dict__ = {
 			'name': self.name,
 			'email': self.email,
-			'permisson': self.permisson,
+			'permission': self.permission,
 			'groups': self.groups,
 			'password': self.password
 		}
 
 class Group(object):
-	def __init__(self, name = 'tmp', permisson = 'all'):
+	def __init__(self, name = 'tmp', permission = 'all'):
 		self.name = name
-		self.permisson = permisson
+		self.permission = permission
 		self.__dict__ = {
 			'name': self.name,
-			'permisson': self.permisson
+			'permission': self.permission
 		}
 
 class RpcResult(object):
@@ -132,24 +132,18 @@ def init_globals():
 	g_chosen_group = republican_party
 	g_login_user = User('SHFE.SFIT', 'SHFE.SFIT@hotmail.com')
 
-	g_group_permission = ["admin | log entry | Can change log entry", \
-						  "admin | log entry | Can add log entry", \
-						  "admin | log entry | Can delete log entry", \
-						  "auth | group | Can add group", \
-						  "auth | group | Can change group", \
-						  "auth | group | Can delete group", \
-						  "auth | permission | Can add permission", \
-						  "auth | permission | Can change permission", \
-						  "auth | permission | Can delete permission", \
-						  "auth | user | Can add user", \
-						  "auth | user | Can change user", \
-						  "auth | user | Can delete user", \
-						  "contenttypes | content type | Can add content type", \
-						  "contenttypes | content type | Can change content type", \
-						  "contenttypes | content type | Can delete content type", \
-						  "sessions | session | Can add session", \
-						  "sessions | session | Can change session", \
-						  "sessions | session | Can delete session"]
+	g_group_permission = ["管理用户权限", \
+						  "运维管理|信息查询", \
+						  "运维管理|安装部署", \
+						  "运维管理|进程控制", \
+						  "版本控制|查询", \
+						  "版本控制|发布", \
+						  "版本控制|回退", \
+						  "版本控制|删除", \
+						  "版本控制|文本差异化比较", \
+						  "即时任务|配置管理", \
+						  "即时任务|查询状态", \
+						  "计划任务|查询状态"]
 	g_user_permission = g_group_permission
 
 	for value in cfg_w.ENV_DICT_KEY:
@@ -310,6 +304,7 @@ class ViewMain(object):
 			'Request_Real_Time_VersionCtr_Task': self._ajax_func.request_real_time_versionCtr_task,
 			'Get_NTF_Task_Result': self._ajax_func.get_all_ntf_task_result,
 			'Get_NTF_Task_State': self._ajax_func.get_all_ntf_task_state,
+			'Request_User_Login': self._ajax_func.request_user_login,
 			'Upload_File': self._ajax_func.upload_file,
 			'Update_Srv': self._ajax_func.update_srv,
 			'Set_DB_Data': self._ajax_func.set_dbdata,
@@ -343,7 +338,7 @@ class ViewMain(object):
 		}
 		object_func = file_object_dict.get(fileName, lambda :{})
 		if id !=-1:
-			print object_func(id)
+			# print object_func(id)
 			return object_func(id)
 		else:
 			print object_func()
@@ -650,13 +645,13 @@ class AdminDataAjaxFunc(object):
 
 		# for group_data in g_groups:
 		# 	print group_data.name
-		# 	print group_data.permisson
-		# 	db_obj = GroupInfo(name = group_data.name, permission = group_data.permisson)
+		# 	print group_data.permission
+		# 	db_obj = GroupInfo(name = group_data.name, permission = group_data.permission)
 		# 	db_obj.save()
 
 		for user in g_users:
 			db_obj = UserInfo(name = user.name, email=user.email, \
-			                  permission = user.permisson, groups = user.groups)
+			                  permission = user.permission, groups = user.groups)
 			db_obj.save()
 		rsp_data = {'data': 'set database data!'}
 		response = HttpResponse(json.dumps(rsp_data))
@@ -686,6 +681,51 @@ class AdminDataAjaxFunc(object):
 		response["Access-Control-Max-Age"] = "1000"
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
+
+	def request_user_login(self, request):
+		req_json = request.POST.getlist('req_json')[0]
+		req_json = json.loads(req_json)
+		print req_json
+		user_name = req_json['name']
+		user_password = req_json['password']
+		rsp_data = {}
+		status = ''
+		info = ''
+		permission = ''
+		try:
+			user = UserInfo.objects.get(name = user_name)
+			if user:
+				password = user.password
+				if password == user_password:
+					status = 'Success'
+					permission = user.permission
+				else:
+					status = 'Failed'
+					info = '密码错误'
+			rsp_data = {
+				'status': status,
+				'info': info,
+				'permission': permission
+			}
+			response = HttpResponse(json.dumps(rsp_data))
+			response["Access-Control-Allow-Origin"] = "*"
+			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+			response["Access-Control-Max-Age"] = "1000"
+			response["Access-Control-Allow-Headers"] = "*"
+			return response
+		except Exception as e:
+			status = 'Failed'
+			info = '用户不存在'
+			rsp_data = {
+				'status': status,
+				'info': info
+			}
+			response = HttpResponse(json.dumps(rsp_data))
+			response["Access-Control-Allow-Origin"] = "*"
+			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+			response["Access-Control-Max-Age"] = "1000"
+			response["Access-Control-Allow-Headers"] = "*"
+			return response
 
 	def set_chosen_group(self, request):
 		group_name = request.POST.getlist('req_json')[0]
@@ -776,14 +816,17 @@ class AdminDataAjaxFunc(object):
 		trans_add_data = json.loads(add_data)
 		print trans_add_data
 		status = ''
+		info = ''
 		if GroupInfo.objects.filter(name = trans_add_data['name']):
 			status = 'Failed'
+			info = '同名群组已存在'
 		else:
 			add_group = GroupInfo(name = trans_add_data['name'], permission = trans_add_data['permission'])
 			add_group.save()
 			status = 'Successful'
 
-		rsp_data = {'status': status}
+		rsp_data = {'status': status,
+					'info': info}
 		response = HttpResponse(json.dumps(rsp_data))
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
@@ -796,17 +839,17 @@ class AdminDataAjaxFunc(object):
 		trans_add_data = json.loads(add_data)
 		print trans_add_data
 		status = ''
-		error = ''
+		info = ''
 		if UserInfo.objects.filter(name = trans_add_data['name']):
 			status = 'Failed'
-			error = '用户已经存在！'
+			info = '用户已经存在！'
 		else:
 			add_user = UserInfo(name = trans_add_data['name'], password = trans_add_data['password'])
 			add_user.save()
 			status = 'Successful'
 
 		rsp_data = {'status': status,
-					'error': error}
+					'info': info}
 		response = HttpResponse(json.dumps(rsp_data))
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
@@ -819,15 +862,63 @@ class AdminDataAjaxFunc(object):
 		trans_change_data = json.loads(change_data)
 		print trans_change_data
 		status = ''
-		group = GroupInfo.objects.get(name = trans_change_data['name'])
-		if group:
+		info = ''
+		# try:
+		group = GroupInfo.objects.filter(id = int(trans_change_data['group_id']))[0]
+		print group
+		if trans_change_data['name'] != group.name:
+			all_group = GroupInfo.objects.all()
+			for tmpGroup in all_group:
+				if tmpGroup.name == trans_change_data['name']:
+					status = 'Failed'
+					info = '群组已经存在'
+			if info == '':
+				all_user = UserInfo.objects.all()
+				for tmpUser in all_user:
+					if group.name in tmpUser.groups:
+						print 'Groups changed User: ', tmpUser.name
+						tmpUser_groups = tmpUser.groups
+						user_group_array = tmpUser_groups.split(';')
+						user_group_array.remove(group.name)
+						user_permission_array = []
+						for tmpGroup_name in user_group_array:
+							tmpGroup = GroupInfo.objects.filter(name = tmpGroup_name)[0]
+							tmpPermission_array = tmpGroup.permission.split(';')
+							for tmpPermission in tmpPermission_array:
+								if tmpPermission not in user_permission_array:
+									user_permission_array.append(tmpPermission)
+						new_group_permission_array = trans_change_data['permission'].split(';')
+						if '' in new_group_permission_array:
+							new_group_permission_array.remove('')
+
+						output_msg('user_permission_array: ', user_permission_array)
+						output_msg('new_group_permission_array: ', new_group_permission_array)
+
+						for new_tmpPermission in new_group_permission_array:
+							if new_tmpPermission not in user_permission_array:
+								user_permission_array.append(new_tmpPermission)
+
+						output_msg('user_permission_array: ', user_permission_array)
+						new_user_permission = ';'.join(user_permission_array)
+						# output_msg('new_user_permission: ', new_user_permission)
+						output_msg('tmpUser_groups: ', tmpUser_groups)
+						new_user_groups = tmpUser_groups.replace(group.name, trans_change_data['name'])
+						output_msg('new_user_groups: ', new_user_groups)
+						UserInfo.objects.filter(name = tmpUser.name).update(groups = new_user_groups)
+						UserInfo.objects.filter(name = tmpUser.name).update(permission = new_user_permission)
+
+		if info == '':
 			status = 'Successful'
 			group.permission = trans_change_data['permission']
+			group.name = trans_change_data['name']
 			group.save()
-		else:
-			status = 'Failed'
 
-		rsp_data = {'status': status}
+		# except Exception as e:
+		# 	status = 'Failed'
+		# 	info = '群组不存在'
+
+		rsp_data = {'status': status,
+					'info': info}
 		response = HttpResponse(json.dumps(rsp_data))
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
@@ -840,17 +931,47 @@ class AdminDataAjaxFunc(object):
 		trans_change_data = json.loads(change_data)
 		print trans_change_data
 		status = ''
-		user = UserInfo.objects.get(name = trans_change_data['name'])
-		if user:
-			status = 'Successful'
-			user.permission = trans_change_data['permission']
-			user.email = trans_change_data['email']
-			user.groups = trans_change_data['groups']
-			user.save()
-		else:
-			status = 'Failed'
+		info = ''
+		alive_group = []
+		try:
+			user =  UserInfo.objects.filter(id = trans_change_data['user_id'])[0]
+			if trans_change_data['name'] != user.name :
+				all_user = UserInfo.objects.all()
+				for tmpUser in all_user:
+					if tmpUser.name == trans_change_data['name']:
+						status = 'Failed'
+						info = '存在同名用户'
+			if info == '':
+				status = 'Successful'
+				user_permission_array = []
+				group_array = trans_change_data['groups'].split(';')
+				group_array.remove('')
+				for group_name in group_array:
+					# print len(group_name)
+					# group_name = group_name[1:len(group_name)-1]
+					# print len(group_name)
+					group = GroupInfo.objects.get(name = group_name)
+					if group:
+						# print 'Alive Group'
+						alive_group.append(group_name)
+						group_permission = group.permission
+						group_permission_array = group_permission.split(';')
+						for permission in group_permission_array:
+							if permission not in user_permission_array:
+								user_permission_array.append(permission)
 
-		rsp_data = {'status': status}
+				user.permission = ';'.join(user_permission_array)
+				user.groups = ';'.join(alive_group)
+				user.name = trans_change_data['name']
+				user.email = trans_change_data['email']
+				user.save()
+
+		except Exception as e:
+			status = 'Failed'
+			info = '用户不存在'
+
+		rsp_data = {'status': status,
+					'info': info}
 		response = HttpResponse(json.dumps(rsp_data))
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
@@ -876,6 +997,8 @@ class TaskAjaxFunc(object):
 		for value in req_para:
 			if value in req_para and value in trans_req_json and trans_req_json[value] !='':
 				cmdline += value + ' ' + trans_req_json[value] + ' '
+
+		cmdline = cmdline[len('--cmd '):]
 
 		print '\ndata_type: ', data_type
 		print 'task_type: ', task_type
@@ -1001,7 +1124,7 @@ class TaskAjaxFunc(object):
 			output_msg('Original Req_json!', req_json)
 			output_msg('Transed Req_Json!', trans_req_json)
 
-			tasktime = int(time.time()) + 1
+			tasktime = int(time.time()) + trans_req_json['exec_time']
 			task_info = TaskInfo(state = cfg.FLAG_TASK_READY, TID = 0, PID = int(cfg.PID), exec_time=tasktime, \
 								 cmd = cmd.strip(), cmdline = cmdline.strip(), task_type = int(task_type))
 			# if cmdline.find(cfg.SEMICOLON) != -1:
@@ -1058,7 +1181,8 @@ class TaskAjaxFunc(object):
 				for info in task_list:
 					print info
 			else:
-				print task_list
+				output_msg('task_list: ', task_list)
+				# print task_list
 
 			sock.close()
 		except Exception as e:
@@ -1083,7 +1207,7 @@ class TaskAjaxFunc(object):
 				output_msg('Original Rsp Data:', task_result, type(task_result))
 			else:
 				trans_result = task_result
-				output_msg('Transed Rsp Data:', trans_result)
+				output_msg('Original Rsp Data:', trans_result)
 		except Exception as e:
 			print('notifyDaemon failed!')
 			print(traceback.format_exc())
@@ -1102,7 +1226,6 @@ class TaskAjaxFunc(object):
 
 			task_type = {}
 			task_result = {}
-
 			# 遍历客户请求
 			index  = 0
 			while index < len(task_data):
@@ -1115,6 +1238,8 @@ class TaskAjaxFunc(object):
 				if task_info['state'] == 3:
 					task_result[task_id] = self.get_nft_task_result(ENV_KEY, task_id)
 					task_result[task_id] = self.process_rpc_result(task_result[task_id], task_type[task_id])
+				elif task_info['state'] == 1:
+					task_result[task_id] = 'Failed'
 				else:
 					task_result[task_id] = 'Empty'
 				index += 1
@@ -1360,8 +1485,8 @@ class TaskAjaxFunc(object):
 				array_data = self.get_version_ctr_array_result(origin_data, data_type)
 			else:
 				array_data = self.get_task_rpc_array_result(origin_data)
-			# print 'array_data: '
-			# print array_data
+
+			# output_msg('array_data', array_data)
 
 			dict_data = self.get_rpc_dict_result(array_data, data_type)
 			# dict_data = self.get_rpc_dict_result(data_type, array_data)
@@ -1402,19 +1527,16 @@ class TaskAjaxFunc(object):
 		index = 0
 		info_flag = ': '
 		other_flag = '::'
-
+		output_msg('tmpdata', tmpdata)
 		final_result = []
 		while index < len(tmpdata):
 			tmp_result = []
-			if tmpdata[index].find(info_flag) >= 0:
-				# print tmpdata[index].find(info_flag)
-				tmpdata[index] = tmpdata[index][tmpdata[index].find(info_flag) + len(info_flag):]
-				tmpdata[index] = tmpdata[index].split(' ')
-			elif tmpdata[index].find(other_flag) >= 0:
-				# print tmpdata[index].find(other_flag)
+			if tmpdata[index].find(other_flag) >= 0:
 				tmpdata[index] = tmpdata[index][tmpdata[index].find(other_flag) + len(other_flag):]
 				tmpdata[index] = tmpdata[index].split(other_flag)
-			# print tmpdata[index]
+			elif tmpdata[index].find(info_flag) >= 0 :
+				tmpdata[index] = tmpdata[index][tmpdata[index].find(info_flag) + len(info_flag):]
+				tmpdata[index] = tmpdata[index].split(' ')
 			for value in tmpdata[index]:
 				if value != '':
 					tmp_result.append(value)
@@ -1432,15 +1554,12 @@ class TaskAjaxFunc(object):
 		final_result = []
 		while index < len(tmpdata):
 			tmp_result = []
-			if tmpdata[index].find(info_flag) >= 0:
-				# print tmpdata[index].find(info_flag)
-				tmpdata[index] = tmpdata[index][tmpdata[index].find(info_flag) + len(info_flag):]
-				tmpdata[index] = tmpdata[index].split(' ')
-			elif tmpdata[index].find(other_flag) >= 0:
-				# print tmpdata[index].find(other_flag)
+			if tmpdata[index].find(other_flag) >= 0:
 				tmpdata[index] = tmpdata[index][tmpdata[index].find(other_flag) + len(other_flag):]
 				tmpdata[index] = tmpdata[index].split(other_flag)
-			# print tmpdata[index]
+			elif tmpdata[index].find(info_flag) >= 0:
+				tmpdata[index] = tmpdata[index][tmpdata[index].find(info_flag) + len(info_flag):]
+				tmpdata[index] = tmpdata[index].split(' ')
 			for value in tmpdata[index]:
 				if value != '':
 					tmp_result.append(value)
@@ -1550,7 +1669,7 @@ class GetHtmlObject(object):
 
 	def get_admin_auth_group_add_object(self):
 		tmp_object = {
-			'user': g_login_user
+			'available_permissions': g_group_permission
 		}
 		return tmp_object
 
@@ -1572,7 +1691,8 @@ class GetHtmlObject(object):
 			'login_user': g_login_user,
 			'available_permissions': g_group_permission,
 			'group': group_json,
-			'permission': permission_array
+			'permission': permission_array,
+			'group_id': cur_id
 		}
 		return tmp_object
 
@@ -1614,18 +1734,20 @@ class GetHtmlObject(object):
 			for tmp_obj in group_obj:
 				available_groups.append(Group(tmp_obj.name, tmp_obj.permission).name)
 			print type(user.permission)
-			print user.permission
+			# print user.permission
 			if user.permission == 'all':
 				permission_array = g_group_permission
 			elif user.permission != None:
 				permission_array = user.permission.split(';')
-				permission_array.remove('')
+				if '' in permission_array:
+					permission_array.remove('')
 
 			if user.groups == 'all':
 				user_groups = available_groups
 			elif user.groups != None :
 				user_groups = user.groups.split(';')
-				user_groups.remove('')
+				if '' in user_groups:
+					user_groups.remove('')
 
 			user_json = {
 				'name': user.name,
@@ -1637,949 +1759,9 @@ class GetHtmlObject(object):
 			'available_permissions': g_user_permission,
 			'permission': permission_array,
 			'available_groups': available_groups,
-			'user_groups': user_groups
+			'user_groups': user_groups,
+			'user_id': cur_id
 		}
 		return tmp_object
 
 server_view = ViewMain()
-
-# def upload_file(self, request):
-# 	rsp_data = {}
-# 	if request.method == 'POST':
-# 		start_time = int(time.time())
-# 		upload_file = request.FILES['file']
-# 		if upload_file:
-# 			filename = str(upload_file).encode('utf-8')
-# 			filepath = os.path.join(cfg.WORK_PATH_TEMP, filename)
-# 			filedst = filepath + cfg.DOT + cfg.PID
-# 			print 'filepath: ', filepath
-# 			print 'filedest: ', filedst
-#
-# 			destination = open(filepath,'wb+')
-# 			for chunk in upload_file.chunks():
-# 				destination.write(chunk)
-# 			destination.close()
-# 			daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 			sock = sock_conn(daemaon_ip, daemon_port)
-# 			rtn = uploadFile(sock, filepath, filedst)
-# 			end_time = int(time.time())
-#
-# 			status = ''
-# 			upload_time = str(end_time - start_time)
-# 			print 'rtn: ', rtn
-# 			if rtn == cfg.CMD_SUCC:
-# 				rsp = recv_end(sock)
-# 				info = '<br/>File transfer SUCC, cost ' + str(end_time - start_time) + ' secs.'
-# 				status = "Successful"
-# 			else:
-# 				info = '<br/>File transfer FAIL, cost ' + str(end_time - start_time) + ' secs.'
-# 				status = 'Failed'
-# 			rsp = rsp + info
-# 			print rsp
-# 			print 'status: ', status
-# 			sock.close()
-# 			rsp_data = {
-# 				'type': status,
-# 				'upload_time': upload_time
-# 			}
-# 		else:
-# 			rsp_data = {
-# 				'type': 'Failed',
-# 				'info': 'No upload file'
-# 			}
-# 	else:
-# 		rsp_data = {
-# 			'type': 'Failed',
-# 			'info': 'Is Not POST Requset!'
-# 		}
-# 	return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
-#
-# def handle_uploaded_file(self, file, filename):
-# 	filename = filename.encode('utf-8')
-# 	print 'filename: ', filename
-# 	if not os.path.exists('upload/'):
-# 		os.mkdir('upload/')
-# 	full_fileName = 'upload/' + filename
-# 	print 'full_fileName: ', full_fileName
-# 	with open(full_fileName, 'wb+') as destination:
-# 		for chunk in file.chunks():
-# 			destination.write(chunk)
-# 	destination.close()
-# 	return full_fileName
-
-# class AjaxReqFunc(object):
-# 	def __init__ (self):
-# 		self.name = 'AjaxReqFunc'
-#
-# 	def default_ajax_request(self, request):
-# 		return HttpResponse(json.dumps({'data':'AJAX Request Failed!'}), content_type = "application/json")
-#
-# 	def upload_file(self, request):
-# 		rsp_data = {}
-# 		if request.method == 'POST':
-# 			start_time = int(time.time())
-# 			upload_file = request.FILES['file']
-# 			if upload_file:
-# 				filename = str(upload_file).encode('utf-8')
-# 				filepath = os.path.join(cfg.WORK_PATH_TEMP, filename)
-# 				filedst = filepath + cfg.DOT + cfg.PID
-# 				print 'filepath: ', filepath
-# 				print 'filedest: ', filedst
-#
-# 				destination = open(filepath,'wb+')
-# 				for chunk in upload_file.chunks():
-# 					destination.write(chunk)
-# 				destination.close()
-# 				daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 				sock = sock_conn(daemaon_ip, daemon_port)
-# 				rtn = uploadFile(sock, filepath, filedst)
-# 				end_time = int(time.time())
-#
-# 				status = ''
-# 				upload_time = str(end_time - start_time)
-# 				print 'rtn: ', rtn
-# 				if rtn == cfg.CMD_SUCC:
-# 					rsp = recv_end(sock)
-# 					info = '<br/>File transfer SUCC, cost ' + str(end_time - start_time) + ' secs.'
-# 					status = "Successful"
-# 				else:
-# 					info = '<br/>File transfer FAIL, cost ' + str(end_time - start_time) + ' secs.'
-# 					status = 'Failed'
-# 				rsp = rsp + info
-# 				print rsp
-# 				print 'status: ', status
-# 				sock.close()
-# 				rsp_data = {
-# 					'type': status,
-# 					'upload_time': upload_time
-# 				}
-# 			else:
-# 				rsp_data = {
-# 					'type': 'Failed',
-# 					'info': 'No upload file'
-# 				}
-# 		else:
-# 			rsp_data = {
-# 				'type': 'Failed',
-# 				'info': 'Is Not POST Requset!'
-# 			}
-# 		return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
-#
-# 	def handle_uploaded_file(self, file, filename):
-# 		filename = filename.encode('utf-8')
-# 		print 'filename: ', filename
-# 		if not os.path.exists('upload/'):
-# 			os.mkdir('upload/')
-# 		full_fileName = 'upload/' + filename
-# 		print 'full_fileName: ', full_fileName
-# 		with open(full_fileName, 'wb+') as destination:
-# 			for chunk in file.chunks():
-# 				destination.write(chunk)
-# 		destination.close()
-# 		return full_fileName
-#
-# 	def set_dbdata(self, request):
-# 		tmp_data = Person(name='LSZ', age=27)
-# 		tmp_data.save()
-#
-# 		# for group_data in g_groups:
-# 		# 	print group_data.name
-# 		# 	print group_data.permisson
-# 		# 	db_obj = GroupInfo(name = group_data.name, permission = group_data.permisson)
-# 		# 	db_obj.save()
-#
-# 		for user in g_users:
-# 			db_obj = UserInfo(name = user.name, email=user.email, \
-# 			                  permission = user.permisson, groups = user.groups)
-# 			db_obj.save()
-# 		rsp_data = {'data': 'set database data!'}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def get_dbdata(self, request):
-# 		# person_obj = Person.objects.all()
-# 		# result = {
-# 		# 	'name': person_obj[0].name,
-# 		# 	'age': person_obj[0].age
-# 		# }
-#
-# 		group_array = []
-# 		group_obj = GroupInfo.objects.all()
-#
-# 		for tmp_obj in group_obj:
-# 			group_array.append(Group(tmp_obj.name, tmp_obj.permission).__dict__)
-#
-# 		rsp_data = {'data': group_array}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def delete_group_data(self, request):
-# 		delete_data = request.POST.getlist('req_json')
-# 		print delete_data
-# 		successful_delete_data = []
-# 		failed_delete_data = []
-# 		for value in delete_data:
-# 			if GroupInfo.objects.filter(name = value).delete():
-# 				successful_delete_data.append(value)
-# 			else:
-# 				failed_delete_data.append(value)
-#
-# 		rsp_data = {'successful': successful_delete_data,
-# 					'failed': failed_delete_data}
-# 		print rsp_data
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def delete_user_data(self, request):
-# 		delete_data = request.POST.getlist('req_json')
-# 		successful_delete_data = []
-# 		failed_delete_data = []
-# 		for value in delete_data:
-# 			if UserInfo.objects.filter(name = value).delete():
-# 				successful_delete_data.append(value)
-# 			else:
-# 				failed_delete_data.append(value)
-#
-# 		rsp_data = {'successful': successful_delete_data,
-# 					'failed': failed_delete_data}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def add_group_data(self, request):
-# 		add_data = request.POST.getlist('req_json')[0]
-# 		trans_add_data = json.loads(add_data)
-# 		print trans_add_data
-# 		status = ''
-# 		if GroupInfo.objects.filter(name = trans_add_data['name']):
-# 			status = 'Failed'
-# 		else:
-# 			add_group = GroupInfo(name = trans_add_data['name'], permission = trans_add_data['permission'])
-# 			add_group.save()
-# 			status = 'Successful'
-#
-# 		rsp_data = {'status': status}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def add_user_data(self, request):
-# 		add_data = request.POST.getlist('req_json')[0]
-# 		trans_add_data = json.loads(add_data)
-# 		print trans_add_data
-# 		status = ''
-# 		error = ''
-# 		if UserInfo.objects.filter(name = trans_add_data['name']):
-# 			status = 'Failed'
-# 			error = '用户已经存在！'
-# 		else:
-# 			add_user = UserInfo(name = trans_add_data['name'], password = trans_add_data['password'])
-# 			add_user.save()
-# 			status = 'Successful'
-#
-# 		rsp_data = {'status': status,
-# 					'error': error}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def change_group_data(self, request):
-# 		change_data = request.POST.getlist('req_json')[0]
-# 		trans_change_data = json.loads(change_data)
-# 		print trans_change_data
-# 		status = ''
-# 		group = GroupInfo.objects.get(name = trans_change_data['name'])
-# 		if group:
-# 			status = 'Successful'
-# 			group.permission = trans_change_data['permission']
-# 			group.save()
-# 		else:
-# 			status = 'Failed'
-#
-# 		rsp_data = {'status': status}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def change_user_data(self, request):
-# 		change_data = request.POST.getlist('req_json')[0]
-# 		trans_change_data = json.loads(change_data)
-# 		print trans_change_data
-# 		status = ''
-# 		user = UserInfo.objects.get(name = trans_change_data['name'])
-# 		if user:
-# 			status = 'Successful'
-# 			user.permission = trans_change_data['permission']
-# 			user.email = trans_change_data['email']
-# 			user.groups = trans_change_data['groups']
-# 			user.save()
-# 		else:
-# 			status = 'Failed'
-#
-# 		rsp_data = {'status': status}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def set_chosen_group(self, request):
-# 		group_name = request.POST.getlist('req_json')[0]
-# 		group_name = group_name.encode('utf-8')
-# 		print 'group_name:   ', group_name
-# 		group = GroupInfo.objects.filter(name = group_name)
-# 		print 'group_id:  ', group[0].id
-# 		rsp_url = ''
-# 		error_info = ''
-# 		if group:
-# 			rsp_url = '/admin/auth/group/' + str(group[0].id) + '/change'
-# 		else:
-# 			error_info = 'request name does not exit!'
-#
-# 		rsp_data = {'data': rsp_url,
-# 					'error': error_info}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def set_chosen_user(self, request):
-# 		userName = request.POST.getlist('req_json')[0]
-# 		userName = userName.encode('utf-8')
-# 		print 'userName:   ', userName
-# 		user = UserInfo.objects.filter(name = userName)[0]
-# 		print 'user_id:  ', user.id
-# 		rsp_url = ''
-# 		error_info = ''
-# 		if user:
-# 			rsp_url = '/admin/auth/user/' + str(user.id) + '/change'
-# 		else:
-# 			error_info = 'request name does not exit!'
-#
-# 		rsp_data = {'data': rsp_url,
-# 					'error': error_info}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def set_env_key(self, request):
-# 		global ENV_KEY
-# 		print 'This is AjaxReqFunc.set_env_key!'
-# 		req_env_key_value = request.POST.getlist('env_key_value')[0]
-#
-# 		ENV_KEY = req_env_key_value
-# 		print 'ENV_KEY: ', ENV_KEY
-#
-# 		rsp_data = {
-# 			'data': req_env_key_value
-# 		}
-# 		response = HttpResponse(json.dumps(rsp_data))
-# 		# response = HttpResponse(req_json)
-# 		response["Access-Control-Allow-Origin"] = "*"
-# 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 		response["Access-Control-Max-Age"] = "1000"
-# 		response["Access-Control-Allow-Headers"] = "*"
-# 		return response
-#
-# 	def get_task_type(self, trans_req_json):
-# 		task_type = cfg.TASK_TYPE_ECALL
-# 		cmdline = ''
-# 		if 'type' in trans_req_json and trans_req_json['type'] == 'version_control':
-# 			data_type = 'version_control_' + trans_req_json['--cmd']
-# 			task_type = cfg.TASK_TYPE_VERCONTROL
-# 		elif '--args' not in trans_req_json or trans_req_json['--args'] == '' or \
-# 			trans_req_json['--args'] =='app':
-# 			data_type = 'default'
-# 		else:
-# 			data_type = trans_req_json['--args']
-# 		req_para = ['--cmd', '--args', '--grp', \
-# 					'--ctr', '--srv', '--srvno',\
-# 					'--ictr', '--isrv', '--isrvno']
-# 		for value in req_para:
-# 			if value in req_para and value in trans_req_json and trans_req_json[value] !='':
-# 				cmdline += value + ' ' + trans_req_json[value] + ' '
-#
-# 		print '\ndata_type: ', data_type
-# 		print 'task_type: ', task_type
-# 		print ('The REQUEST command line is: %s\n' %(cmdline))
-# 		return {
-# 			'data_type': data_type,
-# 			'task_type': task_type,
-# 			'cmdline': cmdline,
-# 			'cmd': trans_req_json['--cmd']
-# 		}
-#
-# 	@csrf_exempt
-# 	def test_task_rpc(self, request):
-# 		if request.method != '':
-# 			req_json = request.POST.getlist('req_json')[0]
-# 			print req_json
-# 			trans_req_json = json.loads(req_json)
-# 			print trans_req_json
-#
-# 			req_data = self.get_task_type(trans_req_json)
-# 			data_type = req_data['data_type']
-# 			task_type = req_data['task_type']
-# 			cmdline = req_data['cmdline']
-#
-# 			original_rsp_data = ''
-# 			cmd = 'info'
-# 			task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=0, \
-# 						cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
-# 			trans_rsp_data = {}
-# 			try:
-# 				daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 				sock = sock_conn(daemaon_ip, daemon_port)
-# 				sock.send(genRpcHead() + task_info.encode() + cfg.TIP_INFO_EOF)
-# 				original_rsp_data = recv_end(sock)
-# 				sock.close()
-# 				print ('The original rsp data is:\n%s' %(original_rsp_data))
-# 				trans_rsp_data = self.process_rpc_result(original_rsp_data, data_type)
-# 				print 'Transed Rsp Data: '
-# 				print trans_rsp_data
-# 			except Exception as e:
-# 				print('notifyDaemon failed!')
-# 				print(traceback.format_exc())
-# 			rsp_data = trans_rsp_data
-# 			response = HttpResponse(json.dumps(rsp_data))
-# 			response["Access-Control-Allow-Origin"] = "*"
-# 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 			response["Access-Control-Max-Age"] = "1000"
-# 			response["Access-Control-Allow-Headers"] = "*"
-# 			return response
-# 		else:
-# 			return index(request)
-#
-# 	@csrf_exempt
-# 	def request_real_time_task(self, request):
-# 		if request.method != '':
-# 			req_json = request.POST.getlist('req_json')[0]
-# 			trans_req_json = json.loads(req_json)
-# 			output_msg('Original Req_json!', req_json)
-# 			output_msg('Transed Req_Json!', trans_req_json)
-#
-# 			compact_req_json = {}
-# 			for key in trans_req_json:
-# 				if key != 'ENV_KEY' and trans_req_json[key] != '':
-# 					if key.find('--') == 0:
-# 						trans_key = key[2:]
-# 						compact_req_json[trans_key] = trans_req_json[key]
-# 					else:
-# 						compact_req_json[key] = trans_req_json[key]
-# 			# compact_req_json = json.dumps(compact_req_json)
-# 			compact_req_json = str(compact_req_json)
-# 			eval_req_json = eval(compact_req_json)
-# 			output_msg('Str Compact Req_JSON', compact_req_json)
-#
-# 			ENV_KEY = trans_req_json['ENV_KEY']
-# 			req_data = self.get_task_type(trans_req_json)
-# 			data_type = req_data['data_type']
-# 			task_type = req_data['task_type']
-# 			rsp = ''
-# 			original_rsp_data = ''
-# 			trans_rsp_data = {}
-# 			args = 'relay'
-#
-# 			try:
-# 				daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 				sock = sock_conn(daemaon_ip, daemon_port)
-# 				# sock.send(genCmdInfoHead() + args + cfg.TIP_INFO_EOF)
-# 				sock.send(genCmdInfoHead() + compact_req_json + cfg.TIP_INFO_EOF)
-# 				original_rsp_data = recv_end(sock)
-# 				sock.close()
-# 				trans_rsp_data = self.process_rpc_result(original_rsp_data, data_type)
-#
-# 				output_msg('The original rsp data is: ', original_rsp_data)
-# 				output_msg('Transed Rsp Data: ', trans_rsp_data)
-# 			except Exception as e:
-# 				print('notifyDaemon failed!')
-# 				print(traceback.format_exc())
-#
-# 			response = HttpResponse(json.dumps(trans_rsp_data))
-# 			response["Access-Control-Allow-Origin"] = "*"
-# 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 			response["Access-Control-Max-Age"] = "1000"
-# 			response["Access-Control-Allow-Headers"] = "*"
-# 			return response
-# 		else:
-# 			return index(request)
-#
-# 	def request_ntf_task(self, request):
-# 		if request.method != '':
-# 			req_json = request.POST.getlist('req_json')[0]
-# 			trans_req_json = json.loads(req_json)
-#
-# 			ENV_KEY = trans_req_json['ENV_KEY']
-# 			req_data = self.get_task_type(trans_req_json)
-# 			data_type = req_data['data_type']
-# 			cmdline = req_data['cmdline']
-# 			task_type = req_data['task_type']
-# 			cmd = req_data['cmd']
-#
-# 			output_msg('Original Req_json!', req_json)
-# 			output_msg('Transed Req_Json!', trans_req_json)
-#
-# 			tasktime = int(time.time()) + 1
-# 			task_info = TaskInfo(state = cfg.FLAG_TASK_READY, TID = 0, PID = int(cfg.PID), exec_time=tasktime, \
-# 								 cmd = cmd.strip(), cmdline = cmdline.strip(), task_type = int(task_type))
-# 			# if cmdline.find(cfg.SEMICOLON) != -1:
-# 			# 	task_type, cmdline = cmdline.split(cfg.SEMICOLON)  ##命令行中有分号
-# 			# else:
-# 			# 	task_type = cfg.TASK_TYPE_ECALL
-# 			# 	task_info = TaskInfo(state=cfg.FLAG_TASK_READY, TID=0, PID=int(cfg.PID), exec_time=tasktime, \
-# 			# 						 cmd=cmd.strip(), cmdline=cmdline.strip(), task_type=int(task_type))
-# 			try:
-# 				daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 				sock = sock_conn(daemaon_ip, daemon_port)
-# 				sock.send(genNtfHead() + task_info.encode() + cfg.TIP_INFO_EOF)
-# 				sock.close()
-#
-# 				output_msg('task_info: ', task_info.__dict__)
-# 			except Exception as e:
-# 				print('notifyDaemon failed!')
-# 				print((traceback.format_exc()))
-#
-# 			rsp_data = {'task_info': task_info.__dict__,
-# 						'data_type': data_type}
-# 			rsp_data = [task_info.TID, data_type]
-# 			response = HttpResponse(json.dumps(rsp_data))
-# 			response["Access-Control-Allow-Origin"] = "*"
-# 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 			response["Access-Control-Max-Age"] = "1000"
-# 			response["Access-Control-Allow-Headers"] = "*"
-# 			return response
-# 		else:
-# 			return index(request)
-#
-# 	def test_all_srvstatus(self, request):
-# 		if request.method != '':
-# 			req_info = ReqInfo(0, cfg.FLAG_REQTYPE_SRVSTATUS)
-# 			rsp = ''
-# 			try:
-# 				# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# 				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
-# 				daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 				sock = sock_conn(daemaon_ip, daemon_port)
-# 				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
-# 				rsp = recv_end(sock)
-# 				print 'Test_all_srvstatus'
-# 				print rsp
-# 				sock.close()
-# 				rsp_list = rsp.split("\n")
-# 				SrvStatus_list = []
-# 				for token in rsp_list:
-# 					if token.startswith(cfg.TIP_BODY_REQ):
-# 						info = token[len(cfg.TIP_BODY_REQ):]
-# 						srv_status = SrvStatus()
-# 						srv_status.decode(info)
-# 						SrvStatus_list.append(srv_status.__dict__)
-# 				# for info in SrvStatus_list:
-# 				# 	print(info.encode())
-# 				rsp_data = SrvStatus_list
-# 			except Exception as e:
-# 				print('notifyDaemon failed!')
-# 				print(traceback.format_exc())
-# 			# return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
-# 			response = HttpResponse(json.dumps(rsp_data))
-# 			response["Access-Control-Allow-Origin"] = "*"
-# 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 			response["Access-Control-Max-Age"] = "1000"
-# 			response["Access-Control-Allow-Headers"] = "*"
-# 			return response
-# 		else:
-# 			return index(request)
-#
-# 	def test_all_tasklist(self, request):
-# 		#if request.method == 'POST':
-# 		if request.method != '':
-#
-# 			#从POST请求中获取查询关键字
-# 			###
-# 			req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKLIST)
-# 			rsp_data = ''
-# 			try:
-# 				# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# 				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
-# 				daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 				sock = sock_conn(daemaon_ip, daemon_port)
-# 				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
-# 				rsp = recv_end(sock)
-# 				print rsp
-# 				rsp_list = rsp.split("\n")
-# 				task_list = []
-# 				for token in rsp_list:
-# 					if token.startswith(cfg.TIP_INFO_TASK):
-# 						info = token[len(cfg.TIP_INFO_TASK):]
-# 						task_info = TaskInfo()
-# 						task_info.decode(info)
-# 						task_list.append(task_info.__dict__)
-# 				# for info in task_list:
-# 				# 	print(info.encode())
-# 				sock.close()
-# 				rsp_data = task_list
-# 			except Exception as e:
-# 				print('notifyDaemon failed!')
-# 				print(traceback.format_exc())
-# 			# return HttpResponse(json.dumps(rsp_data), content_type = "application/json")
-# 			response = HttpResponse(json.dumps(rsp_data))
-# 			response["Access-Control-Allow-Origin"] = "*"
-# 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 			response["Access-Control-Max-Age"] = "1000"
-# 			response["Access-Control-Allow-Headers"] = "*"
-# 			return response
-# 		else:
-# 			return index(request)
-#
-# 	def test_all_taskresult(self, request):
-# 		if request.method != '':
-# 			print 'test_all_taskresult!'
-# 			req_info = ReqInfo(0, cfg.FLAG_REQTYPE_TASKRESULT)
-# 			task_result = ''
-# 			trans_result = {}
-# 			try:
-# 				# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# 				# sock.connect((cfg.DAEMON_IP, cfg.DAEMON_PORT))
-# 				daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 				sock = sock_conn(daemaon_ip, daemon_port)
-# 				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
-# 				task_result = recv_end(sock)
-# 				sock.close()
-#
-# 				task_result = task_result.split('\n')
-# 				trans_result = eval(task_result[1])
-#
-# 				output_msg('Original Rsp Data:', task_result[1], type(task_result[1]))
-# 				output_msg('Transed Rsp Data:', trans_result, type(trans_result))
-# 			except Exception as e:
-# 				print('notifyDaemon failed!')
-# 				print(traceback.format_exc())
-# 			rsp_data = {'task_result': trans_result}
-# 			response = HttpResponse(json.dumps(rsp_data))
-# 			response["Access-Control-Allow-Origin"] = "*"
-# 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 			response["Access-Control-Max-Age"] = "1000"
-# 			response["Access-Control-Allow-Headers"] = "*"
-# 			return response
-# 		else:
-# 			return index(request)
-#
-# 	def test_all_version(self, request):
-# 		if request.method != '':
-# 			req_data = request.POST.getlist('req_json')[0]
-# 			req_data = json.loads(req_data)
-# 			ENV_KEY = req_data['ENV_KEY']
-#
-# 			req_info = ReqInfo(0, cfg.FLAG_REQTYPE_VERSION)
-# 			rsp = ''
-# 			rsp_data = ''
-# 			try:
-# 				daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 				sock = sock_conn(daemaon_ip, daemon_port)
-# 				sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
-# 				tcp_send_head = genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF
-#
-# 				rsp = recv_end(sock)
-# 				sock.close()
-# 				rsp_list = rsp.split("\n")
-# 				version_list = []
-#
-# 				for token in rsp_list:
-# 					if token.startswith(cfg.TIP_BODY_VERINFO):
-# 						info = token[len(cfg.TIP_BODY_VERINFO):]
-# 						version_info = VersionInfo()
-# 						version_info.decode(info)
-# 						version_list.append(version_info.__dict__)
-# 				if info in version_list:
-# 					print info
-# 				rsp_data = version_list
-# 			except Exception as e:
-# 				print('notifyDaemon failed!')
-# 				print(traceback.format_exc())
-#
-# 			response = HttpResponse(json.dumps(rsp_data))
-# 			response["Access-Control-Allow-Origin"] = "*"
-# 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 			response["Access-Control-Max-Age"] = "1000"
-# 			response["Access-Control-Allow-Headers"] = "*"
-# 			return response
-# 		else:
-# 			return index(request)
-#
-# 	def get_task_result(taskID):
-# 		req_info = ReqInfo(taskID, cfg.FLAG_REQTYPE_TASKRESULT)
-# 		task_result = ''
-# 		try:
-# 			daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 			sock = sock_conn(daemaon_ip, daemon_port)
-# 			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
-# 			task_result = recv_end(sock)
-# 			sock.close()
-#
-# 			task_result = task_result.split('\n')
-# 			print 'Original Rsp Data:'
-# 			print task_result[1]
-# 			print type(task_result[1])
-#
-# 			trans_result = eval(task_result[1])
-# 			print 'Transed Rsp Data:'
-# 			print trans_result
-# 			print type(trans_result)
-# 		except Exception as e:
-# 			print('notifyDaemon failed!')
-# 			print(traceback.format_exc())
-#
-# 		return trans_result
-#
-# 	def get_nft_task_state(self, ENV_KEY, task_id = 0):
-# 		req_info = ReqInfo(task_id, cfg.FLAG_REQTYPE_TASKINFO)
-# 		rsp = ''
-# 		task_list = []
-# 		try:
-# 			daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 			sock = sock_conn(daemaon_ip, daemon_port)
-# 			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
-# 			rsp = recv_end(sock)
-# 			output_msg('Ntf_Task_Original_Data', rsp)
-# 			rsp_list = rsp.split("\n")
-# 			for token in rsp_list:
-# 				if token.startswith(cfg.TIP_INFO_TASK):
-# 					info = token[len(cfg.TIP_INFO_TASK):]
-# 					task_info = TaskInfo()
-# 					task_info.decode(info)
-# 					if task_id == 0:
-# 						task_list.append(task_info.__dict__)
-# 					else:
-# 						task_list = task_info.__dict__
-#
-# 			if task_id == 0:
-# 				for info in task_list:
-# 					print info
-# 			else:
-# 				print task_list
-#
-# 			sock.close()
-# 		except Exception as e:
-# 			print('notifyDaemon failed!')
-# 			print(traceback.format_exc())
-# 		return task_list
-#
-# 	def get_nft_task_result(self, ENV_KEY, task_id = 0):
-# 		req_info = ReqInfo(task_id, cfg.FLAG_REQTYPE_TASKRESULT)
-# 		task_result = ''
-# 		trans_result = {}
-# 		try:
-# 			daemaon_ip, daemon_port = getKey(ENV_KEY)
-# 			sock = sock_conn(daemaon_ip, daemon_port)
-# 			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
-# 			task_result = recv_end(sock)
-# 			sock.close()
-# 			if task_id == 0:
-# 				task_result = task_result.split('\n')
-# 				trans_result = eval(task_result[1])
-# 				output_msg('Transed Rsp Data:', trans_result, type(trans_result))
-# 				output_msg('Original Rsp Data:', task_result, type(task_result))
-# 			else:
-# 				trans_result = task_result
-# 				output_msg('Transed Rsp Data:', trans_result)
-# 		except Exception as e:
-# 			print('notifyDaemon failed!')
-# 			print(traceback.format_exc())
-# 		return trans_result
-#
-# 	###查询所有计划任务
-# 	def get_all_ntf_task_result(self, request):
-# 		if request.method != '':
-# 			req_data = request.POST.getlist('req_json')[0]
-# 			req_data = json.loads(req_data)
-#
-# 			task_data = req_data['task_data']
-# 			ENV_KEY = req_data['ENV_KEY']
-#
-# 			output_msg('req_json', req_data)
-# 			output_msg('task_data', task_data)
-#
-# 			task_type = {}
-# 			task_result = {}
-#
-# 			# 遍历客户请求
-# 			index  = 0
-# 			while index < len(task_data):
-# 				# task_data[index] = task_data[index].split(',')
-# 				task_id = task_data[index][0]
-# 				task_type[task_id] = task_data[index][1]
-# 				task_info = self.get_nft_task_state(ENV_KEY, task_id)
-# 				if task_info == []:
-# 					break
-# 				if task_info['state'] == 3:
-# 					task_result[task_id] = self.get_nft_task_result(ENV_KEY, task_id)
-# 					task_result[task_id] = self.process_rpc_result(task_result[task_id], task_type[task_id])
-# 				else:
-# 					task_result[task_id] = 'Empty'
-# 				index += 1
-# 			output_msg('task_result', task_result)
-#
-# 			# 全遍历
-# 			# task_info = self.get_nft_task_state()
-# 			# for task in task_info:
-# 			# 	task_id = task['TID']
-# 			# 	if task['state'] == 3:
-# 			# 		task_result[task_id] = self.get_nft_task_result(task_id)
-#
-# 			rsp_data = {'task_result': task_result}
-#
-# 			response = HttpResponse(json.dumps(rsp_data))
-# 			response["Access-Control-Allow-Origin"] = "*"
-# 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 			response["Access-Control-Max-Age"] = "1000"
-# 			response["Access-Control-Allow-Headers"] = "*"
-# 			return response
-# 		else:
-# 			response = HttpResponse(json.dumps('wrong!'))
-# 			return response
-#
-# 	def get_all_ntf_task_state(self, request):
-# 		if request.method != '':
-# 			req_data = request.POST.getlist('req_json')[0]
-# 			req_data = json.loads(req_data)
-# 			ENV_KEY = req_data['ENV_KEY']
-#
-# 			task_info = self.get_nft_task_state(ENV_KEY)
-# 			rsp_data = {'task_info': task_info}
-# 			response = HttpResponse(json.dumps(rsp_data))
-# 			response["Access-Control-Allow-Origin"] = "*"
-# 			response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 			response["Access-Control-Max-Age"] = "1000"
-# 			response["Access-Control-Allow-Headers"] = "*"
-# 			return response
-# 		else:
-# 			response = HttpResponse(json.dumps('wrong!'))
-# 			return response
-#
-# 	def process_rpc_result(self, origin_data, data_type):
-# 		failed_data = self.get_rpc_failed_data(origin_data, data_type)
-# 		if failed_data == '':
-# 			array_data = []
-# 			if is_version_control_req(data_type):
-# 				array_data = self.get_version_ctr_array_result(origin_data, data_type)
-# 			else:
-# 				array_data = self.get_task_rpc_array_result(origin_data)
-# 			# print 'array_data: '
-# 			# print array_data
-#
-# 			dict_data = self.get_rpc_dict_result(array_data, data_type)
-# 			# dict_data = self.get_rpc_dict_result(data_type, array_data)
-#
-# 			return {'data': dict_data, 'type': data_type}
-# 		else:
-# 			return {'data': failed_data, 'type': 'Failed'}
-#
-# 	def get_rpc_failed_data(self, origin_data, data_type):
-# 		tmpdata = origin_data.split('\n')
-# 		failed_data = ''
-# 		if tmpdata[1].find('verControl Usage:') != -1:
-# 			failed_data = 'verControl Failed'
-#
-# 		# failed_data = tmpdata
-# 		# if is_version_control_req(data_type):
-# 		# 	for value in tmpdata:
-# 		# 		if value.find('---') != -1:
-# 		# 			failed_data = ''
-# 		# 			break
-# 		# else:
-# 		# 	failed_data = ''
-# 		return failed_data
-#
-# 	def get_version_ctr_array_result(self, origin_data, data_type):
-# 		tmpdata = origin_data.split('\n')
-# 		array_data = []
-# 		if data_type.find('show')!= -1:
-# 			tmpdata = tmpdata[len(tmpdata)-2].split('\t')
-# 			array_data.append(tmpdata)
-# 		else:
-# 			array_data.append(tmpdata[1:])
-# 		# print tmpdata
-# 		# for value in tmpdata:
-# 		# 	if value != '':
-# 		# 		array_data.append(value)
-# 		return array_data
-#
-# 	def get_task_rpc_array_result(self, origin_data):
-# 		tmpdata = origin_data.split('\n')
-# 		tmpdata = tmpdata[1:len(tmpdata)-1]
-# 		index = 0
-# 		str_head = '[info]xxx: '
-# 		info_flag = ': '
-# 		other_flag = '::'
-#
-# 		final_result = []
-# 		while index < len(tmpdata):
-# 			tmp_result = []
-# 			if tmpdata[index].find(info_flag) >= 0:
-# 				# print tmpdata[index].find(info_flag)
-# 				tmpdata[index] = tmpdata[index][tmpdata[index].find(info_flag) + len(info_flag):]
-# 				tmpdata[index] = tmpdata[index].split(' ')
-# 			elif tmpdata[index].find(other_flag) >= 0:
-# 				# print tmpdata[index].find(other_flag)
-# 				tmpdata[index] = tmpdata[index][tmpdata[index].find(other_flag) + len(other_flag):]
-# 				tmpdata[index] = tmpdata[index].split(other_flag)
-# 			# print tmpdata[index]
-# 			for value in tmpdata[index]:
-# 				if value != '':
-# 					tmp_result.append(value)
-# 			final_result.append(tmp_result)
-# 			index += 1
-# 		return final_result
-#
-# 	def get_rpc_dict_result(self, array_data, data_type):
-# 		index = 0
-# 		dict_data = []
-# 		while index < len(array_data):
-# 			tmp_dict_data = RpcResult(data_type, array_data[index])
-# 			dict_data.append(tmp_dict_data.__dict__)
-# 			index += 1
-# 		return dict_data
-
-# def timer_start():
-# 	t = threading.Timer(3, test_func, ("Timer_Start", ))
-# 	t.start()
-#
-# def test_func(msg1):
-# 	print ("I'm test_func, ", msg1)
-# 	rsp_data = {'data': 'This is Timer'}
-# 	response = HttpResponse(json.dumps(rsp_data))
-# 	response["Access-Control-Allow-Origin"] = "*"
-# 	response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-# 	response["Access-Control-Max-Age"] = "1000"
-# 	response["Access-Control-Allow-Headers"] = "*"
-# 	return response
-# 	# timer_start()

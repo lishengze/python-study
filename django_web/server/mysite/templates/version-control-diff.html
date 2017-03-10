@@ -2,7 +2,7 @@
 <html >
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <title>上期技术分发管理系统</title>
+  <title>上期技术监控专用版本控制系统</title>
   <link rel="stylesheet" type="text/css" href="static/jsdifflib/diffview.css"/>
   {% include 'dependence.html' %}
 </head>
@@ -20,6 +20,9 @@
       $(document).ready(function() {
           $("#panelbar").kendoPanelBar({
           });
+      $("a").removeClass('k-state-selected');
+      $('#diff').addClass('k-state-selected');
+
       });
     </script>
     <script type="text/javascript" src="static/jsdifflib/diffview.js"></script>

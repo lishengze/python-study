@@ -34,7 +34,7 @@ $(function () {
             if (responseJSON.status === "Successful") {
               window.location.href = '/admin/auth/user';
             } else {
-              alert(responseJSON.error);
+              alert(responseJSON.info);
             }
         }
       });

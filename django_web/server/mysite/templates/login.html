@@ -73,7 +73,7 @@
   	-o-transition: 1s all;
   }
 </style>
-<h1>上期技术版本控制登录系统</h1>
+<h1>上期技术监控专用版本控制系统</h1>
 <div class="login-form">
   <form class="form-horizontal" role="form">
     <div class="form-group">
@@ -122,19 +122,58 @@
     function loginFunction() {
       var logName = $('#loginName').val();
       var logPassword = $('#loginPassword').val();
-      var getType = $('#EvrKeySelect').val()
+      var getType = $('#EvrKeySelect').val();
       if(logName == '') {
         alert('请输入用户名');
       } else if(logPassword == '') {
         alert('请输入密码');
-      } else if(logName === "admin" && logPassword === "admin") {
-        localStorage.setItem('logName', logName)
-        localStorage.setItem('ENV_KEY', getType)
-        var ENV_KEY = getType;
-        console.log(ENV_KEY);
-        location.href="/home.html";
       } else {
-        alert('用户名或者密码错误！');
+        isLegal(logName,logPassword);
+        //
+        // localStorage.setItem('logName', logName)
+        // localStorage.setItem('ENV_KEY', getType)
+        // var ENV_KEY = getType;
+        // console.log(ENV_KEY);
+        // location.href="/home.html";
+      }
+    }
+
+    function isLegal(logName,logPassword) {
+      if(logName == null ||logPassword == null ) return;
+      var req_data = {
+        'name' : logName,
+        'password': logPassword
+      }
+      $.ajax({
+        url: '/AJAX/Request_User_Login/',
+        data: {'req_json': JSON.stringify(req_data)},
+        dataType: 'json',
+        type: 'POST',
+        traditional: true,
+        success: function (responseJSON) {
+            console.log (responseJSON)
+            dataProcess(responseJSON);
+        }
+      });
+    }
+
+    function dataProcess(responseJSON) {
+      if(responseJSON == null) {
+        alert("数据库没有返回数据")
+      };
+      switch (responseJSON.status) {
+        case 'Success':
+          console.log(responseJSON.permission);
+          localStorage.setItem('logName', $('#loginName').val());
+          localStorage.setItem('ENV_KEY', $('#EvrKeySelect').val());
+          localStorage.setItem('permission',responseJSON.permission);
+          window.location.href="/home.html";
+          break;
+        case 'Failed':
+          alert(responseJSON.info);
+          break;
+        default:
+          alert('返回数据格式不正确');
       }
     }
  </script>
