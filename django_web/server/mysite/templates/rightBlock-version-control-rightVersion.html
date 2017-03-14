@@ -27,6 +27,9 @@ th,td {
 </div>
 <script>
 var allVersionData = null;
+var xmlCount = 0;
+var serverCount = 0;
+var clientCount = 0;
 var req_data = {
   'ENV_KEY':localStorage.getItem('ENV_KEY')
 }
@@ -40,9 +43,6 @@ $.ajax({
   success: function (getData) {
       var data1 = getData;
       allVersionData = data1;
-      var xmlCount = 0;
-      var serverCount = 0;
-      var clientCount = 0;
       var xmlContext = ''
       var serverContext = ''
       var clientContext = ''
@@ -88,6 +88,5 @@ function statusJudge(data) {
     text +='<td>'+ data.datetime + '</td></tr>';
   }
   return text;
-
 }
 </script>

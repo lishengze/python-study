@@ -80,8 +80,8 @@ class RpcResult(object):
 	def __init__(self, data_type, data_array):
 		if data_type == 'default':
 			self.__dict__ = {
-				'object_info': data_array[0],
-				'ip_address': data_array[1],
+				'object_info': data_array[1],
+				'ip_address': data_array[0],
 				'cmd_line': ' '.join(data_array[2:])
 			}
 		if data_type == 'relay':
@@ -96,18 +96,24 @@ class RpcResult(object):
 				'host_name': data_array[2]
 			}
 		if is_version_control_req(data_type):
-			if data_type.find('show')!= -1:
-				# print data_array
-				self.__dict__ = {
-					'SEQ': data_array[0],
-					'version': data_array[1],
-					'datetime': data_array[2],
-					'status': data_array[3]
-				}
-			else:
-				self.__dict__ = {
-					'info': data_array
-				}
+			self.__dict__ = {
+				'SEQ': data_array[0],
+				'version': data_array[1],
+				'datetime': data_array[2],
+				'status': data_array[3]
+			}
+			# if data_type.find('show')!= -1 or data_type.find('rollback')!= -1 or data_type.find('drop')!= -1:
+			# 	# print data_array
+			# 	self.__dict__ = {
+			# 		'SEQ': data_array[0],
+			# 		'version': data_array[1],
+			# 		'datetime': data_array[2],
+			# 		'status': data_array[3]
+			# 	}
+			# else:
+			# 	self.__dict__ = {
+			# 		'info': data_array
+			# 	}
 
 def init_globals():
 	global g_users, g_groups, g_login_user, \
@@ -317,6 +323,7 @@ class ViewMain(object):
 			'Add_Group': self._ajax_func.add_group_data,
 			'Change_User': self._ajax_func.change_user_data,
 			'Change_Group': self._ajax_func.change_group_data,
+			'Change_User_Password': self._ajax_func.change_user_password,
 		}
 		ajax_func = ajax_func_dict.get(ajax_name, self._ajax_func.default_ajax_request)
 		return ajax_func
@@ -979,6 +986,35 @@ class AdminDataAjaxFunc(object):
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
 
+	def change_user_password(self, request):
+		change_data = request.POST.getlist('req_json')[0]
+		trans_change_data = json.loads(change_data)
+		output_msg('trans_change_data: ', trans_change_data)
+		user_name = trans_change_data['name']
+		old_password = trans_change_data['old_password']
+		new_password = trans_change_data['new_password']
+		status = 'Success'
+		error = ''
+		info = ''
+		user =  UserInfo.objects.get(name = user_name)
+		if old_password != user.password:
+			status = 'Failed'
+			error = '旧密码不正确'
+		else:
+			info = '/admin/auth/'
+			user.password = new_password
+			user.save()
+
+		rsp_data = {'status': status,
+					'info': info,
+					'error': error}
+		response = HttpResponse(json.dumps(rsp_data))
+		response["Access-Control-Allow-Origin"] = "*"
+		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response["Access-Control-Max-Age"] = "1000"
+		response["Access-Control-Allow-Headers"] = "*"
+		return response
+
 class TaskAjaxFunc(object):
 	def get_task_type(self, trans_req_json):
 		task_type = cfg.TASK_TYPE_ECALL
@@ -1478,7 +1514,7 @@ class TaskAjaxFunc(object):
 			return index(request)
 
 	def process_rpc_result(self, origin_data, data_type):
-		failed_data = self.get_rpc_failed_data(origin_data, data_type)
+		failed_data = self.get_failed_data(origin_data, data_type)
 		if failed_data == '':
 			array_data = []
 			if is_version_control_req(data_type):
@@ -1487,38 +1523,43 @@ class TaskAjaxFunc(object):
 				array_data = self.get_task_rpc_array_result(origin_data)
 
 			# output_msg('array_data', array_data)
-
 			dict_data = self.get_rpc_dict_result(array_data, data_type)
-			# dict_data = self.get_rpc_dict_result(data_type, array_data)
-
 			return {'data': dict_data, 'type': data_type}
 		else:
 			return {'data': failed_data, 'type': 'Failed'}
 
-	def get_rpc_failed_data(self, origin_data, data_type):
+	def get_failed_data(self, origin_data, data_type):
 		tmpdata = origin_data.split('\n')
-		failed_data = ''
-		if tmpdata[1].find('verControl Usage:') != -1:
-			failed_data = 'verControl Failed'
+		if '' in tmpdata:
+			tmpdata.remove('')
+		verControl_param_wrong_flag = 'verControl Usage:'
+		main_param_wrong_flag = 'main Usage:'
 
-		# failed_data = tmpdata
-		# if is_version_control_req(data_type):
-		# 	for value in tmpdata:
-		# 		if value.find('---') != -1:
-		# 			failed_data = ''
-		# 			break
-		# else:
-		# 	failed_data = ''
+		if is_version_control_req(data_type):
+			verControl_SUCC_flag = '--------'
+			if tmpdata[1].find('verControl Usage:') != -1:
+				failed_data = 'verControl Failed'
+			else:
+				failed_data = tmpdata[1:]
+				for value in tmpdata:
+					if value.find(verControl_SUCC_flag) != -1:
+						failed_data = ''
+						break
+		else:
+			failed_data = ''
 		return failed_data
 
 	def get_version_ctr_array_result(self, origin_data, data_type):
 		tmpdata = origin_data.split('\n')
 		array_data = []
-		if data_type.find('show')!= -1:
-			tmpdata = tmpdata[len(tmpdata)-2].split('\t')
-			array_data.append(tmpdata)
-		else:
-			array_data.append(tmpdata[1:])
+		tmpdata = tmpdata[len(tmpdata)-2].split('\t')
+		array_data.append(tmpdata)
+		# if data_type.find('show')!= -1 or data_type.find('rollback')!= -1 or data_type.find('drop')!= -1:
+		# 	tmpdata = tmpdata[len(tmpdata)-2].split('\t')
+		# 	array_data.append(tmpdata)
+		# else:
+		# 	array_data.append(tmpdata[1:])
+
 		return array_data
 
 	def get_version_ctr_array_result_back(self, origin_data, data_type):

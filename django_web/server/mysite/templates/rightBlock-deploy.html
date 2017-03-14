@@ -89,44 +89,41 @@
  .deploySelect {
    border:2px solid gray;
    margin-top:5px;
-   background-color:	#FF9900;
+   background-color:#FF9900;
  }
  .parameterSelect {
    border:2px solid gray;
    margin-top:5px;
-   background-color: 		#C0C0C0;
+   background-color:#C0C0C0;
  }
  .onSelect {
-   background-color:	#FF6347;
+   background-color:#FF6347;
  }
 </style>
 <script>
   var data = [];
-  setNtfSessionStorage(data);
-  keyDownEvent();
-  $('#instruction').click(function(){
-    $(this).find('p').is(':hidden') ? $(this).find('p').show() :  $(this).find('p').hide()
-  })
-  $('#parameter').kendoDropDownList({
-    dataSource : ['deployConsole','undeployConsole','deployServer','undeployServer']
-  })
-  function keyDownEvent() {
-    $(document).bind('keydown', function(event) {
-      if (event.keyCode == 13){
-         submitReq();
-         $(document).unbind('keydown');
-      }
-      else{}
+  var interval= null;
+  init(data);
+
+  function init(data) {
+    setNtfSessionStorage(data);
+    keyDownEvent();
+    $('#instruction').click(function(){
+      $(this).find('p').is(':hidden') ? $(this).find('p').show() :  $(this).find('p').hide()
+    })
+    $('#parameter').kendoDropDownList({
+      dataSource : ['deployConsole','undeployConsole','deployServer','undeployServer']
+    })
+
+    $('.inputValue').focus(function() {
+      var selectNow = $(this).parents('.parameterSelect');
+      selectNow.addClass('onSelect');
+      selectNow.siblings().removeClass('onSelect')
     })
   }
-  $('.inputValue').focus(function() {
-    var selectNow = $(this).parents('.parameterSelect');
-    selectNow.addClass('onSelect');
-    selectNow.siblings().removeClass('onSelect')
-  })
 
   function submitReq() {
-    $('#reqBtn').attr('disabled', 'disabled');
+    unbindEvent('reqBtn')
     $('#result').hide();
     var req_data = getReq_data();
     $.ajax({
@@ -157,46 +154,60 @@
 
   function intervalReq(ntf_task_data) {
     var times = 0;
-    var interval = setInterval(function(){
+    interval = setInterval(function(){
       times ++ ;
       console.log(times);
       if(times == 20) {
         clearInterval(interval);
+        rebindEvent('reqBtn');
+
       }
-      task_data = ntf_task_data;
       reqResult_data = {
         'ENV_KEY': localStorage.getItem('ENV_KEY'),
-        'task_data': task_data
+        'task_data': ntf_task_data
       }
-      console.log(task_data);
-      if(task_data != null) {
-        $.ajax({
-          url: '/AJAX/Get_NTF_Task_Result/',
-          data: {'req_json': JSON.stringify(reqResult_data)},
-          dataType: 'json',
-          type: 'POST',
-          traditional: true,
-          success: function (result) {
-              task_result = result.task_result;
-              for (var value in task_result) {
-                task_id = value;
-                if (task_result[task_id] !== 'Empty') {
-                  for ( var i = 0 ; i < ntf_task_data.length; ++i) {
-                    if (ntf_task_data[i][0] == task_id) {
-                      showResult(result.task_result[task_id]);
-                      ntf_task_data.splice(i,1);
-                      setNtfSessionStorage(ntf_task_data);
-                      $('#reqBtn').removeAttr('disabled');
-                      keyDownEvent();
-                      clearInterval(interval);
-                    }
-                  }
-                }
-              }
+      console.log(ntf_task_data);
+      if(ntf_task_data == null) {
+        return;
+      }
+      $.ajax({
+        url: '/AJAX/Get_NTF_Task_Result/',
+        data: {'req_json': JSON.stringify(reqResult_data)},
+        dataType: 'json',
+        type: 'POST',
+        traditional: true,
+        success: function (result) {
+          ajaxResultProcess(result,ntf_task_data);
+        }
+      });
+    },5000);
+  }
+
+  function ajaxResultProcess(result,ntf_task_data) {
+    var task_result = result.task_result;
+    for (var value in task_result) {
+      task_id = value;
+      switch (task_result[task_id]) {
+        case 'Failed':
+          alert('任务执行错误！');
+          clearInterval(interval);
+          rebindEvent('reqBtn');
+          return;
+        case 'Empty':
+          break;
+        default:
+          for ( var i = 0 ; i < ntf_task_data.length; ++i) {
+            if (ntf_task_data[i][0] == task_id) {
+              showResult(result.task_result[task_id]);
+              ntf_task_data.splice(i,1);
+              setNtfSessionStorage(ntf_task_data);
+              keyDownEvent();
+              clearInterval(interval);
+              rebindEvent('reqBtn');
+            }
           }
-        });
       }
-    },6000);
+    }
   }
 
   function getReq_data(){
@@ -240,9 +251,8 @@
     return req_data;
   }
 
-  function showResult(data)  {
+  function showResult(data) {
     var titles = getTitles(data);
-    $('#result').show();
     $('#result').kendoGrid({
      selectable: "multiple cell",
      allowCopy: true,
@@ -255,9 +265,10 @@
       data: data.data
     })
     $('#result').data("kendoGrid").setDataSource(dataSource);
+    $('#result').show();
   }
 
-  function getTitles(data){
+  function getTitles(data) {
     if(data.type === 'relay'){
       return [
         { field: "origin_ip_address" ,title: '原IP地址'},
@@ -278,4 +289,22 @@
     }
   }
 
+  function keyDownEvent() {
+    $(document).bind('keydown', function(event) {
+      if (event.keyCode == 13){
+         submitReq();
+      }
+      else{}
+    })
+  }
+
+  function unbindEvent(id) {
+    $(document).unbind('keydown');
+    $('#' + id).attr('disabled', 'disabled');
+  }
+
+  function rebindEvent(id) {
+    keyDownEvent();
+    $('#' + id).removeAttr('disabled');
+  }
 </script>

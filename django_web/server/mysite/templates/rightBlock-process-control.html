@@ -102,33 +102,36 @@
 </style>
 <script>
 var data = [];
-setNtfSessionStorage(data);
-keyDownEvent();
-$('#instruction').click(function(){
-  $(this).find('p').is(':hidden') ? $(this).find('p').show() :  $(this).find('p').hide()
-})
-$('#parameter').kendoDropDownList({
-  dataSource : ['show','alive','dead','start','stop','clean','stopcln','rmcore']
-})
+var interval= null;
+init(data);
+
+function init(data) {
+  setNtfSessionStorage(data);
+  keyDownEvent();
+  $('#instruction').click(function(){
+    $(this).find('p').is(':hidden') ? $(this).find('p').show() :  $(this).find('p').hide()
+  })
+  $('#parameter').kendoDropDownList({
+    dataSource : ['show','alive','dead','start','stop','clean','stopcln','rmcore']
+  })
+  $('.inputValue').focus(function() {
+    var selectNow = $(this).parents('.parameterSelect');
+    selectNow.addClass('onSelect');
+    selectNow.siblings().removeClass('onSelect')
+  })
+}
 
 function keyDownEvent() {
   $(document).bind('keydown', function(event) {
     if (event.keyCode == 13){
        submitReq();
-       $(document).unbind('keydown');
     }
     else{}
   })
 }
 
-$('.inputValue').focus(function() {
-  var selectNow = $(this).parents('.parameterSelect');
-  selectNow.addClass('onSelect');
-  selectNow.siblings().removeClass('onSelect')
-})
-
 function submitReq() {
-  $('#reqBtn').attr('disabled', 'disabled');
+  unbindEvent('reqBtn');
   $('#result').hide();
   var req_data = getReq_data();
   $.ajax({
@@ -159,19 +162,20 @@ function getNtfSessionStorage() {
 
 function intervalReq(ntf_task_data) {
   var times = 0;
-  var interval = setInterval(function(){
+  interval = setInterval(function(){
     times ++ ;
     console.log(times);
     if(times == 12) {
       clearInterval(interval);
+      rebindEvent('reqBtn');
     };
     task_data = ntf_task_data;
     reqResult_data = {
       'ENV_KEY': localStorage.getItem('ENV_KEY'),
-      'task_data': task_data
+      'task_data': ntf_task_data
     }
-    console.log(task_data);
-    if(task_data != null) {
+    console.log(ntf_task_data);
+    if(ntf_task_data != null) {
       $.ajax({
         url: '/AJAX/Get_NTF_Task_Result/',
         data: {'req_json': JSON.stringify(reqResult_data)},
@@ -179,33 +183,35 @@ function intervalReq(ntf_task_data) {
         type: 'POST',
         traditional: true,
         success: function (result) {
-          ajaxResultProcess(result);
+          ajaxResultProcess(result,ntf_task_data);
         }
       });
     }
   },5000);
 }
 
-function ajaxResultProcess(result) {
+function ajaxResultProcess(result,ntf_task_data) {
   var task_result = result.task_result;
+  console.log(task_result);
   for (var value in task_result) {
     task_id = value;
     switch (task_result[task_id]) {
       case 'Failed':
-        alert('任务执行错误！');
+        alert('任务执行失败，请稍后重试！');
         clearInterval(interval);
-        break;
+        rebindEvent('reqBtn');
+        return;
       case 'Empty':
         break;
       default:
-        for ( var i = 0 ; i < ntf_task_data.length; ++i) {
+        for ( var i = 0 ; i < ntf_task_data.length; ++ i) {
           if (ntf_task_data[i][0] == task_id) {
             showResult(result.task_result[task_id]);
             ntf_task_data.splice(i,1);
             setNtfSessionStorage(ntf_task_data);
-            $('#reqBtn').removeAttr('disabled');
             keyDownEvent();
             clearInterval(interval);
+            rebindEvent('reqBtn');
           }
         }
     }
@@ -291,4 +297,13 @@ function getTitles(data){
   }
 }
 
+function unbindEvent(id) {
+  $(document).unbind('keydown');
+  $('#' + id).attr('disabled', 'disabled');
+}
+
+function rebindEvent(id) {
+  keyDownEvent();
+  $('#' + id).removeAttr('disabled');
+}
 </script>

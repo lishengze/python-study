@@ -6,15 +6,16 @@
     </div>
     <div style="margin-top: 20px">
       <label style= 'width:150px;float:left'><h4>版本信息:</h4></label>
-      <input  class="form-control" style= 'width:200px; float:left' id="rollBackInputObject2" >
-      <input  class="form-control" style= ' margin-left:10px;width:300px' id="rollBackInputVersion" placeholder=" VERSION | DATE_TIME | number">
+      <input  class="form-control" style= 'width:100px; float:left' id="rollBackInputObject2" >
+      <input  class="form-control" style= ' margin-left:280px;width:300px' id="rollBackInputData" placeholder=" VERSION">
       <div style="width:700px;margin-top:20px;border:2px solid gray;"> <span style= 'font: bold 25px arial;'>版本信息输入提示：</span><br>
-        <br><span style= 'font-weight: bold'>ver =VERSION</span>&nbsp&nbsp&nbsp&nbsp-- 回退到指定版本，VERSION like: 1.1.0  1.0.0.1 ...
-        <br><span style= 'font-weight: bold'>dt= DATE_TIME</span>	&nbsp-- 回退到用时间日期指定版本，DATE_TIME like 20121011_153026；
-        <br><span style= 'font-weight: bold'>seq=number</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	-- 回退至倒数第number个版本，number必须是一个正数。
+        <br><span style= 'font-weight: bold'>ver = VERSION</span>&nbsp&nbsp&nbsp&nbsp-- 回退到指定版本，VERSION like: 1.1.0  1.0.0.1 ...
+        <br><span style= 'font-weight: bold'>dt  = DATE_TIME</span>	&nbsp-- 回退到用时间日期指定版本，DATE_TIME like 20121011_153026；
+        <br><span style= 'font-weight: bold'>seq = number</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	-- 回退至倒数第number个版本，number必须是一个正数。
       </div>
     </div>
-    <button  onclick ='submitRollBack()' class="btn btn-primary btn-default" style="margin-top:5px">回退</button>
+    <button  id = 'rollBackSubmit' onclick ='submitRollBack()' class="btn btn-primary btn-default" style="margin-top:5px">回退</button>
+    <div id = 'releaseResult' style = 'margin-top:2em;'></div>
 
   </div>
   <div class="rightContainer"  style = 'float: right;width: 25%;height:550px;border-left: 1px solid #BDBDBD;'>
@@ -22,23 +23,53 @@
   </div>
 </div>
 <script>
-$('#rollBackInputObject').kendoDropDownList({
-    dataSource : ['xml','server','client']
-});
-$('#rollBackInputObject2').kendoDropDownList({
-    dataSource : ['ver','dt','seq']
-});
-function submitRollBack(){
-  if(confirm('确实要回退吗?')){
-    reqRollBack()
-  } else{
+init();
+
+function init() {
+  keyDownEvent();
+  $('#rollBackInputObject').kendoDropDownList({
+      dataSource : ['xml','server','client']
+  });
+  $('#rollBackInputObject2').kendoDropDownList({
+      dataSource : ['ver','dt','seq']
+  });
+  $('#rollBackInputObject2').change(function(){
+    var inputvalue = $(this).val()
+    switch (inputvalue) {
+      case 'ver':
+        $('#rollBackInputData').attr('placeholder','VERSION')
+        break;
+      case 'dt':
+        $('#rollBackInputData').attr('placeholder','DATE_TIME')
+        break;
+      case 'seq':
+        $('#rollBackInputData').attr('placeholder','number')
+        break;
+      default:
+
+    }
+  });
+
+}
+
+function submitRollBack() {
+  var objType = $('#rollBackInputObject').val();
+  var dataInfo = $('#rollBackInputData').val();
+  var type = $('#rollBackInputObject2').val();
+  var args = objType + ":" + type + "=" + dataInfo;
+  if(isLegal(dataInfo,type) === false) {
+    return;
+  }
+  if(confirm('确实要回退到版本' + args +'吗?')){
+    unbindEvent('rollBackSubmit');
+    reqRollBack(args);
   }
 }
-function reqRollBack() {
-  var objType = $('#rollBackInputObject').val();
-  var versionInfo = $('#rollBackInputVersion').val();
-  var type = $('#rollBackInputObject2').val();
-  var args = objType + ":" + type + "=" + versionInfo;
+
+function reqRollBack(args) {
+  if(args == null){
+    return;
+  }
   var req_data = {
     'ENV_KEY':localStorage.getItem('ENV_KEY'),
     'type': 'version_control',
@@ -52,8 +83,95 @@ function reqRollBack() {
     type: 'POST',
     traditional: true,
     success: function (responseJSON) {
-      console.log (responseJSON)
+      resultShow(responseJSON);
+      rebindEvent('rollBackSubmit');
     }
   });
+}
+
+function resultShow(result) {
+  if(result.type == 'Failed') {
+    alert(result.data[0]);
+  } else {
+    $('h3').remove();
+    $('#releaseResult').before("<h3>当前版本为： </h3>");
+    $('#releaseResult').kendoGrid({
+    //  selectable: "multiple cell",
+     allowCopy: true,
+     scrollable: false,
+     columns : [
+       { field: "status" ,title: '状态'},
+       { field: "version" ,title: '版本'},
+       {field: "SEQ" ,title: 'SEQ'},
+       {field: "datetime" ,title: '提交时间'},
+     ]
+    });
+    var dataSource = new kendo.data.DataSource({
+      data: result.data
+    })
+    $('#releaseResult').data("kendoGrid").setDataSource(dataSource);
+  }
+}
+
+function isLegal(dataInfo,type) {
+  if(type == 'ver' || type == 'dt') {
+    return isRightType(dataInfo,type);
+  } else {
+    return isRightNumber(dataInfo);
+  }
+}
+
+function isRightNumber(number) {
+  if(number <= 0) {
+    alert("number必须为一个正数！");
+    return false;
+  }
+  var typeCount = $('#rollBackInputObject').val() + "Count";
+  if(eval(typeCount) < parseInt(number) ){
+    alert("输入的number超出范围！");
+    return false;
+  }
+  return true;
+}
+
+function isRightType(data,type) {
+  if(data.length === 0) {
+    alert("请输入版本信息！");
+    return false;
+  }
+  if(allVersionData.length === 0) {
+    alert("获取版本信息失败");
+  }
+  for(var i = 0; i < allVersionData.length; i ++) {
+    if(type == 'ver') {
+      if(allVersionData[i].version == data) {
+        return true;
+      }
+    } else {
+      if(allVersionData[i].datatime == data) {
+        return true;
+      }
+    }
+  }
+  alert("输入的版本不存在");
+  return false;
+}
+
+function keyDownEvent() {
+  $(document).bind('keydown', function(event) {
+    if (event.keyCode == 13){
+       submitRollBack();
+    }
+  })
+}
+
+function unbindEvent(id) {
+  $(document).unbind('keydown');
+  $('#' + id).attr('disabled', 'disabled');
+}
+
+function rebindEvent(id) {
+  keyDownEvent();
+  $('#' + id).removeAttr('disabled');
 }
 </script>

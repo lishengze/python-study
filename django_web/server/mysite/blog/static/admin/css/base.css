@@ -11,6 +11,7 @@ body {
     font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
     color: #333;
     background: #fff;
+    width: 100%;
 }
 
 /* LINKS */
@@ -758,12 +759,14 @@ table#change-history tbody th {
 #container {
     position: relative;
     width: 100%;
+    height: 100%;
     min-width: 980px;
     padding: 0;
 }
 
 #content {
-    padding: 20px 40px;
+    padding-bottom: 60px;/*高度等于footer的高度*/
+    /*padding: 20px 40px;*/
 }
 
 .dashboard #content {
