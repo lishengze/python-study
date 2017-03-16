@@ -8,20 +8,9 @@
 	</head>
 	<body class=" app-auth model-group change-form" data-admin-utc-offset="28800">
 		<!-- Container -->
-		<div id="container">
+		<div id="container" style="height:100%">
 	    <!-- Header -->
-	    <div id="header">
-	      <div id="branding">
-					<h1 id="site-name"><a href="/admin/">上期技术后台管理</a></h1>
-	      </div>
-				<div id="user-tools">
-	        欢迎,
-	        <strong id='username_nav'></strong>
-	      	<a href="/home/">访问主页</a> /
-	        <a href="/admin/password_change/">修改密码</a> /
-	        <a href="/login/">退出登录</a>
-	      </div>
-	    </div>
+			{% include '../../header.html' %}
 	    <!-- END Header -->
 			<div class="breadcrumbs">
 				<a href="/admin/">主页</a>
@@ -30,15 +19,10 @@
 				› {{login_user.name}}
 			</div>
 	    <!-- Content -->
-	    <div id="content" class="colM">
+	    <div id="content" class="colM" style=" *width:100%;padding:20px 40px">
 	      <h1>修改群组</h1>
         <span id='group_id' value={{group_id}}><span>
 	      <div id="content-main">
-				  <!-- <ul class="object-tools">
-				    <li>
-				        <a href="/admin/auth/group/1/history/" class="historylink">History</a>
-				    </li>
-				  </ul> -->
 					<form enctype="multipart/form-data" action="" method="post" id="group_form" novalidate="">
 						<input type="hidden" name="csrfmiddlewaretoken" value="0kBG7LeLbHuBQWcklA2mbgkdSdVMKji5P1j3hCRtfXC4atCMtGSueIkd3j8RJTOD">
 						<div>
@@ -46,7 +30,7 @@
 				        <div class="form-row field-name">
 					        <div>
 					          <label class="required" for="id_name">名称:</label>
-					          <input class="vTextField" id="id_name" maxlength="80" name="name" type="text" value="{{group.name}}" required="">
+					          <input id="id_name" maxlength="80" name="name" type="text" value="{{group.name}}" required="">
 					        </div>
 				        </div>
 						    <div class="form-row field-permissions">
@@ -98,9 +82,11 @@
 						      </div>
 						    </div>
 							</fieldset>
-							<div class="submit-row">
+							<div class="submit-row" style="height:inherit">
+								<input type="submit" value="删除" class="default" name="_save"
+								 style="cursor:hand;background-color:rgb(186, 33, 33);float:left">
 								<input type="submit" value="保存" class="default" name="_save">
-								    <p class="deletelink-box"><a class="deletelink" style="cursor:hand">删除</a></p>
+								 <!-- <p class="deletelink-box"><a class="deletelink" style="cursor:hand;">删除</a></p> -->
 								<input type="submit" value="保存并继续添加" name="_addanother">
 							</div>
 					    <!-- <script type="text/javascript" id="django-admin-form-add-constants" src="/static/admin/js/change_form.js"> </script> -->
@@ -111,11 +97,10 @@
 	      <br class="clear">
 	    </div>
 	    <!-- END Content -->
-	    <div id="footer"></div>
-			<div style="background-color:#417690;position:fixed;bottom:0;height:60px;width:100%;">
-				<div style="text-align:center;bottom:0"> copyright 2003-2026 www.sfit.com.cn All rights reserved.
-					<br>上期技术 版权所有本网站所有内容均受版权保护。未经版权所有人明确的书面许可， 任何机构和个人不得以任何方式翻印、转载或用于商业用途。
-				</div>
+		</div>
+		<div style="background-color:#417690; position: relative;margin-top: -60px; height:60px;">
+			<div style="text-align:center;bottom:0"> copyright 2003-2026 www.sfit.com.cn All rights reserved.
+				<br>上期技术 版权所有本网站所有内容均受版权保护。未经版权所有人明确的书面许可， 任何机构和个人不得以任何方式翻印、转载或用于商业用途。
 			</div>
 		</div>
 		<script>

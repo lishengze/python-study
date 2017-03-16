@@ -1,5 +1,5 @@
 $(function () {
-    console.log ('This is class Test!')
+    // console.log ('This is class Test!')
 
     var selectedNumb = 0;
     var sum_checkbox_id = 'action-toggle'

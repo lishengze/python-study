@@ -8,12 +8,9 @@ $(function () {
           group_group += $(this).text() + ";"
       })
 
-      // if (group_group === '') {
-      //   alert('还没选择组群权限!')
-      // }
       var req_data = {
         'name': group_name,
-        'permission':group_group,
+        'permission':group_group
       }
       console.log (req_data)
       $.ajax({
@@ -47,7 +44,7 @@ $(function () {
       } else {
         var req_data = {
           'name': group_name,
-          'permission':group_group,
+          'permission':group_group
         }
         console.log (req_data)
         $.ajax({
@@ -108,7 +105,7 @@ $(function () {
     })
 
     $("#id_permissions_add_link").click(function(){
-      // 添加选中的权限
+      console.log ('id_permissions_add_link')
       $("#id_permissions_from").find("option").each(function(){
           if ($(this).attr('selected')) {
               console.log ($(this).attr('title'));

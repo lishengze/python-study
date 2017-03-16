@@ -50,7 +50,7 @@ $(function () {
       } else {
         var req_data = {
           'name': group_name,
-          'permission':group_group,
+          'permission':group_group
         }
         console.log (req_data)
         $.ajax({
@@ -72,7 +72,7 @@ $(function () {
       return false;
     })
 
-    $(".deletelink").click(function(){
+    $("input[value='删除']").click(function(){
       var group_name = $("#id_name").val();
       console.log (group_name)
       $.ajax({

@@ -27,15 +27,7 @@ import config_web as cfg_w
 admin.autodiscover()
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
-    # url(r'root/(?P<path>.*)$', serve,
-    # url(r'^account/login/', blog_views.alogin),
-    # url(r'^account/register/', blog_views.register),
-    # url(r'^account/logout/', blog_views.alogout),
-    # url(r'^leavemsg/(?P<eid>\d+)/$',blog_views.leave_comment1),
-    # url(r'^(?P<pageNo>\d+)/(?P<etype>\d+)/$',blog_views.index),
-    # url(r'^latest/feed/$', LatestEntriesFeed()),
-    # {'document_root': cfg_w.TEMPLATES_PATH}),
-    # url(r'^',blog_views.index),
+
 
  	#url(r'^task1/$',blog_views.task_rpc),
  	url(r'^task2/$',blog_views.task_ntf),
@@ -52,4 +44,13 @@ urlpatterns = [
     # url(r'AJAX/Request_All_Version/$', blog_views.test_all_version),
     # url(r'AJAX/Request_All_TaskList/$', blog_views.test_all_tasklist),
     # url(r'AJAX/Request_All_TaskResult/$', blog_views.test_all_taskresult),
+    # url(r'root/(?P<path>.*)$', serve,
+    # url(r'^account/login/', blog_views.alogin),
+    # url(r'^account/register/', blog_views.register),
+    # url(r'^account/logout/', blog_views.alogout),
+    # url(r'^leavemsg/(?P<eid>\d+)/$',blog_views.leave_comment1),
+    # url(r'^(?P<pageNo>\d+)/(?P<etype>\d+)/$',blog_views.index),
+    # url(r'^latest/feed/$', LatestEntriesFeed()),
+    # {'document_root': cfg_w.TEMPLATES_PATH}),
+    # url(r'^',blog_views.index),
 ]

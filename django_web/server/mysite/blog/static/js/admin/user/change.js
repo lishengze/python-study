@@ -133,7 +133,7 @@ $(function () {
       return false;
     })
 
-    $(".deletelink").click(function(){
+    $("input[value='删除']").click(function(){
       var user_name = $("#id_username").val();
       $.ajax({
           url: '/AJAX/Delete_User/',

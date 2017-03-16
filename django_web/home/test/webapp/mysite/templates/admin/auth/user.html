@@ -1,6 +1,6 @@
 <html lang="en-us">
 <head>
-	<title>选择用户进行修改| 上期技术后台管理</title>
+	<title>用户管理</title>
 	<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
 	<link rel="stylesheet" type="text/css" href="/static/admin/css/changelists.css">
 	<script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
@@ -8,20 +8,9 @@
 </head>
 <body class=" app-auth model-user change-list" data-admin-utc-offset="28800">
 	<!-- Container -->
-	<div id="container">
+	<div id="container" style="height:100%">
 		<!-- Header -->
-		<div id="header">
-				<div id="branding">
-				<h1 id="site-name"><a href="/admin/">用户管理</a></h1>
-				</div>
-				<div id="user-tools">
-					欢迎,
-					<strong id='username_nav'></strong>
-					<a href="/home/">访问主页</a> /
-					<a href="/admin/password_change/">修改密码</a> /
-					<a href="/login/">退出登录</a>
-				</div>
-		</div>
+		{% include '../header.html' %}
 		<!-- END Header -->
 		<div class="breadcrumbs">
 			<a href="/admin/">主页</a>
@@ -29,7 +18,7 @@
 			› 用户
 		</div>
 	    <!-- Content -->
-	    <div id="content" class="flex">
+	    <div id="content" class="flex" style="*width:100%;padding:20px 40px">
 	      <h1>选择用户</h1>
 	  		<div id="content-main">
 	        <ul class="object-tools">
@@ -40,7 +29,7 @@
 	          </li>
 	        </ul>
 	  			<div class="module filtered" id="changelist">
-						<div id="toolbar">
+						<div id="toolbar" style="margin-right:0px">
 							<form id="changelist-search" method="get">
 								<div><!-- DIV needed for valid HTML -->
 									<label for="searchbar">
@@ -48,66 +37,29 @@
                       <path fill="#555555" d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z"/>
                     </svg>
 									</label>
-										<input type="text" size="40" name="q" value="{{search_username}}" id="searchbar" autofocus="">
-										<input type="submit" value="搜索">
+										<input type="text" size="40" name="q" value="{{search_username}}" id="searchbar" autofocus=""
+										  style="margin-top:1px;height:21px;">
+										<input type="submit" value="搜索"
+										style="margin-left:10px;padding:0px 5px;height:21px;font-size:12px;">
 								</div>
 							</form>
 						</div>
-		        <!-- <div id="changelist-filter">
-		          <h2>Filter</h2>
-							<h3> By staff status </h3>
-							<ul>
-						    <li class="selected">
-						    	<a href="?">All</a></li>
-						    <li>
-						    	<a href="?is_staff__exact=1">Yes</a>
-								</li>
-						    <li>
-						    	<a href="?is_staff__exact=0">No</a>
-								</li>
-							</ul>
-							<h3> By superuser status </h3>
-							<ul>
-							    <li class="selected">
-							    <a href="?">All</a></li>
-							    <li>
-							    <a href="?is_superuser__exact=1">Yes</a></li>
-							    <li>
-							    <a href="?is_superuser__exact=0">No</a></li>
-							</ul>
-							<h3> By active </h3>
-							<ul>
-							    <li class="selected">
-							    <a href="?">All</a></li>
-							    <li>
-							    <a href="?is_active__exact=1">Yes</a></li>
-							    <li>
-							    <a href="?is_active__exact=0">No</a></li>
-							</ul>
-							<h3> By groups </h3>
-							<ul>
-							    <li class="selected">
-							    <a href="?">All</a></li>
-							    <li>
-							    <a href="?groups__id__exact=1">Test1</a></li>
-							    <li>
-							    <a href="?groups__isnull=True">-</a></li>
-							</ul>
-		        </div> -->
 		      	<form id="changelist-form" method="post" novalidate="">
 							<input type="hidden" name="csrfmiddlewaretoken" value="ttBDKc51syxvOzoEGM5lSszerhow1Tqniaj0U3IJwOFY86O6OSVtVUzeCnBB0tWV">
 							<div class="actions">
 							  <label>操作:
-									<select name="action" required="">
+									<select name="action" required="" style="margin-bottom:2px;">
 										<option value="" selected="selected">---------</option>
 										<option value="delete_selected">删除所选的用户</option>
 									</select>
 								</label>
 								<input class="select-across" name="select_across" type="hidden" value="0">
-							    <button id="execute_selection" type="submit" class="button" title="Run the selected action" name="index" value="0">执行</button>
-							    <span class="action-counter" data-actions-icnt="1" style="display: inline;">0 of 1 selected</span>
+							    <button id="execute_selection" type="submit" title="Run the selected action" name="index" value="0"
+										style="margin-left:10px;font-size:12px;height:21px;padding:0px 5px;">
+										执行
+									</button>
 							</div>
-							<div class="results">
+							<div class="results" style="margin-right:0px">
 								<table id="result_list">
 									<thead>
 										<tr>
@@ -129,15 +81,7 @@
 											   <div class="text"><a href="?o=2.1">邮件地址</a></div>
 											   <div class="clear"></div>
 											</th>
-											<!-- <th scope="col" class="sortable column-first_name">
-											   <div class="text"><a href="?o=3.1">姓名</a></div>
-											   <div class="clear"></div>
-											</th> -->
-											<!-- <th scope="col" class="sortable column-is_staff">
-											   <div class="text"><a href="?o=5.1">用户状态</a></div>
-											   <div class="clear"></div>
-											</th> -->
-										</tr>
+											</tr>
 									</thead>
 									<tbody>
 										{% for user in users %}
@@ -149,7 +93,6 @@
 												<a class='hrefJump' style="color:steelblue;cursor:hand">{{user.name}}</a>
 											</th>
 											<td class="field-email">{{user.email}}</td>
-											<!-- <td class="field-is_staff"><img src="/static/admin/img/icon-yes.svg" alt="True"></td> -->
 										</tr>
 										{% endfor %}
 									</tbody>
@@ -162,12 +105,11 @@
 	      <br class="clear">
 	    </div>
 	    <!-- END Content -->
-	    <div id="footer"></div>
-			<div style="background-color:#417690;position:fixed;bottom:0;height:60px;width:100%;">
-				<div style="text-align:center;bottom:0"> copyright 2003-2026 www.sfit.com.cn All rights reserved.
-					<br>上期技术 版权所有本网站所有内容均受版权保护。未经版权所有人明确的书面许可， 任何机构和个人不得以任何方式翻印、转载或用于商业用途。
-				</div>
-			</div>
+	</div>
+	<div style="background-color:#417690;position:relative;margin-top: -60px;height:60px;width:100%;">
+		<div style="text-align:center;bottom:0"> copyright 2003-2026 www.sfit.com.cn All rights reserved.
+			<br>上期技术 版权所有本网站所有内容均受版权保护。未经版权所有人明确的书面许可， 任何机构和个人不得以任何方式翻印、转载或用于商业用途。
+		</div>
 	</div>
 	<!-- END Container -->
 	<script>

@@ -8,20 +8,9 @@
   </head>
   <body class=" app-auth model-group change-form" data-admin-utc-offset="28800">
     <!-- Container -->
-    <div id="container">
+    <div id="container" style="height:100%">
       <!-- Header -->
-      <div id="header">
-        <div id="branding">
-          <h1 id="site-name"><a href="/admin/">用户管理</a></h1>
-        </div>
-        <div id="user-tools">
-          欢迎,
-          <strong id='username_nav'></strong>
-          <a href="/home/">访问主页</a> /
-          <a href="/admin/password_change/">修改密码</a> /
-          <a href="/login/">退出登录</a>
-        </div>
-      </div>
+      {% include '../../header.html' %}
       <!-- END Header -->
       <div class="breadcrumbs">
       <a href="/admin/">主页</a>
@@ -30,7 +19,7 @@
       › 添加群组
       </div>
       <!-- Content -->
-      <div id="content" class="colM">
+      <div id="content" class="colM" style="*width:100%;padding:20px 40px">
         <h1>添加群组</h1>
         <div id="content-main">
           <form enctype="multipart/form-data" action="" method="post" id="group_form" novalidate="">
@@ -40,7 +29,7 @@
                 <div class="form-row field-name">
                   <div>
                     <label class="required" for="id_name">名称:</label>
-                    <input class="vTextField" id="id_name" maxlength="80" name="name" type="text" required="">
+                    <input id="id_name" maxlength="80" name="name" type="text" required="">
                   </div>
                 </div>
                 <div class="form-row field-permissions">
@@ -67,7 +56,6 @@
                         </div>
                         <ul class="selector-chooser">
                           <li>
-                            <!-- <a title="Choose" href="#" id="id_permissions_add_link" class="selector-add">选择</a> -->
                             <a title="Choose"  id="id_permissions_add_link" style="cursor:hand">增</a>
                           </li>
                           <li>
@@ -102,12 +90,11 @@
         <br class="clear">
       </div>
       <!-- END Content -->
-      <div id="footer"></div>
-      <div style="background-color:#417690;position:fixed;bottom:0;height:60px;width:100%;">
-				<div style="text-align:center;bottom:0"> copyright 2003-2026 www.sfit.com.cn All rights reserved.
-					<br>上期技术 版权所有本网站所有内容均受版权保护。未经版权所有人明确的书面许可， 任何机构和个人不得以任何方式翻印、转载或用于商业用途。
-				</div>
-			</div>
+    </div>
+    <div style="background-color:#417690; position: relative;margin-top: -60px; height:60px;">
+      <div style="text-align:center;bottom:0"> copyright 2003-2026 www.sfit.com.cn All rights reserved.
+        <br>上期技术 版权所有本网站所有内容均受版权保护。未经版权所有人明确的书面许可， 任何机构和个人不得以任何方式翻印、转载或用于商业用途。
+      </div>
     </div>
     <script>
 			$("#username_nav").text(localStorage.getItem('logName'));
