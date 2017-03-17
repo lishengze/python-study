@@ -3,27 +3,13 @@
 		<title>上期技术版本发布|用户管理页面</title>
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/dashboard.css">
-		<meta name="robots" content="NONE,NOARCHIVE">
+		<script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
 	</head>
 	<body class=" dashboard" data-admin-utc-offset="0">
 		<!-- Container -->
-		<div id="container" >
+		<div id="container"  style="height:100%">
 			<!-- Header -->
-			<!-- <div id="header" style = 'height:60px;padding:0'>
-				<div style="padding:10px 40px">
-					<div id="branding">
-						<h1 id="site-name"><a href="/admin/">用户管理</a></h1>
-					</div>
-					<div id="user-tools">
-						欢迎,
-						<strong>SHFT.SFIT</strong>.
-						<a href="/">返回站点</a> /
-						<a href="/admin/password_change/">修改密码</a> /
-						<a href="/admin/logout/">退出登录</a>
-					</div>
-				</div>
-			</div> -->
-		 {% include 'admin/header.html' %}
+			{% include 'admin/header.html' %}
 			<!-- END Header -->
 
 			<!-- Content -->
@@ -51,18 +37,12 @@
 						</table>
 					</div>
 				</div>
-				<!-- <div id="content-related">
-					<div class="module" id="recent-actions-module">
-						<h2>最近的操作</h2>
-						<h3>我的操作</h3>
-						<p>None available</p>
-					</div>
-				</div>
-				<br class="clear">
 			</div>
-			<!-- END Content -->
-			<!-- <div id="footer"></div> -->
+			<!--End Content-->
 		</div>
-		<!-- END Container -->
+		<!-- End Container -->
+		<!-- Footer -->
+		{% include 'admin/footer.html' %}
+		<!-- END Footer -->
 	</body>
 </html>

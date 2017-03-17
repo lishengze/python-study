@@ -10,7 +10,7 @@
   </head>
   <body class=" app-auth model-group change-list" data-admin-utc-offset="28800" >
     <!-- Container -->
-    <div id="container">
+    <div id="container" style="height:100%">
         <!-- Header -->
         {% include '../header.html' %}
         <!-- END Header -->
@@ -104,9 +104,8 @@
         </div>
     </div>
     <!-- END Container -->
-    <script>
-      $("#username_nav").text(localStorage.getItem('logName'));
-    </script>
-
+    <!-- Footer -->
+    {% include '../footer.html' %}
+    <!-- END Footer -->
   </body>
 </html>

@@ -6,69 +6,48 @@
   <script src="/static/js/jquery-1.8.3/jquery.min.js"></script>
   </head>
   <body class=" dashboard app-auth" data-admin-utc-offset="28800">
-  <!-- Container -->
-  <div id="container" style="height:100%">
-    <!-- Header -->
-    <!-- <div id="header" style = 'height:60px;padding:0'>
-      <div style="padding:10px 40px">
-        <div id="branding">
-          <h1 id="site-name"><a href="/admin/">用户管理</a></h1>
-        </div>
-        <div id="user-tools">
-          欢迎,
-          <strong>SHFT.SFIT</strong>.
-          <a href="/">返回站点</a> /
-          <a href="/admin/password_change/">修改密码</a> /
-          <a href="/admin/logout/">退出登录</a>
-        </div>
+    <!-- Container -->
+    <div id="container" style="height:100%">
+      <!-- Header -->
+      {% include './header.html' %}
+      <!-- END Header -->
+      <div class="breadcrumbs">
+        <a href="/admin/">主页</a>
+        ›
+        身份认证与授权管理
       </div>
-    </div> -->
-    {% include 'admin/header.html' %}
-    <!-- END Header -->
-    <div class="breadcrumbs">
-      <a href="/admin/">主页</a>
-      ›
-      身份认证与授权管理
-    </div>
-    <!-- Content -->
-    <div id="content" class="colMS">
-      <h1>身份认证与授权管理</h1>
-      <div id="content-main">
-        <div class="app-auth module">
-          <table>
-            <caption>
-                <a href="/admin/auth/" class="section"
-                title="Models in the Authentication and Authorization application">身份认证与授权管理</a>
-            </caption>
-            <tbody>
-              <tr class="model-group">
-                <th scope="row"><a href="/admin/auth/group/">群组</a></th>
-                <td><a href="/admin/auth/group/add/" class="addlink">添加</a></td>
-                <td><a href="/admin/auth/group/" class="changelink">修改</a></td>
-              </tr>
-              <tr class="model-user">
-                <th scope="row"><a href="/admin/auth/user/">用户</a></th>
-                <td><a href="/admin/auth/user/add/" class="addlink">添加</a></td>
-                <td><a href="/admin/auth/user/" class="changelink">修改</a></td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Content -->
+      <div id="content" class="colMS">
+        <h1>身份认证与授权管理</h1>
+        <div id="content-main">
+          <div class="app-auth module">
+            <table>
+              <caption>
+                  <a href="/admin/auth/" class="section"
+                  title="Models in the Authentication and Authorization application">身份认证与授权管理</a>
+              </caption>
+              <tbody>
+                <tr class="model-group">
+                  <th scope="row"><a href="/admin/auth/group/">群组</a></th>
+                  <td><a href="/admin/auth/group/add/" class="addlink">添加</a></td>
+                  <td><a href="/admin/auth/group/" class="changelink">修改</a></td>
+                </tr>
+                <tr class="model-user">
+                  <th scope="row"><a href="/admin/auth/user/">用户</a></th>
+                  <td><a href="/admin/auth/user/add/" class="addlink">添加</a></td>
+                  <td><a href="/admin/auth/user/" class="changelink">修改</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+        <br class="clear">
       </div>
-      <br class="clear">
+      <!-- END Content -->
     </div>
-    <!-- END Content -->
-    </div>
-    <div style="background-color:#417690; position: relative;margin-top: -60px; height:60px;">
-      <div style="text-align:center;bottom:0"> copyright 2003-2026 www.sfit.com.cn All rights reserved.
-        <br>上期技术 版权所有本网站所有内容均受版权保护。未经版权所有人明确的书面许可， 任何机构和个人不得以任何方式翻印、转载或用于商业用途。
-      </div>
-
-  </div>
-  <script>
-    $("#username_nav").text(localStorage.getItem('logName'));
-  </script>
-
-  <!-- END Container -->
+    <!-- END Container -->
+    <!-- Footer -->
+    {% include './footer.html' %}
+    <!-- END Footer -->
   </body>
 </html>
