@@ -10,7 +10,7 @@
 		<!-- Container -->
 		<div id="container"  style="height:100%">
 			<!-- Header -->
-			{% include 'admin/header.html' %}
+			{% block header %} {% endblock %}
 			<!-- END Header -->
 
       {% block content %} {% endblock %}
@@ -18,7 +18,7 @@
 		</div>
 		<!-- End Container -->
 		<!-- Footer -->
-		{% include 'admin/footer.html' %}
+		{% block footer %} {% endblock %}
 		<!-- END Footer -->
 	</body>
 </html>

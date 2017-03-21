@@ -57,8 +57,8 @@
   <br>
   <div id="update_srv_form">
       <input id="file_update" type="file" name="file"/>
-      <input id="exec_time" value="è¾“å…¥æ‰§è¡Œæ—¶é—´" />
-      <button id="update_srv" type="button">ä¸€é”®å‘å¸ƒ</button>
+      <input id="exec_time" value="ÊäÈëÖ´ĞĞÊ±¼ä" />
+      <button id="update_srv" type="button">Ò»¼ü·¢²¼</button>
   </div>
 
   <br>
@@ -297,11 +297,11 @@
           type : 'POST',
           cache: false,
           data : formData,
-          processData : false,   // å‘Šè¯‰jQueryä¸è¦å»å¤„ç†å‘é€çš„æ•°æ®
-          contentType : false,   // å‘Šè¯‰jQueryä¸è¦å»è®¾ç½®Content-Typeè¯·æ±‚å¤´
+          processData : false,   // ¸æËßjQuery²»ÒªÈ¥´¦Àí·¢ËÍµÄÊı¾İ
+          contentType : false,   // ¸æËßjQuery²»ÒªÈ¥ÉèÖÃContent-TypeÇëÇóÍ·
           dataType: 'json',
           beforeSend:function(){
-            // console.log("æ­£åœ¨è¿›è¡Œï¼Œè¯·ç¨å€™");
+            // console.log("ÕıÔÚ½øĞĞ£¬ÇëÉÔºò");
           },
           success : function(responseStr) {
             console.log (responseStr)
@@ -322,7 +322,7 @@
           console.log (exec_time)
           exec_time = 5;
         } else {
-          console.log ('æ˜¯æ•°å­—');
+          console.log ('ÊÇÊı×Ö');
         }
         var Url = '/AJAX/Update_Srv/' + ENV_KEY + '/' + exec_time;
         console.log ('exec_time: ' + exec_time)
@@ -335,11 +335,11 @@
           type : 'POST',
           cache: false,
           data : formData,
-          processData : false,   // å‘Šè¯‰jQueryä¸è¦å»å¤„ç†å‘é€çš„æ•°æ®
-          contentType : false,   // å‘Šè¯‰jQueryä¸è¦å»è®¾ç½®Content-Typeè¯·æ±‚å¤´
+          processData : false,   // ¸æËßjQuery²»ÒªÈ¥´¦Àí·¢ËÍµÄÊı¾İ
+          contentType : false,   // ¸æËßjQuery²»ÒªÈ¥ÉèÖÃContent-TypeÇëÇóÍ·
           dataType: 'json',
           beforeSend:function(){
-            // console.log("æ­£åœ¨è¿›è¡Œï¼Œè¯·ç¨å€™");
+            // console.log("ÕıÔÚ½øĞĞ£¬ÇëÉÔºò");
           },
           success : function(responseStr) {
             console.log (responseStr)
@@ -354,7 +354,7 @@
 
         var req_data = {
           'ENV_KEY':'TEST_170',
-          'fileName' : '/home/test/console/down1.txt'
+          'fileName' : '/home/test/console/temp/testd.txt'
         }
         $.ajax({
           url: '/AJAX/Download_File/',

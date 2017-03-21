@@ -1,11 +1,11 @@
 <div class="col-md-9 op-states" >
-  <div id = 'instruction'  style="border:4px dashed gray;" class="col-md-12"><div style="font: bold 25px arial;">使用说明(点击显示/隐藏):</div>
-    <p  style='display: none' id = 'instructionContent'>Usage for ecall:<br>
-     python main.py --cmd CMD_OPTION [--grp GROUP] [--ctr CTR] [--srv SRV] [--srvno SRVNO] [--ictr CTR] [--isrv SRV] [--isrvno SRVNO]
-         <br>CMD_OPTION as:<br>show &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp -- -- show console toolkits</p>
+  <div style="border:4px dashed gray;" class="col-md-12">
+    <div id ='instruction' style="font: bold 25px arial;">使用说明(点击显示/隐藏):</div>
+    <p style='display: none' id = 'instructionContent'><br>
+        待更新
   </div>
-  <div class="col-md-12" style="border:2px solid gray; background-color: 	#F0F8ff;margin-top:10px;padding-bottom:10px">
-    <div style="font: bold 25px arial;">参数设定</div>
+  <div id = 'paramArea' class="col-md-12" style="border:2px solid gray; background-color: 	#F0F8ff;margin-top:10px;padding-bottom:10px">
+    <div id = 'param' style="font: bold 25px arial;">参数设定(点击显示/隐藏)</div>
     <div  class = 'processSelect'>
       <div class = 'row'>
         <div  class="col-xs-2" > 命令选择</div>
@@ -79,11 +79,11 @@
         </div>
       </div>
     </div>
+    <button  id = 'reqBtn' onclick ='submitReq()' class="btn btn-primary btn-default" style="margin-top:5px;float:left">提交</button>
   </div>
-  <button  id = 'reqBtn' onclick ='submitReq()' class="btn btn-primary btn-default" style="margin-top:5px;float:left">提交</button>
-  <div id= 'getarg' style=" margin-top:5px;margin-left:100px;float:left;font-size:20px;">执行结果：<br></div>
+  <div id= 'getarg' style=" margin-top:5px;font-size:20px;">执行结果：<br></div>
   <div style="clear:both"></div>
-  <div id= 'result' style="margin-top:5px;height:450px;"> </div>
+  <div id= 'result' style="margin-top:5px;"> </div>
 </div>
 <style>
  .processSelect {
@@ -96,9 +96,6 @@
    margin-top:5px;
    background-color: 		#C0C0C0;
  }
- .onSelect {
-   background-color:	#FF6347;
- }
 </style>
 <script>
 var data = [];
@@ -107,18 +104,53 @@ init(data);
 
 function init(data) {
   setNtfSessionStorage(data);
-  keyDownEvent();
-  $('#instruction').click(function(){
-    $(this).find('p').is(':hidden') ? $(this).find('p').show() :  $(this).find('p').hide()
-  })
+  // keyDownEvent();
+  resizeHeight();
+  showOrHide();
   $('#parameter').kendoDropDownList({
     dataSource : ['show','alive','dead','start','stop','clean','stopcln','rmcore']
+  });
+  $('#paramArea').bind({ //鼠标在div内部时执行 keydown操作
+     mouseenter:function(){
+       console.log('mouse enter');
+       $(document).bind('keydown' ,function(event){
+        if (event.keyCode == 13) {
+          console.log('enter press')
+          submitReq();
+          }
+        })
+     },
+     mouseleave:function(){
+       $(document).unbind('keydown');
+     }
   })
-  $('.inputValue').focus(function() {
-    var selectNow = $(this).parents('.parameterSelect');
-    selectNow.addClass('onSelect');
-    selectNow.siblings().removeClass('onSelect')
+  // $('.inputValue').focus(function() {
+  //   var selectNow = $(this).parents('.parameterSelect');
+  //   selectNow.addClass('onSelect');
+  //   selectNow.siblings().removeClass('onSelect')
+  // })
+}
+
+function showOrHide() {
+  $('#instruction').click(function(){
+    $(this).siblings().is(':hidden') ? $(this).siblings().show():$(this).siblings().hide();
+    resizeHeight();
   })
+  $('#param').click(function(){
+    $(this).siblings().is(':hidden') ? $(this).siblings().show():$(this).siblings().hide();
+    resizeHeight();
+  })
+}
+
+function resizeHeight() {
+ var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+ var grid = $("#result").data("kendoGrid");
+ var resizeHeight = windowHeight - $('#result').offset().top - 80;
+ if(grid) {
+    grid.setOptions({
+      height : resizeHeight
+    })
+  }
 }
 
 function keyDownEvent() {
@@ -219,44 +251,55 @@ function ajaxResultProcess(result,ntf_task_data) {
 }
 
 function getReq_data(){
-  var array = $('.parameterSelect');
   var select = $('#parameter').data("kendoDropDownList").text();
-  console.log(select);
-  if ($(array[1]).hasClass('onSelect')) {
-    req_data = {
-      'ENV_KEY':localStorage.getItem('ENV_KEY'),
-      'exec_time': 1, // 预留接口，计划任务延迟执行时间。
-      '--cmd': select,
-      '--grp': $('#grp').val()
-      }
-  } else if ($(array[2]).hasClass('onSelect')) {
-    req_data = {
-      'ENV_KEY':localStorage.getItem('ENV_KEY'),
-      'exec_time': 1,
-      '--cmd': select,
-      '--ctr': $('#ctr').val(),
-      '--srv': $('#srv').val(),
-      '--srvno': $('#srvno').val(),
-      '--ictr': $('#ictr').val(),
-      '--isrv': $('#isrv').val(),
-      '--isrvno': $('#isrvno').val()
-    }
-  } else {
-    req_data = {
-      'ENV_KEY':localStorage.getItem('ENV_KEY'),
-      'exec_time': 1,
-      '--cmd': select,
-      '--args': '',
-      '--grp': '',
-      '--ctr': '',
-      '--srv': '',
-      '--srvno': '',
-      '--ictr': '',
-      '--isrv': '',
-      '--isrvno': '',
-    }
+  var req_data = {
+    'ENV_KEY':localStorage.getItem('ENV_KEY'),
+    'exec_time': 1,
+    '--cmd': select,
+    '--grp': $('#grp').data("kendoDropDownList").text() == "请选择参数类型" ? '' : $('#grp').data("kendoDropDownList").text(),
+    '--ctr': $('#ctr').data("kendoDropDownList").text() == "请选择参数类型" ? '' : $('#ctr').data("kendoDropDownList").text(),
+    '--srv': $('#srv').data("kendoDropDownList").text() == "请选择参数类型" ? '' : $('#srv').data("kendoDropDownList").text(),
+    '--srvno': $('#srvno').val(),
+    '--ictr': $('#ictr').data("kendoDropDownList").text() == "请选择参数类型" ? '' : $('#ictr').data("kendoDropDownList").text(),
+    '--isrv': $('#isrv').data("kendoDropDownList").text() == "请选择参数类型" ? '' : $('#isrv').data("kendoDropDownList").text(),
+    '--isrvno': $('#isrvno').val()
   }
   return req_data;
+  // console.log(select);
+  // if ($(array[1]).hasClass('onSelect')) {
+  //   req_data = {
+  //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+  //     'exec_time': 1, // 预留接口，计划任务延迟执行时间。
+  //     '--cmd': select,
+  //     '--grp': $('#grp').val()
+  //     }
+  // } else if ($(array[2]).hasClass('onSelect')) {
+  //   req_data = {
+  //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+  //     'exec_time': 1,
+  //     '--cmd': select,
+  //     '--ctr': $('#ctr').val(),
+  //     '--srv': $('#srv').val(),
+  //     '--srvno': $('#srvno').val(),
+  //     '--ictr': $('#ictr').val(),
+  //     '--isrv': $('#isrv').val(),
+  //     '--isrvno': $('#isrvno').val()
+  //   }
+  // } else {
+  //   req_data = {
+  //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+  //     'exec_time': 1,
+  //     '--cmd': select,
+  //     '--args': '',
+  //     '--grp': '',
+  //     '--ctr': '',
+  //     '--srv': '',
+  //     '--srvno': '',
+  //     '--ictr': '',
+  //     '--isrv': '',
+  //     '--isrvno': '',
+  //   }
+  // }
 }
 
 function showResult(data) {
@@ -265,7 +308,11 @@ function showResult(data) {
   $('#result').kendoGrid({
    selectable: "multiple cell",
    allowCopy: true,
-   scrollable: true
+   scrollable: true,
+   height:300,
+   filterable: {
+    mode: "row"
+   }
   });
   $('#result').data("kendoGrid").setOptions({
     columns:titles
@@ -298,12 +345,10 @@ function getTitles(data){
 }
 
 function unbindEvent(id) {
-  $(document).unbind('keydown');
   $('#' + id).attr('disabled', 'disabled');
 }
 
 function rebindEvent(id) {
-  keyDownEvent();
   $('#' + id).removeAttr('disabled');
 }
 </script>

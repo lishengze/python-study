@@ -25,6 +25,12 @@
 
   <input type="button" id="Get_NTF_Task_Result" value="Get Ntf Task Result"> <br><br>
 
+  <input type="button" id="Get_All_Group" value="Get All Group"> <br><br>
+
+  <input type="button" id="Get_All_SrvName" value="Get All SrvName"> <br><br>
+
+  <input type="button" id="Get_Version_Difference" value="Get Version Difference"> <br><br>
+
   <input type="button" id="Test_User_Login" value="Test User Login"> <br><br>
 
   <input type="button" id="Set_ENV_KEY" value="Set ENV_KEY"> <br><br>
@@ -57,6 +63,8 @@
 
   <br>
 
+  <input type="button" id="Download_File" value="Download File"> <br><br>
+
   <input type="button" id="Set_DB_Data" value="Set DB Data"> <br><br>
 
   <input type="button" id="Get_DB_Data" value="Get DB Data"> <br><br>
@@ -72,19 +80,19 @@
       var ntf_task_data = []
 
       $('#request_real_time_info_task').click(function(){
-        req_data = {
+         var req_data = {
           'ENV_KEY':'PTEST_170',
           'type': '',
           '--cmd': 'info',
-          '--args':'relay',
-          '--grp': '',
+          '--args':'',
+          '--grp': 'zz',
           '--ctr': '',
           '--srv': '',
           '--srvno': '',
           '--ictr': '',
           '--isrv': '',
-          '--isrvno': '',
-        }
+          '--isrvno': ''
+        };
         $.ajax({
           url: '/AJAX/Request_Real_Time_Info_Task/',
           data: {'req_json': JSON.stringify(req_data)},
@@ -99,7 +107,7 @@
       })
 
       $('#request_real_time_versionCtr_task').click(function(){
-        req_data = {
+        var req_data = {
           'ENV_KEY':'TEST_170',
           'type': 'version_control',
           '--cmd': 'rollback',
@@ -110,8 +118,8 @@
           '--srvno': '',
           '--ictr': '',
           '--isrv': '',
-          '--isrvno': '',
-        }
+          '--isrvno': ''
+        };
         $.ajax({
           url: '/AJAX/Request_Real_Time_VersionCtr_Task/',
           data: {'req_json': JSON.stringify(req_data)},
@@ -138,8 +146,8 @@
           '--srvno': '',
           '--ictr': '',
           '--isrv': '',
-          '--isrvno': '',
-        }
+          '--isrvno': ''
+        };
         $.ajax({
           url: '/AJAX/Request_Task_Ntf/',
           data: {'req_json': JSON.stringify(req_data)},
@@ -186,7 +194,7 @@
       })
 
       $('#Get_NTF_Task_State').click(function(){
-        req_data = {
+        var req_data = {
           'ENV_KEY':'TEST_170'
         }
         $.ajax({
@@ -201,8 +209,60 @@
         });
       })
 
+      $('#Get_All_Group').click(function(){
+          req_data = {
+            'ENV_KEY': 'TEST_170'
+          }
+
+        $.ajax({
+          url: '/AJAX/Get_All_Group/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (result) {
+              console.log (result)
+          }
+        });
+      })
+
+      $('#Get_All_SrvName').click(function(){
+        var req_data = {
+          'ENV_KEY':'TEST_170'
+        }
+        $.ajax({
+          url: '/AJAX/Get_All_SrvName/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log (responseJSON)
+          }
+        });
+      })
+
+      $('#Get_Version_Difference').click(function(){
+        var req_data = {
+          'ENV_KEY':'TEST_170',
+          'object': "server",
+          'ver1': "0.0.2",
+          'ver2': "0.0.7"
+        }
+        $.ajax({
+          url: '/AJAX/Get_Version_Difference/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log (responseJSON)
+          }
+        });
+      })
+
       $('#Test_User_Login').click(function(){
-        req_data = {
+        var req_data = {
           'name': 'admin',
           'password': 'admin'
         }
@@ -290,6 +350,25 @@
         });
       })
 
+      $('#Download_File').click(function(){
+
+        var req_data = {
+          'ENV_KEY':'TEST_170',
+          'fileName' : '/home/test/console/down1.txt'
+        }
+        $.ajax({
+          url: '/AJAX/Download_File/',
+          data: {'req_json': JSON.stringify(req_data)},
+          dataType: 'json',
+          type: 'POST',
+          traditional: true,
+          success: function (responseJSON) {
+              console.log (responseJSON)
+          }
+        });
+      })
+
+
       $('#Set_ENV_KEY').click(function(){
         var ENV_KEY = 'PTEST_170'
         // var ENV_KEY = 'TEST_170'
@@ -306,7 +385,7 @@
       });
 
       $('#Request_Task_Rpc').click(function(){
-          req_data = {
+          var req_data = {
             'type': 'version_control',
             '--cmd': 'show',
             '--args':'',
@@ -316,8 +395,8 @@
             '--srvno': '',
             '--ictr': '',
             '--isrv': '',
-            '--isrvno': '',
-          }
+            '--isrvno': ''
+          };
 
         // req_data = {
         //   '--cmd': 'deployServer',
@@ -368,9 +447,9 @@
       })
 
       $('#Request_All_Version').click(function(){
-          req_data = {
+          var req_data = {
             'ENV_KEY':'TEST_170'
-          }
+          };
           $.ajax({
             url: '/AJAX/Request_All_Version/',
             data: {'req_json': JSON.stringify(req_data)},
@@ -386,13 +465,13 @@
       $('#Set_DB_Data').click(function(){
           $.getJSON('/AJAX/Set_DB_Data/',function(rsp_result){
               console.log (rsp_result)
-          })
+          });
       })
 
       $('#Get_DB_Data').click(function(){
           $.getJSON('/AJAX/Get_DB_Data/',function(rsp_result){
               console.log (rsp_result)
-          })
+          });
       })
 	</script>
 

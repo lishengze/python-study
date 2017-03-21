@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.http import HttpResponse, HttpResponseRedirect
-from django.db.models import Q
+# from django.db.models import Q
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import csrf_exempt
 
@@ -237,6 +237,76 @@ def query_all_version(request):
 				print(info.version)
 		except Exception as e:
 			print('notifyDaemon failed!')
+			print(traceback.format_exc())
+		return HttpResponse(rsp.replace("\n", "<br/>"))
+	else:
+		return index(request)
+
+
+
+@csrf_protect
+def query_all_group(request):
+	#if request.method == 'POST':
+	if request.method != '':
+		#从POST请求中获取查询关键字
+		###
+		req_info = ReqInfo(0, cfg.FLAG_REQTYPE_GROUP)
+		rsp = ""
+		try:
+			daemaon_ip, daemon_port = getKey(ENV_KEY)
+			sock = sock_conn(daemaon_ip, daemon_port)
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			sock.close()
+		except Exception as e:
+			print('Django notifyDaemon failed!')
+			print(traceback.format_exc())
+		return HttpResponse(rsp.replace("\n", "<br/>"))
+	else:
+		return index(request)
+
+@csrf_protect
+def query_all_srvname(request):
+	#if request.method == 'POST':
+	if request.method != '':
+		#从POST请求中获取查询关键字
+		###
+		req_info = ReqInfo(0, cfg.FLAG_REQTYPE_SRVNAME)
+		rsp = ""
+		try:
+			daemaon_ip, daemon_port = getKey(ENV_KEY)
+			sock = sock_conn(daemaon_ip, daemon_port)
+			sock.send(genReqHead() + req_info.encode() + cfg.TIP_INFO_EOF)
+			rsp = recv_end(sock)
+			sock.close()
+		except Exception as e:
+			print('Django notifyDaemon failed!')
+			print(traceback.format_exc())
+		return HttpResponse(rsp.replace("\n", "<br/>"))
+	else:
+		return index(request)
+
+##比较版本
+def CmpVersion(request):
+	#if request.method == 'POST':
+	if request.method != '':
+		#从POST请求中获取查询关键字
+		rsp = ""
+		object = "server"
+		ver1 = "0.0.2"
+		ver2 = "0.0.7"
+		try:
+			daemaon_ip, daemon_port = getKey(ENV_KEY)
+			sock = sock_conn(daemaon_ip, daemon_port)
+			print(genCmpVerHead(object, ver1, ver2))
+			sock.send(genCmpVerHead(object, ver1, ver2) + cfg.TIP_INFO_EOF)
+			print("send succ")
+			rsp = recv_end(sock)
+			print("OK")
+			print(rsp)
+			sock.close()
+		except Exception as e:
+			print('Django notifyDaemon failed!')
 			print(traceback.format_exc())
 		return HttpResponse(rsp.replace("\n", "<br/>"))
 	else:
