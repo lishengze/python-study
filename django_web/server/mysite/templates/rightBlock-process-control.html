@@ -4,76 +4,80 @@
     <p style='display: none' id = 'instructionContent'><br>
         待更新
   </div>
-  <div id = 'paramArea' class="col-md-12" style="border:2px solid gray; background-color: 	#F0F8ff;margin-top:10px;padding-bottom:10px">
+  <div id = 'paramArea' class="col-md-12" style="border:2px solid gray; background-color:#F0F8ff;margin-top:10px;padding-bottom:10px">
     <div id = 'param' style="font: bold 25px arial;">参数设定(点击显示/隐藏)</div>
-    <div  class = 'processSelect'>
-      <div class = 'row'>
-        <div  class="col-xs-2" > 命令选择</div>
-        <div class="col-xs-3">
-          <div id = 'parameter' class = 'inputValue'></div>
+    <div class = 'parameterContent'>
+      <div class = 'parameterSelect' >
+        <div class = 'row'>
+          <div  class="col-xs-2" > 类型参数：</div>
+          <div class="col-xs-3">
+            <div id = 'parameter' class = 'inputValue'></div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class = 'parameterSelect'  >
-      <div class="row" >
-        <div class="col-xs-2">对象组：</div>
-        <div class="col-xs-3">
-          <input type="text" class="form-control inputValue" id = 'grp' placeholder="AllInternal">
+      <div class = 'parameterSelect'  >
+        <div class="row" >
+          <div class="col-xs-2">对象组：</div>
+          <div class="col-xs-3">
+            <div id = 'grp' class = 'inputValue'></div>
+          </div>
         </div>
-      </div>
 
-    </div>
-    <div  class = 'parameterSelect'>
-      <div style = 'font: bold 20px arial; '>对象参数：</div>
-      <div  class="row">
-        <div class="col-xs-4">
+      </div>
+      <div class = 'parameterSelect' >
+        <div style = 'font: bold 20px arial '>对象参数：</div>
+        <div  class="row">
+          <div class="col-xs-4">
+              <div class="row">
+                <div class="col-xs-3">数据中心:</div>
+                <div class="col-xs-6">
+                    <div id = 'ctr' class = 'inputValue'></div>
+                </div>
+              </div>
+          </div>
+          <div class="col-xs-4">
             <div class="row">
-              <div class="col-xs-3">数据中心:</div>
+              <div class="col-xs-3">进程名:</div>
               <div class="col-xs-6">
-                <input type="text" class="form-control inputValue" id = 'ctr' placeholder="PD|BJ|ZJ">
+                <div id = 'srv' class = 'inputValue'></div>
               </div>
             </div>
-        </div>
-        <div class="col-xs-4">
-          <div class="row">
-            <div class="col-xs-3">进程名:</div>
-            <div class="col-xs-7">
-              <input type="text" class="form-control inputValue" id = 'srv' placeholder="monprobe,monproxy">
-            </div>
           </div>
-        </div>
-        <div class="col-xs-4">
-          <div class="row">
-            <div class="col-xs-3">进程编号:</div>
-            <div class="col-xs-6">
-              <input type="text" class="form-control inputValue" id = 'srvno' placeholder="1-3,6,8">
+          <div class="col-xs-4">
+            <div class="row">
+              <div class="col-xs-3">进程编号:</div>
+              <div class="col-xs-6">
+                <input type="text" class="form-control inputValue" id = 'srvno' placeholder="1-3,6,8">
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div style = 'font: bold 20px arial '>排除对象参数(取反模式)：</div>
-      <div class="row">
-        <div class="col-xs-4">
+      <div class = 'parameterSelect' >
+        <div style = 'font: bold 20px arial '>排除对象参数(取反模式)：</div>
+        <div class="row">
+          <div class="col-xs-4">
+              <div class="row">
+                <div class="col-xs-3">数据中心:</div>
+                <div class="col-xs-3">
+                    <div id = 'ictr' class = 'inputValue'></div>
+                </div>
+              </div>
+          </div>
+          <div class="col-xs-4">
             <div class="row">
-              <div class="col-xs-3">数据中心:</div>
+              <div class="col-xs-3">进程名:</div>
               <div class="col-xs-6">
-                <input type="text" class="form-control inputValue" id = 'ictr' placeholder="PD|BJ|ZJ">
+                <div id = 'isrv' class = 'inputValue'></div>
               </div>
             </div>
-        </div>
-        <div class="col-xs-4">
-          <div class="row">
-            <div class="col-xs-3">进程名:</div>
-            <div class="col-xs-7">
-              <input type="text" class="form-control inputValue" id = 'isrv' placeholder="monprobe,monproxy">
-            </div>
           </div>
-        </div>
-        <div class="col-xs-4">
-          <div class="row">
-            <div class="col-xs-3">进程编号:</div>
-            <div class="col-xs-6">
-              <input type="text" class="form-control inputValue" id = 'isrvno' placeholder="1-3,6,8">
+          <div class="col-xs-4">
+            <div class="row">
+              <div class="col-xs-3">进程编号:</div>
+              <div class="col-xs-6">
+                <input type="text" class="form-control inputValue" id = 'isrvno' placeholder="1-3,6,8">
+              </div>
             </div>
           </div>
         </div>
@@ -100,19 +104,17 @@
 <script>
 var data = [];
 var interval= null;
-init(data);
+setNtfSessionStorage(data);
+eventInit();
+kendoParamInit();
 
-function init(data) {
-  setNtfSessionStorage(data);
-  // keyDownEvent();
-  resizeHeight();
+function eventInit() {
   showOrHide();
-  $('#parameter').kendoDropDownList({
-    dataSource : ['show','alive','dead','start','stop','clean','stopcln','rmcore']
-  });
+  $(window).resize(function() {
+    resizeHeight();
+  })
   $('#paramArea').bind({ //鼠标在div内部时执行 keydown操作
-     mouseenter:function(){
-       console.log('mouse enter');
+     mouseenter :function(){
        $(document).bind('keydown' ,function(event){
         if (event.keyCode == 13) {
           console.log('enter press')
@@ -124,11 +126,65 @@ function init(data) {
        $(document).unbind('keydown');
      }
   })
-  // $('.inputValue').focus(function() {
-  //   var selectNow = $(this).parents('.parameterSelect');
-  //   selectNow.addClass('onSelect');
-  //   selectNow.siblings().removeClass('onSelect')
-  // })
+}
+
+function kendoParamInit() {
+  getAjaxParam();
+  $('#ctr').kendoDropDownList({
+    optionLabel: "请选择参数类型",
+    dataSource : ['PD','BJ','ZJ']
+  })
+  $('#ictr').kendoDropDownList({
+    optionLabel: "请选择参数类型",
+    dataSource : ['PD','BJ','ZJ']
+  })
+  $('#parameter').kendoDropDownList({
+    dataSource : ['show','alive','dead','start','stop','clean','stopcln','rmcore']
+  })
+}
+
+function getAjaxParam() {
+  var req_data = {
+      'ENV_KEY': sessionStorage.getItem('ENV_KEY')
+    }
+  getParAllSrvName(req_data);
+  getParAllGroup(req_data);
+}
+
+function getParAllSrvName(req_data) {
+  $.ajax({
+    url: '/AJAX/Get_All_SrvName/',
+    data: {'req_json': JSON.stringify(req_data)},
+    dataType: 'json',
+    type: 'POST',
+    traditional: true,
+    success: function (result) {
+        $('#srv').kendoDropDownList({
+          optionLabel: "请选择参数类型",
+          dataSource : result.rsp_data
+        })
+        $('#isrv').kendoDropDownList({
+          optionLabel: "请选择参数类型",
+          dataSource : result.rsp_data
+        })
+    }
+  });
+}
+
+function getParAllGroup(req_data) {
+  $.ajax({
+    url: '/AJAX/Get_All_Group/',
+    data: {'req_json': JSON.stringify(req_data)},
+    dataType: 'json',
+    type: 'POST',
+    traditional: true,
+    success: function (result) {
+      $('#grp').kendoDropDownList({
+        optionLabel: "请选择参数类型",
+        dataSource : result.rsp_data
+      })
+    }
+  });
 }
 
 function showOrHide() {
@@ -203,7 +259,7 @@ function intervalReq(ntf_task_data) {
     };
     task_data = ntf_task_data;
     reqResult_data = {
-      'ENV_KEY': localStorage.getItem('ENV_KEY'),
+      'ENV_KEY': sessionStorage.getItem('ENV_KEY'),
       'task_data': ntf_task_data
     }
     console.log(ntf_task_data);
@@ -253,7 +309,7 @@ function ajaxResultProcess(result,ntf_task_data) {
 function getReq_data(){
   var select = $('#parameter').data("kendoDropDownList").text();
   var req_data = {
-    'ENV_KEY':localStorage.getItem('ENV_KEY'),
+    'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
     'exec_time': 1,
     '--cmd': select,
     '--grp': $('#grp').data("kendoDropDownList").text() == "请选择参数类型" ? '' : $('#grp').data("kendoDropDownList").text(),
@@ -268,14 +324,14 @@ function getReq_data(){
   // console.log(select);
   // if ($(array[1]).hasClass('onSelect')) {
   //   req_data = {
-  //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+  //     'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
   //     'exec_time': 1, // 预留接口，计划任务延迟执行时间。
   //     '--cmd': select,
   //     '--grp': $('#grp').val()
   //     }
   // } else if ($(array[2]).hasClass('onSelect')) {
   //   req_data = {
-  //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+  //     'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
   //     'exec_time': 1,
   //     '--cmd': select,
   //     '--ctr': $('#ctr').val(),
@@ -287,7 +343,7 @@ function getReq_data(){
   //   }
   // } else {
   //   req_data = {
-  //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+  //     'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
   //     'exec_time': 1,
   //     '--cmd': select,
   //     '--args': '',
@@ -303,13 +359,15 @@ function getReq_data(){
 }
 
 function showResult(data) {
+  var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  var resizeHeight = windowHeight - $('#result').offset().top - 80;
   var titles = getTitles(data);
   $('#result').show();
   $('#result').kendoGrid({
    selectable: "multiple cell",
    allowCopy: true,
    scrollable: true,
-   height:300,
+   height:resizeHeight,
    filterable: {
     mode: "row"
    }

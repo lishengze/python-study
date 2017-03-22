@@ -1,10 +1,5 @@
 <div class="col-md-2"  style=" border-style: solid;border-width: 0 2px 0px 0px;border-right-color: gray; margin-left: 5px;margin-bottom:60px">
    <ul id="panelbar">
-     <li class="k-state-active " style="display:none"> 用户管理
-      <ul>
-       <li> <a id = 'admin' href ="/admin.html" style="display:none">权限</a></li>
-      </ul>
-     </li>
      <li class="k-state-active" style="display:none"> 运维管理
       <ul>
        <li><a id = 'info' href = '/info.html'style="display:none">信息查询</a></li>
@@ -44,7 +39,7 @@
   dataProcess();
 
   function dataProcess(){
-    var permissionString = localStorage.getItem('permission');
+    var permissionString = sessionStorage.getItem('permission');
     var array = permissionString.split(';');
     if(array.length == 0) {
       return;

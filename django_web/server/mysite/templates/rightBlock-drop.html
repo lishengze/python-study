@@ -55,7 +55,7 @@
 
   function reqDrop(args) {
     var req_data = {
-      'ENV_KEY':localStorage.getItem('ENV_KEY'),
+      'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
       'type': 'version_control',
       "--cmd" : "drop",
       "--args": args

@@ -3,6 +3,7 @@
     <div id ='instruction' style="font: bold 25px arial;">使用说明(点击显示/隐藏):</div>
     <p style='display: none' id = 'instructionContent'><br>
         待更新
+      </p>
   </div>
   <div id = 'paramArea' class="col-md-12" style="border:2px solid gray; background-color:#F0F8ff;margin-top:10px;padding-bottom:10px">
     <div id = 'param' style="font: bold 25px arial;">参数设定(点击显示/隐藏)</div>
@@ -87,10 +88,9 @@
   </div>
   <div id= 'getarg' style=" margin-top:5px;font-size:20px;">执行结果：<br></div>
   <div style="clear:both"></div>
-  <div id= 'result' style="margin-top:5px;height: 100px"> </div>
+  <div id= 'result' style="margin-top:5px"> </div>
 </div>
 <style>
-html,body{width:100%;height:100%;margin:0;padding:0;}
  .parameterSelect {
    border:2px solid gray;
    margin-top:5px;
@@ -101,12 +101,9 @@ html,body{width:100%;height:100%;margin:0;padding:0;}
  }
 </style>
 <script>
-  init();
-
-  function init() {
-    eventInit();
-    kendoParamInit();
-  }
+  eventInit();
+  kendoParamInit();
+  initResult();
 
   function eventInit() {
     showOrHide();
@@ -146,7 +143,7 @@ html,body{width:100%;height:100%;margin:0;padding:0;}
 
   function getAjaxParam() {
     var req_data = {
-        'ENV_KEY': localStorage.getItem('ENV_KEY')
+        'ENV_KEY': sessionStorage.getItem('ENV_KEY')
       }
     getParAllSrvName(req_data);
     getParAllGroup(req_data);
@@ -228,7 +225,7 @@ html,body{width:100%;height:100%;margin:0;padding:0;}
 
   function getReq_data(){
      var req_data = {
-        'ENV_KEY':localStorage.getItem('ENV_KEY'),
+        'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
         '--cmd': 'info',
         '--args': $('#parameter').data("kendoDropDownList").text() == "请选择参数类型" ? '' : $('#parameter').data("kendoDropDownList").text(),
         '--grp': $('#grp').data("kendoDropDownList").text() == "请选择参数类型" ? '' : $('#grp').data("kendoDropDownList").text(),
@@ -244,19 +241,19 @@ html,body{width:100%;height:100%;margin:0;padding:0;}
     // var array = $('.parameterSelect')
     // if($(array[0]).hasClass('onSelect')){
     //   req_data = {
-    //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+    //     'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
     //     '--cmd': 'info',
     //     '--args': $('#parameter').data("kendoDropDownList").text() == optionSelectTips ? '' : $('#parameter').data("kendoDropDownList").text()
     //   }
     // }else if ($(array[1]).hasClass('onSelect')) {
     //   req_data = {
-    //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+    //     'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
     //     '--cmd': 'info',
     //     '--grp': $('#grp').val()
     //   }
     // }else if ($(array[2]).hasClass('onSelect')) {
     //   req_data = {
-    //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+    //     'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
     //     '--cmd': 'info',
     //     '--ctr': $('#ctr').val(),
     //     '--srv': $('#srv').val(),
@@ -267,7 +264,7 @@ html,body{width:100%;height:100%;margin:0;padding:0;}
     //   }
     // } else {
     //   req_data = {
-    //     'ENV_KEY':localStorage.getItem('ENV_KEY'),
+    //     'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
     //     '--cmd': 'info',
     //     '--args': '',
     //     '--grp': '',
@@ -286,6 +283,7 @@ html,body{width:100%;height:100%;margin:0;padding:0;}
    var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
    var grid = $("#result").data("kendoGrid");
    var resizeHeight = windowHeight - $('#result').offset().top - 80;
+  //  console.log(grid)
    if(grid) {
       grid.setOptions({
         height : resizeHeight

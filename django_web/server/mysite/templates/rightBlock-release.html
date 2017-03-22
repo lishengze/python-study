@@ -1,10 +1,22 @@
 <div  class="col-md-9" >
   <div class="releaseLeftContainer " style = 'float: left;width: 70%' >
+    <div style="border:4px dashed gray;" class="col-md-12"  >
+      <div id ='instruction' style="font: bold 25px arial;">使用说明(点击显示/隐藏):</div>
+      <p id = 'instructionContent'><br>
+        1、请按照规定格式将最新的文件打包上传。<br>
+        2、待文件上传成功，请输出本次发布的版本号信息。如果不指定版本信息，将默认覆盖对象的最新版本。
+        在输入版本信息时请遵照指定的格式，规则如下：<br>
+        OBJ{,OBJ}*:VERSION{;OBJ{,OBJ}*:VERSION}*<br>
+        -- OBJ can be: [server | client | xml]<br>
+        -- VERSION like: 1.1.0  1.0.0.1 ...<br>
+        即对象和版本号之间用’:’相隔，对象之间用’,’相隔，对象后面可以不指定版本号。此外，版本号可以通过时间或序号形式来指定
+      </p>
+    </div>
     <div>
       <div class="form-group" style = 'margin-top: 30px'>
-       <label for="exampleInputFile" style="float: left">最新文件压缩包：</label>
-       <input type="file" style="float: left" id="file_upload">
-       <button id= 'upload' class="btn btn-primary btn-default">上传并发布</button>
+       <label for="exampleInputFile" style="float: left;margin-top: 30px">最新文件压缩包：</label>
+       <input type="file" style="float: left;margin-top: 30px" id="file_upload">
+       <button id= 'upload' class="btn btn-primary btn-default" style="margin-top: 30px">上传并发布</button>
       </div>
       <div class="form-group" style = 'margin-top: 30px'>
        <label for="exampleInputFile" style="float: left">最新文件压缩包：</label>
@@ -16,19 +28,13 @@
   </div>
   <div class="rightContainer"  style = 'float: right;width: 25%;height:550px;border-left: 1px solid #BDBDBD;'>
     {% include 'rightBlock-version-control-rightVersion.html' %}
-    <div style="border-top: 3px solid #BDBDBD;margin-bottom:60px"><span style= 'font: bold 25px arial;'>使用说明：</span><br>1、请按照规定格式将最新的文件打包上传。<br>
-        2、待文件上传成功，请输出本次发布的版本号信息。如果不指定版本信息，将默认覆盖对象的最新版本。
-        在输入版本信息时请遵照指定的格式，规则如下：<br>
-        OBJ{,OBJ}*:VERSION{;OBJ{,OBJ}*:VERSION}*<br>
-        -- OBJ can be: [server | client | xml]<br>
-        -- VERSION like: 1.1.0  1.0.0.1 ...<br>
-        即对象和版本号之间用’:’相隔，对象之间用’,’相隔，对象后面可以不指定版本号。此外，版本号可以通过时间或序号形式来指定。
-    </div>
   </div>
 </div>
 <script>
+  showOrHide();
+
   $('#upload').click(function(){
-    var Url = '/AJAX/Upload_File/' + localStorage.getItem('ENV_KEY');
+    var Url = '/AJAX/Upload_File/' + sessionStorage.getItem('ENV_KEY');
     var name = $("#file_upload").val();
     console.log ('name: ' + name);
     var formData = new FormData();
@@ -77,7 +83,7 @@
     } else {
       console.log ('是数字');
     }
-    var Url = '/AJAX/Update_Srv/' + localStorage.getItem('ENV_KEY') + '/' + exec_time;
+    var Url = '/AJAX/Update_Srv/' + sessionStorage.getItem('ENV_KEY') + '/' + exec_time;
     console.log ('exec_time: ' + exec_time)
     var file = document.getElementById('file_update').files[0];
     if(file != null && file.size != 0) {
@@ -102,6 +108,11 @@
     }
   })
 
+  function showOrHide() {
+    $('#instruction').click(function(){
+      $(this).siblings().is(':hidden') ? $(this).siblings().show():$(this).siblings().hide();
+    })
+  }
 
   function releaseVersion() {
     if(confirm('确认要发布吗？')) {

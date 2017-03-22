@@ -1036,7 +1036,112 @@ class AdminDataAjaxFunc(object):
 		response["Access-Control-Allow-Headers"] = "*"
 		return response
 
-class TaskAjaxFunc(object):
+class ProcessAjaxRspData(object):
+	def process_rsp_result(self, origin_data, data_type):
+		failed_data = self.get_failed_data(origin_data, data_type)
+		if failed_data == '':
+			array_data = []
+			if is_version_control_req(data_type):
+				array_data = self.get_version_ctr_array_result(origin_data, data_type)
+			else:
+				array_data = self.get_operation_management_array_result(origin_data)
+
+			# output_msg('array_data', array_data)
+			dict_data = self.get_dict_result(array_data, data_type)
+			return {'data': dict_data, 'type': data_type}
+		else:
+			return {'data': failed_data, 'type': 'Failed'}
+
+	def get_failed_data(self, origin_data, data_type):
+		tmpdata = origin_data.split('\n')
+		if '' in tmpdata:
+			tmpdata.remove('')
+		verControl_param_wrong_flag = 'verControl Usage:'
+		main_param_wrong_flag = 'main Usage:'
+
+		if is_version_control_req(data_type):
+			verControl_SUCC_flag = '--------'
+			if tmpdata[1].find('verControl Usage:') != -1:
+				failed_data = 'verControl Failed'
+			else:
+				failed_data = tmpdata[1:]
+				for value in tmpdata:
+					if value.find(verControl_SUCC_flag) != -1:
+						failed_data = ''
+						break
+		else:
+			failed_data = ''
+		return failed_data
+
+	def get_version_ctr_array_result(self, origin_data, data_type):
+		tmpdata = origin_data.split('\n')
+		array_data = []
+		tmpdata = tmpdata[len(tmpdata)-2].split('\t')
+		array_data.append(tmpdata)
+		# if data_type.find('show')!= -1 or data_type.find('rollback')!= -1 or data_type.find('drop')!= -1:
+		# 	tmpdata = tmpdata[len(tmpdata)-2].split('\t')
+		# 	array_data.append(tmpdata)
+		# else:
+		# 	array_data.append(tmpdata[1:])
+
+		return array_data
+
+	def get_version_ctr_array_result_backup(self, origin_data, data_type):
+		tmpdata = origin_data.split('\n')
+		tmpdata = tmpdata[1:len(tmpdata)-1]
+		index = 0
+		info_flag = ': '
+		other_flag = '::'
+		output_msg('tmpdata', tmpdata)
+		final_result = []
+		while index < len(tmpdata):
+			tmp_result = []
+			if tmpdata[index].find(other_flag) >= 0:
+				tmpdata[index] = tmpdata[index][tmpdata[index].find(other_flag) + len(other_flag):]
+				tmpdata[index] = tmpdata[index].split(other_flag)
+			elif tmpdata[index].find(info_flag) >= 0 :
+				tmpdata[index] = tmpdata[index][tmpdata[index].find(info_flag) + len(info_flag):]
+				tmpdata[index] = tmpdata[index].split(' ')
+			for value in tmpdata[index]:
+				if value != '':
+					tmp_result.append(value)
+			final_result.append(tmp_result)
+			index += 1
+		return final_result
+
+	def get_operation_management_array_result(self, origin_data):
+		tmpdata = origin_data.split('\n')
+		tmpdata = tmpdata[1:len(tmpdata)-1]
+		index = 0
+		info_flag = ': '
+		other_flag = '::'
+
+		final_result = []
+		while index < len(tmpdata):
+			tmp_result = []
+			if tmpdata[index].find(other_flag) >= 0:
+				tmpdata[index] = tmpdata[index][tmpdata[index].find(other_flag) + len(other_flag):]
+				tmpdata[index] = tmpdata[index].split(other_flag)
+			elif tmpdata[index].find(info_flag) >= 0:
+				tmpdata[index] = tmpdata[index][tmpdata[index].find(info_flag) + len(info_flag):]
+				tmpdata[index] = tmpdata[index].split(' ')
+			for value in tmpdata[index]:
+				if value != '':
+					tmp_result.append(value)
+			final_result.append(tmp_result)
+			index += 1
+		return final_result
+
+	def get_dict_result(self, array_data, data_type):
+		index = 0
+		dict_data = []
+		while index < len(array_data):
+			tmp_dict_data = RpcResult(data_type, array_data[index])
+			dict_data.append(tmp_dict_data.__dict__)
+			index += 1
+		return dict_data
+
+class TaskAjaxFunc(ProcessAjaxRspData):
 	def get_task_type(self, trans_req_json):
 		task_type = cfg.TASK_TYPE_ECALL
 		cmdline = ''
@@ -1104,7 +1209,7 @@ class TaskAjaxFunc(object):
 				original_rsp_data = recv_end(sock)
 				output_msg('The original rsp data is: ', original_rsp_data)
 				sock.close()
-				trans_rsp_data = self.process_rpc_result(original_rsp_data, data_type)
+				trans_rsp_data = self.process_rsp_result(original_rsp_data, data_type)
 
 				output_msg('Transed Rsp Data: ', trans_rsp_data)
 			except Exception as e:
@@ -1151,7 +1256,7 @@ class TaskAjaxFunc(object):
 				original_rsp_data = recv_end(sock)
 				sock.close()
 				output_msg('original_rsp_data: ', original_rsp_data)
-				trans_rsp_data = self.process_rpc_result(original_rsp_data, data_type)
+				trans_rsp_data = self.process_rsp_result(original_rsp_data, data_type)
 				output_msg('trans_rsp_data: ', trans_rsp_data)
 			except Exception as e:
 				print('notifyDaemon failed!')
@@ -1304,7 +1409,7 @@ class TaskAjaxFunc(object):
 					break
 				if task_info['state'] == 3:
 					task_result[task_id] = self.get_nft_task_result(ENV_KEY, task_id)
-					task_result[task_id] = self.process_rpc_result(task_result[task_id], task_type[task_id])
+					task_result[task_id] = self.process_rsp_result(task_result[task_id], task_type[task_id])
 				elif task_info['state'] == 1:
 					task_result[task_id] = 'Failed'
 				else:
@@ -1353,7 +1458,6 @@ class TaskAjaxFunc(object):
 			response = HttpResponse(json.dumps('wrong!'))
 			return response
 
-	# @csrf_protect
 	def get_all_group(self, request):
 		if request.method != '':
 			req_data = request.POST.getlist('req_json')[0]
@@ -1503,110 +1607,6 @@ class TaskAjaxFunc(object):
 			return response
 		else:
 			return index(request)
-
-	def process_rpc_result(self, origin_data, data_type):
-		failed_data = self.get_failed_data(origin_data, data_type)
-		if failed_data == '':
-			array_data = []
-			if is_version_control_req(data_type):
-				array_data = self.get_version_ctr_array_result(origin_data, data_type)
-			else:
-				array_data = self.get_task_rpc_array_result(origin_data)
-
-			# output_msg('array_data', array_data)
-			dict_data = self.get_rpc_dict_result(array_data, data_type)
-			return {'data': dict_data, 'type': data_type}
-		else:
-			return {'data': failed_data, 'type': 'Failed'}
-
-	def get_failed_data(self, origin_data, data_type):
-		tmpdata = origin_data.split('\n')
-		if '' in tmpdata:
-			tmpdata.remove('')
-		verControl_param_wrong_flag = 'verControl Usage:'
-		main_param_wrong_flag = 'main Usage:'
-
-		if is_version_control_req(data_type):
-			verControl_SUCC_flag = '--------'
-			if tmpdata[1].find('verControl Usage:') != -1:
-				failed_data = 'verControl Failed'
-			else:
-				failed_data = tmpdata[1:]
-				for value in tmpdata:
-					if value.find(verControl_SUCC_flag) != -1:
-						failed_data = ''
-						break
-		else:
-			failed_data = ''
-		return failed_data
-
-	def get_version_ctr_array_result(self, origin_data, data_type):
-		tmpdata = origin_data.split('\n')
-		array_data = []
-		tmpdata = tmpdata[len(tmpdata)-2].split('\t')
-		array_data.append(tmpdata)
-		# if data_type.find('show')!= -1 or data_type.find('rollback')!= -1 or data_type.find('drop')!= -1:
-		# 	tmpdata = tmpdata[len(tmpdata)-2].split('\t')
-		# 	array_data.append(tmpdata)
-		# else:
-		# 	array_data.append(tmpdata[1:])
-
-		return array_data
-
-	def get_version_ctr_array_result_back(self, origin_data, data_type):
-		tmpdata = origin_data.split('\n')
-		tmpdata = tmpdata[1:len(tmpdata)-1]
-		index = 0
-		info_flag = ': '
-		other_flag = '::'
-		output_msg('tmpdata', tmpdata)
-		final_result = []
-		while index < len(tmpdata):
-			tmp_result = []
-			if tmpdata[index].find(other_flag) >= 0:
-				tmpdata[index] = tmpdata[index][tmpdata[index].find(other_flag) + len(other_flag):]
-				tmpdata[index] = tmpdata[index].split(other_flag)
-			elif tmpdata[index].find(info_flag) >= 0 :
-				tmpdata[index] = tmpdata[index][tmpdata[index].find(info_flag) + len(info_flag):]
-				tmpdata[index] = tmpdata[index].split(' ')
-			for value in tmpdata[index]:
-				if value != '':
-					tmp_result.append(value)
-			final_result.append(tmp_result)
-			index += 1
-		return final_result
-
-	def get_task_rpc_array_result(self, origin_data):
-		tmpdata = origin_data.split('\n')
-		tmpdata = tmpdata[1:len(tmpdata)-1]
-		index = 0
-		info_flag = ': '
-		other_flag = '::'
-
-		final_result = []
-		while index < len(tmpdata):
-			tmp_result = []
-			if tmpdata[index].find(other_flag) >= 0:
-				tmpdata[index] = tmpdata[index][tmpdata[index].find(other_flag) + len(other_flag):]
-				tmpdata[index] = tmpdata[index].split(other_flag)
-			elif tmpdata[index].find(info_flag) >= 0:
-				tmpdata[index] = tmpdata[index][tmpdata[index].find(info_flag) + len(info_flag):]
-				tmpdata[index] = tmpdata[index].split(' ')
-			for value in tmpdata[index]:
-				if value != '':
-					tmp_result.append(value)
-			final_result.append(tmp_result)
-			index += 1
-		return final_result
-
-	def get_rpc_dict_result(self, array_data, data_type):
-		index = 0
-		dict_data = []
-		while index < len(array_data):
-			tmp_dict_data = RpcResult(data_type, array_data[index])
-			dict_data.append(tmp_dict_data.__dict__)
-			index += 1
-		return dict_data
 
 class AjaxReqFunc(AdminDataAjaxFunc, TaskAjaxFunc, HandleFileAjaxFunc):
 	def __init__ (self):
@@ -1860,7 +1860,7 @@ server_view = ViewMain()
 	# 			original_rsp_data = recv_end(sock)
 	# 			sock.close()
 	# 			print ('The original rsp data is:\n%s' %(original_rsp_data))
-	# 			trans_rsp_data = self.process_rpc_result(original_rsp_data, data_type)
+	# 			trans_rsp_data = self.process_rsp_result(original_rsp_data, data_type)
 	# 			print 'Transed Rsp Data: '
 	# 			print trans_rsp_data
 	# 		except Exception as e:

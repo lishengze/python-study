@@ -1,20 +1,24 @@
 <div  class="col-md-9" >
   <div class="rollBackLeftContainer "  style = 'width: 70%;float:left' >
-    <div style="margin-top: 20px">
-      <label style= 'width:150px;float:left'><h4>对象选择：</h4></label>
-      <input  class="form-control" style= 'width:200px;' id="rollBackInputObject" >
+    <div style="border:4px dashed gray;" class="col-md-12" >
+      <div id ='instruction' style="font: bold 25px arial;">使用说明(点击显示/隐藏):</div>
+      <p  id = 'instructionContent'>
+        <br><span style= 'font-weight: bold'>ver = VERSION</span>&nbsp&nbsp&nbsp&nbsp-- 回退到指定版本，VERSION like: 1.1.0  1.0.0.1 ...
+        <br><span style= 'font-weight: bold'>dt  = DATE_TIME</span>	&nbsp-- 回退到用时间日期指定版本，DATE_TIME like 20121011_153026；
+        <br><span style= 'font-weight: bold'>seq = number</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	-- 回退至倒数第number个版本，number必须是一个
+    </div>
+    <div>
+      <label style= 'margin-top: 20px;width:150px;float:left'><h4>对象选择：</h4></label>
+      <input  class="form-control" style= 'width:200px;margin-top: 20px;' id="rollBackInputObject" >
     </div>
     <div style="margin-top: 20px">
       <label style= 'width:150px;float:left'><h4>版本信息:</h4></label>
       <input  class="form-control" style= 'width:100px; float:left' id="rollBackInputObject2" >
       <input  class="form-control" style= ' margin-left:280px;width:300px' id="rollBackInputData" placeholder=" VERSION">
-      <div style="width:700px;margin-top:20px;border:2px solid gray;"> <span style= 'font: bold 25px arial;'>版本信息输入提示：</span><br>
-        <br><span style= 'font-weight: bold'>ver = VERSION</span>&nbsp&nbsp&nbsp&nbsp-- 回退到指定版本，VERSION like: 1.1.0  1.0.0.1 ...
-        <br><span style= 'font-weight: bold'>dt  = DATE_TIME</span>	&nbsp-- 回退到用时间日期指定版本，DATE_TIME like 20121011_153026；
-        <br><span style= 'font-weight: bold'>seq = number</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	-- 回退至倒数第number个版本，number必须是一个正数。
-      </div>
     </div>
-    <button  id = 'rollBackSubmit' onclick ='submitRollBack()' class="btn btn-primary btn-default" style="margin-top:5px">回退</button>
+    <div style="clear:both">
+      <button  id = 'rollBackSubmit' onclick ='submitRollBack()' class="btn btn-primary btn-default" style="margin-top:5px">回退</button>
+    </div>
     <div id = 'releaseResult' style = 'margin-top:2em;'></div>
 
   </div>
@@ -26,6 +30,7 @@
 init();
 
 function init() {
+  showOrHide();
   keyDownEvent();
   $('#rollBackInputObject').kendoDropDownList({
       dataSource : ['xml','server','client']
@@ -52,6 +57,12 @@ function init() {
 
 }
 
+function showOrHide() {
+  $('#instruction').click(function(){
+    $(this).siblings().is(':hidden') ? $(this).siblings().show():$(this).siblings().hide();
+  })
+}
+
 function submitRollBack() {
   var objType = $('#rollBackInputObject').val();
   var dataInfo = $('#rollBackInputData').val();
@@ -71,7 +82,7 @@ function reqRollBack(args) {
     return;
   }
   var req_data = {
-    'ENV_KEY':localStorage.getItem('ENV_KEY'),
+    'ENV_KEY':sessionStorage.getItem('ENV_KEY'),
     'type': 'version_control',
     "--cmd" :"rollback",
     "--args":args

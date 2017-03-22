@@ -4,82 +4,86 @@
     <p style='display: none' id = 'instructionContent'><br>
         待更新
   </div>
-  <div id = 'paramArea' class="col-md-12" style="border:2px solid gray; background-color: 	#F0F8ff;margin-top:10px;padding-bottom:10px">
+  <div id = 'paramArea' class="col-md-12" style="border:2px solid gray; background-color:#F0F8ff;margin-top:10px;padding-bottom:10px">
     <div id = 'param' style="font: bold 25px arial;">参数设定(点击显示/隐藏)</div>
-    <div  class = 'deploySelect'>
-      <div class = 'row'>
-        <div  class="col-xs-2" > 命令选择</div>
-        <div class="col-xs-3">
-          <div id = 'parameter' class = 'inputValue'></div>
-        </div>
-      </div>
-    </div>
-    <div class = 'parameterSelect'>
-      <div class="row" >
-        <div class="col-xs-2">对象组：</div>
-        <div class="col-xs-3">
-          <div id = 'grp' class = 'inputValue'></div>
-        </div>
-      </div>
-    </div>
-    <div  class = 'parameterSelect'>
-      <div style = 'font: bold 20px arial '>对象参数：</div>
-      <div  class="row">
-        <div class="col-xs-4">
-            <div class="row">
-              <div class="col-xs-3">数据中心:</div>
-              <div class="col-xs-6">
-                <div id = 'ctr' class = 'inputValue'></div>
-              </div>
-            </div>
-        </div>
-        <div class="col-xs-4">
-          <div class="row">
-            <div class="col-xs-3">进程名:</div>
-            <div class="col-xs-7">
-              <div id = 'srv' class = 'inputValue'></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xs-4">
-          <div class="row">
-            <div class="col-xs-3">进程编号:</div>
-            <div class="col-xs-6">
-              <input type="text" class="form-control inputValue" id = 'srvno' placeholder="1-3,6,8">
-            </div>
+    <div class = 'parameterContent'>
+      <div class = 'parameterSelect' >
+        <div class = 'row'>
+          <div  class="col-xs-2" > 类型参数：</div>
+          <div class="col-xs-3">
+            <div id = 'parameter' class = 'inputValue'></div>
           </div>
         </div>
       </div>
-      <div style = 'font: bold 20px arial '>排除对象参数(取反模式)：</div>
-      <div class="row">
-        <div class="col-xs-4">
-            <div class="row">
-              <div class="col-xs-3">数据中心:</div>
-              <div class="col-xs-6">
-                <div id = 'ictr' class = 'inputValue'></div>
-              </div>
-            </div>
-        </div>
-        <div class="col-xs-4">
-          <div class="row">
-            <div class="col-xs-3">进程名:</div>
-            <div class="col-xs-7">
-              <div id = 'isrv' class = 'inputValue'></div>
-            </div>
+      <div class = 'parameterSelect'  >
+        <div class="row" >
+          <div class="col-xs-2">对象组：</div>
+          <div class="col-xs-3">
+            <div id = 'grp' class = 'inputValue'></div>
           </div>
         </div>
-        <div class="col-xs-4">
-          <div class="row">
-            <div class="col-xs-3">进程编号:</div>
-            <div class="col-xs-6">
-              <input type="text" class="form-control inputValue" id = 'isrvno' placeholder="1-3,6,8">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button id = 'reqBtn' onclick ='submitReq()' class="btn btn-primary btn-default" style="margin-top:5px;float:left">提交</button>
 
+      </div>
+      <div class = 'parameterSelect' >
+        <div style = 'font: bold 20px arial '>对象参数：</div>
+        <div  class="row">
+          <div class="col-xs-4">
+              <div class="row">
+                <div class="col-xs-3">数据中心:</div>
+                <div class="col-xs-6">
+                    <div id = 'ctr' class = 'inputValue'></div>
+                </div>
+              </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="row">
+              <div class="col-xs-3">进程名:</div>
+              <div class="col-xs-6">
+                <div id = 'srv' class = 'inputValue'></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="row">
+              <div class="col-xs-3">进程编号:</div>
+              <div class="col-xs-6">
+                <input type="text" class="form-control inputValue" id = 'srvno' placeholder="1-3,6,8">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class = 'parameterSelect' >
+        <div style = 'font: bold 20px arial '>排除对象参数(取反模式)：</div>
+        <div class="row">
+          <div class="col-xs-4">
+              <div class="row">
+                <div class="col-xs-3">数据中心:</div>
+                <div class="col-xs-3">
+                    <div id = 'ictr' class = 'inputValue'></div>
+                </div>
+              </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="row">
+              <div class="col-xs-3">进程名:</div>
+              <div class="col-xs-6">
+                <div id = 'isrv' class = 'inputValue'></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="row">
+              <div class="col-xs-3">进程编号:</div>
+              <div class="col-xs-6">
+                <input type="text" class="form-control inputValue" id = 'isrvno' placeholder="1-3,6,8">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button  id = 'reqBtn' onclick ='submitReq()' class="btn btn-primary btn-default" style="margin-top:5px;float:left">提交</button>
   </div>
   <div id= 'getarg' style=" margin-top:5px;font-size:20px;">执行结果：<br></div>
   <div style="clear:both"></div>
@@ -100,19 +104,18 @@
 <script>
   var data = [];
   var interval= null;
-  init(data);
+  setNtfSessionStorage(data);
+  eventInit();
+  kendoParamInit();
 
-  function init(data) {
-    setNtfSessionStorage(data);
-    eventInit();
-    kendoParamInit();
-    // $('.inputValue').focus(function() {
-    //   var selectNow = $(this).parents('.parameterSelect');
-    //   selectNow.addClass('onSelect');
-    //   selectNow.siblings().removeClass('onSelect')
-    // })
-  }
-  
+  // function init(data) {
+  //   // $('.inputValue').focus(function() {
+  //   //   var selectNow = $(this).parents('.parameterSelect');
+  //   //   selectNow.addClass('onSelect');
+  //   //   selectNow.siblings().removeClass('onSelect')
+  //   // })
+  // }
+
   function eventInit() {
     showOrHide();
     $(window).resize(function() {
@@ -353,6 +356,8 @@
   }
 
   function showResult(data) {
+    var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    var resizeHeight = windowHeight - $('#result').offset().top - 80;
     var titles = getTitles(data);
     $('#result').kendoGrid({
      selectable: "multiple cell",
@@ -361,7 +366,7 @@
      filterable: {
       mode: "row"
      },
-     height: 300
+     height: resizeHeight
     });
     $('#result').data("kendoGrid").setOptions({
       columns:titles

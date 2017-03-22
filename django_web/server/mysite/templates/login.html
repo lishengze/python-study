@@ -3,6 +3,7 @@
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   {% include 'dependence.html' %}
+  <title>aaa</title>
   <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
 <style>
   body{
@@ -73,7 +74,9 @@
   	-o-transition: 1s all;
   }
 </style>
-<h1>上期技术监控专用版本控制系统</h1>
+</head>
+<body>
+<h1>慧眼监控发布控制系统</h1>
 <div class="login-form">
   <form class="form-horizontal" role="form">
     <div class="form-group">
@@ -106,13 +109,19 @@
   </form>
 </div>
  <script>
+   var TITLE = '慧眼监控发布控制系统'; // 全局控制名字
+   sessionStorage.setItem('ENV_KEY_TITLE', TITLE);
+   $('title').text(sessionStorage.getItem('ENV_KEY_TITLE'));
+   $('h1').text(sessionStorage.getItem('ENV_KEY_TITLE'));
+   sessionStorage.setItem('ADMIN_PERMISSION','false');
+
     var env_keySet = [];
     $('#EvrKeySelect option').each(function() {
       env_keySet.push(this.value);
     })
     console.log(env_keySet);
     var str = JSON.stringify(env_keySet);
-    localStorage.setItem('ENV_KEY_SET', str);
+    sessionStorage.setItem('ENV_KEY_SET', str);
       $('input').keyup(function(e){
       var keyCode = e.which;
       if( keyCode === 13){
@@ -129,12 +138,6 @@
         alert('请输入密码');
       } else {
         isLegal(logName,logPassword);
-        //
-        // localStorage.setItem('logName', logName)
-        // localStorage.setItem('ENV_KEY', getType)
-        // var ENV_KEY = getType;
-        // console.log(ENV_KEY);
-        // location.href="/home.html";
       }
     }
 
@@ -159,14 +162,18 @@
 
     function dataProcess(responseJSON) {
       if(responseJSON == null) {
-        alert("数据库没有返回数据")
+        alert("数据库没有返回数据");
       };
       switch (responseJSON.status) {
         case 'Success':
+          console.log(responseJSON);
           console.log(responseJSON.permission);
-          localStorage.setItem('logName', $('#loginName').val());
-          localStorage.setItem('ENV_KEY', $('#EvrKeySelect').val());
-          localStorage.setItem('permission',responseJSON.permission);
+          if(responseJSON.permission!= null && responseJSON.permission.indexOf('管理用户权限')) {
+            sessionStorage.setItem('ADMIN_PERMISSION','true');
+          }
+          sessionStorage.setItem('logName', $('#loginName').val());
+          sessionStorage.setItem('ENV_KEY', $('#EvrKeySelect').val());
+          sessionStorage.setItem('permission',responseJSON.permission);
           window.location.href="/home.html";
           break;
         case 'Failed':

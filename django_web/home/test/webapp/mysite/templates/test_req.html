@@ -9,11 +9,6 @@
       <h1> Hello {{name}} </h1>
 	  <h2> Hello {{user.name}} </h2>
   </div>
-  <ul>
-    {% for user_name in users%}
-      <li> {{user_name}} </li>
-    {% endfor %}
-  </ul>
 
   <input type="button" id="request_real_time_info_task" value="Request Real Time Info Task"> <br><br>
 
@@ -81,11 +76,11 @@
 
       $('#request_real_time_info_task').click(function(){
          var req_data = {
-          'ENV_KEY':'PTEST_170',
+          'ENV_KEY':'TEST_170',
           'type': '',
           '--cmd': 'info',
           '--args':'',
-          '--grp': 'zz',
+          '--grp': '',
           '--ctr': '',
           '--srv': '',
           '--srvno': '',
@@ -111,7 +106,7 @@
           'ENV_KEY':'TEST_170',
           'type': 'version_control',
           '--cmd': 'rollback',
-          '--args':'xml:ver=1.0.13',
+          '--args':'xml:ver=0.0.1',
           '--grp': '',
           '--ctr': '',
           '--srv': '',
@@ -367,7 +362,6 @@
           }
         });
       })
-
 
       $('#Set_ENV_KEY').click(function(){
         var ENV_KEY = 'PTEST_170'
