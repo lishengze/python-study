@@ -35,6 +35,7 @@ class Seeker(threading.Thread):
         self.cond.release() 
         print self.name + ': 被你找到了，哎~~~'
         
+t = threading.Thread()        
 cond = threading.Condition()
 seeker = Seeker(cond, 'seeker')
 hider = Hider(cond, 'hider')
