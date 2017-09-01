@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<QtAPI>
+	<!--UPMS测试环境配置信息-->
+	<!--UPMS protocal="http" ip="10.1.130.23" port="8002" ></UPMS-->
+	<!--UPMS生产环境配置信息-->
+	<UPMS protocal="https" ip="upmsapi.gtarsc.com" port="443" ></UPMS>
+	<MarketSuppported>
+		<Market name="沪市">SSE</Market>
+		<Market name="深市">SZSE</Market>
+		<Market name="大商所">DCE</Market>
+		<Market name="郑商所">CZCE</Market>
+		<Market name="上期所">SHFE</Market>
+		<Market name="中金所">CFFEX</Market>
+		<Market name="港交所">HKEX</Market>
+	</MarketSuppported>
+	<!--CounterSupported>		
+		<CounterPlugin type="CTP" counter_version="1.0" counter_desc="CTP期货交易系统" plugin_path="./plugins/CTP" plugin_filename="TCA_CTP_Lite" plugin_version="1.0.0.0"></CounterPlugin>
+		<CounterPlugin type="JZ" counter_version="1.0" counter_desc="金正证券交易系统" plugin_path="./plugins/JZ" plugin_filename="TCA_JZ_KMAP" plugin_version="1.0.0.0"></CounterPlugin>		
+    </CounterSupported-->
+	<DataAPI>
+		<API type_id="10" msg_id="0000" version="2.0"     timeout="10">Subscribe</API>
+		<API type_id="10" msg_id="0000" version="2.0"     timeout="10">UnSubscribe</API>
+		<API type_id="12" msg_id="0001" version="1.2.1.0" timeout="60">GetExchanges</API>
+		<API type_id="12" msg_id="0003" version="1.2.1.0" timeout="60">GetSecurityTypes</API>
+		<API type_id="12" msg_id="0005" version="1.2.1.0" timeout="60">GetTradeTypes</API>
+		<API type_id="12" msg_id="0007" version="1.2.1.0" timeout="60">GetTradeCalendar</API>
+		<API type_id="12" msg_id="0009" version="1.2.1.0" timeout="60">GetPlates</API>
+		<API type_id="12" msg_id="0013" version="1.2.1.0" timeout="60">GetPlateSymbols</API>
+		<API type_id="12" msg_id="0011" version="1.2.1.0" timeout="60">GetRelatedPlates</API>
+		<API type_id="12" msg_id="0015" version="1.2.1.0" timeout="60">GetSecurityInfo</API>
+		<API type_id="12" msg_id="0017" version="1.2.1.0" timeout="60">GetSecurityCurInfo</API>
+		<API type_id="12" msg_id="0101" version="1.2.1.0" timeout="60">GetDataByTime</API>
+		<API type_id="12" msg_id="0103" version="1.2.1.0" timeout="60">GetDataByCount</API>
+		<API type_id="12" msg_id="0105" version="1.2.1.0" timeout="60">GetTickByTime</API>
+		<API type_id="12" msg_id="0107" version="1.2.1.0" timeout="60">GetTickByCount</API>
+		<API type_id="12" msg_id="0109" version="1.2.1.0" timeout="60">GetSnapData</API>
+		<API type_id="12" msg_id="0111" version="1.2.1.0" timeout="60">GetL2TickByTime</API>
+		<API type_id="12" msg_id="0113" version="1.2.1.0" timeout="60">GetL2TickByCount</API>
+		<API type_id="12" msg_id="0201" version="1.2.1.0" timeout="60">GetFinance</API>
+		<API type_id="12" msg_id="0203" version="1.2.1.0" timeout="60">GetFactor</API>
+		<API type_id="12" msg_id="0301" version="1.2.1.0" timeout="60">GetHisMarketInfo</API>
+		<API type_id="12" msg_id="0303" version="1.2.1.0" timeout="60">GetJointContracts</API>
+		<API type_id="12" msg_id="1000" version="1.2.1.0" timeout="60">GetCustomData</API>
+	</DataAPI>
+	<TradeAPI>
+		<API timeout="30" beforetrade_timer="20:30:00" aftertrade_timer="16:00:00">AccLogin</API>
+		<API timeout="30">AccLogout</API>
+		<API timeout="30">PlaceOrder</API>
+		<API timeout="30">CancelOrder</API>
+		<API timeout="30">QryOrder</API>
+		<API timeout="30">QryCapital</API>
+		<API timeout="30">QryPosition</API>
+		<API timeout="30">QryTradePar</API>
+	</TradeAPI>
+</QtAPI>
+ 

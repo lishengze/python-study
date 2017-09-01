@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sdk>
+    <network>
+       <!--发送数据等待回应超时间隔 单位:毫秒-->
+       <item key="RequestTimeoutSpin" value="10000" />
+	   
+       <!--网关或MDP地址和端口-->
+       <!--Local MDP服务器-->
+       <!--item key="GatewayAddressPort" value="127.0.0.1:8182" /-->
+	   
+	   <!--QtAPI开发环境 DSP网关服务器-->
+       <!--item key="GatewayAddressPort" value="10.1.134.154:8185" /-->
+	   
+       <!--QtAPI测试环境 DSP网关服务器-->
+       <!--item key="GatewayAddressPort" value="10.1.130.29:8185" /-->
+	   <!--item key="GatewayAddressPort" value="10.1.130.30:8185" /-->
+	   
+	   <!--QtAPI生产环境 DSP网关服务器-->
+	   <item key="GatewayAddressPort" value="119.147.213.43:8181" />	  
+	   <item key="GatewayAddressPort" value="119.147.213.44:8181" />
+	   
+       <!--行情推送测试  DSP网关服务器-->
+       <!--item key="GatewayAddressPort" value="192.168.203.37:8185"/-->
+	   
+       <!--重连网关间隔 单位:毫秒-->
+       <item key="ReconnectGatewaySpin" value="1000" />
+	   
+       <!--重连网关次数，当超时次数且存在两个以上有效网关时，重新执行选路-->
+       <item key="ReconnectGatewayCount" value="10" />
+	   
+       <!--心跳间隔 单位:毫秒-->
+       <item key="HeartBeatSpin" value="5000" />
+    </network>
+	
+    <communication>
+       <!--繁忙程度回复时间间隔 单位:毫秒-->
+       <item key="WaitReplydegreeSpin" value="5000" />
+	   
+       <!--网关繁忙程度标准值，当繁忙程序小于等于此值时，认为是可用连接-->
+       <item key="StandardServerLoad" value="60" />
+	   
+       <!--处理线程数量 未启用-->
+       <item key="ThreadNum" value="5" />	   
+       
+       <!--日志是否输出订阅管理列表，测试使用，打开会程序影响性能-->
+       <item key="PrintSubUserList" value="1" />
+    </communication>
+</sdk>

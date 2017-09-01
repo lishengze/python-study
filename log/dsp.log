@@ -1,0 +1,631 @@
+6308   ERROR [08-31 10:00:42.676][QtAPI.cpp:161] GTA::QtAPI::QtLogin: USR/PWD Invalid! https://upmsapi.gtarsc.com:443/api/user/login?name=hello1&password=123456&mac=93-E4-1C-6E-20-91&applicationMark=12: {"status":2,"messagecode":33619980,"message":"用户名或者密码验证错误！"} 
+6308   ERROR [08-31 10:00:42.676][QtAPI.cpp:180] GTA::QtAPI::QtLogin: Invalid usr/pwd! 
+9336   INFO  [08-31 10:02:55.239][QtAPI.cpp:77] QtAPI: Started! 
+9336   FATAL [08-31 10:02:55.239][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9336   INFO  [08-31 10:02:56.279][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+9336   INFO  [08-31 10:02:56.279][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+9336   INFO  [08-31 10:02:56.477][QtAPI.cpp:139] OnAuthChanged Started! 
+9336   INFO  [08-31 10:02:56.477][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9336   INFO  [08-31 10:02:56.544][QuoteAPI.cpp:1249] GTA::QtAPI::GetExchanges: success! 
+9336   INFO  [08-31 10:02:56.586][QuoteAPI.cpp:1252] GTA::QtAPI::GetExchanges: finished! 
+9336   INFO  [08-31 10:02:56.683][QuoteAPI.cpp:1290] GTA::QtAPI::GetTradeTypes: success! 
+9336   INFO  [08-31 10:02:56.719][QuoteAPI.cpp:1293] GTA::QtAPI::GetTradeTypes: finished! 
+9336   INFO  [08-31 10:02:56.787][QuoteAPI.cpp:1331] GTA::QtAPI::GetTradeCalendar: success! 
+9336   INFO  [08-31 10:02:56.824][QuoteAPI.cpp:1334] GTA::QtAPI::GetTradeCalendar: finished! 
+9336   INFO  [08-31 10:02:57.387][QuoteAPI.cpp:1908] GTA::QtAPI::GetSnapData: success! 
+9336   INFO  [08-31 10:02:57.443][QuoteAPI.cpp:1911] GTA::QtAPI::GetSnapData: finished! 
+9336   INFO  [08-31 10:02:57.611][QuoteAPI.cpp:1376] GTA::QtAPI::GetPlates: success! 
+9336   INFO  [08-31 10:02:57.658][QuoteAPI.cpp:1379] GTA::QtAPI::GetPlates: finished! 
+9336   INFO  [08-31 10:02:58.411][QuoteAPI.cpp:1421] GTA::QtAPI::GetRelatedPlates: success! 
+9336   INFO  [08-31 10:02:58.473][QuoteAPI.cpp:1425] GTA::QtAPI::GetRelatedPlates: finished! 
+9336   INFO  [08-31 10:03:00.126][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+9336   INFO  [08-31 10:03:00.179][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+9336   INFO  [08-31 10:03:00.724][QuoteAPI.cpp:1520] GTA::QtAPI::GetSecurityInfo: success! 
+9336   INFO  [08-31 10:03:00.771][QuoteAPI.cpp:1524] GTA::QtAPI::GetSecurityInfo: finished! 
+9336   INFO  [08-31 10:03:01.361][QuoteAPI.cpp:1569] GTA::QtAPI::GetSecurityCurInfo: success! 
+9336   INFO  [08-31 10:03:01.423][QuoteAPI.cpp:1572] GTA::QtAPI::GetSecurityCurInfo: finished! 
+9336   INFO  [08-31 10:03:04.160][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+9336   INFO  [08-31 10:03:04.195][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+9336   INFO  [08-31 10:03:04.534][QuoteAPI.cpp:1672] GTA::QtAPI::GetDataByCount: success! 
+9336   INFO  [08-31 10:03:04.581][QuoteAPI.cpp:1675] GTA::QtAPI::GetDataByCount: finished! 
+9336   INFO  [08-31 10:03:06.889][QuoteAPI.cpp:1958] GTA::QtAPI::GetFinance: success! 
+9336   INFO  [08-31 10:03:06.935][QuoteAPI.cpp:1961] GTA::QtAPI::GetFinance: finished! 
+9336   INFO  [08-31 10:03:08.405][QuoteAPI.cpp:2005] GTA::QtAPI::GetFactor: success! 
+9336   INFO  [08-31 10:03:08.452][QuoteAPI.cpp:2008] GTA::QtAPI::GetFactor: finished! 
+9336   INFO  [08-31 10:03:08.916][QuoteAPI.cpp:2053] GTA::QtAPI::GetHisMarketInfo: success! 
+9336   INFO  [08-31 10:03:08.980][QuoteAPI.cpp:2056] GTA::QtAPI::GetHisMarketInfo: finished! 
+9336   INFO  [08-31 10:03:09.619][QuoteAPI.cpp:2097] GTA::QtAPI::GetJointContracts: success! 
+9336   INFO  [08-31 10:03:09.666][QuoteAPI.cpp:2100] GTA::QtAPI::GetJointContracts: finished! 
+9336   INFO  [08-31 10:03:09.682][Subscribe.cpp:176] GTA::QtAPI::RegSubQuoteCB: success! 
+9336   ERROR [08-31 10:03:09.682][QuoteAPI.cpp:938] GTA::QtAPI::Subscribe:  don't have tick_auth 
+8040   INFO  [08-31 10:40:13.953][QtAPI.cpp:77] QtAPI: Started! 
+8040   FATAL [08-31 10:40:13.953][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8040   INFO  [08-31 10:40:26.672][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8040   INFO  [08-31 10:40:26.672][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8040   INFO  [08-31 10:40:26.852][QtAPI.cpp:139] OnAuthChanged Started! 
+8040   INFO  [08-31 10:40:26.852][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8040   INFO  [08-31 10:40:26.923][QuoteAPI.cpp:1249] GTA::QtAPI::GetExchanges: success! 
+8040   INFO  [08-31 10:40:26.962][QuoteAPI.cpp:1252] GTA::QtAPI::GetExchanges: finished! 
+8040   INFO  [08-31 10:40:27.061][QuoteAPI.cpp:1290] GTA::QtAPI::GetTradeTypes: success! 
+8040   INFO  [08-31 10:40:27.111][QuoteAPI.cpp:1293] GTA::QtAPI::GetTradeTypes: finished! 
+8040   INFO  [08-31 10:40:27.170][QuoteAPI.cpp:1331] GTA::QtAPI::GetTradeCalendar: success! 
+8040   INFO  [08-31 10:40:27.231][QuoteAPI.cpp:1334] GTA::QtAPI::GetTradeCalendar: finished! 
+8040   INFO  [08-31 10:40:27.712][QuoteAPI.cpp:1908] GTA::QtAPI::GetSnapData: success! 
+8040   INFO  [08-31 10:40:27.759][QuoteAPI.cpp:1911] GTA::QtAPI::GetSnapData: finished! 
+8040   INFO  [08-31 10:40:27.889][QuoteAPI.cpp:1376] GTA::QtAPI::GetPlates: success! 
+8040   INFO  [08-31 10:40:27.936][QuoteAPI.cpp:1379] GTA::QtAPI::GetPlates: finished! 
+8040   INFO  [08-31 10:40:28.550][QuoteAPI.cpp:1421] GTA::QtAPI::GetRelatedPlates: success! 
+8040   INFO  [08-31 10:40:28.615][QuoteAPI.cpp:1425] GTA::QtAPI::GetRelatedPlates: finished! 
+8040   INFO  [08-31 10:40:29.386][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+8040   INFO  [08-31 10:40:29.433][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+8040   INFO  [08-31 10:40:29.991][QuoteAPI.cpp:1520] GTA::QtAPI::GetSecurityInfo: success! 
+8040   INFO  [08-31 10:40:30.048][QuoteAPI.cpp:1524] GTA::QtAPI::GetSecurityInfo: finished! 
+8040   INFO  [08-31 10:40:30.712][QuoteAPI.cpp:1569] GTA::QtAPI::GetSecurityCurInfo: success! 
+8040   INFO  [08-31 10:40:30.760][QuoteAPI.cpp:1572] GTA::QtAPI::GetSecurityCurInfo: finished! 
+8040   INFO  [08-31 10:40:31.658][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8040   INFO  [08-31 10:40:31.706][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8040   INFO  [08-31 10:40:32.075][QuoteAPI.cpp:1672] GTA::QtAPI::GetDataByCount: success! 
+8040   INFO  [08-31 10:40:32.123][QuoteAPI.cpp:1675] GTA::QtAPI::GetDataByCount: finished! 
+8040   INFO  [08-31 10:40:34.306][QuoteAPI.cpp:1958] GTA::QtAPI::GetFinance: success! 
+8040   INFO  [08-31 10:40:34.351][QuoteAPI.cpp:1961] GTA::QtAPI::GetFinance: finished! 
+8040   INFO  [08-31 10:40:35.084][QuoteAPI.cpp:2005] GTA::QtAPI::GetFactor: success! 
+8040   INFO  [08-31 10:40:35.128][QuoteAPI.cpp:2008] GTA::QtAPI::GetFactor: finished! 
+8040   INFO  [08-31 10:40:35.658][QuoteAPI.cpp:2053] GTA::QtAPI::GetHisMarketInfo: success! 
+8040   INFO  [08-31 10:40:35.705][QuoteAPI.cpp:2056] GTA::QtAPI::GetHisMarketInfo: finished! 
+8040   INFO  [08-31 10:40:36.327][QuoteAPI.cpp:2097] GTA::QtAPI::GetJointContracts: success! 
+8040   INFO  [08-31 10:40:36.374][QuoteAPI.cpp:2100] GTA::QtAPI::GetJointContracts: finished! 
+8040   ERROR [08-31 10:40:36.464][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+4148   INFO  [08-31 11:27:45.375][QtAPI.cpp:77] QtAPI: Started! 
+4148   FATAL [08-31 11:27:45.375][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+4148   INFO  [08-31 11:27:59.639][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+4148   INFO  [08-31 11:27:59.639][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+4148   INFO  [08-31 11:27:59.847][QtAPI.cpp:139] OnAuthChanged Started! 
+4148   INFO  [08-31 11:27:59.847][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+4148   INFO  [08-31 11:27:59.899][QuoteAPI.cpp:1249] GTA::QtAPI::GetExchanges: success! 
+4148   INFO  [08-31 11:27:59.941][QuoteAPI.cpp:1252] GTA::QtAPI::GetExchanges: finished! 
+4148   ERROR [08-31 11:28:00.022][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10520  INFO  [08-31 14:51:07.314][QtAPI.cpp:77] QtAPI: Started! 
+10520  FATAL [08-31 14:51:07.315][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10520  INFO  [08-31 14:51:23.430][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10520  INFO  [08-31 14:51:23.430][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10520  INFO  [08-31 14:51:23.609][QtAPI.cpp:139] OnAuthChanged Started! 
+10520  INFO  [08-31 14:51:23.609][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10520  INFO  [08-31 14:51:23.695][QuoteAPI.cpp:1331] GTA::QtAPI::GetTradeCalendar: success! 
+10520  INFO  [08-31 14:51:23.734][QuoteAPI.cpp:1334] GTA::QtAPI::GetTradeCalendar: finished! 
+10520  ERROR [08-31 14:51:23.849][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+5472   INFO  [08-31 15:09:02.927][QtAPI.cpp:77] QtAPI: Started! 
+5472   FATAL [08-31 15:09:02.928][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+5472   INFO  [08-31 15:09:07.437][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+5472   INFO  [08-31 15:09:07.437][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+5472   INFO  [08-31 15:09:07.636][QtAPI.cpp:139] OnAuthChanged Started! 
+5472   INFO  [08-31 15:09:07.637][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+5472   INFO  [08-31 15:09:07.928][QuoteAPI.cpp:1376] GTA::QtAPI::GetPlates: success! 
+5472   INFO  [08-31 15:09:07.984][QuoteAPI.cpp:1379] GTA::QtAPI::GetPlates: finished! 
+5472   ERROR [08-31 15:09:08.088][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+4588   INFO  [08-31 15:13:07.922][QtAPI.cpp:77] QtAPI: Started! 
+4588   FATAL [08-31 15:13:07.923][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+4588   INFO  [08-31 15:13:08.951][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+4588   INFO  [08-31 15:13:08.951][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+4588   INFO  [08-31 15:13:09.136][QtAPI.cpp:139] OnAuthChanged Started! 
+4588   INFO  [08-31 15:13:09.136][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+4588   INFO  [08-31 15:13:09.185][QuoteAPI.cpp:1249] GTA::QtAPI::GetExchanges: success! 
+4588   INFO  [08-31 15:13:09.224][QuoteAPI.cpp:1252] GTA::QtAPI::GetExchanges: finished! 
+4588   ERROR [08-31 15:13:09.303][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+8212   INFO  [08-31 15:29:42.555][QtAPI.cpp:77] QtAPI: Started! 
+8212   FATAL [08-31 15:29:42.556][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8212   INFO  [08-31 15:29:47.168][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8212   INFO  [08-31 15:29:47.168][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8212   INFO  [08-31 15:29:47.358][QtAPI.cpp:139] OnAuthChanged Started! 
+8212   INFO  [08-31 15:29:47.359][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8212   INFO  [08-31 15:29:47.417][QuoteAPI.cpp:1249] GTA::QtAPI::GetExchanges: success! 
+8212   INFO  [08-31 15:29:47.469][QuoteAPI.cpp:1252] GTA::QtAPI::GetExchanges: finished! 
+8212   ERROR [08-31 15:29:47.545][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10472  INFO  [08-31 15:30:11.750][QtAPI.cpp:77] QtAPI: Started! 
+10472  FATAL [08-31 15:30:11.751][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10472  INFO  [08-31 15:30:12.815][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10472  INFO  [08-31 15:30:12.815][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10472  INFO  [08-31 15:30:12.996][QtAPI.cpp:139] OnAuthChanged Started! 
+10472  INFO  [08-31 15:30:12.996][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10472  INFO  [08-31 15:30:13.088][QuoteAPI.cpp:1376] GTA::QtAPI::GetPlates: success! 
+10472  INFO  [08-31 15:30:13.132][QuoteAPI.cpp:1379] GTA::QtAPI::GetPlates: finished! 
+10472  ERROR [08-31 15:30:13.227][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10704  INFO  [08-31 15:38:32.732][QtAPI.cpp:77] QtAPI: Started! 
+10704  FATAL [08-31 15:38:32.732][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10704  INFO  [08-31 15:38:33.759][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10704  INFO  [08-31 15:38:33.759][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10704  INFO  [08-31 15:38:33.934][QtAPI.cpp:139] OnAuthChanged Started! 
+10704  INFO  [08-31 15:38:33.934][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10704  INFO  [08-31 15:38:35.735][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+10704  INFO  [08-31 15:38:35.783][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+10704  ERROR [08-31 15:38:35.887][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10408  INFO  [08-31 15:47:33.347][QtAPI.cpp:77] QtAPI: Started! 
+10408  FATAL [08-31 15:47:33.348][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10408  INFO  [08-31 15:47:43.857][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10408  INFO  [08-31 15:47:43.857][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10408  INFO  [08-31 15:47:44.083][QtAPI.cpp:139] OnAuthChanged Started! 
+10408  INFO  [08-31 15:47:44.083][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10408  INFO  [08-31 15:48:35.134][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10408  INFO  [08-31 15:48:35.178][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+1276   INFO  [08-31 15:49:21.069][QtAPI.cpp:77] QtAPI: Started! 
+1276   FATAL [08-31 15:49:21.070][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+1276   INFO  [08-31 15:49:22.106][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+1276   INFO  [08-31 15:49:22.106][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+1276   INFO  [08-31 15:49:22.323][QtAPI.cpp:139] OnAuthChanged Started! 
+1276   INFO  [08-31 15:49:22.324][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+1276   INFO  [08-31 15:49:23.158][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+1276   INFO  [08-31 15:49:23.204][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+1276   ERROR [08-31 15:49:23.280][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10556  INFO  [08-31 15:52:09.324][QtAPI.cpp:77] QtAPI: Started! 
+10556  FATAL [08-31 15:52:09.325][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10556  INFO  [08-31 15:52:10.423][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10556  INFO  [08-31 15:52:10.424][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10556  INFO  [08-31 15:52:10.605][QtAPI.cpp:139] OnAuthChanged Started! 
+10556  INFO  [08-31 15:52:10.606][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10556  INFO  [08-31 15:52:11.088][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10556  INFO  [08-31 15:52:11.140][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10556  ERROR [08-31 15:52:11.251][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+3276   INFO  [08-31 15:52:49.026][QtAPI.cpp:77] QtAPI: Started! 
+3276   FATAL [08-31 15:52:49.026][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+3276   INFO  [08-31 15:52:50.163][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+3276   INFO  [08-31 15:52:50.163][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+3276   INFO  [08-31 15:52:50.343][QtAPI.cpp:139] OnAuthChanged Started! 
+3276   INFO  [08-31 15:52:50.343][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+3276   INFO  [08-31 15:52:50.809][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+3276   INFO  [08-31 15:52:50.865][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+3276   ERROR [08-31 15:52:50.937][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10008  INFO  [08-31 16:18:13.810][QtAPI.cpp:77] QtAPI: Started! 
+10008  FATAL [08-31 16:18:13.810][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10008  INFO  [08-31 16:18:15.088][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10008  INFO  [08-31 16:18:15.088][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10008  INFO  [08-31 16:18:15.306][QtAPI.cpp:139] OnAuthChanged Started! 
+10008  INFO  [08-31 16:18:15.306][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10008  INFO  [08-31 16:18:16.250][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+10008  INFO  [08-31 16:18:16.293][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+3296   INFO  [08-31 16:19:20.687][QtAPI.cpp:77] QtAPI: Started! 
+3296   FATAL [08-31 16:19:20.687][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+3296   INFO  [08-31 16:19:21.808][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+3296   INFO  [08-31 16:19:21.808][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+3296   INFO  [08-31 16:19:21.982][QtAPI.cpp:139] OnAuthChanged Started! 
+3296   INFO  [08-31 16:19:21.982][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+3296   INFO  [08-31 16:19:22.868][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+3296   INFO  [08-31 16:19:22.915][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+3296   ERROR [08-31 16:19:23.004][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11392  INFO  [08-31 16:24:36.234][QtAPI.cpp:77] QtAPI: Started! 
+11392  FATAL [08-31 16:24:36.234][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11392  INFO  [08-31 16:24:37.345][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+11392  INFO  [08-31 16:24:37.345][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+11392  INFO  [08-31 16:24:37.524][QtAPI.cpp:139] OnAuthChanged Started! 
+11392  INFO  [08-31 16:24:37.524][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11392  INFO  [08-31 16:24:38.449][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+11392  INFO  [08-31 16:24:38.492][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+11392  ERROR [08-31 16:24:38.573][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10872  INFO  [08-31 16:24:47.695][QtAPI.cpp:77] QtAPI: Started! 
+10872  FATAL [08-31 16:24:47.696][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10872  INFO  [08-31 16:24:48.823][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10872  INFO  [08-31 16:24:48.823][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10872  INFO  [08-31 16:24:48.993][QtAPI.cpp:139] OnAuthChanged Started! 
+10872  INFO  [08-31 16:24:48.993][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10872  INFO  [08-31 16:24:51.106][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+10872  INFO  [08-31 16:24:51.153][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+7672   INFO  [08-31 16:25:36.806][QtAPI.cpp:77] QtAPI: Started! 
+7672   FATAL [08-31 16:25:36.807][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+7672   INFO  [08-31 16:25:37.946][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+7672   INFO  [08-31 16:25:37.946][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+7672   INFO  [08-31 16:25:38.120][QtAPI.cpp:139] OnAuthChanged Started! 
+7672   INFO  [08-31 16:25:38.120][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+7672   INFO  [08-31 16:25:39.038][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+7672   INFO  [08-31 16:25:39.094][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+7528   INFO  [08-31 16:26:17.334][QtAPI.cpp:77] QtAPI: Started! 
+7528   FATAL [08-31 16:26:17.335][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+7528   INFO  [08-31 16:26:18.453][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+7528   INFO  [08-31 16:26:18.453][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+7528   INFO  [08-31 16:26:18.623][QtAPI.cpp:139] OnAuthChanged Started! 
+7528   INFO  [08-31 16:26:18.623][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+7528   INFO  [08-31 16:26:19.402][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+7528   INFO  [08-31 16:26:19.450][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+7528   ERROR [08-31 16:26:19.529][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+8868   INFO  [08-31 16:27:55.367][QtAPI.cpp:77] QtAPI: Started! 
+8868   FATAL [08-31 16:27:55.368][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8868   INFO  [08-31 16:27:56.487][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8868   INFO  [08-31 16:27:56.487][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8868   INFO  [08-31 16:27:56.667][QtAPI.cpp:139] OnAuthChanged Started! 
+8868   INFO  [08-31 16:27:56.667][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8868   INFO  [08-31 16:27:57.421][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+8868   INFO  [08-31 16:27:57.462][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+8868   ERROR [08-31 16:27:57.543][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+5504   INFO  [08-31 16:30:39.371][QtAPI.cpp:77] QtAPI: Started! 
+5504   FATAL [08-31 16:30:39.371][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+5504   INFO  [08-31 16:30:40.538][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+5504   INFO  [08-31 16:30:40.538][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+5504   INFO  [08-31 16:30:40.767][QtAPI.cpp:139] OnAuthChanged Started! 
+5504   INFO  [08-31 16:30:40.767][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+5504   INFO  [08-31 16:30:41.378][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+5504   INFO  [08-31 16:30:41.426][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+5504   ERROR [08-31 16:30:41.508][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11944  INFO  [08-31 16:30:52.555][QtAPI.cpp:77] QtAPI: Started! 
+11944  FATAL [08-31 16:30:52.556][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11944  INFO  [08-31 16:30:53.699][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+11944  INFO  [08-31 16:30:53.699][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+11944  INFO  [08-31 16:30:53.914][QtAPI.cpp:139] OnAuthChanged Started! 
+11944  INFO  [08-31 16:30:53.914][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11944  INFO  [08-31 16:30:54.917][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+11944  INFO  [08-31 16:30:54.963][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+10792  INFO  [08-31 16:31:20.994][QtAPI.cpp:77] QtAPI: Started! 
+10792  FATAL [08-31 16:31:20.995][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10792  INFO  [08-31 16:31:22.123][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10792  INFO  [08-31 16:31:22.124][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10792  INFO  [08-31 16:31:22.349][QtAPI.cpp:139] OnAuthChanged Started! 
+10792  INFO  [08-31 16:31:22.349][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10792  INFO  [08-31 16:31:22.988][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+10792  INFO  [08-31 16:31:23.036][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+8000   INFO  [08-31 16:32:55.744][QtAPI.cpp:77] QtAPI: Started! 
+8000   FATAL [08-31 16:32:55.745][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8000   INFO  [08-31 16:32:56.837][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8000   INFO  [08-31 16:32:56.838][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8000   INFO  [08-31 16:32:57.043][QtAPI.cpp:139] OnAuthChanged Started! 
+8000   INFO  [08-31 16:32:57.043][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8000   INFO  [08-31 16:32:57.910][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+8000   INFO  [08-31 16:32:57.966][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+8000   INFO  [08-31 16:32:58.639][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8000   INFO  [08-31 16:32:58.687][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8000   ERROR [08-31 16:32:58.824][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+7944   INFO  [08-31 16:37:04.881][QtAPI.cpp:77] QtAPI: Started! 
+7944   FATAL [08-31 16:37:04.882][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+7944   INFO  [08-31 16:37:06.014][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+7944   INFO  [08-31 16:37:06.014][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+7944   INFO  [08-31 16:37:06.204][QtAPI.cpp:139] OnAuthChanged Started! 
+7944   INFO  [08-31 16:37:06.205][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+7944   INFO  [08-31 16:37:07.037][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+7944   INFO  [08-31 16:37:07.085][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+7944   ERROR [08-31 16:37:07.167][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11944  INFO  [08-31 16:37:59.304][QtAPI.cpp:77] QtAPI: Started! 
+11944  FATAL [08-31 16:37:59.305][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11944  INFO  [08-31 16:38:00.374][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+11944  INFO  [08-31 16:38:00.374][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+11944  INFO  [08-31 16:38:00.599][QtAPI.cpp:139] OnAuthChanged Started! 
+11944  INFO  [08-31 16:38:00.599][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11944  INFO  [08-31 16:38:02.334][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+11944  INFO  [08-31 16:38:02.390][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+11944  ERROR [08-31 16:38:02.471][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+8344   INFO  [08-31 16:44:23.372][QtAPI.cpp:77] QtAPI: Started! 
+8344   FATAL [08-31 16:44:23.373][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8344   INFO  [08-31 16:44:24.465][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8344   INFO  [08-31 16:44:24.465][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8344   INFO  [08-31 16:44:24.689][QtAPI.cpp:139] OnAuthChanged Started! 
+8344   INFO  [08-31 16:44:24.689][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8344   INFO  [08-31 16:44:25.546][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+8344   INFO  [08-31 16:44:25.593][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+8620   INFO  [08-31 16:45:24.834][QtAPI.cpp:77] QtAPI: Started! 
+8620   FATAL [08-31 16:45:24.835][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8620   INFO  [08-31 16:45:26.079][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8620   INFO  [08-31 16:45:26.079][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8620   INFO  [08-31 16:45:26.293][QtAPI.cpp:139] OnAuthChanged Started! 
+8620   INFO  [08-31 16:45:26.293][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8620   INFO  [08-31 16:45:26.887][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+8620   INFO  [08-31 16:45:26.933][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+8620   ERROR [08-31 16:45:27.020][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+3428   INFO  [08-31 16:48:14.391][QtAPI.cpp:77] QtAPI: Started! 
+3428   FATAL [08-31 16:48:14.392][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+3428   INFO  [08-31 16:48:15.487][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+3428   INFO  [08-31 16:48:15.487][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+3428   INFO  [08-31 16:48:15.662][QtAPI.cpp:139] OnAuthChanged Started! 
+3428   INFO  [08-31 16:48:15.662][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+3428   INFO  [08-31 16:48:16.534][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+3428   INFO  [08-31 16:48:16.590][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+3428   ERROR [08-31 16:48:16.671][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+1476   INFO  [08-31 16:49:05.419][QtAPI.cpp:77] QtAPI: Started! 
+1476   FATAL [08-31 16:49:05.419][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+1476   INFO  [08-31 16:49:06.552][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+1476   INFO  [08-31 16:49:06.552][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+1476   INFO  [08-31 16:49:06.727][QtAPI.cpp:139] OnAuthChanged Started! 
+1476   INFO  [08-31 16:49:06.727][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+1476   INFO  [08-31 16:49:07.380][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+1476   INFO  [08-31 16:49:07.427][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+1476   ERROR [08-31 16:49:07.508][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11320  INFO  [08-31 16:49:51.503][QtAPI.cpp:77] QtAPI: Started! 
+11320  FATAL [08-31 16:49:51.504][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11320  INFO  [08-31 16:49:52.612][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+11320  INFO  [08-31 16:49:52.612][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+11320  INFO  [08-31 16:49:52.783][QtAPI.cpp:139] OnAuthChanged Started! 
+11320  INFO  [08-31 16:49:52.783][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11320  INFO  [08-31 16:49:53.576][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+11320  INFO  [08-31 16:49:53.623][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+11320  ERROR [08-31 16:49:53.705][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+8832   INFO  [08-31 16:50:13.883][QtAPI.cpp:77] QtAPI: Started! 
+8832   FATAL [08-31 16:50:13.883][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8832   INFO  [08-31 16:50:15.017][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8832   INFO  [08-31 16:50:15.017][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8832   INFO  [08-31 16:50:15.196][QtAPI.cpp:139] OnAuthChanged Started! 
+8832   INFO  [08-31 16:50:15.196][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8832   INFO  [08-31 16:50:15.799][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+8832   INFO  [08-31 16:50:15.857][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+8832   ERROR [08-31 16:50:15.940][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+8608   INFO  [08-31 16:51:31.535][QtAPI.cpp:77] QtAPI: Started! 
+8608   FATAL [08-31 16:51:31.536][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8608   INFO  [08-31 16:51:32.651][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8608   INFO  [08-31 16:51:32.651][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8608   INFO  [08-31 16:51:34.342][QtAPI.cpp:139] OnAuthChanged Started! 
+8608   INFO  [08-31 16:51:34.342][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8608   INFO  [08-31 16:51:35.248][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+8608   INFO  [08-31 16:51:35.294][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+8428   INFO  [08-31 17:30:03.701][QtAPI.cpp:77] QtAPI: Started! 
+8428   FATAL [08-31 17:30:03.702][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8428   INFO  [08-31 17:30:06.272][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8428   INFO  [08-31 17:30:06.272][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8428   INFO  [08-31 17:30:06.453][QtAPI.cpp:139] OnAuthChanged Started! 
+8428   INFO  [08-31 17:30:06.454][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8428   INFO  [08-31 17:30:08.255][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+8428   INFO  [08-31 17:30:08.303][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+6504   INFO  [08-31 17:32:51.789][QtAPI.cpp:77] QtAPI: Started! 
+6504   FATAL [08-31 17:32:51.790][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+6504   INFO  [08-31 17:32:52.931][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+6504   INFO  [08-31 17:32:52.931][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+6504   INFO  [08-31 17:32:53.148][QtAPI.cpp:139] OnAuthChanged Started! 
+6504   INFO  [08-31 17:32:53.148][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+6504   INFO  [08-31 17:32:54.179][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+6504   INFO  [08-31 17:32:54.228][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+4144   INFO  [08-31 17:33:49.711][QtAPI.cpp:77] QtAPI: Started! 
+4144   FATAL [08-31 17:33:49.712][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+4144   INFO  [08-31 17:33:50.877][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+4144   INFO  [08-31 17:33:50.877][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+4144   INFO  [08-31 17:33:51.104][QtAPI.cpp:139] OnAuthChanged Started! 
+4144   INFO  [08-31 17:33:51.104][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+4144   INFO  [08-31 17:33:52.294][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+4144   INFO  [08-31 17:33:52.342][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+488    INFO  [08-31 17:34:30.882][QtAPI.cpp:77] QtAPI: Started! 
+488    FATAL [08-31 17:34:30.883][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+488    INFO  [08-31 17:34:32.051][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+488    INFO  [08-31 17:34:32.051][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+488    INFO  [08-31 17:34:32.226][QtAPI.cpp:139] OnAuthChanged Started! 
+488    INFO  [08-31 17:34:32.226][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+488    INFO  [08-31 17:34:33.405][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+488    INFO  [08-31 17:34:33.464][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+12216  INFO  [08-31 17:35:19.639][QtAPI.cpp:77] QtAPI: Started! 
+12216  FATAL [08-31 17:35:19.639][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+12216  INFO  [08-31 17:35:20.792][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+12216  INFO  [08-31 17:35:20.793][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+12216  INFO  [08-31 17:35:20.965][QtAPI.cpp:139] OnAuthChanged Started! 
+12216  INFO  [08-31 17:35:20.965][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+12216  INFO  [08-31 17:35:21.889][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+12216  INFO  [08-31 17:35:21.936][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+10288  INFO  [08-31 17:35:36.040][QtAPI.cpp:77] QtAPI: Started! 
+10288  FATAL [08-31 17:35:36.041][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10288  INFO  [08-31 17:35:37.228][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10288  INFO  [08-31 17:35:37.228][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10288  INFO  [08-31 17:35:37.451][QtAPI.cpp:139] OnAuthChanged Started! 
+10288  INFO  [08-31 17:35:37.451][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10288  INFO  [08-31 17:35:38.097][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+10288  INFO  [08-31 17:35:38.145][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+6444   INFO  [08-31 17:48:37.368][QtAPI.cpp:77] QtAPI: Started! 
+6444   FATAL [08-31 17:48:37.369][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+6444   INFO  [08-31 17:48:38.531][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+6444   INFO  [08-31 17:48:38.531][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+6444   INFO  [08-31 17:48:38.721][QtAPI.cpp:139] OnAuthChanged Started! 
+6444   INFO  [08-31 17:48:38.721][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+6444   INFO  [08-31 17:48:39.602][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+6444   INFO  [08-31 17:48:39.660][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+6444   ERROR [08-31 17:48:39.741][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+5788   INFO  [08-31 17:52:28.885][QtAPI.cpp:77] QtAPI: Started! 
+5788   FATAL [08-31 17:52:28.886][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+5788   INFO  [08-31 17:52:30.029][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+5788   INFO  [08-31 17:52:30.029][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+5788   INFO  [08-31 17:52:30.201][QtAPI.cpp:139] OnAuthChanged Started! 
+5788   INFO  [08-31 17:52:30.202][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+5788   INFO  [08-31 17:52:31.140][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+5788   INFO  [08-31 17:52:31.185][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+5788   ERROR [08-31 17:52:31.266][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+3872   INFO  [08-31 17:57:05.303][QtAPI.cpp:77] QtAPI: Started! 
+3872   FATAL [08-31 17:57:05.304][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+3872   INFO  [08-31 17:57:06.411][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+3872   INFO  [08-31 17:57:06.411][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+3872   INFO  [08-31 17:57:06.581][QtAPI.cpp:139] OnAuthChanged Started! 
+3872   INFO  [08-31 17:57:06.581][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+3872   INFO  [08-31 17:57:07.463][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+3872   INFO  [08-31 17:57:07.511][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+12260  INFO  [08-31 17:59:10.059][QtAPI.cpp:77] QtAPI: Started! 
+12260  FATAL [08-31 17:59:10.060][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+12260  INFO  [08-31 17:59:11.206][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+12260  INFO  [08-31 17:59:11.206][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+12260  INFO  [08-31 17:59:11.423][QtAPI.cpp:139] OnAuthChanged Started! 
+12260  INFO  [08-31 17:59:11.424][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+12260  INFO  [08-31 17:59:12.571][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+12260  INFO  [08-31 17:59:12.625][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+12260  ERROR [08-31 17:59:12.706][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+9876   INFO  [08-31 18:00:13.300][QtAPI.cpp:77] QtAPI: Started! 
+9876   FATAL [08-31 18:00:13.301][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9876   INFO  [08-31 18:00:14.391][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+9876   INFO  [08-31 18:00:14.392][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+9876   INFO  [08-31 18:00:14.575][QtAPI.cpp:139] OnAuthChanged Started! 
+9876   INFO  [08-31 18:00:14.576][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9876   INFO  [08-31 18:00:15.514][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+9876   INFO  [08-31 18:00:15.570][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+9876   ERROR [08-31 18:00:15.658][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11628  INFO  [08-31 18:01:18.103][QtAPI.cpp:77] QtAPI: Started! 
+11628  FATAL [08-31 18:01:18.103][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11628  INFO  [08-31 18:01:19.234][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+11628  INFO  [08-31 18:01:19.234][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+11628  INFO  [08-31 18:01:19.407][QtAPI.cpp:139] OnAuthChanged Started! 
+11628  INFO  [08-31 18:01:19.407][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11628  INFO  [08-31 18:01:20.256][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+11628  INFO  [08-31 18:01:20.308][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+1308   INFO  [08-31 18:01:41.011][QtAPI.cpp:77] QtAPI: Started! 
+1308   FATAL [08-31 18:01:41.011][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+1308   INFO  [08-31 18:01:42.092][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+1308   INFO  [08-31 18:01:42.092][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+1308   INFO  [08-31 18:01:42.307][QtAPI.cpp:139] OnAuthChanged Started! 
+1308   INFO  [08-31 18:01:42.307][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+1308   INFO  [08-31 18:01:43.156][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+1308   INFO  [08-31 18:01:43.205][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+1308   ERROR [08-31 18:01:43.287][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+9144   INFO  [08-31 18:01:57.507][QtAPI.cpp:77] QtAPI: Started! 
+9144   FATAL [08-31 18:01:57.508][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9144   INFO  [08-31 18:01:58.622][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+9144   INFO  [08-31 18:01:58.622][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+9144   INFO  [08-31 18:01:58.851][QtAPI.cpp:139] OnAuthChanged Started! 
+9144   INFO  [08-31 18:01:58.852][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9144   INFO  [08-31 18:01:59.958][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+9144   INFO  [08-31 18:02:00.012][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+9144   ERROR [08-31 18:02:00.092][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10056  INFO  [08-31 18:04:15.954][QtAPI.cpp:77] QtAPI: Started! 
+10056  FATAL [08-31 18:04:15.954][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10056  INFO  [08-31 18:04:17.026][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10056  INFO  [08-31 18:04:17.027][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10056  INFO  [08-31 18:04:17.198][QtAPI.cpp:139] OnAuthChanged Started! 
+10056  INFO  [08-31 18:04:17.198][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10056  INFO  [08-31 18:04:18.230][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+10056  INFO  [08-31 18:04:18.277][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+10056  INFO  [08-31 18:04:19.417][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10056  INFO  [08-31 18:04:19.461][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10056  ERROR [08-31 18:04:19.563][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10392  INFO  [08-31 18:05:07.646][QtAPI.cpp:77] QtAPI: Started! 
+10392  FATAL [08-31 18:05:07.646][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10392  INFO  [08-31 18:05:08.762][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10392  INFO  [08-31 18:05:08.762][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10392  INFO  [08-31 18:05:08.936][QtAPI.cpp:139] OnAuthChanged Started! 
+10392  INFO  [08-31 18:05:08.936][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10392  INFO  [08-31 18:05:09.980][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+10392  INFO  [08-31 18:05:10.037][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+10392  INFO  [08-31 18:05:11.285][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10392  INFO  [08-31 18:05:11.338][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10392  ERROR [08-31 18:05:11.440][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10480  INFO  [08-31 18:23:04.388][QtAPI.cpp:77] QtAPI: Started! 
+10480  FATAL [08-31 18:23:04.389][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10480  INFO  [08-31 18:23:08.910][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10480  INFO  [08-31 18:23:08.911][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10480  INFO  [08-31 18:23:09.130][QtAPI.cpp:139] OnAuthChanged Started! 
+10480  INFO  [08-31 18:23:09.131][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10480  INFO  [08-31 18:23:10.101][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+10480  INFO  [08-31 18:23:10.147][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+10480  INFO  [08-31 18:23:11.298][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10480  INFO  [08-31 18:23:11.342][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10480  ERROR [08-31 18:23:11.422][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11228  INFO  [08-31 18:35:20.356][QtAPI.cpp:77] QtAPI: Started! 
+11228  FATAL [08-31 18:35:20.357][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11228  INFO  [08-31 18:35:21.419][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+11228  INFO  [08-31 18:35:21.420][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+11228  INFO  [08-31 18:35:21.604][QtAPI.cpp:139] OnAuthChanged Started! 
+11228  INFO  [08-31 18:35:21.604][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11228  INFO  [08-31 18:35:22.565][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+11228  INFO  [08-31 18:35:22.622][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+10616  INFO  [08-31 18:36:33.105][QtAPI.cpp:77] QtAPI: Started! 
+10616  FATAL [08-31 18:36:33.106][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10616  INFO  [08-31 18:36:34.225][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+10616  INFO  [08-31 18:36:34.225][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+10616  INFO  [08-31 18:36:34.396][QtAPI.cpp:139] OnAuthChanged Started! 
+10616  INFO  [08-31 18:36:34.396][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10616  INFO  [08-31 18:36:35.517][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+10616  INFO  [08-31 18:36:35.561][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+10616  INFO  [08-31 18:36:36.099][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:36.157][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  INFO  [08-31 18:36:36.638][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:36.681][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  INFO  [08-31 18:36:37.138][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:37.185][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  INFO  [08-31 18:36:37.654][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:37.707][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  INFO  [08-31 18:36:38.128][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:38.183][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  INFO  [08-31 18:36:38.752][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:38.795][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  INFO  [08-31 18:36:39.243][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:39.297][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  INFO  [08-31 18:36:39.795][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:39.838][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  INFO  [08-31 18:36:40.305][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:40.351][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  INFO  [08-31 18:36:40.723][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+10616  INFO  [08-31 18:36:41.074][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+10616  ERROR [08-31 18:36:41.146][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+8544   INFO  [08-31 18:37:00.124][QtAPI.cpp:77] QtAPI: Started! 
+8544   FATAL [08-31 18:37:00.124][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8544   INFO  [08-31 18:37:01.222][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8544   INFO  [08-31 18:37:01.222][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8544   INFO  [08-31 18:37:01.404][QtAPI.cpp:139] OnAuthChanged Started! 
+8544   INFO  [08-31 18:37:01.404][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8544   INFO  [08-31 18:37:02.292][QuoteAPI.cpp:1470] GTA::QtAPI::GetPlateSymbols: success! 
+8544   INFO  [08-31 18:37:02.339][QuoteAPI.cpp:1473] GTA::QtAPI::GetPlateSymbols: finished! 
+8544   INFO  [08-31 18:37:03.572][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:03.616][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   INFO  [08-31 18:37:04.225][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:04.275][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   INFO  [08-31 18:37:04.759][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:04.803][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   INFO  [08-31 18:37:05.368][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:05.412][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   INFO  [08-31 18:37:05.896][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:05.938][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   INFO  [08-31 18:37:06.424][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:06.468][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   INFO  [08-31 18:37:07.063][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:07.117][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   INFO  [08-31 18:37:07.600][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:07.645][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   INFO  [08-31 18:37:08.201][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:08.242][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   INFO  [08-31 18:37:08.821][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+8544   INFO  [08-31 18:37:08.873][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+8544   ERROR [08-31 18:37:08.952][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+9412   INFO  [08-31 18:39:00.557][QtAPI.cpp:77] QtAPI: Started! 
+9412   FATAL [08-31 18:39:00.558][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9412   INFO  [08-31 18:39:01.677][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+9412   INFO  [08-31 18:39:01.677][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+9412   INFO  [08-31 18:39:01.882][QtAPI.cpp:139] OnAuthChanged Started! 
+9412   INFO  [08-31 18:39:01.882][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9412   INFO  [08-31 18:39:02.388][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
+9412   INFO  [08-31 18:39:02.439][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
+9412   ERROR [08-31 18:39:02.512][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11868  INFO  [09-01 10:03:36.088][QtAPI.cpp:77] QtAPI: Started! 
+11868  FATAL [09-01 10:03:36.089][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11868  INFO  [09-01 10:03:37.447][QtAPI.cpp:139] OnAuthChanged Started! 
+11868  INFO  [09-01 10:03:37.447][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11868  ERROR [09-01 10:03:37.448][QuoteAPI.cpp:1451] GTA::QtAPI::GetPlateSymbols: authority error! 
+10516  INFO  [09-01 10:04:39.094][QtAPI.cpp:77] QtAPI: Started! 
+10516  FATAL [09-01 10:04:39.100][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10516  INFO  [09-01 10:04:40.364][QtAPI.cpp:139] OnAuthChanged Started! 
+10516  INFO  [09-01 10:04:40.364][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10516  ERROR [09-01 10:04:40.365][QuoteAPI.cpp:1451] GTA::QtAPI::GetPlateSymbols: authority error! 
+11628  INFO  [09-01 10:05:16.411][QtAPI.cpp:77] QtAPI: Started! 
+11628  FATAL [09-01 10:05:16.412][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11628  INFO  [09-01 10:05:17.639][QtAPI.cpp:139] OnAuthChanged Started! 
+11628  INFO  [09-01 10:05:17.640][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11628  ERROR [09-01 10:05:17.641][QuoteAPI.cpp:1451] GTA::QtAPI::GetPlateSymbols: authority error! 
+11628  ERROR [09-01 10:05:17.707][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10108  INFO  [09-01 10:06:11.961][QtAPI.cpp:77] QtAPI: Started! 
+10108  FATAL [09-01 10:06:11.962][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10108  INFO  [09-01 10:06:13.185][QtAPI.cpp:139] OnAuthChanged Started! 
+10108  INFO  [09-01 10:06:13.185][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10108  INFO  [09-01 10:06:13.252][QuoteAPI.cpp:1249] GTA::QtAPI::GetExchanges: success! 
+10108  INFO  [09-01 10:06:13.299][QuoteAPI.cpp:1252] GTA::QtAPI::GetExchanges: finished! 
+10108  ERROR [09-01 10:06:13.371][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+9360   INFO  [09-01 10:07:23.686][QtAPI.cpp:77] QtAPI: Started! 
+9360   FATAL [09-01 10:07:23.686][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9360   INFO  [09-01 10:07:24.886][QtAPI.cpp:139] OnAuthChanged Started! 
+9360   INFO  [09-01 10:07:24.886][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9360   ERROR [09-01 10:07:24.886][QuoteAPI.cpp:1451] GTA::QtAPI::GetPlateSymbols: authority error! 
+9360   ERROR [09-01 10:07:24.953][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11072  INFO  [09-01 10:13:54.168][QtAPI.cpp:77] QtAPI: Started! 
+11072  FATAL [09-01 10:13:54.168][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11072  INFO  [09-01 10:13:55.472][QtAPI.cpp:139] OnAuthChanged Started! 
+11072  INFO  [09-01 10:13:55.472][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11072  ERROR [09-01 10:13:55.473][QuoteAPI.cpp:1599] GTA::QtAPI::GetDataByTime: authority error! 
+11072  ERROR [09-01 10:13:55.540][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+3828   INFO  [09-01 10:15:51.134][QtAPI.cpp:77] QtAPI: Started! 
+3828   FATAL [09-01 10:15:51.135][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+3828   INFO  [09-01 10:15:52.456][QtAPI.cpp:139] OnAuthChanged Started! 
+3828   INFO  [09-01 10:15:52.456][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+3828   INFO  [09-01 10:15:52.506][QuoteAPI.cpp:1331] GTA::QtAPI::GetTradeCalendar: success! 
+3828   INFO  [09-01 10:15:52.539][QuoteAPI.cpp:1334] GTA::QtAPI::GetTradeCalendar: finished! 
+3828   ERROR [09-01 10:15:52.612][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+9340   INFO  [09-01 10:16:15.102][QtAPI.cpp:77] QtAPI: Started! 
+9340   FATAL [09-01 10:16:15.103][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9340   INFO  [09-01 10:16:16.354][QtAPI.cpp:139] OnAuthChanged Started! 
+9340   INFO  [09-01 10:16:16.354][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9340   ERROR [09-01 10:16:16.355][QuoteAPI.cpp:1360] GTA::QtAPI::GetPlates: authority error! 
+9340   ERROR [09-01 10:16:16.424][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+9016   INFO  [09-01 10:16:47.080][QtAPI.cpp:77] QtAPI: Started! 
+9016   FATAL [09-01 10:16:47.081][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9016   INFO  [09-01 10:16:48.387][QtAPI.cpp:139] OnAuthChanged Started! 
+9016   INFO  [09-01 10:16:48.388][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9016   INFO  [09-01 10:16:48.436][QuoteAPI.cpp:1249] GTA::QtAPI::GetExchanges: success! 
+9016   INFO  [09-01 10:16:48.485][QuoteAPI.cpp:1252] GTA::QtAPI::GetExchanges: finished! 
+9016   ERROR [09-01 10:16:48.554][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
