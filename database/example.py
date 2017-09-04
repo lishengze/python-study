@@ -81,4 +81,5 @@ class MSSQL:
         tmp = cur.execute(sql)  
         self.conn.commit()  
         self.conn.close()  
+        # print tmp
         return tmp

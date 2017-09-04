@@ -1,10 +1,6 @@
 #coding=utf-8
 import threading
 from time import ctime,sleep
-from multiprocessing import cpu_count
-
-print 'cpu_count %d' %(cpu_count())
-
 
 def music(fileName):
     for i in range(2):
@@ -15,6 +11,7 @@ def move(fileName):
     for i in range(2):
         print "I was at the %s! %s" %(fileName,ctime())
         sleep(5)
+
 
 threads = []
 t1 = threading.Thread(target=music,args=(u'爱情买卖',))
