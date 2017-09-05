@@ -3,8 +3,9 @@ import os, pymssql
 from multiprocessing import cpu_count
 import datetime
 import threading
+import traceback
 
-from example import MSSQL 
+from example import MSSQL
 
 g_DatabaseObj = MSSQL();
 
@@ -23,14 +24,14 @@ class TestMSSQL(object):
         # print type(result[1])
         # print result[1][0], result[1][1]
 
-    def testInsert(self, databaseObj):    
+    def testInsert(self, databaseObj):
         TDate = 15
         secode = '000004'
         insertStr = "insert into [dbo].[ATestTable](TDATE, SECODE) values ("+ str(TDate) + ", \'"+ secode +"\')"
         # insertStr = "insert into [dbo].[ATestTable](TDATE, SECODE) values (14, '000003')"
         print insertStr
         insertRst = databaseObj.ExecStoreProduce(insertStr)
-        print insertRst    
+        print insertRst
 
     def testInsertFromTable(self, databaseObj):
         originDataTable = '[dbo].[SecodeInfo]'
@@ -38,13 +39,13 @@ class TestMSSQL(object):
 
         queryString = 'select SECODE, EXCHANGE from ' + originDataTable
         result = databaseObj.ExecQuery(queryString)
-        resultRows = len(result)
-        print 'result rows: ' + str(resultRows)
+        resultLens = len(result)
+        print 'result rows: ' + str(resultLens)
 
         starttime = datetime.datetime.now()
         print "Start Time: %s" %(starttime)
 
-        for i in range(0, resultRows):
+        for i in range(0, resultLens):
             secode = result[i][0]
             insertStr = "insert into "+ desDataTable + "(TDATE, SECODE) values ("+ str(i) + ", \'"+ secode +"\')"
             insertRst = databaseObj.ExecStoreProduce(insertStr)
@@ -54,41 +55,40 @@ class TestMSSQL(object):
         print "End Time: %s" %(endtime)
         print 'Single Thread Running Time: %d%s' %(deletaTime.seconds, "s")
 
-
-def InsertFromTable(databaseObj, desDataTable, result):    
-    print 'Insert To Table: ' + desDataTable
-    for i in range(0, len(result)):
-        secode = result[i][0]
-        insertStr = "insert into "+ desDataTable + "(TDATE, SECODE) values ("+ str(i) + ", \'"+ secode +"\')"
-        insertRst = databaseObj.ExecStoreProduce(insertStr)    
+def InsertFromTable(databaseObj, desDataTable, result):
+    try:
+        print 'Insert To Table: ' + desDataTable
+        for i in range(0, len(result)):
+            secode = result[i][0]
+            insertStr = "insert into "+ desDataTable + "(TDATE, SECODE) values ("+ str(i) + ", \'"+ secode +"\')"
+            insertRst = databaseObj.ExecStoreProduce(insertStr)
+    except:
+        traceback.print_exc()
 
 def TestMultiThreadInsert():
     originDataTable = '[dbo].[SecodeInfo]'
     queryString = 'select SECODE, EXCHANGE from ' + originDataTable
-    result = g_DatabaseObj.ExecQuery(queryString)    
+    result = g_DatabaseObj.ExecQuery(queryString)
 
-    resultRows = len(result)
-    numbInterval = len(result) / cpu_count()
+    resultLens = len(result)
     threadCount = cpu_count()
-    if len(result) % cpu_count() != 0:
-        threadCount = threadCount + 1
+    numbInterval = resultLens / cpu_count()
 
-    print 'resultRows: %d, numbInterval: %d, threadCount: %d' %(len(result), numbInterval, threadCount)
+    print 'resultLens: %d, numbInterval: %d, threadCount: %d' %(resultLens, numbInterval, threadCount)
 
     threads = [];
-    desDataTables = ["[dbo].[TestTable1]", "[dbo].[BTestTable2]"];
 
-    for i in range(0, threadCount):
+    for i in range(0, cpu_count() * 2):
         startIndex = i * numbInterval
         endIndex = min((i+1) * numbInterval, len(result))
-        print (startIndex, endIndex)
+        print (i, startIndex, endIndex)
         databaseObj = MSSQL();
         desDataTables = "[dbo].[ATestTable_"+ str(i) +"]"
         if databaseObj.VerifyConnection():
-            threads.append(threading.Thread(target=InsertFromTable, args=(databaseObj, desDataTables, result)))    
+            threads.append(threading.Thread(target=InsertFromTable, args=(databaseObj, desDataTables, result)))
 
     #     # tmp = threading.Thread(target=InsertFromTable, args=(result, startIndex, endIndex))
-    #     # threads.append(tmp)   
+    #     # threads.append(tmp)
 
     # for i in range(0, threadCount):
     #     databaseObj = MSSQL();
@@ -97,7 +97,7 @@ def TestMultiThreadInsert():
 
     starttime = datetime.datetime.now()
     print "Start Time: %s" %(starttime)
-
+    
     for thread in threads:
         thread.setDaemon(True)
         thread.start();
@@ -110,7 +110,7 @@ def TestMultiThreadInsert():
 
 def main():
     if g_TestSingleThread:
-        databaseObj = MSSQL()        
+        databaseObj = MSSQL()
         if databaseObj.VerifyConnection():
             testObj = TestMSSQL()
             # testObj.testQuery(databaseObj)
@@ -121,17 +121,17 @@ def main():
         TestMultiThreadInsert()
 
 def test():
-    conn=pymssql.connect(host='localhost',user='sa',password='sa',database='HistData')  
+    conn=pymssql.connect(host='localhost',user='sa',password='sa',database='HistData')
 
-    cur=conn.cursor()  
-    
-    cur.execute('select SECODE from [dbo].[SecodeInfo]')  
+    cur=conn.cursor()
 
-    print (cur.fetchall())  
-    
-    cur.close()  
-    
-    conn.close()      
+    cur.execute('select SECODE from [dbo].[SecodeInfo]')
+
+    print (cur.fetchall())
+
+    cur.close()
+
+    conn.close()
 
 if __name__ == "__main__":
     main()
