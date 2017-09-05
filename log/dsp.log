@@ -629,3 +629,51 @@
 9016   INFO  [09-01 10:16:48.436][QuoteAPI.cpp:1249] GTA::QtAPI::GetExchanges: success! 
 9016   INFO  [09-01 10:16:48.485][QuoteAPI.cpp:1252] GTA::QtAPI::GetExchanges: finished! 
 9016   ERROR [09-01 10:16:48.554][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+9020   INFO  [09-04 10:53:58.924][QtAPI.cpp:77] QtAPI: Started! 
+9020   FATAL [09-04 10:53:58.924][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9020   INFO  [09-04 10:54:04.558][QtAPI.cpp:139] OnAuthChanged Started! 
+9020   INFO  [09-04 10:54:04.558][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11004  INFO  [09-04 10:54:25.977][QtAPI.cpp:77] QtAPI: Started! 
+11004  FATAL [09-04 10:54:25.977][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11004  INFO  [09-04 10:54:30.062][QtAPI.cpp:139] OnAuthChanged Started! 
+11004  INFO  [09-04 10:54:30.062][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+2868   INFO  [09-04 10:55:39.226][QtAPI.cpp:77] QtAPI: Started! 
+2868   FATAL [09-04 10:55:39.226][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+2868   INFO  [09-04 10:55:43.328][QtAPI.cpp:139] OnAuthChanged Started! 
+2868   INFO  [09-04 10:55:43.328][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+2868   ERROR [09-04 10:55:46.413][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10584  INFO  [09-04 10:57:26.771][QtAPI.cpp:77] QtAPI: Started! 
+10584  FATAL [09-04 10:57:26.771][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+10584  INFO  [09-04 10:57:30.872][QtAPI.cpp:139] OnAuthChanged Started! 
+10584  INFO  [09-04 10:57:30.872][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10584  ERROR [09-04 10:57:33.956][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+6308   INFO  [09-04 10:58:26.752][QtAPI.cpp:77] QtAPI: Started! 
+6308   FATAL [09-04 10:58:26.753][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+6308   INFO  [09-04 10:58:30.914][QtAPI.cpp:139] OnAuthChanged Started! 
+6308   INFO  [09-04 10:58:30.914][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+6308   ERROR [09-04 10:58:34.000][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+9476   INFO  [09-04 12:46:09.496][QtAPI.cpp:77] QtAPI: Started! 
+9476   FATAL [09-04 12:46:09.496][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9476   INFO  [09-04 12:46:13.585][QtAPI.cpp:139] OnAuthChanged Started! 
+9476   INFO  [09-04 12:46:13.585][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9476   ERROR [09-04 12:46:16.669][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+8896   INFO  [09-04 13:01:34.731][QtAPI.cpp:77] QtAPI: Started! 
+8896   FATAL [09-04 13:01:34.731][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8896   INFO  [09-04 13:01:38.855][QtAPI.cpp:139] OnAuthChanged Started! 
+8896   INFO  [09-04 13:01:38.855][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8896   ERROR [09-04 13:01:41.910][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11704  INFO  [09-04 13:02:46.014][QtAPI.cpp:77] QtAPI: Started! 
+11704  FATAL [09-04 13:02:46.014][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+11704  INFO  [09-04 13:02:50.134][QtAPI.cpp:139] OnAuthChanged Started! 
+11704  INFO  [09-04 13:02:50.134][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+11704  ERROR [09-04 13:02:53.218][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+7660   INFO  [09-04 13:03:43.482][QtAPI.cpp:77] QtAPI: Started! 
+7660   FATAL [09-04 13:03:43.482][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+7660   INFO  [09-04 13:03:47.620][QtAPI.cpp:139] OnAuthChanged Started! 
+7660   INFO  [09-04 13:03:47.620][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+7660   ERROR [09-04 13:03:50.686][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+8572   INFO  [09-04 15:31:01.834][QtAPI.cpp:77] QtAPI: Started! 
+8572   FATAL [09-04 15:31:01.834][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8572   INFO  [09-04 15:31:07.501][QtAPI.cpp:139] OnAuthChanged Started! 
+8572   INFO  [09-04 15:31:07.501][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8572   ERROR [09-04 15:31:10.553][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
