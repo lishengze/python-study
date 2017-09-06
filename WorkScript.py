@@ -59,10 +59,12 @@ def ConvertStr(data):
     return data
 
 
-
+'''
+功能：将数据写入数据库
+'''
 def WriteToDataBase(databaseObj, desTableName, result):
     resultRows = len(result)
-    print 'result rows: ' + str(resultRows)
+    # print 'result rows: ' + str(resultRows)
 
     # starttime = datetime.datetime.now()
     # print "Start Time: %s" %(starttime)
@@ -76,7 +78,7 @@ def WriteToDataBase(databaseObj, desTableName, result):
                 + str(result.iloc[i, 9]) + ", " + str(result.iloc[i, 10])
 
         insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
-        print 'insertStr: %s'%(insertStr)
+        # print 'insertStr: %s'%(insertStr)
         insertRst = databaseObj.ExecStoreProduce(insertStr)
 
     # endtime = datetime.datetime.now()
@@ -90,6 +92,36 @@ def GetSecodeInfo():
     result = g_DatabaseObj.ExecQuery(queryString)
     return result
 
+'''
+作用： 从数据源读取每个证券的历史数据并写入数据库
+过程：1. 为每个线程申请一个读取数据库的类对象
+     2. 循环遍历证券代码表，组合得到每只证券的代码和交易所代码，向数据源申请历史数据 
+        --- 向数据源申请数据可能是线程独立的，需要用锁控制，防止并发访问造成错误
+     3. 将获得数据写入数据库表中。
+'''
+def InsertData(secodeInfo):
+    databaseObj = MSSQL()    
+    for i in range(0, len(secodeInfo)):
+        security = secodeInfo[i][0] + '.' + secodeInfo[i][1]
+        securities = [];
+        securities.append(security)
+        fields = ["TradingTime","TradingDate", "Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
+        timePeriods = [['2017-07-01 00:00:00.000', '2017-08-01 00:00:00.000']]
+        timeInterval = 5
+
+        # 这个操作可能无法在多个线程同时进行
+        ret, errMsg, dataCols = GetDataByTime(securities, [], fields, EQuoteType["k_Minute"], timeInterval, timePeriods)
+
+        if ret == 0:
+            print "[i] GetDataByTime Success! Rows = ", len(dataCols)
+            desTableName = '[dbo].LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0]
+            WriteToDataBase(databaseObj, desTableName, dataCols)
+
+        else:
+            print "[x] GetDataByTime(", hex(ret), "): ", errMsg  
+'''
+功能： 单线程获取所有历史数据并插入到数据库中
+'''
 def GetHistDataSingleThread():
     secodeInfo = GetSecodeInfo()
     databaseObj = MSSQL()
@@ -112,25 +144,12 @@ def GetHistDataSingleThread():
         else:
             print "[x] GetDataByTime(", hex(ret), "): ", errMsg    
 
-def InsertData(secodeInfo):
-    databaseObj = MSSQL()    
-    for i in range(0, len(secodeInfo)):
-        security = secodeInfo[i][0] + '.' + secodeInfo[i][1]
-        securities = [];
-        securities.append(security)
-        fields = ["TradingTime","TradingDate", "Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
-        timePeriods = [['2017-07-01 00:00:00.000', '2017-08-01 00:00:00.000']]
-        timeInterval = 5
-        ret, errMsg, dataCols = GetDataByTime(securities, [], fields, EQuoteType["k_Minute"], timeInterval, timePeriods)
-
-        if ret == 0:
-            print "[i] GetDataByTime Success! Rows = ", len(dataCols)
-            desTableName = '[dbo].LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0]
-            WriteToDataBase(databaseObj, desTableName, dataCols)
-
-        else:
-            print "[x] GetDataByTime(", hex(ret), "): ", errMsg  
-
+'''
+作用：获取所有证券的历史数据
+过程：1. 从数据库获取证券的代码信息。
+     2. 根据CPU的数目和证券数设置读写线程的个数。
+     3. 将证券代码信息按照线程数均分给不同的线程。
+'''
 def GetHistDataMultiThread():
     secodeInfo = GetSecodeInfo()
     numbInterval = len(secodeInfo) / cpu_count()
@@ -161,6 +180,9 @@ def GetHistDataMultiThread():
     print "End Time: %s" %(endtime)
     print 'Multi Thread Running Time: %d%s' %(deletaTime.seconds, "s")    
 
+'''
+功能： 测试从数据源获取数据，并插入数据库中的代码是否有效。
+'''
 def TestGetAllHistData():
     secodeInfo = GetSecodeInfo()
     security = secodeInfo[0][0] + '.' + secodeInfo[0][1]

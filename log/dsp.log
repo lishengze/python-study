@@ -677,3 +677,32 @@
 8572   INFO  [09-04 15:31:07.501][QtAPI.cpp:139] OnAuthChanged Started! 
 8572   INFO  [09-04 15:31:07.501][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
 8572   ERROR [09-04 15:31:10.553][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+900    INFO  [09-05 14:15:40.883][QtAPI.cpp:77] QtAPI: Started! 
+900    FATAL [09-05 14:15:40.891][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+900    INFO  [09-05 14:15:45.420][QtAPI.cpp:139] OnAuthChanged Started! 
+900    INFO  [09-05 14:15:45.421][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+900    ERROR [09-05 14:15:48.428][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+3532   INFO  [09-05 14:16:13.200][QtAPI.cpp:77] QtAPI: Started! 
+3532   FATAL [09-05 14:16:13.200][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+3532   INFO  [09-05 14:16:17.261][QtAPI.cpp:139] OnAuthChanged Started! 
+3532   INFO  [09-05 14:16:17.262][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9100   INFO  [09-05 14:16:17.262][QtAPI.cpp:77] QtAPI: Started! 
+9100   INFO  [09-05 14:16:20.266][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+5068   INFO  [09-05 14:16:20.266][QtAPI.cpp:77] QtAPI: Started! 
+5068   INFO  [09-05 14:16:20.410][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+10160  INFO  [09-05 14:16:20.410][QtAPI.cpp:77] QtAPI: Started! 
+10160  INFO  [09-05 14:16:24.269][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+3532   ERROR [09-05 14:16:24.304][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+11992  WARN  [09-05 14:16:25.266][QtAuth.cpp:203] GTA::QtAPI::OnAuthChanged: authority changed! 
+9100   ERROR [09-05 14:16:25.269][QtAPI.cpp:245] GTA::QtAPI::QtLogout: Not the login user! 
+5068   ERROR [09-05 14:16:26.269][QtAPI.cpp:245] GTA::QtAPI::QtLogout: Not the login user! 
+10160  ERROR [09-05 14:16:27.269][QtAPI.cpp:245] GTA::QtAPI::QtLogout: Not the login user! 
+8480   INFO  [09-05 14:29:13.963][QtAPI.cpp:77] QtAPI: Started! 
+8480   FATAL [09-05 14:29:13.963][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8480   INFO  [09-05 14:29:17.993][QtAPI.cpp:139] OnAuthChanged Started! 
+8480   INFO  [09-05 14:29:17.994][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8480   ERROR [09-05 14:29:21.002][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+10624  ERROR [09-05 14:29:21.005][QuoteAPI.cpp:1230] GTA::QtAPI::GetExchanges: QtAPI not initialized or authority error! 
+10212  ERROR [09-05 14:29:21.006][QuoteAPI.cpp:1230] GTA::QtAPI::GetExchanges: QtAPI not initialized or authority error! 
+10628  ERROR [09-05 14:29:21.007][QuoteAPI.cpp:1230] GTA::QtAPI::GetExchanges: QtAPI not initialized or authority error! 
+7300   ERROR [09-05 14:29:21.010][QuoteAPI.cpp:1230] GTA::QtAPI::GetExchanges: QtAPI not initialized or authority error! 

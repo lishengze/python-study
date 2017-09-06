@@ -62,7 +62,7 @@ def DemonRun():
         k -= 1
         if 0 == k:
           print "[i] QtAPIDemo is running!"
-          k = g_BeatInterval    
+          k = g_BeatInterval
 
 def GetAllStockSecurityInfo():
     plateIDs = [1001001] #全部A股的代码
@@ -71,14 +71,15 @@ def GetAllStockSecurityInfo():
         print "[i] GetDataByTime Success! Rows = ", len(dataCols)
         bToScreen = False
         if bToScreen:
-            print dataCols, '\n'          
+            print dataCols, '\n'
         return dataCols
     else:
-        print "[x] GetDataByTime(", hex(ret), "): ", errMsg    
+        print "[x] GetDataByTime(", hex(ret), "): ", errMsg
         return -1
-    
+
 def WriteToDataBase(data, dataBaseName):
     print 'WriteTODataBase'
+
 def TestGetAllHistData(security):
     # securitityIDS = [201000000002]
     # securitityIDS = []
@@ -102,12 +103,12 @@ def TestGetAllHistData(security):
             # dataCols.to_csv('result\Test_GetDataByTime.csv')
             dataCols.to_csv(completeFileName);
     else:
-        print "[x] GetDataByTime(", hex(ret), "): ", errMsg    
+        print "[x] GetDataByTime(", hex(ret), "): ", errMsg
 
 def GetAllSecurityTradeInfo():
     allStockSecurityInfo = GetAllStockSecurityInfo()
     # WriteToDataBase(allStockSecurityInfo, 'stock_securityId')
-    
+
     # completeStockID = allStockSecurityInfo.iloc[0, 2] + '.' + str(allStockSecurityInfo.iloc[0, 0])
 
     # for i in range(0, 10):
@@ -116,7 +117,7 @@ def GetAllSecurityTradeInfo():
     #     TestGetAllHistData(completeStockID)
 
 # 主程序
-if __name__=='__main__': 
+if __name__=='__main__':
 
     print os.getcwd()
 
@@ -142,7 +143,7 @@ if __name__=='__main__':
     # 行情订阅demo
     # SubDemo()
 
-    # GetAllSecurityTradeInfo()
+    GetAllSecurityTradeInfo()
 
     testApi.QtLogout(qt_usr)
 
