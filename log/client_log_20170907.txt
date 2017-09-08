@@ -1,0 +1,18 @@
+20170907171738 Info network.c:_reconnect_cb 2787 Begin
+20170907171738 Info network.c:_client_kernel_cb 2697 Begin
+20170907171738 Info Client.cpp:_ProcessProClientMapDataUnitTimeout 453 Begin
+20170907171739 Error client connect timeout fault
+20170907171739 Error ID=0,ip=119.147.213.43,port=8181 closed, erorcode:0
+20170907171739 Error network.c:add_connect 3288 add_connect(ip:119.147.213.43 port:8181) failed id(0)
+20170907171741 Error client connect timeout fault
+20170907171741 Error ID=1,ip=119.147.213.44,port=8181 closed, erorcode:0
+20170907171741 Error network.c:add_connect 3288 add_connect(ip:119.147.213.44 port:8181) failed id(1)
+20170907171741 Error network.c:_cltunit_pool_reader_get 2067 invalid id=1 flag=0
+20170907171742 Error client connect timeout fault
+20170907171742 Error ID=2,ip=119.147.213.43,port=8181 closed, erorcode:0
+20170907171742 Error network.c:add_connect 3288 add_connect(ip:119.147.213.43 port:8181) failed id(2)
+20170907171742 Error network.c:_cltunit_pool_reader_get 2067 invalid id=2 flag=0
+20170907171744 Error client connect timeout fault
+20170907171744 Error ID=3,ip=119.147.213.44,port=8181 closed, erorcode:0
+20170907171744 Error network.c:add_connect 3288 add_connect(ip:119.147.213.44 port:8181) failed id(3)
+20170907171744 Error network.c:_cltunit_pool_reader_get 2067 invalid id=3 flag=0

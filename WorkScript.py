@@ -207,6 +207,8 @@ def TestGetAllHistData():
 def main():
     bret, qt_usr, qt_pwd = GetUsrPwd(os.getcwd() + "\\QtAPIDemo.id")
 
+    print "username: %s, password: %s" %(qt_usr, qt_pwd)
+
     testApi = TestApi()
 
     testApi.QtLogin(qt_usr, qt_pwd)
