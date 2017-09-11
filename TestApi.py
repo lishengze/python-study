@@ -18,6 +18,20 @@ g_L1QuoteLeft = 30
 
 g_toGBK    = False  # 提取的数据是否进行汉字编码转换
 
+# UTF-8转换为GBK编码
+def ConvertStr(data):
+    if ~g_toGBK:
+        return data
+    nLen = len(data)
+    if nLen == 0:
+        return data
+    for col_name in data.columns:
+        if type(data.ix[0, col_name]) == type('str'):
+            for index, row in data.iterrows():
+                data.ix[index,col_name] = data.ix[index,col_name].decode('UTF-8').encode('GBK')
+    return data
+
+
 class TestApi(object):
     def __init__(self):
         self.__name__ = "TestApi"
@@ -442,10 +456,13 @@ class TestApi(object):
             if g_toScreen:
                 print dataCols, '\n'
             if g_toFile:
-                dataCols = ConvertStr(dataCols)
-                ret = dataCols.to_csv('result\Test_GetExchanges.csv')
+                pass
+                # dataCols = ConvertStr(dataCols)
+                # ret = dataCols.to_csv('result\Test_GetExchanges_CHN.csv')
+            return dataCols
         else:
             print "[x] GetExchanges(", hex(ret), "): ", errMsg
+            return -1
 
     # GetTradeTypes取交易品种信息
     # 示例: 取商品期货所有交易品种的交易品种、交易所代码、品种ID、交易单位、

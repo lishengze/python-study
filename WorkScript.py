@@ -16,8 +16,10 @@ g_toGBK    = False  # 提取的数据是否进行汉字编码转换
 
 g_DatabaseObj = MSSQL();
 
-# 提取用户和密码
-# 返回值为：(ret, usr, pwd)
+'''
+功能：提取用户和密码
+返回值为：(ret, usr, pwd)
+'''
 def GetUsrPwd(filename):
     if os.path.exists(filename):
         pass
@@ -45,18 +47,6 @@ def GetUsrPwd(filename):
     return (True, usr, pwd)
 
 
-# UTF-8转换为GBK编码
-def ConvertStr(data):
-    if ~g_toGBK:
-        return data
-    nLen = len(data)
-    if nLen == 0:
-        return data
-    for col_name in data.columns:
-        if type(data.ix[0, col_name]) == type('str'):
-            for index, row in data.iterrows():
-                data.ix[index,col_name] = data.ix[index,col_name].decode('UTF-8').encode('GBK')
-    return data
 
 
 '''
@@ -70,7 +60,7 @@ def WriteToDataBase(databaseObj, desTableName, result):
     # print "Start Time: %s" %(starttime)
 
     for i in range(0, resultRows):
-        secode = result[i][0]
+        # secode = result[i][0]
         colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
         valStr = str(result.iloc[i, 0]) + ", " + str(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'" \
                 + str(result.iloc[i, 3]) + ", " + str(result.iloc[i, 4]) + ", " + str(result.iloc[i, 5]) + ", " \
@@ -109,7 +99,8 @@ def InsertData(secodeInfo):
         timePeriods = [['2017-07-01 00:00:00.000', '2017-08-01 00:00:00.000']]
         timeInterval = 5
 
-        # 这个操作可能无法在多个线程同时进行
+        # 这个操作可能无法在多个线程同时进行, 
+        # 经过测试验证是可以多线程同时读取数据的。
         ret, errMsg, dataCols = GetDataByTime(securities, [], fields, EQuoteType["k_Minute"], timeInterval, timePeriods)
 
         if ret == 0:
@@ -205,13 +196,19 @@ def TestGetAllHistData():
         print "[x] GetDataByTime(", hex(ret), "): ", errMsg    
 
 def main():
-    bret, qt_usr, qt_pwd = GetUsrPwd(os.getcwd() + "\\QtAPIDemo.id")
+    # bret, qt_usr, qt_pwd = GetUsrPwd(os.getcwd() + "\\QtAPIDemo.id")
 
+    qt_usr = "xgzc_api"
+    qt_pwd = "UXLAS4YF"
     print "username: %s, password: %s" %(qt_usr, qt_pwd)
 
     testApi = TestApi()
 
     testApi.QtLogin(qt_usr, qt_pwd)
+
+    testApi.GetExchanges()
+
+    # testApi.GetDataByTime()
 
     # TestGetAllHistData()
 

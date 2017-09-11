@@ -28,10 +28,14 @@ def readDataFunc(threadName):
     print "***** threadName: %s ***** \n"%(threadName)
     ret, errMsg, dataCols = GetExchanges("CHN")
     if ret == 0:
-        print "[i] GetExchanges Success! Rows = ", len(dataCols)
+        print "[i] ThreadName = %s, GetExchanges Success! Rows = %d \n"%(threading.currentThread().getName(), len(dataCols))
     else:
         print "[x] GetExchanges(", hex(ret), "): ", errMsg    
 
+'''
+功能：测试多线程同时读取数据
+结果：可以多线程同时读取数据;
+'''
 def testMultiReadData():
     threadCount = 4
     threads = []
@@ -40,7 +44,7 @@ def testMultiReadData():
     qt_usr = "xgzc_api"
     qt_pwd = "UXLAS4YF"
     testObj.QtLogin(qt_usr, qt_pwd)
-    testObj.QtLogout(qt_usr)    
+      
 
     for i in range(0, threadCount):
         threads.append(threading.Thread(target=readDataFunc, args=(str(i))))
@@ -49,6 +53,8 @@ def testMultiReadData():
         thread.setDaemon(True)
         thread.start()
     thread.join()    
+
+    testObj.QtLogout(qt_usr)  
 
 def main():
     # testMultiLoginLogout()

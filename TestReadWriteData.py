@@ -4,6 +4,7 @@ import pickle
 from QtAPI import *
 from QtDataAPI import *
 from TestApi import TestApi
+from example import MSSQL
 
 g_BeatInterval = 5  # 运行信号输出间隔
 g_cycle    = False  # Demo程序是否持续运行
@@ -74,7 +75,7 @@ def GetAllStockSecurityInfo():
             print dataCols, '\n'
         return dataCols
     else:
-        print "[x] GetDataByTime(", hex(ret), "): ", errMsg
+        print "[x] GetDataByTime(", hex(ret), "): ", errorMsg
         return -1
 
 def WriteToDataBase(data, dataBaseName):
@@ -116,19 +117,88 @@ def GetAllSecurityTradeInfo():
     #     print 'completeStockID: ', completeStockID
     #     TestGetAllHistData(completeStockID)
 
+'''
+功能： 测试原始数据是什么样的形式，每一个元素是什么类型，如何存取;
+'''
+def testDataType(data):
+    print type(data)
+    print len(data)
+    for i in range(0, len(data.iloc[0])):
+        print "len(exchangeData.iloc[0, %d]  type is %s \n"%(i, type(data.iloc[0, i]))
+'''
+功能： 测试ExchangeData的读取与存储;
+结果： 测试成功, 可以正常读取写入到数据库;
+'''
+def testWriteExchangeData(oriDataObj):
+    result = oriDataObj.GetExchanges()
+    # testDataType(result)
+    databaseObj = MSSQL()   
+    desTableName = "[dbo].[AExchangeData]"
+    colStr = "(CoutryCode , ENName , Market , Marketname ) "
+    for i in range(0, len(result)): 
+        valStr = "\'" + result.iloc[i, 0] + "\', \'" + result.iloc[i, 1] + "\', \'" \
+                + result.iloc[i, 2] + "\', \'" + result.iloc[i, 3] + "\'" 
+
+        insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
+        print insertStr
+        insertRst = databaseObj.ExecStoreProduce(insertStr)
+
+'''
+功能： 测试从数据源读取后写入到数据库的数据是否正确
+结果： 正确；
+'''
+def testReadExchangeDataFromDatabase():
+    databaseObj = MSSQL()   
+    originDataTable = "[dbo].[AExchangeData]"
+    queryString = 'select * from ' + originDataTable
+    result = databaseObj.ExecQuery(queryString)
+    print result
+    return result
+
+'''
+功能： 测试HistData的读取与存储;
+'''        
+def testWriteHistByTimeData(oriDataObj):
+    result = oriDataObj.GetDataByTime()
+    testDataType(result)
+    desTableName = "[dbo].[ATestTable_0]"
+    for i in range(0, len(result)):
+        colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
+        valStr = str(result.iloc[i, 0]) + ", " + str(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'" \
+                + str(result.iloc[i, 3]) + ", " + str(result.iloc[i, 4]) + ", " + str(result.iloc[i, 5]) + ", " \
+                + str(result.iloc[i, 6]) + ", " + str(result.iloc[i, 7]) + ", " + str(result.iloc[i, 8]) + ", " \
+                + str(result.iloc[i, 9]) + ", " + str(result.iloc[i, 10])
+
+        insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
+        if i == 0:
+            print 'insertStr: %s'%(insertStr)
+        # insertRst = databaseObj.ExecStoreProduce(insertStr)    
+'''
+功能： 测试从数据源读取后写入到数据库的数据是否正确
+结果： 
+'''
+def testReadHistByTimeDataFromDatabase():
+    databaseObj = MSSQL()   
+    originDataTable = "[dbo].[ATestTable_0]"
+    queryString = 'select * from ' + originDataTable
+    result = databaseObj.ExecQuery(queryString)
+    print result
+    return result
+
 # 主程序
 if __name__=='__main__':
-
-    print os.getcwd()
-
-    #在QtAPIDemo.id填入GTA登录的用户名和密码
-    bret, qt_usr, qt_pwd = GetUsrPwd(os.getcwd() + "\\QtAPIDemo.id")
+    qt_usr = "xgzc_api"
+    qt_pwd = "UXLAS4YF"
 
     testApi = TestApi()
 
     testApi.QtLogin(qt_usr, qt_pwd)
 
-    testApi.GetExchanges()
+    # testWriteExchangeData(testApi)
+
+    testReadExchangeDataFromDatabase()
+
+    # testApi.GetExchanges()
 
     # testApi.GetTradeTypes()
 
@@ -143,7 +213,7 @@ if __name__=='__main__':
     # 行情订阅demo
     # SubDemo()
 
-    GetAllSecurityTradeInfo()
+    # GetAllSecurityTradeInfo()
 
     testApi.QtLogout(qt_usr)
 
