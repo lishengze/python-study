@@ -1,6 +1,6 @@
 from example import MSSQL
 
-def createTable(databaseObj):
+def createDataByTimeTable(databaseObj):
     startIndex = 0
     endIndex = 20
     for i in range(startIndex, endIndex):
@@ -19,11 +19,18 @@ def dropTable(databaseObj):
         dropStr = "drop table " + tableName
         databaseObj.ExecStoreProduce(dropStr)
 
+def createExchangeData(databaseObj):
+    tableName = "[dbo].[AExchangeData]"
+    valueStr = "(CoutryCode varchar(10), ENName varchar(50), Market varchar(10), Marketname varchar(50))"
+    createStr = "create table " + tableName + valueStr    
+    databaseObj.ExecStoreProduce(createStr)
+
 def main():
     databaseObj = MSSQL()
     if databaseObj.VerifyConnection():
         # dropTable(databaseObj)
-        createTable(databaseObj)
+        # createDataByTimeTable(databaseObj)
+        createExchangeData(databaseObj)
 
 if __name__ == "__main__":
     main()
