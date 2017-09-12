@@ -6,6 +6,7 @@ from QtAPI import *
 from QtDataAPI import *
 from TestApi import TestApi
 from example import MSSQL
+from WorkScript import GetSecodeInfo
 
 g_BeatInterval = 5  # 运行信号输出间隔
 g_cycle    = False  # Demo程序是否持续运行
@@ -211,7 +212,7 @@ def testWriteHistByTimeData(oriDataObj):
         print "\n++++ Start Time: %s ++++ \n" %(starttime)
 
         databaseObj = MSSQL() 
-        desTableName = "[dbo].[ATestTable_5]"
+        desTableName = "[dbo].[ATestTable_6]"
         for i in range(0, len(result)):
             colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
             valStr = getSimpleDate(result.iloc[i, 0]) + ", " + getSimpleTime(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'," \
@@ -241,6 +242,66 @@ def testReadHistByTimeDataFromDatabase():
     print result
     return result
 
+'''
+功能： 得到所有三千多支证券的总计交易数据量
+'''
+def getSumSecodeDataCount():
+    databaseObj = MSSQL()
+    originDataTable = '[dbo].[SecodeInfo]'
+    queryString = 'select SECODE, EXCHANGE from ' + originDataTable
+    result = databaseObj.ExecQuery(queryString)
+
+    resultFileName = "secodeResult.txt"
+    wfile = open(resultFileName, 'w')
+    rstStr = "SecodeInfo numb is  : " + str(len(result)) + '\n'
+    wfile.write(rstStr)    
+    print rstStr
+
+    count = 0
+    secondeCount = len(result)
+    for i in range(0, 1):
+        
+        security = result[i][0] + '.'
+        if result[i][1] == 'SZ':
+            security = security + 'SZSE'
+        if result[i][1] == 'SH':
+            security = security + 'SSE'
+
+        securities = [];
+        securities.append(str(security))
+        print securities
+        fields = ["TradingTime","TradingDate", "Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
+        timePeriods = [['2014-02-01 00:00:00.000', '2017-9-11 00:00:00.000']]
+        timeInterval = 5
+        ret, errMsg, dataCols = GetDataByTime(securities, [], fields, \
+                                            EQuoteType["k_Minute"], timeInterval, timePeriods)
+
+        if ret == 0:
+            rstStr = security + " : " + str(len(dataCols)) + '\n'
+            wfile.write(rstStr)
+            print rstStr
+            count = count + len(dataCols)
+        else:
+            wfile.write('errMsg: ' + errMsg)
+            print "[x] GetDataByTime(", hex(ret), "): ", errMsg
+        dataCols = None
+
+    rstStr = "\nSum count is " + str(30) + '\n'
+    print rstStr
+    wfile.write(rstStr)
+    wfile.close()
+
+def testWriteFile():
+    resultFileName = ".\secodeResult.txt"
+    wfile = open(resultFileName,'w')
+    rstStr = "SecodeInfo numb is  : " + str(len([1,2,3]))
+    wfile.write(rstStr)    
+
+    rstStr = "\nSum count is " + str(11) + '\n'
+    print rstStr
+    wfile.write(rstStr)
+    wfile.close()
+
 def testMain():
     qt_usr = "xgzc_api"
     qt_pwd = "UXLAS4YF"
@@ -249,7 +310,9 @@ def testMain():
 
     testApi.QtLogin(qt_usr, qt_pwd)
 
-    testWriteHistByTimeData(testApi)
+    getSumSecodeDataCount()
+
+    # testWriteHistByTimeData(testApi)
 
     # testWriteExchangeData(testApi)
 
@@ -274,10 +337,11 @@ def testMain():
 
     testApi.QtLogout(qt_usr)
 
-    sys.exit(0)    
+    # sys.exit(0)    
 
 def testOther():
-    testConvertDatetime()    
+    # testConvertDatetime()    
+    testWriteFile()
 
 # 主程序
 if __name__=='__main__':

@@ -18,6 +18,8 @@ g_L1QuoteLeft = 30
 
 g_toGBK    = False  # 提取的数据是否进行汉字编码转换
 
+# g_logFile = open('log.txt', 'a')
+
 # UTF-8转换为GBK编码
 def ConvertStr(data):
     if ~g_toGBK:
@@ -613,7 +615,7 @@ class TestApi(object):
     def GetDataByTime(self):
         securities = ["000008.SZSE"]
         fields = ["TradingDate", "TradingTime","Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
-        timePeriods = [['2014-02-01 00:00:00.000', '2017-08-30 00:00:00.000']]
+        timePeriods = [['2017-02-01 00:00:00.000', '2017-08-30 00:00:00.000']]
 
         ret, errMsg, dataCols = GetDataByTime(securities, [], fields, \
                                             EQuoteType["k_Minute"], 5, timePeriods)
@@ -626,7 +628,7 @@ class TestApi(object):
                 dataCols.to_csv('result\Test_GetDataByTime.csv')
             return dataCols
         else:
-            print "[x] GetDataByTime(", hex(ret), "): ", errMsg
+            print "[x] GetDataByTime(", hex(ret), "): ", errMsg.encode('utf-8')
             return -1
 
     # GetDataByCount按数量取历史数据，默认数据先按日期和时间排序，

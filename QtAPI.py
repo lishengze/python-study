@@ -4,6 +4,9 @@ import os,sys
 
 #del os.environ["TMPPYTHONPATH"]
 work_path = os.getenv('TMPPYTHONPATH')
+# print 'work_path: %s'%(work_path)
+# print 'os.getcwd(): %s'%(os.getcwd())
+
 if work_path is None:
     #pyd安装文件所在的路径
     print os.getcwd();
@@ -11,7 +14,9 @@ if work_path is None:
     work_path = r"E:\github\study\python work"
 sys.path.append(work_path)
 import QtPyAPI
-os.chdir(work_path)
+
+os.chdir(os.getcwd())
+# print "QtAPI, Current Work Dir: %s" % (os.getcwd())
 
 
 #********* QtAPI登录，启动API环境 *************

@@ -5,6 +5,7 @@ from QtAPI import *
 from QtDataAPI import *
 from example import MSSQL
 from TestApi import TestApi
+from toolFunc import getSimpleDate, getSimpleTime
 
 from multiprocessing import cpu_count
 import datetime
@@ -16,71 +17,50 @@ g_toGBK    = False  # 提取的数据是否进行汉字编码转换
 
 g_DatabaseObj = MSSQL();
 
-'''
-功能：提取用户和密码
-返回值为：(ret, usr, pwd)
-'''
-def GetUsrPwd(filename):
-    if os.path.exists(filename):
-        pass
-    else:
-        return (False, "", "")
+g_writeLogLock = threading.Lock()
+g_logFileName = 'log.txt'
+g_logFile = open(g_logFileName, 'w')
 
-    usr = None
-    pwd = None
-    f = open(filename, "r")
+def recordInfo(infoStr):
+    g_logFile.write(infoStr + '\n')
+    print infoStr
 
-    line = f.readline()
-    strs = line.split(':')
-    if 0 == len(strs):
-        f.close()
-        return (False, "", "")
-    usr = strs[1].strip()
-    line = f.readline()
-    strs = line.split(':')
-    if 0 == len(strs):
-        f.close()
-        return (False, "", "")
-    pwd = strs[1].strip()
-    f.close()
-
-    return (True, usr, pwd)
-
-
-
+def recordInfoWithLock(infoStr):    
+    g_writeLogLock.acquire()
+    print infoStr
+    g_logFile.write(infoStr + '\n')
+    g_writeLogLock.release()        
 
 '''
 功能：将数据写入数据库
 '''
 def WriteToDataBase(databaseObj, desTableName, result):
-    resultRows = len(result)
-    # print 'result rows: ' + str(resultRows)
 
-    # starttime = datetime.datetime.now()
-    # print "Start Time: %s" %(starttime)
-
-    for i in range(0, resultRows):
-        # secode = result[i][0]
+    for i in range(0, len(result)):
         colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
-        valStr = str(result.iloc[i, 0]) + ", " + str(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'" \
+        valStr = getSimpleDate(result.iloc[i, 0]) + ", " + getSimpleTime(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'," \
                 + str(result.iloc[i, 3]) + ", " + str(result.iloc[i, 4]) + ", " + str(result.iloc[i, 5]) + ", " \
                 + str(result.iloc[i, 6]) + ", " + str(result.iloc[i, 7]) + ", " + str(result.iloc[i, 8]) + ", " \
-                + str(result.iloc[i, 9]) + ", " + str(result.iloc[i, 10])
+                + str(result.iloc[i, 9])   
 
         insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
         # print 'insertStr: %s'%(insertStr)
         insertRst = databaseObj.ExecStoreProduce(insertStr)
-
-    # endtime = datetime.datetime.now()
-    # deletaTime = endtime - starttime
-    # print "End Time: %s" %(endtime)
-    # print 'Single Thread Running Time: %d%s' %(deletaTime.seconds, "s")
 
 def GetSecodeInfo():
     originDataTable = '[dbo].[SecodeInfo]'
     queryString = 'select SECODE, EXCHANGE from ' + originDataTable
     result = g_DatabaseObj.ExecQuery(queryString)
     return result
+
+def testThreadTransData(info):
+    print 'testThreadTransData'
+    print type(info)
+    print len(info)
+    print len(info[0])
+    print type(info[0])
+    print info[0][1]
+    print info[0][0]
 
 '''
 作用： 从数据源读取每个证券的历史数据并写入数据库
@@ -90,26 +70,33 @@ def GetSecodeInfo():
      3. 将获得数据写入数据库表中。
 '''
 def InsertData(secodeInfo):
-    databaseObj = MSSQL()    
+    # databaseObj = MSSQL()    
+    secodeInfo = secodeInfo[0]
     for i in range(0, len(secodeInfo)):
-        security = secodeInfo[i][0] + '.' + secodeInfo[i][1]
+        
+        security = secodeInfo[i][0] + '.'
+        if secodeInfo[i][1] == 'SZ':
+            security = security + 'SZSE'
+        if secodeInfo[i][1] == 'SH':
+            security = security + 'SSE'
+        security = str(security)
+
         securities = [];
         securities.append(security)
-        fields = ["TradingTime","TradingDate", "Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
+        fields = ["TradingDate", "TradingTime","Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
         timePeriods = [['2017-07-01 00:00:00.000', '2017-08-01 00:00:00.000']]
         timeInterval = 5
 
-        # 这个操作可能无法在多个线程同时进行, 
-        # 经过测试验证是可以多线程同时读取数据的。
         ret, errMsg, dataCols = GetDataByTime(securities, [], fields, EQuoteType["k_Minute"], timeInterval, timePeriods)
 
         if ret == 0:
-            print "[i] GetDataByTime Success! Rows = ", len(dataCols)
+            infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " + security +" GetDataByTime Success! InfoCount = " + str(len(dataCols))
+            recordInfoWithLock(infoStr)
             desTableName = '[dbo].LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0]
-            WriteToDataBase(databaseObj, desTableName, dataCols)
-
+            # WriteToDataBase(databaseObj, desTableName, dataCols)
         else:
-            print "[x] GetDataByTime(", hex(ret), "): ", errMsg  
+            infoStr = "[x] threadName: " + str(threading.currentThread().getName()) + "  " + security + " GetDataByTime Failed: " +  errMsg  
+            recordInfoWithLock(infoStr)
 '''
 功能： 单线程获取所有历史数据并插入到数据库中
 '''
@@ -143,61 +130,40 @@ def GetHistDataSingleThread():
 '''
 def GetHistDataMultiThread():
     secodeInfo = GetSecodeInfo()
-    numbInterval = len(secodeInfo) / cpu_count()
-    threadCount = cpu_count()
-    if len(secodeInfo) % cpu_count() != 0:
+    threadCount = 3
+    numbInterval = len(secodeInfo) / threadCount
+    
+    if len(secodeInfo) % threadCount != 0:
         threadCount = threadCount + 1
 
-    print 'resultRows: %d, numbInterval: %d, threadCount: %d' %(len(secodeInfo), numbInterval, threadCount)
+    infoStr = 'secodeInfo count:' + str(len(secodeInfo)) + ', numbInterval: ' + str(numbInterval) + ', threadCount:' + str(threadCount)
+    recordInfo(infoStr)
 
     threads = []
     for i in range(0, threadCount):
         startIndex = i * numbInterval
         endIndex = min((i+1) * numbInterval, len(secodeInfo))
-        print (startIndex, endIndex)
-        tmp = threading.Thread(target=InsertData, args=(secodeInfo[startIndex:endIndex]))
+        # print (startIndex, endIndex)
+        threadSecodeInfo = secodeInfo[startIndex:endIndex]
+        tmp = threading.Thread(target = InsertData, args = ([threadSecodeInfo],))
         threads.append(tmp)
 
     starttime = datetime.datetime.now()
-    print "Start Time: %s" %(starttime)
+    infoStr = "+++++++++ Start Time: " + str(starttime) + " +++++++++++"
+    recordInfo(infoStr)
 
     for thread in threads:
-        thread.setDaemon()
+        thread.setDaemon(True)
         thread.start()
     thread.join()
 
     endtime = datetime.datetime.now()
     deletaTime = endtime - starttime
-    print "End Time: %s" %(endtime)
-    print 'Multi Thread Running Time: %d%s' %(deletaTime.seconds, "s")    
 
-'''
-功能： 测试从数据源获取数据，并插入数据库中的代码是否有效。
-'''
-def TestGetAllHistData():
-    secodeInfo = GetSecodeInfo()
-    security = secodeInfo[0][0] + '.' + secodeInfo[0][1]
-    print 'security: %s'%(security)
-    securities = [];
-    securities.append(security)
-    
-    fields = ["TradingTime","TradingDate", "Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
-    timePeriods = [['2017-07-01 00:00:00.000', '2017-08-01 00:00:00.000']]
-    timeInterval = 5
-    ret, errMsg, dataCols = GetDataByTime(securities, [], fields, EQuoteType["k_Minute"], timeInterval, timePeriods)
-
-    if ret == 0:
-        print "[i] GetDataByTime Success! Rows = ", len(dataCols)
-        desTableName = '[dbo].ATest_' + secodeInfo[0][1] +'_' + secodeInfo[0][0]
-        print 'desTableName: %s'%(desTableName)
-        WriteToDataBase(desTableName, dataCols)
-
-    else:
-        print "[x] GetDataByTime(", hex(ret), "): ", errMsg    
+    infoStr = "++++++++++ End Time: " + str(endtime) +  ' Multi Thread Running Time: ' + str(deletaTime.seconds)  + "s ++++++++"    
+    recordInfo(infoStr)
 
 def main():
-    # bret, qt_usr, qt_pwd = GetUsrPwd(os.getcwd() + "\\QtAPIDemo.id")
-
     qt_usr = "xgzc_api"
     qt_pwd = "UXLAS4YF"
     print "username: %s, password: %s" %(qt_usr, qt_pwd)
@@ -206,7 +172,9 @@ def main():
 
     testApi.QtLogin(qt_usr, qt_pwd)
 
-    testApi.GetExchanges()
+    GetHistDataMultiThread()
+
+    # testApi.GetExchanges()
 
     # testApi.GetDataByTime()
 
