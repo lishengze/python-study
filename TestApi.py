@@ -9,7 +9,7 @@ g_BeatInterval = 5  # 运行信号输出间隔
 g_cycle    = False  # Demo程序是否持续运行
 
 g_toScreen = False  # 提取的数据是否输出到屏幕
-g_toFile   = True   # 提取的数据是否输出到文件
+g_toFile   = False   # 提取的数据是否输出到文件
 
 g_StsFreq     = 60  # 订阅的分时数据频率，单位: 秒
 g_StsLeft     = 10  # 示例程序只接收一定数量行情即退出
@@ -611,9 +611,9 @@ class TestApi(object):
     #      平安银行、万科A、浦发银行和中国石化5分钟证券代码、交易所代码、交易时间、
     #      开盘价、最高价、最低价和收盘价的历史数据
     def GetDataByTime(self):
-        securities = ["000008.SZSE", "000009.SZSE"]
-        fields = ["Symbol","Market", "TradingTime", "OP", "HIP", "LOP", "CP"]
-        timePeriods = [['2017-07-01 00:00:00.000', '2017-07-04 00:00:00.000']]
+        securities = ["000008.SZSE"]
+        fields = ["TradingDate", "TradingTime","Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
+        timePeriods = [['2014-02-01 00:00:00.000', '2017-08-30 00:00:00.000']]
 
         ret, errMsg, dataCols = GetDataByTime(securities, [], fields, \
                                             EQuoteType["k_Minute"], 5, timePeriods)
@@ -624,8 +624,10 @@ class TestApi(object):
             if g_toFile:
                 dataCols = ConvertStr(dataCols)
                 dataCols.to_csv('result\Test_GetDataByTime.csv')
+            return dataCols
         else:
             print "[x] GetDataByTime(", hex(ret), "): ", errMsg
+            return -1
 
     # GetDataByCount按数量取历史数据，默认数据先按日期和时间排序，
     # 再按证券代码排序，不保证数据按时间对齐

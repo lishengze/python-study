@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import time
 import pickle
+import string
 from QtAPI import *
 from QtDataAPI import *
 from TestApi import TestApi
@@ -64,6 +65,49 @@ def DemonRun():
         if 0 == k:
           print "[i] QtAPIDemo is running!"
           k = g_BeatInterval
+
+def convertDatetime(oriDateStr, oriTimeStr):
+    print ('oriDateStr = %s, oriTimeStr = %s') % (oriDateStr, oriTimeStr)
+    dateArray = oriDateStr.split(' ')
+    timeArray = oriTimeStr.split(' ')
+    print dateArray
+    print timeArray
+    dateStr = dateArray[0].replace('-','')
+    timeStr = timeArray[1].replace(':','').split('.')[0]
+    print dateStr
+    print timeStr
+    dateInt = string.atoi(dateStr)
+    timeInt = string.atoi(timeStr)
+    print dateInt
+    print timeInt    
+    return dateStr, timeStr
+
+def getIntDate(oriDateStr):
+    dateArray = oriDateStr.split(' ')
+    dateStr = dateArray[0].replace('-','')
+    # dateInt = string.atoi(dateStr)
+    # print dateArray
+    # print dateStr
+    # print dateInt
+    return dateStr   
+
+def getSimpleDate(oriDateStr):
+    dateArray = oriDateStr.split(' ')
+    dateStr = dateArray[0].replace('-','')
+    return dateStr   
+
+def getSimpleTime(oriTimeStr):
+    timeArray = oriTimeStr.split(' ')
+    timeStr = timeArray[1].replace(':','').split('.')[0]
+    return timeStr   
+
+def testConvertDatetime():
+    oriDateStr = "2017-07-03 09:30:00.000"
+    oriTimeStr = "2017-07-03 08:00:00.000"
+    # convertDatetime(oriDateStr, oriTimeStr)
+    print getIntDate(oriDateStr)
+    print getIntTime(oriTimeStr)
+
 
 def GetAllStockSecurityInfo():
     plateIDs = [1001001] #全部A股的代码
@@ -159,20 +203,32 @@ def testReadExchangeDataFromDatabase():
 功能： 测试HistData的读取与存储;
 '''        
 def testWriteHistByTimeData(oriDataObj):
-    result = oriDataObj.GetDataByTime()
-    testDataType(result)
-    desTableName = "[dbo].[ATestTable_0]"
-    for i in range(0, len(result)):
-        colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
-        valStr = str(result.iloc[i, 0]) + ", " + str(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'" \
-                + str(result.iloc[i, 3]) + ", " + str(result.iloc[i, 4]) + ", " + str(result.iloc[i, 5]) + ", " \
-                + str(result.iloc[i, 6]) + ", " + str(result.iloc[i, 7]) + ", " + str(result.iloc[i, 8]) + ", " \
-                + str(result.iloc[i, 9]) + ", " + str(result.iloc[i, 10])
+    result = oriDataObj.GetDataByTime()    
+    if type(result) == 'int':
+        print 'GetDataByTime Failed!'
+    else:
+        starttime = datetime.datetime.now()
+        print "\n++++ Start Time: %s ++++ \n" %(starttime)
 
-        insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
-        if i == 0:
-            print 'insertStr: %s'%(insertStr)
-        # insertRst = databaseObj.ExecStoreProduce(insertStr)    
+        databaseObj = MSSQL() 
+        desTableName = "[dbo].[ATestTable_5]"
+        for i in range(0, len(result)):
+            colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
+            valStr = getSimpleDate(result.iloc[i, 0]) + ", " + getSimpleTime(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'," \
+                    + str(result.iloc[i, 3]) + ", " + str(result.iloc[i, 4]) + ", " + str(result.iloc[i, 5]) + ", " \
+                    + str(result.iloc[i, 6]) + ", " + str(result.iloc[i, 7]) + ", " + str(result.iloc[i, 8]) + ", " \
+                    + str(result.iloc[i, 9])                    
+
+            insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
+            if i < 0:
+                # print 'insertStr: %s'%(insertStr)
+                pass
+            insertRst = databaseObj.ExecStoreProduce(insertStr)    
+
+        endtime = datetime.datetime.now()
+        deletaTime = endtime - starttime
+        print "\n+++++ End Time: %s ++++++" %(endtime)
+        print 'DataCount: %d, Cost Time: %d%s\n' %(len(result), deletaTime.seconds, "s")
 '''
 功能： 测试从数据源读取后写入到数据库的数据是否正确
 结果： 
@@ -185,8 +241,7 @@ def testReadHistByTimeDataFromDatabase():
     print result
     return result
 
-# 主程序
-if __name__=='__main__':
+def testMain():
     qt_usr = "xgzc_api"
     qt_pwd = "UXLAS4YF"
 
@@ -194,9 +249,11 @@ if __name__=='__main__':
 
     testApi.QtLogin(qt_usr, qt_pwd)
 
+    testWriteHistByTimeData(testApi)
+
     # testWriteExchangeData(testApi)
 
-    testReadExchangeDataFromDatabase()
+    # testReadExchangeDataFromDatabase()
 
     # testApi.GetExchanges()
 
@@ -217,6 +274,14 @@ if __name__=='__main__':
 
     testApi.QtLogout(qt_usr)
 
-    sys.exit(0)
+    sys.exit(0)    
+
+def testOther():
+    testConvertDatetime()    
+
+# 主程序
+if __name__=='__main__':
+    testMain()
+    # testOther()
 
     # endof __main__
