@@ -9,7 +9,7 @@ class MSSQL:
         self.user = user
         self.pwd = pwd
         self.db = db
-        print (self.host, self.user, self.pwd, self.db)
+        # print (self.host, self.user, self.pwd, self.db)
 
              
     def __GetConnect(self):  

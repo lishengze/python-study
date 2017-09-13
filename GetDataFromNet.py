@@ -15,7 +15,7 @@ g_toScreen = False  # 提取的数据是否输出到屏幕
 g_toFile   = True   # 提取的数据是否输出到文件
 g_toGBK    = False  # 提取的数据是否进行汉字编码转换
 
-g_DatabaseObj = MSSQL();
+g_DatabaseObj = MSSQL()
 
 g_writeLogLock = threading.Lock()
 g_logFileName = 'log.txt'
@@ -34,7 +34,7 @@ def recordInfoWithLock(infoStr):
 '''
 功能：将数据写入数据库
 '''
-def WriteToDataBase(databaseObj, desTableName, result):
+def WriteToDataBaseFromNet(databaseObj, desTableName, result):
 
     for i in range(0, len(result)):
         colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
@@ -50,7 +50,8 @@ def WriteToDataBase(databaseObj, desTableName, result):
 def GetSecodeInfo():
     originDataTable = '[dbo].[SecodeInfo]'
     queryString = 'select SECODE, EXCHANGE from ' + originDataTable
-    result = g_DatabaseObj.ExecQuery(queryString)
+    databaseObj = MSSQL()
+    result = databaseObj.ExecQuery(queryString)
     return result
 
 def testThreadTransData(info):
@@ -71,7 +72,7 @@ def testThreadTransData(info):
 '''
 def InsertData(secodeInfo):
     # databaseObj = MSSQL()    
-    secodeInfo = secodeInfo[0]
+    # secodeInfo = secodeInfo[0]
     for i in range(0, len(secodeInfo)):
         
         security = secodeInfo[i][0] + '.'
@@ -130,9 +131,9 @@ def GetHistDataSingleThread():
 '''
 def GetHistDataMultiThread():
     secodeInfo = GetSecodeInfo()
+    srcName = "Net"
     threadCount = 3
-    numbInterval = len(secodeInfo) / threadCount
-    
+    numbInterval = len(secodeInfo) / threadCount    
     if len(secodeInfo) % threadCount != 0:
         threadCount = threadCount + 1
 
@@ -145,7 +146,7 @@ def GetHistDataMultiThread():
         endIndex = min((i+1) * numbInterval, len(secodeInfo))
         # print (startIndex, endIndex)
         threadSecodeInfo = secodeInfo[startIndex:endIndex]
-        tmp = threading.Thread(target = InsertData, args = ([threadSecodeInfo],))
+        tmp = threading.Thread(target = testThreadTransData, args = (threadSecodeInfo,))
         threads.append(tmp)
 
     starttime = datetime.datetime.now()

@@ -1106,3 +1106,34 @@
 8576   INFO  [09-12 17:43:47.451][QuoteAPI.cpp:1622] GTA::QtAPI::GetDataByTime: success! 
 8576   INFO  [09-12 17:43:47.506][QuoteAPI.cpp:1625] GTA::QtAPI::GetDataByTime: finished! 
 6696   ERROR [09-12 17:50:07.807][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+9076   INFO  [09-13 09:26:27.747][QtAPI.cpp:77] QtAPI: Started! 
+9076   FATAL [09-13 09:26:27.747][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+9076   INFO  [09-13 09:26:30.263][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+9076   INFO  [09-13 09:26:30.263][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+9076   INFO  [09-13 09:26:30.461][QtAPI.cpp:139] OnAuthChanged Started! 
+9076   INFO  [09-13 09:26:30.461][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+9076   ERROR [09-13 09:27:30.699][QtAPI.cpp:276] GTA::QtAPI::QtLogout: success! 
+17172  INFO  [09-13 10:51:54.424][QtAPI.cpp:77] QtAPI: Started! 
+17172  FATAL [09-13 10:51:54.424][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+17172  INFO  [09-13 10:51:55.883][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+17172  INFO  [09-13 10:51:55.884][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+17172  INFO  [09-13 10:51:56.104][QtAPI.cpp:139] OnAuthChanged Started! 
+17172  INFO  [09-13 10:51:56.105][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+8348   INFO  [09-13 10:53:42.608][QtAPI.cpp:77] QtAPI: Started! 
+8348   FATAL [09-13 10:53:42.609][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+8348   INFO  [09-13 10:53:43.508][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+8348   INFO  [09-13 10:53:43.508][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+8348   INFO  [09-13 10:53:43.733][QtAPI.cpp:139] OnAuthChanged Started! 
+8348   INFO  [09-13 10:53:43.733][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+16748  INFO  [09-13 10:54:10.210][QtAPI.cpp:77] QtAPI: Started! 
+16748  FATAL [09-13 10:54:10.211][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+16748  INFO  [09-13 10:54:11.106][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+16748  INFO  [09-13 10:54:11.106][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+16748  INFO  [09-13 10:54:11.347][QtAPI.cpp:139] OnAuthChanged Started! 
+16748  INFO  [09-13 10:54:11.348][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 
+18412  INFO  [09-13 11:08:00.589][QtAPI.cpp:77] QtAPI: Started! 
+18412  FATAL [09-13 11:08:00.589][ApiCfg.cpp:263] GTA::QtAPI::CApiCfg::LoadBrokerInfos: can't find any broker config file in ./brokers! 
+18412  INFO  [09-13 11:08:01.491][QtAuth.cpp:162] GTA::QtAPI::UpdateAuthInfo: RtQuote authorized! 
+18412  INFO  [09-13 11:08:01.491][QtAuth.cpp:173] GTA::QtAPI::UpdateAuthInfo: ArQuote authorized! 
+18412  INFO  [09-13 11:08:01.734][QtAPI.cpp:139] OnAuthChanged Started! 
+18412  INFO  [09-13 11:08:01.734][QtAPI.cpp:146] GTA::QtAPI::QtLogin: success! 

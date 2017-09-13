@@ -286,7 +286,7 @@ def getSumSecodeDataCount():
             print "[x] GetDataByTime(", hex(ret), "): ", errMsg
         dataCols = None
 
-    rstStr = "\nSum count is " + str(30) + '\n'
+    rstStr = "\nSum count is " + str(count) + '\n'
     print rstStr
     wfile.write(rstStr)
     wfile.close()

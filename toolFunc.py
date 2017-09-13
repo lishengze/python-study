@@ -1,4 +1,7 @@
 # -*- coding: UTF-8 -*-
+import math
+import time
+
 def getSimpleDate(oriDateStr):
     dateArray = oriDateStr.split(' ')
     dateStr = dateArray[0].replace('-','')
@@ -8,6 +11,25 @@ def getSimpleTime(oriTimeStr):
     timeArray = oriTimeStr.split(' ')
     timeStr = timeArray[1].replace(':','').split('.')[0]
     return timeStr   
+
+def transExcelTimeToStr(excelTime):
+    deltaDays = 70 * 365 + 19
+    deltaHoursSecs = 8 * 60 * 60
+    daySecs = 24 * 60 * 60
+    originalDayTime = excelTime - deltaDays
+    
+    transSecTime = math.ceil(originalDayTime * daySecs - deltaHoursSecs)
+    # print 'transSecTime: %f'%(transSecTime)
+    timeArray = time.localtime(transSecTime)
+    otherStyleTime = time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
+    # print otherStyleTime
+    return otherStyleTime
+
+def getSecodeInfo(databaseObj):
+    originDataTable = '[dbo].[SecodeInfo]'
+    queryString = 'select SECODE, EXCHANGE from ' + originDataTable
+    result = databaseObj.ExecQuery(queryString)
+    return result
 
 '''
 功能：提取用户和密码
