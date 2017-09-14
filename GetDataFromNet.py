@@ -1,11 +1,16 @@
 # -*- coding: UTF-8 -*-
 import time
 import pickle
+import xlrd
 from QtAPI import *
 from QtDataAPI import *
 from example import MSSQL
 from TestApi import TestApi
-from toolFunc import getSimpleDate, getSimpleTime
+# from toolFunc import getSimpleDate, getSimpleTime, transExcelTimeToStr, getSecodeInfo, GetSecodeInfo
+from toolFunc import *
+
+import os, sys
+import traceback
 
 from multiprocessing import cpu_count
 import datetime
@@ -35,7 +40,7 @@ def recordInfoWithLock(infoStr):
 功能：将数据写入数据库
 '''
 def WriteToDataBaseFromNet(databaseObj, desTableName, result):
-
+    rowNumb = len(result) 
     for i in range(0, len(result)):
         colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
         valStr = getSimpleDate(result.iloc[i, 0]) + ", " + getSimpleTime(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'," \
@@ -47,15 +52,119 @@ def WriteToDataBaseFromNet(databaseObj, desTableName, result):
         # print 'insertStr: %s'%(insertStr)
         insertRst = databaseObj.ExecStoreProduce(insertStr)
 
-def GetSecodeInfo():
-    originDataTable = '[dbo].[SecodeInfo]'
-    queryString = 'select SECODE, EXCHANGE from ' + originDataTable
-    databaseObj = MSSQL()
-    result = databaseObj.ExecQuery(queryString)
-    return result
+    infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
+            + " Write to Table " + desTableName + " Success!"
+    recordInfoWithLock(infoStr) 
 
-def testThreadTransData(info):
+
+def WriteToDataBaseFromExcel(databaseObj, desTableName, result):
+    rowNumb = result.nrows
+    infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
+                + "Write to Table " + desTableName + " Start!\n"    
+    # recordInfoWithLock(infoStr)
+    try:
+        for i in range(1, rowNumb):
+            colStr = " (TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
+            dateTimeStr = transExcelTimeToStr(result.cell_value(i, 2))
+            TDATE = getSimpleDate(dateTimeStr)
+            TIME = getSimpleTime(dateTimeStr)
+            SECODE = str(result.cell_value(i, 0))[2:]
+            TOPEN = result.cell_value(i, 4)
+            TCLOSE = result.cell_value(i, 5)
+            HIGH = result.cell_value(i, 6)
+            LOW = result.cell_value(i, 7)
+            VOTRUNOVER = result.cell_value(i, 8)
+            VATRUNOVER = result.cell_value(i, 9)
+            TYClOSE = result.cell_value(i, 11)
+            PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+
+            valStr = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
+                    + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
+                    + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG)  
+
+            insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
+
+            databaseObj.ExecStoreProduce(insertStr)    
+
+        infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
+                + "Write to Table " + desTableName + " Success!\n"
+        recordInfoWithLock(infoStr) 
+        
+    except: 
+        info = sys.exc_info() 
+        infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
+                + "Exception: " + str(info)
+        recordInfoWithLock(infoStr) 
+        traceback.print_exc()
+
+'''
+从网络接口获取数据并写入到数据库中
+'''
+def WriteNetData(secodeInfo):
+    databaseObj = MSSQL()    
+    for i in range(0, len(secodeInfo)):        
+        security = secodeInfo[i][0] + '.'
+        if secodeInfo[i][1] == 'SZ':
+            security = security + 'SZSE'
+        if secodeInfo[i][1] == 'SH':
+            security = security + 'SSE'
+        security = str(security)
+
+        desTableName = '[HistData].[dbo].[LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0] + "]"
+        securities = [];
+        securities.append(security)
+        fields = ["TradingDate", "TradingTime","Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
+        timePeriods = [['2017-07-01 00:00:00.000', '2017-08-01 00:00:00.000']]
+        timeInterval = 5
+        
+        ret, errMsg, dataCols = GetDataByTime(securities, [], fields, EQuoteType["k_Minute"], timeInterval, timePeriods)
+
+        if ret == 0:
+            infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " + security +" GetDataByTime Success! InfoCount = " + str(len(dataCols))
+            recordInfoWithLock(infoStr)
+            WriteToDataBaseFromNet(databaseObj, desTableName, dataCols)
+        else:
+            infoStr = "[x] threadName: " + str(threading.currentThread().getName()) + "  " + security + " GetDataByTime Failed: " +  errMsg  
+            recordInfoWithLock(infoStr)
+    databaseObj.CloseConnect()
+'''
+从Execl获取数据并写入到数据库中
+'''
+def WriteExeclData(secodeInfo):
+    databaseObj = MSSQL()    
+    for i in range(0, len(secodeInfo)):        
+        symbol = str(secodeInfo[i][0])
+        market = str(secodeInfo[i][1])
+        security = symbol + market
+        fileName = market + symbol + '.xlsx'
+        dirName =  "E:\database\original-data-20160910-20170910-1m"
+        completeFileName = dirName + "\\" + fileName
+        desTableName = '[HistData].[dbo].[LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0] + "]"
+
+        infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " + 'desTableName: ' + desTableName + ' \n' \
+                + "[i] threadName: " + str(threading.currentThread().getName()) + "  " + 'completeFileName: ' + completeFileName + '\n'
+
+        # recordInfoWithLock(infoStr) 
+
+        bk = xlrd.open_workbook(completeFileName)
+        try :
+            result = bk.sheet_by_name("Sheet1")
+            infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
+                    + "GetDataFromExcel " + fileName + " Success! InfoCount = " + str(result.nrows-1)
+            recordInfoWithLock(infoStr) 
+            WriteToDataBaseFromExcel(databaseObj, desTableName, result)
+        except:
+            infoStr = "[x] threadName: " + str(threading.currentThread().getName()) + "  " \
+                    + "GetDataFromExcel " + fileName +" Failed \n" \
+                    + "Exception : " + str(sys.exc_info())  
+            recordInfoWithLock(infoStr)   
+    databaseObj.CloseConnect()         
+'''
+测试主线程传递数据给子线程的方式
+'''
+def testThreadTransData(info, srcName):
     print 'testThreadTransData'
+    print 'srcName: %s'%(srcName)
     print type(info)
     print len(info)
     print len(info[0])
@@ -70,58 +179,35 @@ def testThreadTransData(info):
         --- 向数据源申请数据可能是线程独立的，需要用锁控制，防止并发访问造成错误
      3. 将获得数据写入数据库表中。
 '''
-def InsertData(secodeInfo):
-    # databaseObj = MSSQL()    
-    # secodeInfo = secodeInfo[0]
-    for i in range(0, len(secodeInfo)):
-        
-        security = secodeInfo[i][0] + '.'
-        if secodeInfo[i][1] == 'SZ':
-            security = security + 'SZSE'
-        if secodeInfo[i][1] == 'SH':
-            security = security + 'SSE'
-        security = str(security)
+def InsertData(secodeInfo, srcName):
+    if srcName == 'Net':
+        WriteNetData(secodeInfo)
+    elif srcName == "Excel":
+        WriteExeclData(secodeInfo)
+    else:
+        print 'UnResolved Src!'
 
-        securities = [];
-        securities.append(security)
-        fields = ["TradingDate", "TradingTime","Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
-        timePeriods = [['2017-07-01 00:00:00.000', '2017-08-01 00:00:00.000']]
-        timeInterval = 5
 
-        ret, errMsg, dataCols = GetDataByTime(securities, [], fields, EQuoteType["k_Minute"], timeInterval, timePeriods)
-
-        if ret == 0:
-            infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " + security +" GetDataByTime Success! InfoCount = " + str(len(dataCols))
-            recordInfoWithLock(infoStr)
-            desTableName = '[dbo].LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0]
-            # WriteToDataBase(databaseObj, desTableName, dataCols)
-        else:
-            infoStr = "[x] threadName: " + str(threading.currentThread().getName()) + "  " + security + " GetDataByTime Failed: " +  errMsg  
-            recordInfoWithLock(infoStr)
 '''
 功能： 单线程获取所有历史数据并插入到数据库中
 '''
 def GetHistDataSingleThread():
+    starttime = datetime.datetime.now()
+    infoStr = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++"
+    recordInfoWithLock(infoStr)
+
     secodeInfo = GetSecodeInfo()
-    databaseObj = MSSQL()
+    secodeInfo = secodeInfo[0:5]
+    srcName = "Excel"
+    InsertData(secodeInfo, srcName)
 
-    for i in range(0, len(secodeInfo)):
-        security = secodeInfo[i][0] + '.' + secodeInfo[i][1]
-        securities = [];
-        securities.append(security)
-        fields = ["TradingTime","TradingDate", "Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
-        timePeriods = [['2017-07-01 00:00:00.000', '2017-08-01 00:00:00.000']]
-        timeInterval = 5
-        ret, errMsg, dataCols = GetDataByTime(securities, [], fields, \
-                                            EQuoteType["k_Minute"], timeInterval, timePeriods)
-
-        if ret == 0:
-            print "[i] GetDataByTime Success! Rows = ", len(dataCols)
-            desTableName = '[dbo].LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0]
-            WriteToDataBase(databaseObj, desTableName, dataCols)
-
-        else:
-            print "[x] GetDataByTime(", hex(ret), "): ", errMsg    
+    endtime = datetime.datetime.now()
+    deletaTime = endtime - starttime
+    aveCostTime = deletaTime.seconds / len(secodeInfo) 
+    infoStr = "++++++++++ End Time: " + str(endtime) \
+            + ' Sum Cost Time: ' + str(deletaTime.seconds)  + "s" \
+            + " Ave Cost Time: " + str(aveCostTime) + "s ++++++++\n"      
+    recordInfoWithLock(infoStr)
 
 '''
 作用：获取所有证券的历史数据
@@ -131,38 +217,45 @@ def GetHistDataSingleThread():
 '''
 def GetHistDataMultiThread():
     secodeInfo = GetSecodeInfo()
-    srcName = "Net"
+    secodeInfo = secodeInfo[1:9]
+    srcName = "Excel"
+
     threadCount = 3
     numbInterval = len(secodeInfo) / threadCount    
     if len(secodeInfo) % threadCount != 0:
         threadCount = threadCount + 1
 
-    infoStr = 'secodeInfo count:' + str(len(secodeInfo)) + ', numbInterval: ' + str(numbInterval) + ', threadCount:' + str(threadCount)
-    recordInfo(infoStr)
+    infoStr = '\nSecodeInfo count:' + str(len(secodeInfo)) + ', numbInterval: ' + str(numbInterval) + ', threadCount:' + str(threadCount)
+    recordInfoWithLock(infoStr)
 
     threads = []
     for i in range(0, threadCount):
         startIndex = i * numbInterval
-        endIndex = min((i+1) * numbInterval, len(secodeInfo))
-        # print (startIndex, endIndex)
+        endIndex = min((i+1) * numbInterval, len(secodeInfo))        
+        print (startIndex, endIndex)
+
         threadSecodeInfo = secodeInfo[startIndex:endIndex]
-        tmp = threading.Thread(target = testThreadTransData, args = (threadSecodeInfo,))
+        tmp = threading.Thread(target = InsertData, args = (threadSecodeInfo, srcName,))
         threads.append(tmp)
 
     starttime = datetime.datetime.now()
-    infoStr = "+++++++++ Start Time: " + str(starttime) + " +++++++++++"
-    recordInfo(infoStr)
+    infoStr = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
+    recordInfoWithLock(infoStr)
 
     for thread in threads:
-        thread.setDaemon(True)
+        # thread.setDaemon(False)
         thread.start()
-    thread.join()
+    
+    for thread in threads:
+        thread.join()
 
     endtime = datetime.datetime.now()
     deletaTime = endtime - starttime
-
-    infoStr = "++++++++++ End Time: " + str(endtime) +  ' Multi Thread Running Time: ' + str(deletaTime.seconds)  + "s ++++++++"    
-    recordInfo(infoStr)
+    aveCostTime = deletaTime.seconds / len(secodeInfo) 
+    infoStr = "++++++++++ End Time: " + str(endtime) \
+            + ' Sum Cost Time: ' + str(deletaTime.seconds)  + "s" \
+            + " Ave Cost Time: " + str(aveCostTime) + "s ++++++++\n"    
+    recordInfoWithLock(infoStr)
 
 def main():
     qt_usr = "xgzc_api"
@@ -175,11 +268,7 @@ def main():
 
     GetHistDataMultiThread()
 
-    # testApi.GetExchanges()
-
-    # testApi.GetDataByTime()
-
-    # TestGetAllHistData()
+    # GetHistDataSingleThread()
 
     testApi.QtLogout(qt_usr)
 

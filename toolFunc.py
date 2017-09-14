@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import math
 import time
+from example import MSSQL
 
 def getSimpleDate(oriDateStr):
     dateArray = oriDateStr.split(' ')
@@ -31,6 +32,19 @@ def getSecodeInfo(databaseObj):
     result = databaseObj.ExecQuery(queryString)
     return result
 
+def GetSecodeInfo():
+    databaseObj = MSSQL()
+    originDataTable = '[dbo].[SecodeInfo]'
+    queryString = 'select SECODE, EXCHANGE from ' + originDataTable
+    result = databaseObj.ExecQuery(queryString)
+    return result
+    
+# def GetSecodeInfo():
+#     originDataTable = '[dbo].[SecodeInfo]'
+#     queryString = 'select SECODE, EXCHANGE from ' + originDataTable
+#     databaseObj = MSSQL()
+#     result = databaseObj.ExecQuery(queryString)
+#     return result
 '''
 功能：提取用户和密码
 返回值为：(ret, usr, pwd)

@@ -9,6 +9,10 @@ class MSSQL:
         self.user = user
         self.pwd = pwd
         self.db = db
+        self.conn = pymssql.connect(host=self.host,user=self.user,password=self.pwd,database=self.db,timeout=5,login_timeout=2,charset="utf8")  
+        self.cur = self.conn.cursor()  
+        if not self.cur:  
+            raise(NameError,"Connect Data Base Failed! ")  
         # print (self.host, self.user, self.pwd, self.db)
 
              
@@ -23,7 +27,7 @@ class MSSQL:
         self.conn = pymssql.connect(host=self.host,user=self.user,password=self.pwd,database=self.db,timeout=5,login_timeout=2,charset="utf8")  
         cur = self.conn.cursor()  
         if not cur:  
-            raise(NameError,"连接数据库失败")  
+            raise(NameError,"Connect Data Base Failed!")  
         else:  
             return cur  
   
@@ -72,13 +76,25 @@ class MSSQL:
         self.conn.commit()  
         self.conn.close()  
   
+    # def ExecStoreProduce(self,sql):  
+    #     """ 
+    #     执行插入语句 
+
+    #     """  
+    #     cur = self.__GetConnect()  
+    #     tmp = cur.execute(sql)  
+    #     self.conn.commit()  
+    #     self.conn.close()  
+    #     return tmp
+
     def ExecStoreProduce(self,sql):  
         """ 
         执行插入语句 
 
         """  
-        cur = self.__GetConnect()  
-        tmp = cur.execute(sql)  
+        result = self.cur.execute(sql)  
         self.conn.commit()  
+        return result    
+
+    def CloseConnect(self):
         self.conn.close()  
-        return tmp
