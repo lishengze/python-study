@@ -214,3 +214,11 @@
 20170914175309 Info connect success, ID=1,ip=119.147.213.44,port=8181
 20170914175309 Info network.c:add_connect 3298 add_connect(ip:119.147.213.44 port:8181) succ id(1) reconnect(0)
 20170914175309 Error ID=1,ip=119.147.213.44,port=8181 closed, erorcode:995
+20170914181029 Info network.c:_reconnect_cb 2787 Begin
+20170914181029 Info network.c:_client_kernel_cb 2697 Begin
+20170914181029 Info Client.cpp:_ProcessProClientMapDataUnitTimeout 453 Begin
+20170914181029 Info connect success, ID=0,ip=119.147.213.43,port=8181
+20170914181029 Info network.c:add_connect 3298 add_connect(ip:119.147.213.43 port:8181) succ id(0) reconnect(0)
+20170914181029 Info connect success, ID=1,ip=119.147.213.44,port=8181
+20170914181029 Info network.c:add_connect 3298 add_connect(ip:119.147.213.44 port:8181) succ id(1) reconnect(0)
+20170914181029 Error ID=1,ip=119.147.213.44,port=8181 closed, erorcode:995

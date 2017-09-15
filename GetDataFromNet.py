@@ -21,21 +21,18 @@ g_toFile   = True   # 提取的数据是否输出到文件
 g_toGBK    = False  # 提取的数据是否进行汉字编码转换
 
 g_DatabaseObj = MSSQL()
-
 g_writeLogLock = threading.Lock()
+g_susCount = 0
+g_susCountLock = threading.Lock()
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
 
-def recordInfo(infoStr):
-    g_logFile.write(infoStr + '\n')
-    print infoStr
-
 def recordInfoWithLock(infoStr):    
+    global g_writeLogLock, g_logFile
     g_writeLogLock.acquire()
     print infoStr
     g_logFile.write(infoStr + '\n')
-    g_writeLogLock.release()        
-
+    g_writeLogLock.release()      
 '''
 功能：将数据写入数据库
 '''
@@ -57,12 +54,13 @@ def WriteToDataBaseFromNet(databaseObj, desTableName, result):
     recordInfoWithLock(infoStr) 
 
 
-def WriteToDataBaseFromExcel(databaseObj, desTableName, result):
-    rowNumb = result.nrows
-    infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
-                + "Write to Table " + desTableName + " Start!\n"    
-    # recordInfoWithLock(infoStr)
+def WriteToDataBaseFromExcel(databaseObj, desTableName, result):    
     try:
+        global g_susCount, g_susCountLock
+        rowNumb = result.nrows
+        # infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
+        #             + "Write to Table " + desTableName + " Start!\n"    
+        # recordInfoWithLock(infoStr)                    
         for i in range(1, rowNumb):
             colStr = " (TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
             dateTimeStr = transExcelTimeToStr(result.cell_value(i, 2))
@@ -86,16 +84,22 @@ def WriteToDataBaseFromExcel(databaseObj, desTableName, result):
 
             databaseObj.ExecStoreProduce(insertStr)    
 
+        g_susCountLock.acquire()
+        g_susCount = g_susCount + 1
+        tmp_susCount = g_susCount
+        g_susCountLock.release()
+
         infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
-                + "Write to Table " + desTableName + " Success!\n"
+                + "Write to Table " + desTableName + " Success , Success cout is: " + str(tmp_susCount) + "\n"
         recordInfoWithLock(infoStr) 
         
     except: 
-        info = sys.exc_info() 
-        infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
-                + "Exception: " + str(info)
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] threadName: " + str(threading.currentThread().getName()) + "  " \
+                + "Write to dataTable " + desTableName +" Failed \n" \
+                + "[E] Exception : " + exceptionInfo
         recordInfoWithLock(infoStr) 
-        traceback.print_exc()
+        
 
 '''
 从网络接口获取数据并写入到数据库中
@@ -131,34 +135,35 @@ def WriteNetData(secodeInfo):
 从Execl获取数据并写入到数据库中
 '''
 def WriteExeclData(secodeInfo):
-    databaseObj = MSSQL()    
-    for i in range(0, len(secodeInfo)):        
-        symbol = str(secodeInfo[i][0])
-        market = str(secodeInfo[i][1])
-        security = symbol + market
-        fileName = market + symbol + '.xlsx'
-        dirName =  "E:\database\original-data-20160910-20170910-1m"
-        completeFileName = dirName + "\\" + fileName
-        desTableName = '[HistData].[dbo].[LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0] + "]"
+    try :
+        databaseObj = MSSQL()    
+        for i in range(0, len(secodeInfo)):        
+            symbol = str(secodeInfo[i][0])
+            market = str(secodeInfo[i][1])
+            security = symbol + market
+            fileName = market + symbol + '.xlsx'
+            dirName =  "E:\database\original-data-20160910-20170910-1m"
+            completeFileName = dirName + "\\" + fileName
+            desTableName = '[HistData].[dbo].[LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0] + "]"
 
-        infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " + 'desTableName: ' + desTableName + ' \n' \
-                + "[i] threadName: " + str(threading.currentThread().getName()) + "  " + 'completeFileName: ' + completeFileName + '\n'
+            # infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " + 'desTableName: ' + desTableName + ' \n' \
+            #         + "[i] threadName: " + str(threading.currentThread().getName()) + "  " + 'completeFileName: ' + completeFileName + '\n'
+            # recordInfoWithLock(infoStr)             
 
-        # recordInfoWithLock(infoStr) 
-
-        bk = xlrd.open_workbook(completeFileName)
-        try :
+            bk = xlrd.open_workbook(completeFileName)
             result = bk.sheet_by_name("Sheet1")
             infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
                     + "GetDataFromExcel " + fileName + " Success! InfoCount = " + str(result.nrows-1)
             recordInfoWithLock(infoStr) 
             WriteToDataBaseFromExcel(databaseObj, desTableName, result)
-        except:
-            infoStr = "[x] threadName: " + str(threading.currentThread().getName()) + "  " \
-                    + "GetDataFromExcel " + fileName +" Failed \n" \
-                    + "Exception : " + str(sys.exc_info())  
-            recordInfoWithLock(infoStr)   
-    databaseObj.CloseConnect()         
+    
+        databaseObj.CloseConnect()    
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] threadName: " + str(threading.currentThread().getName()) + "  " \
+                + "GetDataFromExcel " + fileName +" Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        recordInfoWithLock(infoStr)      
 '''
 测试主线程传递数据给子线程的方式
 '''
@@ -180,12 +185,19 @@ def testThreadTransData(info, srcName):
      3. 将获得数据写入数据库表中。
 '''
 def InsertData(secodeInfo, srcName):
-    if srcName == 'Net':
-        WriteNetData(secodeInfo)
-    elif srcName == "Excel":
-        WriteExeclData(secodeInfo)
-    else:
-        print 'UnResolved Src!'
+    try:
+        if srcName == 'Net':
+            WriteNetData(secodeInfo)
+        elif srcName == "Excel":
+            WriteExeclData(secodeInfo)
+        else:
+            print 'UnResolved Src!'
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] threadName: " + str(threading.currentThread().getName()) + "  " \
+                + "InsertDatra Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        recordInfoWithLock(infoStr)              
 
 
 '''
@@ -216,47 +228,53 @@ def GetHistDataSingleThread():
      3. 将证券代码信息按照线程数均分给不同的线程。
 '''
 def GetHistDataMultiThread():
-    secodeInfo = GetSecodeInfo()
-    secodeInfo = secodeInfo[1:9]
-    srcName = "Excel"
+    try: 
+        global g_susCount
+        secodeInfo = GetSecodeInfo()
+        secodeInfo = secodeInfo[1:9]
+        srcName = "Excel"
 
-    threadCount = 3
-    numbInterval = len(secodeInfo) / threadCount    
-    if len(secodeInfo) % threadCount != 0:
-        threadCount = threadCount + 1
+        threadCount = 3
+        numbInterval = len(secodeInfo) / threadCount    
+        if len(secodeInfo) % threadCount != 0:
+            threadCount = threadCount + 1
 
-    infoStr = '\nSecodeInfo count:' + str(len(secodeInfo)) + ', numbInterval: ' + str(numbInterval) + ', threadCount:' + str(threadCount)
-    recordInfoWithLock(infoStr)
+        infoStr = '\nSecodeInfo count:' + str(len(secodeInfo)) + ', numbInterval: ' + str(numbInterval) + ', threadCount:' + str(threadCount)
+        recordInfoWithLock(infoStr)
 
-    threads = []
-    for i in range(0, threadCount):
-        startIndex = i * numbInterval
-        endIndex = min((i+1) * numbInterval, len(secodeInfo))        
-        print (startIndex, endIndex)
+        threads = []
+        for i in range(0, threadCount):
+            startIndex = i * numbInterval
+            endIndex = min((i+1) * numbInterval, len(secodeInfo))        
+            print (startIndex, endIndex)
 
-        threadSecodeInfo = secodeInfo[startIndex:endIndex]
-        tmp = threading.Thread(target = InsertData, args = (threadSecodeInfo, srcName,))
-        threads.append(tmp)
+            threadSecodeInfo = secodeInfo[startIndex:endIndex]
+            tmp = threading.Thread(target = InsertData, args = (threadSecodeInfo, srcName,))
+            threads.append(tmp)
 
-    starttime = datetime.datetime.now()
-    infoStr = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
-    recordInfoWithLock(infoStr)
+        starttime = datetime.datetime.now()
+        infoStr = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
+        recordInfoWithLock(infoStr)
 
-    for thread in threads:
-        # thread.setDaemon(False)
-        thread.start()
+        for thread in threads:
+            thread.start()        
+        for thread in threads:
+            thread.join()
+
+        endtime = datetime.datetime.now()
+        deletaTime = endtime - starttime
+        aveCostTime = deletaTime.seconds / g_susCount 
+        infoStr = "++++++++++ End Time: " + str(endtime) \
+                + ' Sum Cost Time: ' + str(deletaTime.seconds)  + "s" \
+                + " Ave Cost Time: " + str(aveCostTime) + "s ++++++++\n"    
+        recordInfoWithLock(infoStr)
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] threadName: " + str(threading.currentThread().getName()) + "  " \
+                + "GetHistDataMultiThread Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        recordInfoWithLock(infoStr)            
     
-    for thread in threads:
-        thread.join()
-
-    endtime = datetime.datetime.now()
-    deletaTime = endtime - starttime
-    aveCostTime = deletaTime.seconds / len(secodeInfo) 
-    infoStr = "++++++++++ End Time: " + str(endtime) \
-            + ' Sum Cost Time: ' + str(deletaTime.seconds)  + "s" \
-            + " Ave Cost Time: " + str(aveCostTime) + "s ++++++++\n"    
-    recordInfoWithLock(infoStr)
-
 def main():
     qt_usr = "xgzc_api"
     qt_pwd = "UXLAS4YF"

@@ -37,6 +37,7 @@ def GetSecodeInfo():
     originDataTable = '[dbo].[SecodeInfo]'
     queryString = 'select SECODE, EXCHANGE from ' + originDataTable
     result = databaseObj.ExecQuery(queryString)
+    databaseObj.CloseConnect()
     return result
     
 # def GetSecodeInfo():

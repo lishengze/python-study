@@ -1,0 +1,24 @@
+20170915100853 Info network.c:_client_kernel_cb 2697 Begin
+20170915100853 Info network.c:_reconnect_cb 2787 Begin
+20170915100853 Info Client.cpp:_ProcessProClientMapDataUnitTimeout 453 Begin
+20170915100853 Info connect success, ID=0,ip=119.147.213.43,port=8181
+20170915100853 Info network.c:add_connect 3298 add_connect(ip:119.147.213.43 port:8181) succ id(0) reconnect(0)
+20170915100853 Info connect success, ID=1,ip=119.147.213.44,port=8181
+20170915100853 Info network.c:add_connect 3298 add_connect(ip:119.147.213.44 port:8181) succ id(1) reconnect(0)
+20170915100853 Error ID=1,ip=119.147.213.44,port=8181 closed, erorcode:995
+20170915101326 Info network.c:_reconnect_cb 2787 Begin
+20170915101326 Info network.c:_client_kernel_cb 2697 Begin
+20170915101326 Info Client.cpp:_ProcessProClientMapDataUnitTimeout 453 Begin
+20170915101326 Info connect success, ID=0,ip=119.147.213.43,port=8181
+20170915101326 Info network.c:add_connect 3298 add_connect(ip:119.147.213.43 port:8181) succ id(0) reconnect(0)
+20170915101326 Info connect success, ID=1,ip=119.147.213.44,port=8181
+20170915101326 Info network.c:add_connect 3298 add_connect(ip:119.147.213.44 port:8181) succ id(1) reconnect(0)
+20170915101326 Error ID=1,ip=119.147.213.44,port=8181 closed, erorcode:995
+20170915103246 Info network.c:_client_kernel_cb 2697 Begin
+20170915103246 Info network.c:_reconnect_cb 2787 Begin
+20170915103246 Info Client.cpp:_ProcessProClientMapDataUnitTimeout 453 Begin
+20170915103246 Info connect success, ID=0,ip=119.147.213.43,port=8181
+20170915103246 Info network.c:add_connect 3298 add_connect(ip:119.147.213.43 port:8181) succ id(0) reconnect(0)
+20170915103246 Info connect success, ID=1,ip=119.147.213.44,port=8181
+20170915103246 Info network.c:add_connect 3298 add_connect(ip:119.147.213.44 port:8181) succ id(1) reconnect(0)
+20170915103246 Error ID=1,ip=119.147.213.44,port=8181 closed, erorcode:995

@@ -54,12 +54,14 @@ class MSSQL:
                 for (id,NickName) in resList: 
                     print str(id),NickName 
         """  
-        cur = self.__GetConnect()  
-        cur.execute(sql)  
-        resList = cur.fetchall()  
-        #resList = cur.description  
-        #查询完毕后必须关闭连接  
-        self.conn.close()  
+        result = self.cur.execute(sql)  
+
+        resList = self.cur.fetchall()  
+        # cur = self.__GetConnect()  
+        # cur.execute(sql)  
+        # resList = cur.description  
+        # 查询完毕后必须关闭连接  
+        # self.conn.close()  
         return resList  
   
     def ExecNonQuery(self,sql):  
