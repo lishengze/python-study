@@ -1,3 +1,3 @@
 SecodeInfo numb is  : 3329
-errMsg: 
-Sum count is 30
+errMsg: 定额用尽
+Sum count is 0

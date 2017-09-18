@@ -6,7 +6,7 @@ from QtAPI import *
 from QtDataAPI import *
 from TestApi import TestApi
 from example import MSSQL
-from WorkScript import GetSecodeInfo
+from toolFunc import *
 
 g_BeatInterval = 5  # 运行信号输出间隔
 g_cycle    = False  # Demo程序是否持续运行
@@ -28,34 +28,6 @@ def ConvertStr(data):
             for index, row in data.iterrows():
                 data.ix[index,col_name] = data.ix[index,col_name].decode('UTF-8').encode('GBK')
     return data
-
-# 提取用户和密码
-# 返回值为：(ret, usr, pwd)
-def GetUsrPwd(filename):
-    if os.path.exists(filename):
-        pass
-    else:
-        return (False, "", "")
-
-    usr = None
-    pwd = None
-    f = open(filename, "r")
-
-    line = f.readline()
-    strs = line.split(':')
-    if 0 == len(strs):
-        f.close()
-        return (False, "", "")
-    usr = strs[1].strip()
-    line = f.readline()
-    strs = line.split(':')
-    if 0 == len(strs):
-        f.close()
-        return (False, "", "")
-    pwd = strs[1].strip()
-    f.close()
-
-    return (True, usr, pwd)
 
 # 分时行情回调函数示例
 def DemonRun():
@@ -254,8 +226,7 @@ def getSumSecodeDataCount():
     resultFileName = "secodeResult.txt"
     wfile = open(resultFileName, 'w')
     rstStr = "SecodeInfo numb is  : " + str(len(result)) + '\n'
-    wfile.write(rstStr)    
-    print rstStr
+    LogInfo(wfile, rstStr)
 
     count = 0
     secondeCount = len(result)
@@ -278,8 +249,8 @@ def getSumSecodeDataCount():
 
         if ret == 0:
             rstStr = security + " : " + str(len(dataCols)) + '\n'
-            wfile.write(rstStr)
-            print rstStr
+            LogInfo(wfile, rstStr)
+ 
             count = count + len(dataCols)
         else:
             wfile.write('errMsg: ' + errMsg)
@@ -287,8 +258,7 @@ def getSumSecodeDataCount():
         dataCols = None
 
     rstStr = "\nSum count is " + str(count) + '\n'
-    print rstStr
-    wfile.write(rstStr)
+    LogInfo(wfile, rstStr)
     wfile.close()
 
 def testWriteFile():

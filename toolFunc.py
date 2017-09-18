@@ -2,6 +2,9 @@
 import math
 import time
 from example import MSSQL
+import os
+import traceback
+import threading
 
 def getSimpleDate(oriDateStr):
     dateArray = oriDateStr.split(' ')
@@ -37,15 +40,144 @@ def GetSecodeInfo():
     originDataTable = '[dbo].[SecodeInfo]'
     queryString = 'select SECODE, EXCHANGE from ' + originDataTable
     result = databaseObj.ExecQuery(queryString)
+
     databaseObj.CloseConnect()
     return result
-    
-# def GetSecodeInfo():
-#     originDataTable = '[dbo].[SecodeInfo]'
-#     queryString = 'select SECODE, EXCHANGE from ' + originDataTable
-#     databaseObj = MSSQL()
-#     result = databaseObj.ExecQuery(queryString)
-#     return result
+
+def GetDatabaseTableInfo():
+    databaseObj = MSSQL()
+    queryString = "select name from HistData..sysobjects where xtype= 'U'"
+    result = databaseObj.ExecQuery(queryString)
+    transRst = []
+    for i in range(len(result)):
+        transRst.append(str(result[i][0]))
+    databaseObj.CloseConnect()
+    return transRst    
+
+def LogInfo(wfile, info):
+    wfile.write(info)    
+    print info    
+
+def dropTableByName(databaseObj, tableName):
+    try:
+        valueStr = "(TDATE int, TIME int, SECODE varchar(10), \
+                    TOPEN decimal(10,4), TCLOSE decimal(10,4), HIGH decimal(10,4), LOW decimal(10,4), \
+                    VATRUNOVER decimal(18,4), VOTRUNOVER decimal(18,4), PCTCHG decimal(10,4))"
+        createStr = "drop table " + tableName 
+        databaseObj.ExecStoreProduce(createStr)
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] deleteTableByName  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr  
+
+def createTableByName(databaseObj, tableName):
+    try:
+        valueStr = "(TDATE int, TIME int, SECODE varchar(10), \
+                    TOPEN decimal(10,4), TCLOSE decimal(10,4), HIGH decimal(10,4), LOW decimal(10,4), \
+                    VATRUNOVER decimal(18,4), VOTRUNOVER decimal(18,4), PCTCHG decimal(10,4))"
+        createStr = "create table " + tableName + valueStr
+        databaseObj.ExecStoreProduce(createStr)
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] createTableByName  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr  
+
+def deleteSecodeInfoFromExcel(secodeInfo, execlFileDirName):
+    try:
+        excelFileNameArray = os.listdir(execlFileDirName)
+        i = 0
+        deletedSecodeInfo = []
+        while i < len(secodeInfo):      
+            symbol = str(secodeInfo[i][0])
+            market = str(secodeInfo[i][1])
+            security = symbol + market
+            fileName = market + symbol + '.xlsx'    
+            if fileName not in excelFileNameArray:
+                secodeInfo.pop(i)       
+                deletedSecodeInfo.append([symbol,market])   
+                continue
+            i = i + 1
+        return deletedSecodeInfo, secodeInfo
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] completeSecodeInfo  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr   
+        return -1, secodeInfo   
+
+def AddSecodeInfoFromExcel(secodeInfo, execlFileDirName):
+    try:
+        excelFileNameArray = os.listdir(execlFileDirName)
+        secodeExelFileName = []
+        for i in range (len(secodeInfo)):
+            symbol = str(secodeInfo[i][0])
+            market = str(secodeInfo[i][1])
+            fileName = market + symbol + '.xlsx'            
+            secodeExelFileName.append(fileName)
+ 
+        addedSecodeInfo = []
+        for i in range(len(excelFileNameArray)):            
+            if excelFileNameArray[i] not in secodeExelFileName:            
+                symbol = excelFileNameArray[i][2:8]
+                market = excelFileNameArray[i][0:2]
+                secodeInfo.append([symbol,market])
+                addedSecodeInfo.append([symbol,market])
+        return addedSecodeInfo, secodeInfo
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] completeSecodeInfo  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr   
+        return -1, secodeInfo
+
+def addTableBySecodeInfo(secodeInfo, databaseTable):
+    try:
+        databaseObj = MSSQL()
+        for i in range(len(secodeInfo)):
+            tableName = 'LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0]
+            wholeTableName = '[HistData].[dbo].'+ tableName
+            if tableName not in databaseTable:
+                print 'tableName: ' + tableName
+                createTableByName(databaseObj, wholeTableName)    
+        databaseObj.CloseConnect()
+
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] addTableBySecodeInfo()  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr   
+
+def createTableBySecodeInfo(secodeInfo):
+    try: 
+        databaseObj = MSSQL()
+        for i in range(len(secodeInfo)):
+            symbol = str(secodeInfo[i][0])
+            market = str(secodeInfo[i][1])
+            tableName = '[HistData].[dbo].[LCY_STK_01MS_' + market +'_' + symbol + "]"
+            createTableByName(databaseObj, tableName)
+        databaseObj.CloseConnect()
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "\n[X] addTableBySecodeInfo  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr   
+
+def getCompleteSecodeInfoByExcel(secodeInfo, execlFileDirName):
+    try: 
+        deletedSecodeInfo, secodeInfo = deleteSecodeInfoFromExcel(secodeInfo, execlFileDirName)
+        print 'Deleted Secode Numb: %d, Afte delete Secode Numb : %d' %(len(deletedSecodeInfo), len(secodeInfo))
+
+        addedSecodeInfo, secodeInfo = AddSecodeInfoFromExcel(secodeInfo, execlFileDirName)
+        print 'Added Secode Numb: %d, Afte add Secode Numb : %d' %(len(addedSecodeInfo), len(secodeInfo))   
+
+        return addedSecodeInfo, secodeInfo
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] getCompleteSecodeInfoByExcel()  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr         
 '''
 功能：提取用户和密码
 返回值为：(ret, usr, pwd)

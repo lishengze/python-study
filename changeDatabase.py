@@ -3,6 +3,8 @@ import traceback
 import threading
 from toolFunc import *
 
+
+
 def createRealTable(databaseObj):
     startIndex = 1
     endIndex = 11
@@ -47,7 +49,105 @@ def dropRealTable(databaseObj):
                 + "[E] Exception : " + exceptionInfo
         print infoStr
 
+def dropAllSecodeTable(secodeInfo):
+    try: 
+        databaseObj = MSSQL()
+        for i in range(len(secodeInfo)):
+            symbol = str(secodeInfo[i][0])
+            market = str(secodeInfo[i][1])
+            tableName = '[HistData].[dbo].[LCY_STK_01MS_' + market +'_' + symbol + "]"
+            dropTableByName(databaseObj, tableName)
+        databaseObj.CloseConnect()
+        return secodeInfo
 
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] comleteDatabaseByExcel()  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr       
+
+def createAllSecodeTable(secodeInfo):
+    try: 
+        databaseObj = MSSQL()
+        for i in range(len(secodeInfo)):
+            symbol = str(secodeInfo[i][0])
+            market = str(secodeInfo[i][1])
+            tableName = '[HistData].[dbo].[LCY_STK_01MS_' + market +'_' + symbol + "]"
+            createTableByName(databaseObj, tableName)
+        databaseObj.CloseConnect()
+        return secodeInfo
+
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] comleteDatabaseByExcel()  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr               
+
+def addTableByExcel():
+    try: 
+        secodeInfo = GetSecodeInfo()
+        execlFileDirName = "E:\DataBase\original-data-20160910-20170910-1m"
+
+        print 'Original Secode Numb: %d' %(len(secodeInfo))
+
+        addedSecodeInfo, secodeInfo = getCompleteSecodeInfoByExcel(secodeInfo, execlFileDirName)
+
+        createTableBySecodeInfo(addedSecodeInfo)
+
+        return secodeInfo
+
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] comleteDatabaseByExcel()  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr            
+
+def createCompleteExeclTable():
+    try: 
+        secodeInfo = GetSecodeInfo()
+        execlFileDirName = "E:\DataBase\original-data-20160910-20170910-1m"
+
+        print 'Original Secode Numb: %d' %(len(secodeInfo))
+
+        addedSecodeInfo, secodeInfo = getCompleteSecodeInfoByExcel(secodeInfo, execlFileDirName)
+
+        addTableBySecodeInfo(secodeInfo, GetDatabaseTableInfo())
+
+        # createAllSecodeTable(secodeInfo)
+
+        return secodeInfo
+
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] createCompleteExeclTable()  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr       
+
+def dropCompleteExeclTable():
+    try: 
+        secodeInfo = GetSecodeInfo()
+        execlFileDirName = "E:\DataBase\original-data-20160910-20170910-1m"
+
+        print 'Original Secode Numb: %d' %(len(secodeInfo))
+
+        addedSecodeInfo, secodeInfo = getCompleteSecodeInfoByExcel(secodeInfo, execlFileDirName)
+
+        dropAllSecodeTable(secodeInfo)
+
+        return secodeInfo
+
+    except:
+        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] createCompleteExeclTable()  Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        print infoStr         
+
+def testGetDatabaseTableInfo():
+    databaseTable = GetDatabaseTableInfo()
+    print len(databaseTable)
+    print databaseTable[1:5]
+    if u'LCY_STK_01MS_SH_600970' in databaseTable:
+        print 'TTTTT'
 
 def main():
     try:
@@ -65,5 +165,10 @@ def main():
         print infoStr            
 
 if __name__ == "__main__":
-    main()
+    # main()
+    # dropAllSecodeTable()
+    # comleteDatabaseByExcel()
+    # dropCompleteExeclTable()
+    createCompleteExeclTable()
+    # testGetDatabaseTableInfo()
 

@@ -16,11 +16,6 @@ from multiprocessing import cpu_count
 import datetime
 import threading
 
-g_toScreen = False  # 提取的数据是否输出到屏幕
-g_toFile   = True   # 提取的数据是否输出到文件
-g_toGBK    = False  # 提取的数据是否进行汉字编码转换
-
-g_DatabaseObj = MSSQL()
 g_writeLogLock = threading.Lock()
 g_susCount = 0
 g_susCountLock = threading.Lock()
@@ -36,25 +31,28 @@ def recordInfoWithLock(infoStr):
 '''
 功能：将数据写入数据库
 '''
-def WriteToDataBaseFromNet(databaseObj, desTableName, result):
-    rowNumb = len(result) 
-    for i in range(0, len(result)):
-        colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
-        valStr = getSimpleDate(result.iloc[i, 0]) + ", " + getSimpleTime(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'," \
-                + str(result.iloc[i, 3]) + ", " + str(result.iloc[i, 4]) + ", " + str(result.iloc[i, 5]) + ", " \
-                + str(result.iloc[i, 6]) + ", " + str(result.iloc[i, 7]) + ", " + str(result.iloc[i, 8]) + ", " \
-                + str(result.iloc[i, 9])   
+def WriteToDataBaseFromNet(databaseObj, desTableName, result, taskCount):
+    try:
+        global g_susCount, g_susCountLock    
+        rowNumb = len(result) 
+        for i in range(0, len(result)):
+            colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
+            valStr = getSimpleDate(result.iloc[i, 0]) + ", " + getSimpleTime(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'," \
+                    + str(result.iloc[i, 3]) + ", " + str(result.iloc[i, 4]) + ", " + str(result.iloc[i, 5]) + ", " \
+                    + str(result.iloc[i, 6]) + ", " + str(result.iloc[i, 7]) + ", " + str(result.iloc[i, 8]) + ", " \
+                    + str(result.iloc[i, 9])   
 
-        insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
-        # print 'insertStr: %s'%(insertStr)
-        insertRst = databaseObj.ExecStoreProduce(insertStr)
+            insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
+            # print 'insertStr: %s'%(insertStr)
+            insertRst = databaseObj.ExecStoreProduce(insertStr)
+    except:
+        infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
+                + "Write to Table " + desTableName + " Success , TaskCount is :" + str(taskCount) \
+                + " Success count is: " + str(tmp_susCount) + "\n"
+        recordInfoWithLock(infoStr) 
 
-    infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
-            + " Write to Table " + desTableName + " Success!"
-    recordInfoWithLock(infoStr) 
 
-
-def WriteToDataBaseFromExcel(databaseObj, desTableName, result):    
+def WriteToDataBaseFromExcel(databaseObj, desTableName, result, taskCount):    
     try:
         global g_susCount, g_susCountLock
         rowNumb = result.nrows
@@ -90,7 +88,8 @@ def WriteToDataBaseFromExcel(databaseObj, desTableName, result):
         g_susCountLock.release()
 
         infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
-                + "Write to Table " + desTableName + " Success , Success cout is: " + str(tmp_susCount) + "\n"
+                + "Write to Table " + desTableName + " Success , TaskCount is :" + str(taskCount) \
+                + " Success count is: " + str(tmp_susCount) + "\n"
         recordInfoWithLock(infoStr) 
         
     except: 
@@ -137,14 +136,17 @@ def WriteNetData(secodeInfo):
 def WriteExeclData(secodeInfo):
     try :
         databaseObj = MSSQL()    
+        infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + " ThreadTaskCount = " + str(len(secodeInfo))
+        recordInfoWithLock(infoStr) 
         for i in range(0, len(secodeInfo)):        
             symbol = str(secodeInfo[i][0])
             market = str(secodeInfo[i][1])
             security = symbol + market
             fileName = market + symbol + '.xlsx'
-            dirName =  "E:\database\original-data-20160910-20170910-1m"
+            dirName =  "D:\database\original-data-20160910-20170910-1m"
             completeFileName = dirName + "\\" + fileName
-            desTableName = '[HistData].[dbo].[LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0] + "]"
+            tableName = '[LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0] + "]"
+            wholeTableName = '[HistData].[dbo].'+ tableName
 
             # infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " + 'desTableName: ' + desTableName + ' \n' \
             #         + "[i] threadName: " + str(threading.currentThread().getName()) + "  " + 'completeFileName: ' + completeFileName + '\n'
@@ -155,7 +157,7 @@ def WriteExeclData(secodeInfo):
             infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
                     + "GetDataFromExcel " + fileName + " Success! InfoCount = " + str(result.nrows-1)
             recordInfoWithLock(infoStr) 
-            WriteToDataBaseFromExcel(databaseObj, desTableName, result)
+            WriteToDataBaseFromExcel(databaseObj, wholeTableName, result, i+1)
     
         databaseObj.CloseConnect()    
     except:
@@ -231,10 +233,17 @@ def GetHistDataMultiThread():
     try: 
         global g_susCount
         secodeInfo = GetSecodeInfo()
-        secodeInfo = secodeInfo[1:9]
+        databaseTable = GetDatabaseTableInfo()
+        # secodeInfo = secodeInfo[1:9]
         srcName = "Excel"
 
-        threadCount = 3
+        if srcName == "Excel":
+            execlFileDirName = "D:\DataBase\original-data-20160910-20170910-1m"
+            addedSecodeInfo, secodeInfo = getCompleteSecodeInfoByExcel(secodeInfo, execlFileDirName)        
+
+        addTableBySecodeInfo(secodeInfo, databaseTable)
+
+        threadCount = 4
         numbInterval = len(secodeInfo) / threadCount    
         if len(secodeInfo) % threadCount != 0:
             threadCount = threadCount + 1
