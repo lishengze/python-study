@@ -273,13 +273,8 @@ def testWriteFile():
     wfile.close()
 
 def testMain():
-    qt_usr = "xgzc_api"
-    qt_pwd = "UXLAS4YF"
-
     testApi = TestApi()
-
-    testApi.QtLogin(qt_usr, qt_pwd)
-
+    testApi.QtLogin(QT_USR, QT_PWD)
     getSumSecodeDataCount()
 
     # testWriteHistByTimeData(testApi)

@@ -5,6 +5,7 @@ from example import MSSQL
 import os
 import traceback
 import threading
+from CONFIG import *
 
 def getSimpleDate(oriDateStr):
     dateArray = oriDateStr.split(' ')
@@ -28,12 +29,6 @@ def transExcelTimeToStr(excelTime):
     otherStyleTime = time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
     # print otherStyleTime
     return otherStyleTime
-
-def getSecodeInfo(databaseObj):
-    originDataTable = '[dbo].[SecodeInfo]'
-    queryString = 'select SECODE, EXCHANGE from ' + originDataTable
-    result = databaseObj.ExecQuery(queryString)
-    return result
 
 def GetSecodeInfo():
     databaseObj = MSSQL()
@@ -135,19 +130,22 @@ def AddSecodeInfoFromExcel(secodeInfo, execlFileDirName):
 def addTableBySecodeInfo(secodeInfo, databaseTable):
     try:
         databaseObj = MSSQL()
+        addedNumb = 0
         for i in range(len(secodeInfo)):
-            tableName = 'LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0]
-            wholeTableName = '[HistData].[dbo].'+ tableName
+            tableName = DATABASE_TABLE_PREFIX + secodeInfo[i][1] +'_' + secodeInfo[i][0]
+            wholeTableName = '[HistData].[dbo].'+ '[' + tableName + ']'
             if tableName not in databaseTable:
                 print 'tableName: ' + tableName
-                createTableByName(databaseObj, wholeTableName)    
+                createTableByName(databaseObj, wholeTableName)  
+                addedNumb = addedNumb + 1  
         databaseObj.CloseConnect()
-
+        return addedNumb
     except:
         exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
         infoStr = "[X] addTableBySecodeInfo()  Failed \n" \
                 + "[E] Exception : " + exceptionInfo
         print infoStr   
+        return -1
 
 def createTableBySecodeInfo(secodeInfo):
     try: 

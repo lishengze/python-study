@@ -1,31 +1,35 @@
 
 SecodeInfo count:8, numbInterval: 2, threadCount:4
 
-+++++++++ Start Time: 2017-09-15 10:32:46.412000 +++++++++++
++++++++++ Start Time: 2017-09-19 09:57:34.895000 +++++++++++
 
+[i] threadName: Thread-1 ThreadTaskCount = 2
+[i] threadName: Thread-4 ThreadTaskCount = 2
+[i] threadName: Thread-3 ThreadTaskCount = 2
+[i] threadName: Thread-2 ThreadTaskCount = 2
 [i] threadName: Thread-3  GetDataFromExcel SZ000007.xlsx Success! InfoCount = 29280
-[i] threadName: Thread-3  Write to Table [HistData].[dbo].[LCY_STK_01MS_SZ_000007] Success , Success cout is: 1
+[i] threadName: Thread-3  WriteToTable [HistData].[dbo].[LCY_STK_01MS_SZ_000007] Success , TaskCount is :1 Success count is: 1
 
 [i] threadName: Thread-1  GetDataFromExcel SZ000002.xlsx Success! InfoCount = 56880
 [i] threadName: Thread-2  GetDataFromExcel SZ000005.xlsx Success! InfoCount = 58080
 [i] threadName: Thread-4  GetDataFromExcel SZ000009.xlsx Success! InfoCount = 58080
 [i] threadName: Thread-3  GetDataFromExcel SZ000008.xlsx Success! InfoCount = 55680
-[i] threadName: Thread-1  Write to Table [HistData].[dbo].[LCY_STK_01MS_SZ_000002] Success , Success cout is: 2
+[i] threadName: Thread-1  WriteToTable [HistData].[dbo].[LCY_STK_01MS_SZ_000002] Success , TaskCount is :1 Success count is: 2
 
-[i] threadName: Thread-2  Write to Table [HistData].[dbo].[LCY_STK_01MS_SZ_000005] Success , Success cout is: 3
+[i] threadName: Thread-2  WriteToTable [HistData].[dbo].[LCY_STK_01MS_SZ_000005] Success , TaskCount is :1 Success count is: 3
 
-[i] threadName: Thread-4  Write to Table [HistData].[dbo].[LCY_STK_01MS_SZ_000009] Success , Success cout is: 4
+[i] threadName: Thread-4  WriteToTable [HistData].[dbo].[LCY_STK_01MS_SZ_000009] Success , TaskCount is :1 Success count is: 4
 
-[i] threadName: Thread-3  Write to Table [HistData].[dbo].[LCY_STK_01MS_SZ_000008] Success , Success cout is: 5
+[i] threadName: Thread-3  WriteToTable [HistData].[dbo].[LCY_STK_01MS_SZ_000008] Success , TaskCount is :2 Success count is: 5
 
 [i] threadName: Thread-1  GetDataFromExcel SZ000004.xlsx Success! InfoCount = 44880
 [i] threadName: Thread-2  GetDataFromExcel SZ000006.xlsx Success! InfoCount = 58080
 [i] threadName: Thread-4  GetDataFromExcel SZ000010.xlsx Success! InfoCount = 58080
-[i] threadName: Thread-1  Write to Table [HistData].[dbo].[LCY_STK_01MS_SZ_000004] Success , Success cout is: 6
+[i] threadName: Thread-1  WriteToTable [HistData].[dbo].[LCY_STK_01MS_SZ_000004] Success , TaskCount is :2 Success count is: 6
 
-[i] threadName: Thread-4  Write to Table [HistData].[dbo].[LCY_STK_01MS_SZ_000010] Success , Success cout is: 7
+[i] threadName: Thread-4  WriteToTable [HistData].[dbo].[LCY_STK_01MS_SZ_000010] Success , TaskCount is :2 Success count is: 7
 
-[i] threadName: Thread-2  Write to Table [HistData].[dbo].[LCY_STK_01MS_SZ_000006] Success , Success cout is: 8
+[i] threadName: Thread-2  WriteToTable [HistData].[dbo].[LCY_STK_01MS_SZ_000006] Success , TaskCount is :2 Success count is: 8
 
-++++++++++ End Time: 2017-09-15 10:41:48.286000 Sum Cost Time: 541s Ave Cost Time: 67s ++++++++
+++++++++++ End Time: 2017-09-19 10:07:05.732000 Sum Cost Time: 570s Ave Cost Time: 71s ++++++++
 

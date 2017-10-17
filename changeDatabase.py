@@ -2,8 +2,7 @@ from example import MSSQL
 import traceback
 import threading
 from toolFunc import *
-
-
+from CONFIG import * 
 
 def createRealTable(databaseObj):
     startIndex = 1
@@ -105,7 +104,7 @@ def addTableByExcel():
 def createCompleteExeclTable():
     try: 
         secodeInfo = GetSecodeInfo()
-        execlFileDirName = "E:\DataBase\original-data-20160910-20170910-1m"
+        execlFileDirName = EXCELFILE_DIR
 
         print 'Original Secode Numb: %d' %(len(secodeInfo))
 
@@ -126,7 +125,8 @@ def createCompleteExeclTable():
 def dropCompleteExeclTable():
     try: 
         secodeInfo = GetSecodeInfo()
-        execlFileDirName = "E:\DataBase\original-data-20160910-20170910-1m"
+        # execlFileDirName = "E:\DataBase\original-data-20160910-20170910-1m"
+        execlFileDirName = EXCELFILE_DIR
 
         print 'Original Secode Numb: %d' %(len(secodeInfo))
 

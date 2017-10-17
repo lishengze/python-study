@@ -1,9 +1,10 @@
 #coding=utf-8
 
 import pymssql  
+from CONFIG import *
   
 class MSSQL:  
-    def __init__(self, host="localhost", user="sa", pwd="sa", db="HistData"):  
+    def __init__(self, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):  
         self.__name__ = "MSSQL"
         self.host = host
         self.user = user
