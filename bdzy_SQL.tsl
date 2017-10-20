@@ -1,0 +1,104 @@
+Function bdzy_SQL(BkName,EndT);
+Begin
+{
+本地数据库的访问步骤：
+   1、配置  ExecSql.ini （只需要配置1次）
+   2、从本地SQL读取数据（用ExecSQL函数。如果需要的话）
+   3、开发业务部分
+   4、导出数据到本地SQL（用ExecSQL函数。如果需要的话）
+
+1、本地资源-数据库访问（在天软目录\plugin\ExecSql.ini）
+#MyLocalSQL             ：数据库别名（以后的对数据库的访问是通过此来访问）
+#Provider=SQLOLEDB.1    ：如果是SQL Server数据库的话
+#Password=MyPwd         : 数据库访问密码
+#User ID=sa             : 数据库访问用户名
+#Initial Catalog=pubs   : 数据库名称
+#Data Source=127.0.0.1  : 数据库地址
+[MyLocalSQL]
+ConnectStr=Provider=SQLOLEDB.1;Password=MyPwd;Persist Security Info=True;User ID=sa;Initial Catalog=pubs;Data Source=127.0.0.1
+permit=local
+
+
+以下是对Oracle的配置范例
+[MyLocalSQL]
+ConnectStr=Provider=OraOLEDB.Oracle.1;Password=MyPwd;Persist Security Info=True;User ID=sa;Data Source=127.0.0.1
+permit=local
+
+
+2、用ExecSQL函数读取数据
+ExecSQL(DataBaseName,SQL,Result)
+参数：
+   DataBaseName   :数据库别名（在天软目录\plugin\ExecSql.ini配置）
+   SQL            :SQL串.如 : Select top 10 * from myABCD order by T001 desc
+   Result         :执行结果
+返回值:
+   成功：true；失败：False
+其他说明：
+   必须有对数据库的访问权限（详见SQL Server or Oracle的配置）
+}
+
+      //2、用 ExecSQL 读取数据
+   s:="Select Count(*) as 'Count' from  TS_TestedSQL where EndDate="+format("'%s'",DateToStr(EndT));
+   Ret:=rdo2 ExecSQL('MyLocalSQL',s,t);
+   if Ret then
+   begin
+      if isTable(t) and t[0]['Count']<>0 then
+         return '已经导出过指定日的数据，不允许重复导出';
+   end
+   else
+      return '查询失败';
+
+   oV:=BackUpSystemParameters();
+      //把每天的资金流向（主买+主卖 库化）
+   StockArr:=GetBK(BkName);
+   r:=array();
+   n:=0;
+   for nI:=0 to length(StockArr)-1 do
+   begin
+      StockId:=StockArr[nI];
+      SetSysParam(PN_Stock(),StockId);
+      SetSysParam(PN_Date(),EndT);
+         //没有上市
+      if not IsStockGoMarket(EndT) then continue;
+         //没有交易
+      if not istradeday(EndT) then continue;
+      r[n]['代码']:=StockId;
+         //r[n]['名称']:=StockName(StockId);
+      r[n]['日期']:=EndT;
+
+         //主买量-当日累计
+      r[n]['主买量']:=td_sectional_buy_vol();
+         //主卖量-当日累计
+      r[n]['主卖量']:=td_sectional_sale_vol();
+         //主买金额-当日累计
+      r[n]['主买金额']:=td_sectional_buy_amount();
+         //主卖金额-当日累计
+      r[n]['主卖金额']:=td_sectional_sale_amount();
+         //资金流向-当日累计
+      r[n]['资金流向']:=r[n]['主买金额']-r[n]['主卖金额'];
+      n++;
+   end;
+   //return r;
+
+      //形成SQL串
+   sSQL:='';
+   for nI:=0 to length(r)-1 do
+   begin
+      sSQL:=sSQL+"Insert into TS_TestedSQL(StockId,EndDate,T001,T002,T003,T004,T005) values("
+                +format("'%s',",r[nI]['代码'])
+                +format("'%s',",DateToStr(r[nI]['日期']))
+                +format("%18.2f,",r[nI]['主买量'])
+                +format("%18.2f,",r[nI]['主卖量'])
+                +format("%18.2f,",r[nI]['主买金额'])
+                +format("%18.2f,",r[nI]['主卖金额'])
+                +format("%18.2f",r[nI]['资金流向'])
+                +")";
+      if nI<>length(r) then
+         sSQL:=sSQL+'\r\n';
+   end;
+      //4、Inser to Local's SQL
+   ret:=rdo2 ExecSQL('MyLocalSQL',sSQL,t);
+
+   RestoreSystemParameters(oV);
+   return r;
+End;

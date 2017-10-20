@@ -1,0 +1,14 @@
+Function UndefineFunc123();
+Begin
+   Stock:=getbk("A股");
+   begt:=20160910T;
+   endt:=20170910T;
+   setsysparam(pn_cycle(),cy_1m());
+ //  for i:=2986 to length(stock)-1 do
+//   begin
+      data:=select * from  markettable datekey begt to endt +0.99 of stock[i] end;
+      rdo2 exportfile(ftxls(),"","E:\\1分钟数据 20160910-20170910\\"+Stock[i]+".xlsx",data);
+  //    return 0;      length(stock)-1
+//   end
+
+End;
