@@ -1,21 +1,21 @@
-%ÉèÖÃÊı¾İÀàĞÍ
+%è®¾ç½®æ•°æ®ç±»å‹
 setdbprefs('datareturnformat','cellarray');
-%matlab Ä¬ÈÏÃ¿´Î fetch È¡ 100000 ĞĞ£¬ÏÂÃæÁ½ÌõÓï¾ä¿ÉÒÔµ÷ÕûÃ¿´ÎÈ¡¶àÉÙĞĞ
+%matlab é»˜è®¤æ¯æ¬¡ fetch å– 100000 è¡Œï¼Œä¸‹é¢ä¸¤æ¡è¯­å¥å¯ä»¥è°ƒæ•´æ¯æ¬¡å–å¤šå°‘è¡Œ
 %setdbprefs('FetchInBatches','yes')
 %setdbprefs('FetchBatchSize','2')
-%Á¬½ÓÊı¾İ¿â
+%è¿æ¥æ•°æ®åº“
 conn=database.ODBCConnection('t1','','');
-%Ö´ĞĞ TSL Óï¾ä
-tsl_str='setsysparam(pn_stock(),"SZ000002");setsysparam(pn_date(),today());return nday(1000,"Ê±¼ä",datetimetostr(sp_time()), "¿ªÅÌ¼Û",open(), "ÊÕÅÌ¼Û",close());';
+%æ‰§è¡Œ TSL è¯­å¥
+tsl_str='setsysparam(pn_stock(),"SZ000002");setsysparam(pn_date(),today());return nday(1000,"æ—¶é—´",datetimetostr(sp_time()), "å¼€ç›˜ä»·",open(), "æ”¶ç›˜ä»·",close());';
 curs=exec(conn, tsl_str);
-%ÌáÈ¡Êı¾İ
+%æå–æ•°æ®
 curs=fetch(curs);
 Data=curs.Data;
 close(curs);
 close(conn);
 
-% %×ª»»Êı¾İ
+% %è½¬æ¢æ•°æ®
 % price=cell2mat(Data(:,2:3));
-% %»­Í¼
+% %ç”»å›¾
 % plot(price);
-% xlabel('Ìì');ylabel('ÊÕÅÌ¼Û');title('Íò¿Æ A ×î½ü 30 ¸ö½»Ò×ÈÕ¿ªÅÌ¼Û/ÊÕÅÌ¼Û');
+% xlabel('å¤©');ylabel('æ”¶ç›˜ä»·');title('ä¸‡ç§‘ A æœ€è¿‘ 30 ä¸ªäº¤æ˜“æ—¥å¼€ç›˜ä»·/æ”¶ç›˜ä»·');
