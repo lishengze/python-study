@@ -1,0 +1,7 @@
+
+Traceback (most recent call last):
+  File "testEnv.py", line 25, in basicTest
+    curs.execute(tslStr)
+Error: ('S1000', u'[S1000] General error---Execute: unsupported return type\x00\u0284\u955a\n\u7d9e\ufe92\u07fe\x00\x00\x00\x00\x00\u1c7a\uef18\u07fe\x00\ufffe\uffff\uffff\uffff\u38e2\u03de\x00\x00S\x00\u955a\n\ueff04\x00\x00\ubf00\u06d4\x00\x00T\x00\x00\x00\uc140\u06d3\x00\x00\u8528\u03dc\x00\x00 (-1) (SQLExecDirectW)')
+
+

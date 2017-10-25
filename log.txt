@@ -1,7 +1,0 @@
-
-Traceback (most recent call last):
-  File "test/testEnv.py", line 14, in basicTest
-    conn = pyodbc.connect(dataSource)
-Error: ('IM014', u'[IM014] [Microsoft][ODBC \u9a71\u52a8\u7a0b\u5e8f\u7ba1\u7406\u5668] \u5728\u6307\u5b9a\u7684 DSN \u4e2d\uff0c\u9a71\u52a8\u7a0b\u5e8f\u548c\u5e94\u7528\u7a0b\u5e8f\u4e4b\u95f4\u7684\u4f53\u7cfb\u7ed3\u6784\u4e0d\u5339\u914d (0) (SQLDriverConnect)')
-
-

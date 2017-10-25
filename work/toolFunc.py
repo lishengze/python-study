@@ -5,6 +5,7 @@ from example import MSSQL
 import os
 import traceback
 import threading
+import pyodbc
 from CONFIG import *
 
 def getSimpleDate(oriDateStr):
@@ -30,7 +31,7 @@ def transExcelTimeToStr(excelTime):
     # print otherStyleTime
     return otherStyleTime
 
-def GetSecodeInfo():
+def GetSecodeInfoFromDataTable():
     databaseObj = MSSQL()
     originDataTable = '[dbo].[SecodeInfo]'
     queryString = 'select SECODE, EXCHANGE from ' + originDataTable
@@ -39,9 +40,9 @@ def GetSecodeInfo():
     databaseObj.CloseConnect()
     return result
 
-def GetDatabaseTableInfo():
+def GetDatabaseTableInfo(databaseName):
     databaseObj = MSSQL()
-    queryString = "select name from HistData..sysobjects where xtype= 'U'"
+    queryString = "select name from "+ databaseName +"..sysobjects where xtype= 'U'"
     result = databaseObj.ExecQuery(queryString)
     transRst = []
     for i in range(len(result)):
@@ -53,13 +54,79 @@ def LogInfo(wfile, info):
     wfile.write(info)    
     print info    
 
+def getInsertStockDataStr(result, desTableName):
+    colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
+    TDATE = getSimpleDate(result[0])
+    TIME = getSimpleTime(result[0])
+    SECODE = result[1]
+    TOPEN = result[2]
+    TCLOSE = result[3]
+    HIGH = result[4]
+    LOW = result[5]
+    VOTRUNOVER = result[6]
+    VATRUNOVER = result[7]
+    TYClOSE = result[8]
+    PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+
+    valStr = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
+            + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
+            + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG)  
+
+    insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
+    return insertStr
+        
+
+def getMarketDataTslStr(secode, startDate, endDate, logFile):
+    # secode = 'SH000001'
+    # startDate = "20170901" 
+    # endDate = "20170902"
+    try:
+        tslStr = "code := \'" + secode + "\'; \
+        beginDate := " + startDate + "; \
+        endDate := " + endDate + "; \
+        begt:=inttodate(beginDate); \
+        endt:=inttodate(endDate); \
+        Setsysparam(PN_Cycle(),cy_1m()); \
+        return select datetimetostr(['date']) as 'date',\
+        ['StockID'] as 'secode', ['open'] as 'open',  ['close'] as 'close', \
+        ['high']as 'high', ['low']as 'low', ['amount'] as 'VATRUNOVER', ['vol'] as 'VOTRUNOVER',['yclose'] as 'yclose'\
+        from markettable datekey  begt to endt of code end;"
+        # print tslStr
+        return tslStr
+    except:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "GetMarketDataTslStr Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        LogInfo(logFile, infoStr)    
+
+def getStockGoMarkerTime(curs, secode, logFile):
+    try:
+        tslStr = "stockId:='SZ000002';SetSysParam(PN_Stock(), stockId); result:=StockGoMarketDate();return result;" 
+        stockGoMarkertTime = curs.execute(tslStr)
+        return stockGoMarkertTime
+    except:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "GetStockGoMarkerTime Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        LogInfo(logFile, infoStr)          
+
+def getDownloadedDataStartEndTime(tableName):
+    startTime = 0
+    endTime = 0
+    return startTime, endTime
+
+def getCurStartEndTime(stockGoMarkertTime, downLoadedDataStartTime, downLoadedDataEndTime, STARTDATE, ENDDATE):
+    curStartTime = 0
+    curEndTime = 0
+    return curStartTime, curEndTime
+
 def dropTableByName(databaseObj, tableName):
     try:
-        valueStr = "(TDATE int, TIME int, SECODE varchar(10), \
-                    TOPEN decimal(10,4), TCLOSE decimal(10,4), HIGH decimal(10,4), LOW decimal(10,4), \
-                    VATRUNOVER decimal(18,4), VOTRUNOVER decimal(18,4), PCTCHG decimal(10,4))"
-        createStr = "drop table " + tableName 
-        databaseObj.ExecStoreProduce(createStr)
+        # valueStr = "(TDATE int, TIME int, SECODE varchar(10), \
+        #             TOPEN decimal(10,4), TCLOSE decimal(10,4), HIGH decimal(10,4), LOW decimal(10,4), \
+        #             VATRUNOVER decimal(18,4), VOTRUNOVER decimal(18,4), PCTCHG decimal(10,4))"
+        sqlStr = "drop table " + tableName 
+        databaseObj.ExecStoreProduce(sqlStr)
     except:
         exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
         infoStr = "[X] deleteTableByName  Failed \n" \
@@ -71,8 +138,8 @@ def createTableByName(databaseObj, tableName):
         valueStr = "(TDATE int, TIME int, SECODE varchar(10), \
                     TOPEN decimal(10,4), TCLOSE decimal(10,4), HIGH decimal(10,4), LOW decimal(10,4), \
                     VATRUNOVER decimal(18,4), VOTRUNOVER decimal(18,4), PCTCHG decimal(10,4))"
-        createStr = "create table " + tableName + valueStr
-        databaseObj.ExecStoreProduce(createStr)
+        sqlStr = "create table " + tableName + valueStr
+        databaseObj.ExecStoreProduce(sqlStr)
     except:
         exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
         infoStr = "[X] createTableByName  Failed \n" \
@@ -162,8 +229,25 @@ def createTableBySecodeInfo(secodeInfo):
                 + "[E] Exception : " + exceptionInfo
         print infoStr   
 
-def getCompleteSecodeInfoByExcel(secodeInfo, execlFileDirName):
+def getSecodeInfoFromTianRuan(logFile):
+    try:
+        dataSource = "dsn=t1"
+        conn = pyodbc.connect(dataSource)
+        curs = conn.cursor()
+        tslStr = u"name:='A股';StockID:=getbk(name);return StockID;"
+        curs.execute(tslStr)
+        result = curs.fetchall()
+        curs.close()
+        conn.close()
+        return result
+    except Exception as e:       
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        exceptionInfo.decode('unicode_escape')
+        LogInfo(logFile, exceptionInfo)    
+    
+def getCompleteSecodeInfoByExcel(logFile, execlFileDirName):
     try: 
+        secodeInfo = GetSecodeInfoFromDataTable()
         deletedSecodeInfo, secodeInfo = deleteSecodeInfoFromExcel(secodeInfo, execlFileDirName)
         print 'Deleted Secode Numb: %d, Afte delete Secode Numb : %d' %(len(deletedSecodeInfo), len(secodeInfo))
 
@@ -175,7 +259,7 @@ def getCompleteSecodeInfoByExcel(secodeInfo, execlFileDirName):
         exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
         infoStr = "[X] getCompleteSecodeInfoByExcel()  Failed \n" \
                 + "[E] Exception : " + exceptionInfo
-        print infoStr         
+        LogInfo(logFile, exceptionInfo)         
 '''
 功能：提取用户和密码
 返回值为：(ret, usr, pwd)

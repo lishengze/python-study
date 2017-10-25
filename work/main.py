@@ -5,6 +5,7 @@ import xlrd
 
 import os, sys
 import traceback
+import pyodbc
 
 from multiprocessing import cpu_count
 import datetime
@@ -12,6 +13,7 @@ import threading
 
 from example import MSSQL
 from toolFunc import *
+from CONFIG import *
 
 g_writeLogLock = threading.Lock()
 g_susCount = 0
@@ -33,13 +35,7 @@ def WriteToDataBaseFromTianRuan(databaseObj, desTableName, result, taskCount):
         global g_susCount, g_susCountLock    
         rowNumb = len(result) 
         for i in range(0, len(result)):
-            colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
-            valStr = getSimpleDate(result.iloc[i, 0]) + ", " + getSimpleTime(result.iloc[i, 1]) + ", \'"+ result.iloc[i, 2] + "\'," \
-                    + str(result.iloc[i, 3]) + ", " + str(result.iloc[i, 4]) + ", " + str(result.iloc[i, 5]) + ", " \
-                    + str(result.iloc[i, 6]) + ", " + str(result.iloc[i, 7]) + ", " + str(result.iloc[i, 8]) + ", " \
-                    + str(result.iloc[i, 9])   
-
-            insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
+            insertStr = getInsertStockDataStr(result[i], desTableName)
             insertRst = databaseObj.ExecStoreProduce(insertStr)
 
         g_susCountLock.acquire()
@@ -107,36 +103,33 @@ def WriteToDataBaseFromExcel(databaseObj, desTableName, result, taskCount):
         recordInfoWithLock(infoStr)         
 
 '''
-从网络接口获取数据并写入到数据库中
+从天软获取数据并写入到数据库中
 '''
 def WriteTianRuanData(secodeInfo):
     try:
         databaseObj = MSSQL()    
+        conn = pyodbc.connect(dataSource)
+        curs = conn.cursor()
         for i in range(0, len(secodeInfo)):        
-            security = secodeInfo[i][0] + '.'
-            if secodeInfo[i][1] == 'SZ':
-                security = security + 'SZSE'
-            if secodeInfo[i][1] == 'SH':
-                security = security + 'SSE'
-            security = str(security)
+            secode = secodeInfo[i][0]
+            desTableName = '[HistData].[dbo].[LCY_STK_01MS_' + secode[0:2] +'_' + secodeInfo[2:] + "]"
+            downLoadedDataStartTime, downLoadedDataEndTime = getDownloadedDataStartEndTime(desTableName)
+            stockGoMarkertTime = getStockGoMarkerTime(curs, secode)
+            curStartTime, curEndTime = getCurStartEndTime(stockGoMarkertTime, downLoadedDataStartTime, downLoadedDataEndTime, STARTDATE, ENDDATE)
 
-            desTableName = '[HistData].[dbo].[LCY_STK_01MS_' + secodeInfo[i][1] +'_' + secodeInfo[i][0] + "]"
-            securities = [];
-            securities.append(security)
-            fields = ["TradingDate", "TradingTime","Symbol", "OP", "CP", "HIP", "LOP", "CM", "CQ", "Change"]
-            timePeriods = [['2017-07-01 00:00:00.000', '2017-08-01 00:00:00.000']]
-            timeInterval = 5
-            
-            ret, errMsg, dataCols = GetDataByTime(securities, [], fields, EQuoteType["k_Minute"], timeInterval, timePeriods)
+            tslStr = getMarketDataTslStr(secode, curStartTime, curEndTime)
+            curs.execute(tslStr)
+            result = curs.fetchall()
 
-            if ret == 0:
-                infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " + security +" GetDataByTime Success! InfoCount = " + str(len(dataCols))
-                recordInfoWithLock(infoStr)
-                WriteToDataBaseFromTianRuan(databaseObj, desTableName, dataCols)
-            else:
-                infoStr = "[x] threadName: " + str(threading.currentThread().getName()) + "  " + security + " GetDataByTime Failed: " +  errMsg  
-                recordInfoWithLock(infoStr)
+            infoStr = "[i] threadName: " + str(threading.currentThread().getName()) + "  " \
+                    + secode +" GetDataByTime Success! InfoCount = " + str(len(result))
+            recordInfoWithLock(infoStr)
+
+            WriteToDataBaseFromTianRuan(databaseObj, desTableName, result, i+1)            
+
         databaseObj.CloseConnect()
+        curs.close()
+        conn.close()
     except:
         exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
         infoStr = "[X] threadName: " + str(threading.currentThread().getName()) +  "  " + "GetDataByTime Failed " \
@@ -223,7 +216,7 @@ def GetHistDataSingleThread():
     infoStr = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++"
     recordInfoWithLock(infoStr)
 
-    secodeInfo = GetSecodeInfo()
+    secodeInfo = GetSecodeInfoFromDataTable()
     secodeInfo = secodeInfo[0:5]
     srcName = "Excel"
     InsertData(secodeInfo, srcName)
@@ -236,6 +229,13 @@ def GetHistDataSingleThread():
             + " Ave Cost Time: " + str(aveCostTime) + "s ++++++++\n"      
     recordInfoWithLock(infoStr)
 
+def getSecodeInfo(srcName):
+    if srcName == "Excel":
+        addedSecodeInfo, secodeInfo = getCompleteSecodeInfoByExcel(g_logFile, EXCELFILE_DIR)        
+    if srcName == "TIANRUAN":
+        secodeInfo = getSecodeInfoFromTianRuan(g_logFile);
+    return secodeInfo;
+
 '''
 作用：获取所有证券的历史数据
 过程：1. 从数据库获取证券的代码信息。
@@ -245,12 +245,9 @@ def GetHistDataSingleThread():
 def GetHistDataMultiThread(srcName):
     try: 
         global g_susCount
-        secodeInfo = GetSecodeInfo()
-        databaseTable = GetDatabaseTableInfo()
-        
-        if srcName == "Excel":
-            addedSecodeInfo, secodeInfo = getCompleteSecodeInfoByExcel(secodeInfo, EXCELFILE_DIR)        
 
+        databaseTable = GetDatabaseTableInfo()
+        secodeInfo = getSecodeInfo(srcName)
         addedTableNumb = addTableBySecodeInfo(secodeInfo, databaseTable)
 
         secodeInfo = secodeInfo[1:9]
