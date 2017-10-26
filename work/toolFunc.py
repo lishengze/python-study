@@ -82,8 +82,8 @@ def getMarketDataTslStr(secode, startDate, endDate, logFile):
     # endDate = "20170902"
     try:
         tslStr = "code := \'" + secode + "\'; \
-        beginDate := " + startDate + "; \
-        endDate := " + endDate + "; \
+        beginDate := " + str(startDate) + "; \
+        endDate := " + str(endDate) + "; \
         begt:=inttodate(beginDate); \
         endt:=inttodate(endDate); \
         Setsysparam(PN_Cycle(),cy_1m()); \
@@ -110,12 +110,13 @@ def getStockGoMarkerTime(curs, secode, logFile):
                 + "[E] Exception : " + exceptionInfo
         LogInfo(logFile, infoStr)          
 
+
 def getDownloadedDataStartEndTime(tableName):
     startTime = 0
     endTime = 0
     return startTime, endTime
 
-def getCurStartEndTime(stockGoMarkertTime, downLoadedDataStartTime, downLoadedDataEndTime, STARTDATE, ENDDATE):
+def getCurStartEndTime(secode):
     curStartTime = 0
     curEndTime = 0
     return curStartTime, curEndTime
@@ -239,7 +240,10 @@ def getSecodeInfoFromTianRuan(logFile):
         result = curs.fetchall()
         curs.close()
         conn.close()
-        return result
+        transResult = []
+        for data in result:
+            transResult.append(data[0])
+        return transResult
     except Exception as e:       
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         exceptionInfo.decode('unicode_escape')

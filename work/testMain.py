@@ -3,6 +3,7 @@ import threading
 from multiprocessing import cpu_count
 
 from toolFunc import *
+from testFunc import *
 from example import MSSQL
 from CONFIG import *
 import datetime
@@ -25,8 +26,8 @@ def testGetStockData():
         conn = pyodbc.connect(dataSource)
         curs = conn.cursor()
         code = 'SH000001'
-        startDate = "20130901" 
-        endDate = "20170902"
+        startDate = "20160901" 
+        endDate = "20170901"
         tslStr = getMarketDataTslStr(code, startDate, endDate, g_logFile);
         curs.execute(tslStr)
         result = curs.fetchall()
@@ -67,53 +68,14 @@ def testInserData():
                 + "[E] Exception : " + exceptionInfo
         LogInfo(g_logFile, infoStr)   
   
-def simpleConnect():
-    try:
-        dataSource = "dsn=t1"
-        conn = pyodbc.connect(dataSource)
-        curs = conn.cursor()
-        curs.close()
-        conn.close()
-
-        infoStr = "[i] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-                + "SimpleConnect Succeed \n"
-        LogInfo(g_logFile, infoStr)  
-        
-    except Exception as e:       
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-                + "SimpleConnect Failed \n" \
-                + "[E] Exception : " + exceptionInfo
-        LogInfo(g_logFile, infoStr) 
-
-def simpleExc(curs):
-    try:
-        tslStr = u"name:='A股';StockID:=getbk(name);return StockID;"
-        curs.execute(tslStr)
-        result = curs.fetchall()
-        print len(result)
-        infoStr = "[i] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-                + "SimpleExc Succeed \n"
-        LogInfo(g_logFile, infoStr)          
-    except Exception as e:       
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-                + "SimpleExc Failed \n" \
-                + "[E] Exception : " + exceptionInfo
-        LogInfo(g_logFile, infoStr)     
-
 def testMultiThreadConnect():
     try:
         thread_count = 2
         threads = []
 
-        dataSource = "dsn=t1"
-        conn = pyodbc.connect(dataSource)
-        curs = conn.cursor()
-
         for i in range(thread_count):
-            # tmpThread = threading.Thread(target=simpleExc, args=(curs,))
-            tmpThread = threading.Thread(target=simpleConnect)
+
+            tmpThread = threading.Thread(target=simpleConnect, args=(g_logFile,))
             threads.append(tmpThread)
 
         for thread in threads:
@@ -122,8 +84,6 @@ def testMultiThreadConnect():
         for thread in threads:
             thread.join()
 
-        curs.close()
-        conn.close()
     except Exception as e:
         exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
         infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \
@@ -131,82 +91,46 @@ def testMultiThreadConnect():
                 + "[E] Exception : " + exceptionInfo
         LogInfo(g_logFile, infoStr) 
 
-def writeDataToDatabase(databaseObj, result, desTableName):
-    try:
-        starttime = datetime.datetime.now()
-
-        for i in range(len(result)):
-            insertStr = getInsertStockDataStr(result[i], desTableName)
-            insertRst = databaseObj.ExecStoreProduce(insertStr)
-
-        endtime = datetime.datetime.now()
-        deletaTime = endtime - starttime
-        infoStr = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-                + "WriteDataToDatabase Succeed Cost " + str(deletaTime.seconds) + "s \n" 
-        LogInfo(g_logFile, infoStr) 
-    except Exception as e:
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "\n" \
-                + "writeDataToDatabase Failed \n" \
-                + "[E] Exception : " + exceptionInfo
-        LogInfo(g_logFile, infoStr)              
-
-def refreshTestDatabase(databaseName, tableNumb):
-    try:
-        databaseObj = MSSQL() 
-        tableInfo = GetDatabaseTableInfo(databaseName)
-        # print tableInfo
-        for i in range(tableNumb):
-            tableName = str(i)
-            completeTableName = u'[' + databaseName + '].[dbo].['+ tableName +']'
-
-            if tableName in tableInfo:
-                dropTableByName(databaseObj, completeTableName)
-                # print completeTableName
-            createTableByName(databaseObj, completeTableName)
-        databaseObj.CloseConnect()
-    except Exception as e:
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        infoStr = "refreshTestDatabase Failed \n" \
-                + "[E] Exception : " + exceptionInfo
-        LogInfo(g_logFile, infoStr)  
-
 def testRefreshTestDatabase():
-    refreshTestDatabase(4)
+    refreshTestDatabase("TestData", 4, g_logFile)
+    
+def testGetAllStockDataCostDays():
+    getAllStockDataCostDays(28, g_logFile)
 
 def testMultiThreadWriteData():
     try:
         starttime = datetime.datetime.now()
         infoStr = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
-        thread_count = 2
+        LogInfo(g_logFile, infoStr)   
+        thread_count = 8
         threads = []
 
-        databaseObj = MSSQL() 
         result = testGetStockData()
         print 'result rows: '+ str(len(result))
 
         databaseName = "TestData"
-        refreshTestDatabase(databaseName, thread_count)
+        refreshTestDatabase(databaseName, thread_count, g_logFile)
         
         for i in range(thread_count):
             tableName = str(i)
             desTableName = "["+ databaseName +"].[dbo].[" + tableName + "]"
             print desTableName
-            tmpThread = threading.Thread(target=writeDataToDatabase, args=(databaseObj, result, desTableName))
+            tmpThread = threading.Thread(target=writeDataToDatabase, args=(result, desTableName, g_logFile))
             threads.append(tmpThread)
 
         for thread in threads:
             thread.start()
 
         for thread in threads:
-            thread.join()                
-          
-        databaseObj.CloseConnect()
+            thread.join()                          
 
         endtime = datetime.datetime.now()
         deletaTime = endtime - starttime
+        aveTime = deletaTime.seconds / thread_count
+        sumCostDays = getAllStockDataCostDays(aveTime, g_logFile)
+
         infoStr = "++++++++++ End Time: " + str(endtime) \
-                + ' Sum Cost Time: ' + str(deletaTime.seconds)  + "s ++++++++\n"  
+                + " AveTime: " + str(aveTime) + "s Sum Cost Days: " + str(sumCostDays) + " days ++++++++\n"  
         LogInfo(g_logFile, infoStr)                                   
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
@@ -232,8 +156,11 @@ def testGetStockGoMarkerTime():
 if __name__ == "__main__":
     # testGetSecodeInfo()
     # testGetStockData()
-    # testMultiThread()
     # testInserData()
     # testGetStockGoMarkerTime()
     # testRefreshTestDatabase()
-    testMultiThreadWriteData()
+    # testMultiThreadConnect()
+    testGetAllStockDataCostDays()
+    # testMultiThreadWriteData()
+    
+    
