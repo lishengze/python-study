@@ -153,14 +153,44 @@ def testGetStockGoMarkerTime():
         exceptionInfo.decode('unicode_escape')
         LogInfo(g_logFile, exceptionInfo)  
 
+def testGetTableDataStartEndTime():
+    try:
+        database = "TestData"
+        table = "SH600000"
+        startTime, endTime = getTableDataStartEndTime(database, table, g_logFile)
+        if startTime is None or endTime is None:
+            print 'table is Empty'
+        else:
+            print ("startTime: %d, endTime: %d")%(startTime, endTime)
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] TestCompleteDatabase Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        LogInfo(g_logFile, infoStr) 
+
+def testCompleteDatabase():
+    try:
+        database = "TestData"
+        tableArray = ["SH666666", "SH700000"]
+        completeDatabaseTable(database, tableArray, g_logFile)
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "[X] TestCompleteDatabase Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        LogInfo(g_logFile, infoStr) 
+
+
 if __name__ == "__main__":
     # testGetSecodeInfo()
     # testGetStockData()
     # testInserData()
     # testGetStockGoMarkerTime()
     # testRefreshTestDatabase()
+    # testCompleteDatabase()
     # testMultiThreadConnect()
-    testGetAllStockDataCostDays()
+    # testGetAllStockDataCostDays()
     # testMultiThreadWriteData()
+    testGetTableDataStartEndTime()
+    
     
     

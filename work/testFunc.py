@@ -5,6 +5,7 @@ import pyodbc
 import traceback
 import datetime
 import threading
+import math
 
 def getAllStockDataCostDays(oneyearAveTimeSeconds, logFile):
     stockNumb = len(getSecodeInfoFromTianRuan(logFile))
@@ -48,6 +49,22 @@ def simpleExc(curs, logFile):
                 + "SimpleExc Failed \n" \
                 + "[E] Exception : " + exceptionInfo
         LogInfo(logFile, infoStr)    
+
+def completeDatabaseTable (databaseName, tableNameArray, logFile):
+    try:
+        databaseObj = MSSQL() 
+        tableInfo = GetDatabaseTableInfo(databaseName)
+        # print tableInfo
+        for tableName in tableNameArray:
+            completeTableName = u'[' + databaseName + '].[dbo].['+ tableName +']'
+            if tableName not in tableInfo:
+                createTableByName(databaseObj, completeTableName)
+        databaseObj.CloseConnect()
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "refreshTestDatabase Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        LogInfo(logFile, infoStr) 
 
 def refreshTestDatabase(databaseName, tableNameArray, logFile):
     try:
@@ -104,3 +121,24 @@ def getStockData(code, startDate, endDate, logFile):
         infoStr = "GetMarketDataTslStr Failed \n" \
                 + "[E] Exception : " + exceptionInfo
         LogInfo(logFile, infoStr)        
+
+def getTableDataStartEndTime(database, table, logFile):
+    try:
+        databaseObj = MSSQL() 
+        completeTableName = u'[' + database + '].[dbo].['+ table +']'
+        sqlStr = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + completeTableName
+        result = databaseObj.ExecQuery(sqlStr)
+        # if type(result[0][0]) == "NoneType":
+        #     print "result none"
+        # print type(result[0][0])
+        startTime = result[0][0]
+        endTime = result[0][1]
+        # startTime = 0
+        # endTime = 0
+        databaseObj.CloseConnect()
+        return (startTime, endTime)
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "refreshTestDatabase Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        LogInfo(logFile, infoStr)     

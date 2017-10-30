@@ -19,7 +19,7 @@ from testFunc import *
 g_writeLogLock = threading.Lock()
 g_susCount = 0
 g_susCountLock = threading.Lock()
-g_logFileName = 'log.txt'
+g_logFileName = os.getcwd() + '\log.txt'
 g_logFile = open(g_logFileName, 'w')
 
 def getSusCount():    
