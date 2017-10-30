@@ -90,8 +90,8 @@ def MultiThreadWriteData():
 
         thread_count = 8
         databaseName = "TestData"
-        startDate = "20130901"
-        endDate = "20170901"
+        oriStartDate = 20170725
+        oriEndDate = 20170901
         tmpMarketDataArray = []        
         tmpSecodeDataArray = []
         secodeArray = getSecodeInfoFromTianRuan(g_logFile)
@@ -102,23 +102,28 @@ def MultiThreadWriteData():
         secodeArray = secodeArray[0:thread_count*2]
         print secodeArray
 
-        refreshTestDatabase(databaseName, secodeArray, g_logFile)
+        # refreshTestDatabase(databaseName, secodeArray, g_logFile)
 
+        timeCount = 0
         for i in range(len(secodeArray)):
+            curSecode = secodeArray[i]
+            timeArray = getStartEndTime(oriStartDate, oriEndDate, databaseName, curSecode, g_logFile)
+            # print timeArray
+            for (startDate, endDate) in timeArray:   
+                timeCount = timeCount + 1                             
+                stockHistMarketData = getStockData(curSecode, startDate, endDate, g_logFile); 
+                # print "secode: " + str(curSecode) + ", from "+ str(startDate) +" to "+ str(endDate) + ", dataNumb: " + str(len(stockHistMarketData))
+                # print("secodeArray: %s, from %d to %d, dataNumb: %d") % (curSecode, startDate, endDate, len(stockHistMarketData))
 
+                tmpMarketDataArray.append(stockHistMarketData)
+                tmpSecodeDataArray.append(curSecode)
 
-            stockHistMarketData = getStockData(secodeArray[i], startDate, endDate, g_logFile);
-            # print("stockHistMarketData numb: %d") % (len(stockHistMarketData))
-
-            tmpMarketDataArray.append(stockHistMarketData)
-            tmpSecodeDataArray.append(secodeArray[i])
-
-            if ((i+1) % thread_count == 0 and i != 0) or i == len(secodeArray)-1:
-                # print ("tmpMarketDataArray len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmpMarketDataArray), len(tmpSecodeDataArray), i)
-                startWriteThread(thread_count, databaseName, tmpMarketDataArray, tmpSecodeDataArray)
-                tmpMarketDataArray = []
-                tmpSecodeDataArray = []            
-
+                if (timeCount % thread_count == 0) or i == len(secodeArray)-1:
+                    # print ("tmpMarketDataArray len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmpMarketDataArray), len(tmpSecodeDataArray), i)
+                    startWriteThread(thread_count, databaseName, tmpMarketDataArray, tmpSecodeDataArray)
+                    tmpMarketDataArray = []
+                    tmpSecodeDataArray = []     
+                    
         endtime = datetime.datetime.now()
         deletaTime = endtime - starttime
         aveTime = deletaTime.seconds / len(secodeArray)

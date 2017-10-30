@@ -179,6 +179,28 @@ def testCompleteDatabase():
                 + "[E] Exception : " + exceptionInfo
         LogInfo(g_logFile, infoStr) 
 
+def testGetStartEndTime():
+    oriTimeArray = [[20130902, 22000101],
+                    [20170902, 22000101],
+                    [20000000, 20170831],
+                    [20000000, 20100000],
+                    [20000000, 20170901],
+                    [20140000, 20150000]]
+    database = "TestData"
+    table = "SH600000"
+    for i in range(len(oriTimeArray)):
+        curTimeArray = getStartEndTime(oriTimeArray[i][0], oriTimeArray[i][1], database, table, g_logFile)
+        for (startDate, endDate) in curTimeArray:   
+            print (startDate, endDate)
+
+def testDate():
+    oriDate = 20161201
+    print getYearMonthDay(oriDate)
+    addDate = addOneDay(oriDate)
+    print addDate
+    minusDate = minusOneDay(oriDate)
+    print minusDate
+    
 
 if __name__ == "__main__":
     # testGetSecodeInfo()
@@ -190,7 +212,9 @@ if __name__ == "__main__":
     # testMultiThreadConnect()
     # testGetAllStockDataCostDays()
     # testMultiThreadWriteData()
-    testGetTableDataStartEndTime()
+    # testGetTableDataStartEndTime()
+    testGetStartEndTime()
+    # testDate()
     
     
     

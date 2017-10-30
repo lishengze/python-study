@@ -18,6 +18,46 @@ def getSimpleTime(oriTimeStr):
     timeStr = timeArray[1].replace(':','').split('.')[0]
     return timeStr   
 
+def getYearMonthDay(oriDate):
+    year = oriDate / 10000
+    month = (oriDate - year * 10000) / 100
+    day = oriDate - year * 10000 - month * 100
+    return (year, month, day)
+
+def addOneDay(oriDate):
+    year, month, day = getYearMonthDay(oriDate)
+    day = day + 1
+    if year % 4 == 0:
+        monthArray = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    else:
+        monthArray = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    if day > monthArray[month-1]:
+        day = 1
+        month = month + 1
+        if month > 12:
+            month = 1
+            year = year + 1
+    addedDate = year * 10000 + month * 100 + day 
+    return addedDate
+
+def minusOneDay(oriDate):
+    year, month, day = getYearMonthDay(oriDate)
+    if year % 4 == 0:
+        monthArray = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    else:
+        monthArray = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    day = day - 1
+    if day == 0:
+        month = month - 1
+        if month == 0:
+            month = 12
+            day = monthArray[month-1]
+            year = year - 1
+        else:
+            day = monthArray[month-1]
+    addedDate = year * 10000 + month * 100 + day 
+    return addedDate
+
 def transExcelTimeToStr(excelTime):
     deltaDays = 70 * 365 + 19
     deltaHoursSecs = 8 * 60 * 60
@@ -90,7 +130,7 @@ def getMarketDataTslStr(secode, startDate, endDate, logFile):
         return select datetimetostr(['date']) as 'date',\
         ['StockID'] as 'secode', ['open'] as 'open',  ['close'] as 'close', \
         ['high']as 'high', ['low']as 'low', ['amount'] as 'VATRUNOVER', ['vol'] as 'VOTRUNOVER',['yclose'] as 'yclose'\
-        from markettable datekey  begt to endt of code end;"
+        from markettable datekey  begt to endt + 0.999 of code end;"
         # print tslStr
         return tslStr
     except:
@@ -109,7 +149,6 @@ def getStockGoMarkerTime(curs, secode, logFile):
         infoStr = "GetStockGoMarkerTime Failed \n" \
                 + "[E] Exception : " + exceptionInfo
         LogInfo(logFile, infoStr)          
-
 
 def getDownloadedDataStartEndTime(tableName):
     startTime = 0

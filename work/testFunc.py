@@ -128,13 +128,8 @@ def getTableDataStartEndTime(database, table, logFile):
         completeTableName = u'[' + database + '].[dbo].['+ table +']'
         sqlStr = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + completeTableName
         result = databaseObj.ExecQuery(sqlStr)
-        # if type(result[0][0]) == "NoneType":
-        #     print "result none"
-        # print type(result[0][0])
         startTime = result[0][0]
         endTime = result[0][1]
-        # startTime = 0
-        # endTime = 0
         databaseObj.CloseConnect()
         return (startTime, endTime)
     except Exception as e:
@@ -142,3 +137,32 @@ def getTableDataStartEndTime(database, table, logFile):
         infoStr = "refreshTestDatabase Failed \n" \
                 + "[E] Exception : " + exceptionInfo
         LogInfo(logFile, infoStr)     
+
+def getStartEndTime(oriStartTime, oriEndTime, database, table, logFile):
+    try:
+        timeArray = []
+        tableDataStartTime, tableDataEndTime = getTableDataStartEndTime(database, table, logFile)
+        if tableDataStartTime is None or tableDataEndTime is None:
+            timeArray.append([oriStartTime, oriEndTime])
+        else:
+            if oriStartTime >=  tableDataStartTime and oriEndTime > tableDataEndTime:
+                startTime = addOneDay(tableDataEndTime)
+                endTime = oriEndTime
+                timeArray.append([startTime, endTime])
+            
+            if oriStartTime < tableDataStartTime and oriEndTime <= tableDataEndTime:
+                startTime = oriStartTime
+                endTime = minusOneDay(tableDataStartTime)
+                timeArray.append([startTime, endTime])
+            
+            if oriStartTime < tableDataStartTime and oriEndTime > tableDataEndTime:
+                timeArray.append([oriStartTime, minusOneDay(tableDataStartTime)])
+                timeArray.append([addOneDay(tableDataEndTime), oriEndTime])
+
+        return timeArray
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "refreshTestDatabase Failed \n" \
+                + "[E] Exception : " + exceptionInfo
+        LogInfo(logFile, infoStr) 
+        raise(Exception(infoStr))
