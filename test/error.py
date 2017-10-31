@@ -13,18 +13,19 @@ def simpleConnect():
         infoStr = "[i] ThreadName: " + str(threading.currentThread().getName()) + "  " \
                 + "SimpleConnect Succeed \n"
         print infoStr
-        
+        raise(Exception(infoStr))
     except Exception as e:       
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  " \
                 + "SimpleConnect Failed \n" \
-                + "[E] Exception : " + exceptionInfo
+                + "[E] Exception : \n" + exceptionInfo
         print infoStr
+        raise(Exception(infoStr))
 
 
 def testMultiThreadConnect():
     try:
-        thread_count = 2
+        thread_count = 1
         threads = []
 
         for i in range(thread_count):
@@ -41,7 +42,7 @@ def testMultiThreadConnect():
         exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
         infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \
                 + "TestMultiThread Failed" + "\n" \
-                + "[E] Exception : " + exceptionInfo
+                + "[E] Exception : \n" + exceptionInfo
         print infoStr 
 
 if __name__ == "__main__":

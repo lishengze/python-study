@@ -1,12 +1,13 @@
 # -*- coding: UTF-8 -*-
 import threading
 from multiprocessing import cpu_count
-
-from toolFunc import *
-from testFunc import *
-from example import MSSQL
-from CONFIG import *
 import datetime
+
+from CONFIG import *
+from databaseClass import MSSQL
+from toolFunc import *
+from databaseFunc import *
+from netdataFunc import *
 
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
@@ -25,21 +26,23 @@ def testGetStockData():
         dataSource = "dsn=t1"
         conn = pyodbc.connect(dataSource)
         curs = conn.cursor()
-        code = 'SH000001'
-        startDate = "20160901" 
-        endDate = "20170901"
+        code = 'SH600023'
+        startDate = "20131030" 
+        endDate = "20131218"
         tslStr = getMarketDataTslStr(code, startDate, endDate, g_logFile);
         curs.execute(tslStr)
         result = curs.fetchall()
-        # print len(result)
+        print len(result)
+        print result[0][0] == -1
         curs.close()
         conn.close()
         return result        
     except Exception as e:       
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        infoStr = "GetMarketDataTslStr Failed \n" \
-                + "[E] Exception : " + exceptionInfo
-        LogInfo(g_logFile, infoStr)      
+        infoStr = "TestGetStockData Failed \n" \
+                + "[E] Exception : \n" + exceptionInfo
+        # LogInfo(g_logFile, infoStr)     
+        raise(Exception(infoStr)) 
 
 def testInserData():
     try:
@@ -52,7 +55,7 @@ def testInserData():
 
         desTableName = '[HistData].[dbo].[LCY_STK_01MS_1]'
         for i in range(len(result)):
-            insertStr = getInsertStockDataStr(result[i], desTableName)
+            insertStr = getInsertStockDataStr(result[i], desTableName, g_logFile)
             insertRst = databaseObj.ExecStoreProduce(insertStr)
           
         databaseObj.CloseConnect()
@@ -65,8 +68,9 @@ def testInserData():
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         infoStr = "TestInserData Failed \n" \
-                + "[E] Exception : " + exceptionInfo
-        LogInfo(g_logFile, infoStr)   
+                + "[E] Exception : \n" + exceptionInfo
+        LogInfo(g_logFile, infoStr)  
+        raise(infoStr)
   
 def testMultiThreadConnect():
     try:
@@ -88,8 +92,9 @@ def testMultiThreadConnect():
         exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
         infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \
                 + "TestMultiThread Failed" + "\n" \
-                + "[E] Exception : " + exceptionInfo
+                + "[E] Exception : \n" + exceptionInfo
         LogInfo(g_logFile, infoStr) 
+        raise(infoStr)
 
 def testRefreshTestDatabase():
     refreshTestDatabase("TestData", 4, g_logFile)
@@ -135,8 +140,9 @@ def testMultiThreadWriteData():
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         infoStr = "testMultiThreadWriteData Failed \n" \
-                + "[E] Exception : " + exceptionInfo
-        LogInfo(g_logFile, infoStr)   ,
+                + "[E] Exception : \n" + exceptionInfo
+        LogInfo(g_logFile, infoStr)   
+        raise(infoStr)
 
 def testGetStockGoMarkerTime():
     try:
@@ -152,6 +158,7 @@ def testGetStockGoMarkerTime():
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         exceptionInfo.decode('unicode_escape')
         LogInfo(g_logFile, exceptionInfo)  
+        raise(infoStr)
 
 def testGetTableDataStartEndTime():
     try:
@@ -165,8 +172,9 @@ def testGetTableDataStartEndTime():
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         infoStr = "[X] TestCompleteDatabase Failed \n" \
-                + "[E] Exception : " + exceptionInfo
+                + "[E] Exception : \n" + exceptionInfo
         LogInfo(g_logFile, infoStr) 
+        raise(infoStr)
 
 def testCompleteDatabase():
     try:
@@ -176,8 +184,9 @@ def testCompleteDatabase():
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         infoStr = "[X] TestCompleteDatabase Failed \n" \
-                + "[E] Exception : " + exceptionInfo
+                + "[E] Exception : \n" + exceptionInfo
         LogInfo(g_logFile, infoStr) 
+        raise(infoStr)
 
 def testGetStartEndTime():
     oriTimeArray = [[20130902, 22000101],
@@ -200,11 +209,15 @@ def testDate():
     print addDate
     minusDate = minusOneDay(oriDate)
     print minusDate
-    
+
+def testGetIntegerDateNow():
+    integerDate = getIntegerDateNow(g_logFile)
+    print type(integerDate)
+    print integerDate
 
 if __name__ == "__main__":
     # testGetSecodeInfo()
-    # testGetStockData()
+    testGetStockData()
     # testInserData()
     # testGetStockGoMarkerTime()
     # testRefreshTestDatabase()
@@ -213,8 +226,9 @@ if __name__ == "__main__":
     # testGetAllStockDataCostDays()
     # testMultiThreadWriteData()
     # testGetTableDataStartEndTime()
-    testGetStartEndTime()
+    # testGetStartEndTime()
     # testDate()
+    # testGetIntegerDateNow()
     
     
     

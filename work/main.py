@@ -1,20 +1,18 @@
 # -*- coding: UTF-8 -*-
 import time
-import pickle
-import xlrd
 
 import os, sys
 import traceback
 import pyodbc
 
-from multiprocessing import cpu_count
 import datetime
 import threading
 
-from example import MSSQL
-from toolFunc import *
+from databaseClass import MSSQL
 from CONFIG import *
-from testFunc import *
+from toolFunc import *
+from databaseFunc import *
+from netdataFunc import *
 
 g_writeLogLock = threading.Lock()
 g_susCount = 0
@@ -43,7 +41,7 @@ def writeDataToDatabase(result, databaseName, secode, logFile):
         tableName = secode
         desTableName = "["+ databaseName +"].[dbo].[" + tableName + "]"
         for i in range(len(result)):
-            insertStr = getInsertStockDataStr(result[i], desTableName)
+            insertStr = getInsertStockDataStr(result[i], desTableName, g_logFile)
             insertRst = databaseObj.ExecStoreProduce(insertStr)
 
         tmpSuccessCount = getSusCount()
@@ -57,14 +55,14 @@ def writeDataToDatabase(result, databaseName, secode, logFile):
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "\n" \
                 + "writeDataToDatabase Failed \n" \
-                + "[E] Exception : " + exceptionInfo
-        recordInfoWithLock(infoStr)  
+                + "[E] Exception : \n" + exceptionInfo
+        # recordInfoWithLock(infoStr)  
+        raise(Exception(infoStr))
 
-# 主线程必须在已创建的子线程执行完后，才能再创建新的子线程.
-def startWriteThread(thread_count, databaseName, resultArray, secodeArray):
+def startWriteThread(databaseName, resultArray, secodeArray):
     try:
         threads = []
-        for i in range(thread_count):
+        for i in range(len(resultArray)):
             tmpThread = threading.Thread(target=writeDataToDatabase, args=(resultArray[i], databaseName, str(secodeArray[i]), g_logFile))
             threads.append(tmpThread)
 
@@ -74,55 +72,61 @@ def startWriteThread(thread_count, databaseName, resultArray, secodeArray):
         for thread in threads:
             thread.join()      
         
-        print ("threading.active_count(): %d") % (threading.active_count())
+        print ("threading.active_count(): %d\n") % (threading.active_count())
 
     except:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         infoStr = "\n[X]: MainThread StartWriteThread Failed \n" \
-                + "[E] Exception : " + exceptionInfo
-        recordInfoWithLock(infoStr)           
+                + "[E] Exception : \n" + exceptionInfo
+        # recordInfoWithLock(infoStr)       
+        raise(Exception(infoStr))    
 
 def MultiThreadWriteData():
     try:
         starttime = datetime.datetime.now()
-        infoStr = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
+        infoStr = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
         LogInfo(g_logFile, infoStr)   
 
-        thread_count = 8
-        databaseName = "TestData"
-        oriStartDate = 20170725
-        oriEndDate = 20170901
+        thread_count = 12
+        databaseName = "MarketData"
+        oriStartDate = 20170930
+        oriEndDate = getIntegerDateNow(g_logFile)
+
         tmpMarketDataArray = []        
         tmpSecodeDataArray = []
         secodeArray = getSecodeInfoFromTianRuan(g_logFile)
 
-        infoStr = "Secode Numb : " + str(len(secodeArray))
+        infoStr = "Secode Numb : " + str(len(secodeArray)) + '\n'
         LogInfo(g_logFile, infoStr)   
 
         secodeArray = secodeArray[0:thread_count*2]
         print secodeArray
 
-        # refreshTestDatabase(databaseName, secodeArray, g_logFile)
+        completeDatabaseTable(databaseName, secodeArray, g_logFile)
 
         timeCount = 0
         for i in range(len(secodeArray)):
             curSecode = secodeArray[i]
             timeArray = getStartEndTime(oriStartDate, oriEndDate, databaseName, curSecode, g_logFile)
-            # print timeArray
-            for (startDate, endDate) in timeArray:   
-                timeCount = timeCount + 1                             
+            for j in range(len(timeArray)):     
+                startDate = timeArray[j][0]
+                endDate = timeArray[j][1]             
+
                 stockHistMarketData = getStockData(curSecode, startDate, endDate, g_logFile); 
-                # print "secode: " + str(curSecode) + ", from "+ str(startDate) +" to "+ str(endDate) + ", dataNumb: " + str(len(stockHistMarketData))
-                # print("secodeArray: %s, from %d to %d, dataNumb: %d") % (curSecode, startDate, endDate, len(stockHistMarketData))
+                if stockHistMarketData is not None:
+                    timeCount = timeCount + 1 
 
-                tmpMarketDataArray.append(stockHistMarketData)
-                tmpSecodeDataArray.append(curSecode)
+                    infoStr =  "[B] Stock: " + str(curSecode) + ", from "+ str(startDate) +" to "+ str(endDate) + ", dataNumb: " + str(len(stockHistMarketData)) + '\n'
+                    LogInfo(g_logFile, infoStr)  
 
-                if (timeCount % thread_count == 0) or i == len(secodeArray)-1:
-                    # print ("tmpMarketDataArray len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmpMarketDataArray), len(tmpSecodeDataArray), i)
-                    startWriteThread(thread_count, databaseName, tmpMarketDataArray, tmpSecodeDataArray)
-                    tmpMarketDataArray = []
-                    tmpSecodeDataArray = []     
+                    tmpMarketDataArray.append(stockHistMarketData)
+                    tmpSecodeDataArray.append(curSecode)
+
+                    if (timeCount % thread_count == 0) or (i == len(secodeArray)-1 and j == len(timeArray) -1):
+                        # print ("tmpMarketDataArray len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmpMarketDataArray), len(tmpSecodeDataArray), i)
+                        startWriteThread(databaseName, tmpMarketDataArray, tmpSecodeDataArray)
+                        tmpMarketDataArray = []
+                        tmpSecodeDataArray = [] 
                     
         endtime = datetime.datetime.now()
         deletaTime = endtime - starttime
@@ -136,8 +140,17 @@ def MultiThreadWriteData():
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "\n" \
                 +  "MultiThreadWriteData Failed" \
-                + "[E] Exception : " + exceptionInfo
-        recordInfoWithLock(infoStr)   
+                + "[E] Exception : \n" + exceptionInfo
+        # recordInfoWithLock(infoStr)  
+        raise(Exception(infoStr)) 
 
 if __name__ == "__main__":
-    MultiThreadWriteData()
+    try:
+        MultiThreadWriteData()
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "__Main__ Failed" \
+                + "[E] Exception : \n" + exceptionInfo
+        recordInfoWithLock(infoStr)  
+        raise(Exception(infoStr)) 
+    
