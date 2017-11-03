@@ -2,6 +2,7 @@
 import threading
 from multiprocessing import cpu_count
 import datetime
+import pymssql
 
 from CONFIG import *
 from databaseClass import MSSQL
@@ -13,36 +14,6 @@ g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
 
 # 'SZ300512'
-def testGetSecodeInfo():
-    secodeInfo = getSecodeInfoFromTianRuan(g_logFile)
-
-    print len(secodeInfo[0])
-    print type (secodeInfo[0])
-    secode = str(secodeInfo[1][0])
-    print secode[0:2], secode[2:]
-
-def testGetStockData():
-    try:
-        dataSource = "dsn=t1"
-        conn = pyodbc.connect(dataSource)
-        curs = conn.cursor()
-        code = 'SH600023'
-        startDate = "20131030" 
-        endDate = "20131218"
-        tslStr = getMarketDataTslStr(code, startDate, endDate, g_logFile);
-        curs.execute(tslStr)
-        result = curs.fetchall()
-        print len(result)
-        print result[0][0] == -1
-        curs.close()
-        conn.close()
-        return result
-    except:
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        infoStr = "TestGetStockData Failed \n" \
-                + "[E] Exception : \n" + exceptionInfo
-        # LogInfo(g_logFile, infoStr)     
-        raise(Exception(infoStr)) 
 
 def testInserData():
     try:
@@ -71,42 +42,12 @@ def testInserData():
                 + "[E] Exception : \n" + exceptionInfo
         LogInfo(g_logFile, infoStr)  
         raise(infoStr)
-  
-def testMultiThreadConnect():
-    try:
-        thread_count = 2
-        threads = []
-
-        for i in range(thread_count):
-
-            tmpThread = threading.Thread(target=simpleConnect, args=(g_logFile,))
-            threads.append(tmpThread)
-
-        for thread in threads:
-            thread.start()
-
-        for thread in threads:
-            thread.join()
-
-    except Exception as e:
-        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \
-                + "TestMultiThread Failed" + "\n" \
-                + "[E] Exception : \n" + exceptionInfo
-        LogInfo(g_logFile, infoStr) 
-        raise(infoStr)
-
-def testRefreshTestDatabase():
-    refreshTestDatabase("TestData", 4, g_logFile)
     
 def testGetMaxMinDataTime():
-    database ="MarketData"
+    database = "MarketData"
     table = "SH600000"
     startDate, endDate = getTableDataStartEndTime(database, table, g_logFile)
     print startDate, endDate
-
-def testGetAllStockDataCostDays():
-    getAllStockDataCostDays(28, g_logFile)
 
 def testMultiThreadWriteData():
     try:
@@ -148,22 +89,6 @@ def testMultiThreadWriteData():
         infoStr = "testMultiThreadWriteData Failed \n" \
                 + "[E] Exception : \n" + exceptionInfo
         LogInfo(g_logFile, infoStr)   
-        raise(infoStr)
-
-def testGetStockGoMarkerTime():
-    try:
-        dataSource = "dsn=t1"
-        conn = pyodbc.connect(dataSource)
-        curs = conn.cursor()
-        result = getStockGoMarkerTime(curs, '', g_logFile)
-        curs.close()
-        conn.close()
-        return result
-        
-    except Exception as e:       
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        exceptionInfo.decode('unicode_escape')
-        LogInfo(g_logFile, exceptionInfo)  
         raise(infoStr)
 
 def testGetTableDataStartEndTime():
@@ -208,24 +133,19 @@ def testGetStartEndTime():
         for (startDate, endDate) in curTimeArray:   
             print (startDate, endDate)
 
-def testDate():
-    oriDate = 20161201
-    print getYearMonthDay(oriDate)
-    addDate = addOneDay(oriDate)
-    print addDate
-    minusDate = minusOneDay(oriDate)
-    print minusDate
-
-def testGetIntegerDateNow():
-    integerDate = getIntegerDateNow(g_logFile)
-    print type(integerDate)
-    print integerDate
-
 def testInsertSamePrimaryValue():
     try:
         databaseObj = MSSQL()
-        insertStr = "insert into [MarketData].[dbo].[SH600000] (TDATE, TIME) values(20160101, 090103)"
-        databaseObj.ExecStoreProduce(insertStr)
+        valueArray = [(20160101, 90103), (20160101, 90104)]
+        for value in valueArray:        
+            insertStr = "insert into [MarketData].[dbo].[SH600000] (TDATE, TIME) values(" + str(value[0]) +", " + str(value[1]) +")"
+            try:
+                databaseObj.ExecStoreProduce(insertStr)
+            except Exception as e:
+                repeatInsertError = "Violation of PRIMARY KEY constraint"
+                if repeatInsertError not in e[1]:                                        
+                    break
+            
         databaseObj.CloseConnect()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
@@ -249,30 +169,54 @@ def changeDatabase():
         infoStr = "ChangeDatabase Failed \n" \
                 + "[E] Exception :  \n" + exceptionInfo  
         raise(Exception(infoStr))
-    
-if __name__ == "__main__":
+
+def addPrimaryKeyToDatabase():
     try:
-        # testGetSecodeInfo()
-        # testGetStockData()
-        # testInserData()
-        # testGetStockGoMarkerTime()
-        # testRefreshTestDatabase()
-        # testCompleteDatabase()
-        # testMultiThreadConnect()
-        # testGetAllStockDataCostDays()
-        # testMultiThreadWriteData()
-        # testGetTableDataStartEndTime()
-        # testGetStartEndTime()
-        # testDate()
-        # testGetIntegerDateNow()
-        # testGetMaxMinDataTime()
-        # changeDatabase()
-        testInsertSamePrimaryValue()
+        database = "MarketData"
+        secodeArray = getSecodeInfoFromTianRuan(g_logFile)
+
+        infoStr = "Secode Numb : " + str(len(secodeArray)) + '\n'
+        LogInfo(g_logFile, infoStr)   
+
+        completeDatabaseTable(database, secodeArray, g_logFile)
+        addPrimaryKey(database, g_logFile)
+        
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "AddPrimaryKeyToDatabase Failed \n" \
+                + "[E] Exception :  \n" + exceptionInfo  
+        raise(Exception(infoStr))    
+
+def testConnectRemoteDatabaseServer():
+    try:
+        remoteServer = "192.168.211.165"
+        localServer = '127.0.0.1'
+        user = 'sa'
+        pwd = 'sasa'
+        db = 'TestData'
+        # conn = pymssql.connect(host=remoteServer, user=user,password=pwd,database=db, \
+        #                        port='1433',timeout=5,login_timeout=2,charset="utf8")  
+
+        databaseObj = MSSQL(host=remoteServer)
+
+        databaseObj.CloseConnect()
+
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         infoStr = "__Main__ Failed \n" \
                 + "[E] Exception :  \n" + exceptionInfo  
         raise(Exception(infoStr))
+     
+if __name__ == "__main__":
+    try:
+        # changeDatabase()
+        # testInsertSamePrimaryValue()
+        testConnectRemoteDatabaseServer()
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "__Main__ Failed \n" \
+                + "[E] Exception :  \n" + exceptionInfo  
+        LogInfo(g_logFile, infoStr)
 
     
     
