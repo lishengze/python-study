@@ -51,11 +51,10 @@ def completeDatabaseTable (databaseName, tableNameArray, logFile):
         LogInfo(logFile, infoStr) 
         raise(Exception(infoStr))
 
-def refreshTestDatabase(databaseName, tableNameArray, logFile):
+def refreshDatabase(databaseName, tableNameArray, logFile):
     try:
         databaseObj = MSSQL() 
         tableInfo = getDatabaseTableInfo(databaseName, logFile)
-        # print tableInfo
         for tableName in tableNameArray:
             completeTableName = u'[' + databaseName + '].[dbo].['+ tableName +']'
 
@@ -109,3 +108,37 @@ def getDatabaseTableInfo(databaseName, logFile):
         LogInfo(logFile, infoStr)    
         raise(Exception(infoStr)) 
 
+def getTableDataStartEndTime(database, table, logFile):
+    try:
+        databaseObj = MSSQL() 
+        completeTableName = u'[' + database + '].[dbo].['+ table +']'
+        sqlStr = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + completeTableName
+        result = databaseObj.ExecQuery(sqlStr)
+        startTime = result[0][0]
+        endTime = result[0][1]
+        databaseObj.CloseConnect()
+        return (startTime, endTime)
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "refreshTestDatabase Failed \n" \
+                + "[E] Exception :  \n" + exceptionInfo   
+        raise(infoStr)
+
+def addPrimaryKey(database, logFile):
+    try:
+        databaseObj = MSSQL() 
+        databaseTableInfo = getDatabaseTableInfo(database,logFile)
+        for table in databaseTableInfo:
+            completeTableName = u'[' + database + '].[dbo].['+ table +']'
+            alterNullColumnSqlStr = "alter table "+ completeTableName +" alter column TDATE int not null\
+                                alter table "+ completeTableName +" alter column TIME int not null"
+            
+            databaseObj.ExecStoreProduce(alterNullColumnSqlStr)
+            addPrimaryKeySqlStr = " alter table "+ completeTableName +" add primary key (TDATE, TIME)"
+            databaseObj.ExecStoreProduce(addPrimaryKeySqlStr)
+        databaseObj.CloseConnect()
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "AddPrimaryKey Failed \n" \
+                + "[E] Exception :  \n" + exceptionInfo  
+        raise(Exception(infoStr))

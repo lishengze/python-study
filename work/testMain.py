@@ -99,6 +99,12 @@ def testMultiThreadConnect():
 def testRefreshTestDatabase():
     refreshTestDatabase("TestData", 4, g_logFile)
     
+def testGetMaxMinDataTime():
+    database ="MarketData"
+    table = "SH600000"
+    startDate, endDate = getTableDataStartEndTime(database, table, g_logFile)
+    print startDate, endDate
+
 def testGetAllStockDataCostDays():
     getAllStockDataCostDays(28, g_logFile)
 
@@ -215,20 +221,59 @@ def testGetIntegerDateNow():
     print type(integerDate)
     print integerDate
 
+def testInsertSamePrimaryValue():
+    try:
+        databaseObj = MSSQL()
+        insertStr = "insert into [MarketData].[dbo].[SH600000] (TDATE, TIME) values(20160101, 090103)"
+        databaseObj.ExecStoreProduce(insertStr)
+        databaseObj.CloseConnect()
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "TestInsertSamePrimaryValue Failed \n" \
+                + "[E] Exception :  \n" + exceptionInfo  
+        raise(Exception(infoStr))
+
+def changeDatabase():
+    try:
+        database = "MarketData"
+        secodeArray = getSecodeInfoFromTianRuan(g_logFile)
+
+        infoStr = "Secode Numb : " + str(len(secodeArray)) + '\n'
+        LogInfo(g_logFile, infoStr)   
+
+        refreshDatabase(database, secodeArray, g_logFile)
+        addPrimaryKey(database, g_logFile)
+        
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "ChangeDatabase Failed \n" \
+                + "[E] Exception :  \n" + exceptionInfo  
+        raise(Exception(infoStr))
+    
 if __name__ == "__main__":
-    # testGetSecodeInfo()
-    testGetStockData()
-    # testInserData()
-    # testGetStockGoMarkerTime()
-    # testRefreshTestDatabase()
-    # testCompleteDatabase()
-    # testMultiThreadConnect()
-    # testGetAllStockDataCostDays()
-    # testMultiThreadWriteData()
-    # testGetTableDataStartEndTime()
-    # testGetStartEndTime()
-    # testDate()
-    # testGetIntegerDateNow()
+    try:
+        # testGetSecodeInfo()
+        # testGetStockData()
+        # testInserData()
+        # testGetStockGoMarkerTime()
+        # testRefreshTestDatabase()
+        # testCompleteDatabase()
+        # testMultiThreadConnect()
+        # testGetAllStockDataCostDays()
+        # testMultiThreadWriteData()
+        # testGetTableDataStartEndTime()
+        # testGetStartEndTime()
+        # testDate()
+        # testGetIntegerDateNow()
+        # testGetMaxMinDataTime()
+        # changeDatabase()
+        testInsertSamePrimaryValue()
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "__Main__ Failed \n" \
+                + "[E] Exception :  \n" + exceptionInfo  
+        raise(Exception(infoStr))
+
     
     
     

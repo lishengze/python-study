@@ -8,6 +8,7 @@ import math
 from databaseClass import MSSQL
 from CONFIG import *
 from toolFunc import *
+from databaseFunc  import *
 
 def getAllStockDataCostDays(oneyearAveTimeSeconds, logFile):
     stockNumb = len(getSecodeInfoFromTianRuan(logFile))
@@ -129,23 +130,6 @@ def getStockData(code, startDate, endDate, logFile):
         LogInfo(logFile, infoStr)        
         raise(Exception(infoStr))
 
-def getTableDataStartEndTime(database, table, logFile):
-    try:
-        databaseObj = MSSQL() 
-        completeTableName = u'[' + database + '].[dbo].['+ table +']'
-        sqlStr = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + completeTableName
-        result = databaseObj.ExecQuery(sqlStr)
-        startTime = result[0][0]
-        endTime = result[0][1]
-        databaseObj.CloseConnect()
-        return (startTime, endTime)
-    except Exception as e:
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        infoStr = "refreshTestDatabase Failed \n" \
-                + "[E] Exception :  \n" + exceptionInfo
-        LogInfo(logFile, infoStr)     
-        raise(infoStr)
-
 def getStartEndTime(oriStartTime, oriEndTime, database, table, logFile):
     try:
         timeArray = []
@@ -198,8 +182,9 @@ def getSecodeInfoFromTianRuan(logFile):
         return transResult
     except Exception as e:       
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        exceptionInfo.decode('unicode_escape')
-        LogInfo(logFile, exceptionInfo)    
+        infoStr = "GetSecodeInfoFromTianRuan Failed \n" \
+                + "[E] Exception :  \n" + exceptionInfo
+        # LogInfo(logFile, infoStr)     
         raise(Exception(infoStr))        
 
 def getStockGoMarkerTime(curs, secode, logFile):

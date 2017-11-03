@@ -89,7 +89,7 @@ def MultiThreadWriteData():
 
         thread_count = 12
         databaseName = "MarketData"
-        oriStartDate = 20170930
+        oriStartDate = 20131030
         oriEndDate = getIntegerDateNow(g_logFile)
 
         tmpMarketDataArray = []        
@@ -99,9 +99,10 @@ def MultiThreadWriteData():
         infoStr = "Secode Numb : " + str(len(secodeArray)) + '\n'
         LogInfo(g_logFile, infoStr)   
 
-        secodeArray = secodeArray[0:thread_count*2]
-        print secodeArray
+        # secodeArray = secodeArray[0:thread_count*2]
+        # print secodeArray
 
+        # refreshDatabase(databaseName, secodeArray, g_logFile)
         completeDatabaseTable(databaseName, secodeArray, g_logFile)
 
         timeCount = 0
@@ -116,7 +117,9 @@ def MultiThreadWriteData():
                 if stockHistMarketData is not None:
                     timeCount = timeCount + 1 
 
-                    infoStr =  "[B] Stock: " + str(curSecode) + ", from "+ str(startDate) +" to "+ str(endDate) + ", dataNumb: " + str(len(stockHistMarketData)) + '\n'
+                    infoStr = "[B] Stock: " + str(curSecode) + ", from "+ str(startDate) +" to "+ str(endDate) \
+                            + ", dataNumb: " + str(len(stockHistMarketData)) \
+                            + ' , timeCount: ' + str(timeCount) + ", stockCount: "+ str(i+1) + "\n"
                     LogInfo(g_logFile, infoStr)  
 
                     tmpMarketDataArray.append(stockHistMarketData)
@@ -127,6 +130,13 @@ def MultiThreadWriteData():
                         startWriteThread(databaseName, tmpMarketDataArray, tmpSecodeDataArray)
                         tmpMarketDataArray = []
                         tmpSecodeDataArray = [] 
+                else:
+                    infoStr = "[C] Stock: " + str(curSecode) + " has no data beteen "+ str(startDate) +" and "+ str(endDate) + " \n"
+                    LogInfo(g_logFile, infoStr) 
+            
+            if len(timeArray) == 0:
+                    infoStr = "[C] Stock: " + str(curSecode) + " already has data beteen "+ str(oriStartDate) +" and "+ str(oriEndDate) + " \n"
+                    LogInfo(g_logFile, infoStr)                 
                     
         endtime = datetime.datetime.now()
         deletaTime = endtime - starttime
@@ -152,5 +162,14 @@ if __name__ == "__main__":
         infoStr = "__Main__ Failed" \
                 + "[E] Exception : \n" + exceptionInfo
         recordInfoWithLock(infoStr)  
-        raise(Exception(infoStr)) 
+
+        connFailedError = "Communication link failure---InternalConnect"
+        connFailedWaitTime = 60 * 5
+        if connFailedError in infoStr:
+            time.sleep(connFailedWaitTime)
+            infoStr = "[RS] MultiThreadWriteData  Restart : \n" 
+            recordInfoWithLock(infoStr)  
+            MultiThreadWriteData()
+        
+        # raise(Exception(infoStr)) 
     

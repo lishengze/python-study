@@ -109,6 +109,10 @@ def minusOneDay(oriDate, logFile):
 def getIntegerDateNow(logFile):
     try:
         curDate = datetime.datetime.now().strftime('%Y%m%d')
+        curHourTime = datetime.datetime.now().strftime('%H')
+        curDate = long(curDate)
+        if long(curHourTime) < 15:
+            curDate = minusOneDay(curDate, logFile)
         integerDate = long(curDate)
         return integerDate
     except Exception as e:
