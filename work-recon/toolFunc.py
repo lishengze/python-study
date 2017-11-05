@@ -7,7 +7,6 @@ import threading
 import pyodbc
 import datetime
 
-from databaseClass import MSSQL
 from CONFIG import *
 
 def LogInfo(wfile, info):

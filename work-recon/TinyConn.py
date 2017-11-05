@@ -5,23 +5,47 @@ import datetime
 import threading
 import math
 
-from databaseClass import MSSQL
 from CONFIG import *
 from toolFunc import *
-from databaseFunc  import *
 
-class SkySoft(object):
-    def __init__(self):
-        self.__name__ = "SkySoft"
-        self.conn = ""
-        self.curs = ""
+class TinySoft(object):
+    def __init__(self, log_file, file_lock):
+        try:
+            self.__name__ = "TinySoft"
+            self.conn = ""
+            self.curs = ""
+            self.log_file = log_file
+            self.file_lock = file_lock
+            self.startConnect()
+            
+        except:
+            exception_str = "[X]: Thread Name " + str(threading.currentThread().getName()) + '\n' \
+                          + str(traceback.format_exc())
+            self.record_with_rock(exception_str)  
+            # raise(Exception(exception_str))  
+            # 
+        # self.__name__ = "TinySoft"
+        # self.conn = ""
+        # self.curs = ""
+        # self.log_file = log_file
+        # self.file_lock = file_lock
+        # self.startConnect()
+        # raise(Exception('Test Exception in subThread!'))
+
+    def __del__(self):
+        self.closeConnect()
+        # print '__del__'
+
+    def record_with_rock(self, info):
+        self.file_lock.acquire()
+        self.log_file.write(info + "\n")
+        print(info)
+        self.file_lock.release()
 
     def startConnect(self, dataSource = "dsn=t1"):
-        try:
-            self.conn = pyodbc.connect(dataSource)
-            self.curs = self.conn.cursor()            
-        except Exception as e: 
-            raise(e)
+        self.conn = pyodbc.connect(dataSource)
+        self.curs = self.conn.cursor()   
+        # raise(Exception('Test Exception in startConnect!')) 
 
     def closeConnect(self):
         try:
@@ -30,37 +54,26 @@ class SkySoft(object):
         except Exception as e:
             raise e
 
-    def getAllStockDataCostDays(self, oneyearAveTimeSeconds, logFile):
-        stockNumb = len(self.getSecodeInfoFromTianRuan())
-        print ("stockNumb: %d") % (stockNumb)
-        year = 4
-        costDays = float(oneyearAveTimeSeconds * year * stockNumb) / 3600.00 / 24.00
-        print ("costDays: %f") % (costDays)
-        return costDays
-
     def getInsertStockDataStr(self, result, desTableName):
-        try:
-            colStr = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
-            TDATE = getSimpleDate(result[0])
-            TIME = getSimpleTime(result[0])
-            SECODE = result[1]
-            TOPEN = result[2]
-            TCLOSE = result[3]
-            HIGH = result[4]
-            LOW = result[5]
-            VOTRUNOVER = result[6]
-            VATRUNOVER = result[7]
-            TYClOSE = result[8]
-            PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+        col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
+        TDATE = getSimpleDate(result[0])
+        TIME = getSimpleTime(result[0])
+        SECODE = result[1]
+        TOPEN = result[2]
+        TCLOSE = result[3]
+        HIGH = result[4]
+        LOW = result[5]
+        VOTRUNOVER = result[6]
+        VATRUNOVER = result[7]
+        TYClOSE = result[8]
+        PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
 
-            valStr = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
-                    + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
-                    + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG)  
+        valStr = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
+                + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
+                + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG)  
 
-            insertStr = "insert into "+ desTableName + colStr + "values ("+ valStr +")"
-            return insertStr
-        except Exception as e:
-            raise(e)   
+        insertStr = "insert into "+ desTableName + col_str + "values ("+ valStr +")"
+        return insertStr 
         
     def getMarketDataTslStr(self, secode, startDate, endDate):
         try:
@@ -86,17 +99,13 @@ class SkySoft(object):
             raise(e)   
 
     def getStockData(self, code, startDate, endDate):
-        try:
-            dataSource = "dsn=t1"
-            tslStr = self.getMarketDataTslStr(code, startDate, endDate);
-            self.curs.execute(tslStr)
-            result = self.curs.fetchall()
-            if len(result) == 1 and result[0][0] == -1:
-                result = None
-            return result        
-        except Exception as e:       
-            raise(e)
-
+        tslStr = self.getMarketDataTslStr(code, startDate, endDate);
+        self.curs.execute(tslStr)
+        result = self.curs.fetchall()
+        if len(result) == 1 and result[0][0] == -1:
+            result = None
+        return result        
+        
     def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):
         try:
             timeArray = []
