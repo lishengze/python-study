@@ -36,6 +36,7 @@ def test_get_weight_data():
     end_date = 20171107 
     secode ="SH000016"
     result = tiny_obj.getWeightData(secode, start_date, end_date)
+    # print result
     # for secode in secode_array:
     #     result = tiny_obj.getWeightData(secode, start_date, end_date)
     #     print 'secode weight result len: ' + str(len(result))
@@ -72,8 +73,8 @@ def write_weightdata(database_obj, oridata, table_name):
 
 def test_singlethread_write_weightdata():
     database_name = "WeightDataTest"
-    start_date = 20171104
-    end_date = 20171105
+    start_date = 20171101
+    end_date = 20171103
 
     database_obj = Database(db=database_name)
     tinysoft_obj = TinySoft(g_logFile, g_writeLogLock)

@@ -1,13 +1,9 @@
-# -*- coding: UTF-8 -*-
-import sys
+#coding=utf-8
 import pymssql  
 from CONFIG import *
 from toolFunc import *
 from weightdatabasefunc import WeightDatabaseFunc
 from marketdatabasefunc import MarketDatabaseFunc
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 class Database:
     def __init__(self, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):
@@ -39,7 +35,7 @@ class Database:
     def closeConnect(self):
         self.conn.close()  
 
-    def get_database_data(self,sql):  
+    def getData(self,sql):  
         self.cur.execute(sql)  
         result = self.cur.fetchall()  
         return result  
@@ -49,8 +45,8 @@ class Database:
         self.conn.commit()  
 
     def dropTableByName(self, table_name):
-        sql_str = "drop table " + table_name 
-        self.changeDatabase(sql_str)
+        sqlStr = "drop table " + table_name 
+        self.changeDatabase(sqlStr)
 
     def createTableByName(self, table_name):
         create_str = self.dbfunc.get_create_str(table_name)
@@ -71,20 +67,57 @@ class Database:
                 self.dropTableByName(complete_tablename)
             self.createTableByName(complete_tablename)    
 
+    def get_insert_weightdata_str(self, oridata, table_name):
+        col_str = "(indexcode, indexname, indexcomday, indexendday, stockcode, stockname, ratio, ranking, datasource)"
+        val_str = "\'" + oridata[0] + "\', \'" + oridata[1] + "\', " \
+                    + str(oridata[2]) + ", " + str(oridata[3]) + "," \
+                    + "\'" + oridata[4] + "\', \'" + oridata[5] + "\', " \
+                    + str(oridata[6]) + ", " + str(oridata[7]) + "," \
+                    + "\'" + oridata[8] + "\'"
+
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        insert_str = "insert into " + complete_tablename + col_str + " values ("+ val_str +")"
+        # print oridata
+        # print insert_str
+        return insert_str
+
+    def get_insert_marketdata_str(self, oridata, table_name):
+        col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
+        TDATE = getSimpleDate(oridata[0])
+        TIME = getSimpleTime(oridata[0])
+        SECODE = oridata[1]
+        TOPEN = oridata[2]
+        TCLOSE = oridata[3]
+        HIGH = oridata[4]
+        LOW = oridata[5]
+        VOTRUNOVER = oridata[6]
+        VATRUNOVER = oridata[7]
+        TYClOSE = oridata[8]
+        PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+
+        val_str = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
+                + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
+                + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG)
+
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
+        return insert_str 
+
     def insert_data(self, oridata, table_name):
-        insert_str = self.dbfunc.get_insert_str(oridata, table_name)
-        print insert_str
-        self.changeDatabase(insert_str)
-        # try:
-        #     self.changeDatabase(insert_str)
-        # except Exception as e:
-        #     print str(traceback.format_exc())
-        #     if "Violation of PRIMARY KEY constraint" not in e[1]:
-        #         raise(e)
+        # if "WeightData" in self.db:
+        #     insert_str = self.get_insert_weightdata_str(oridata, table_name)
+        # if "MarketData" in self.db:
+        #     insert_str = self.get_insert_marketdata_str(oridata, table_name)
+        insert_str = self.dbfunc.get_insert_str()
+        try:
+            self.changeDatabase(insert_str)
+        except Exception as e:
+            if "Violation of PRIMARY KEY constraint" not in e[1]:
+                raise(e)
 
     def getDatabaseTableInfo(self):
         queryString = "select name from "+ self.db +"..sysobjects where xtype= 'U'"
-        result = self.get_database_data(queryString)
+        result = self.getData(queryString)
         transRst = []
         for i in range(len(result)):
             transRst.append(str(result[i][0]))
@@ -92,30 +125,15 @@ class Database:
 
     def getTableDataStartEndTime(self, table):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table +']'
-        sql_str = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
-        result = self.get_database_data(sql_str)
+        sqlStr = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
+        result = self.getData(sqlStr)
         startTime = result[0][0]
         endTime = result[0][1]
         return (startTime, endTime)
 
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-        sql_str = 'select * from ' + complete_tablename
-        result = self.get_database_data(sql_str)
-        return result
-
     def getDataByTableName(self, table_name):
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-        sql_str = 'select * from ' + complete_tablename
-        result = self.get_database_data(sql_str)
+        sql_str = 'select * from ' + table_name
+        result = self.getData(table_name)
         return result
 
     def addPrimaryKey(self):
-        databaseTableInfo = self.getDatabaseTableInfo()
-        for table in databaseTableInfo:
-            complete_tablename = u'[' + self.db + '].[dbo].['+ table +']'
-            alterNullColumnsql_str = "alter table "+ complete_tablename +" alter column TDATE int not null\
-                                alter table "+ complete_tablename +" alter column TIME int not null"                
-            self.changeDatabase(alterNullColumnsql_str)
-
-            addPrimaryKeysql_str = " alter table "+ complete_tablename +" add primary key (TDATE, TIME)"
-            self.changeDatabase(addPrimaryKeysql_str)
