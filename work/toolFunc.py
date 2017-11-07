@@ -7,7 +7,6 @@ import threading
 import pyodbc
 import datetime
 
-from databaseClass import MSSQL
 from CONFIG import *
 
 def LogInfo(wfile, info):
@@ -18,48 +17,36 @@ def LogInfo(wfile, info):
         exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
         infoStr = "[X] LogInfo Failed \n" \
                 + "[E] Exception :  \n" + exceptionInfo   
-        raise(Exception(infoStr)) 
+        raise(e) 
 
-def getSimpleDate (oriDateStr, logFile):
+def getSimpleDate (oriDateStr):
     try:
         dateArray = oriDateStr.split(' ')
         dateStr = dateArray[0].replace('-','')
         return dateStr 
-    except Exception as e:
-        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] GetSimpleDate Failed \n" \
-                + "[E] Exception :  \n" + exceptionInfo
-        LogInfo(logFile, infoStr)    
-        raise(Exception(infoStr))   
+    except Exception as e:   
+        raise(e)   
 
-def getSimpleTime(oriTimeStr, logFile):
+def getSimpleTime(oriTimeStr):
     try:
         timeArray = oriTimeStr.split(' ')
         timeStr = timeArray[1].replace(':','').split('.')[0]
         return timeStr   
     except Exception as e:
-        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] GetSimpleTime Failed \n" \
-                + "[E] Exception :  \n" + exceptionInfo
-        LogInfo(logFile, infoStr)    
-        raise(Exception(infoStr))  
+        raise(e)  
 
-def getYearMonthDay(oriDate, logFile):
+def getYearMonthDay(oriDate):
     try:
         year = oriDate / 10000
         month = (oriDate - year * 10000) / 100
         day = oriDate - year * 10000 - month * 100
         return (year, month, day)
-    except Exception as e:
-        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] GetSimpleTime Failed \n" \
-                + "[E] Exception :  \n" + exceptionInfo
-        LogInfo(logFile, infoStr)    
-        raise(Exception(infoStr)) 
+    except Exception as e:  
+        raise(e)   
 
-def addOneDay(oriDate, logFile):
+def addOneDay(oriDate):
     try:
-        year, month, day = getYearMonthDay(oriDate, logFile)
+        year, month, day = getYearMonthDay(oriDate)
         day = day + 1
         if year % 4 == 0:
             monthArray = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -73,16 +60,12 @@ def addOneDay(oriDate, logFile):
                 year = year + 1
         addedDate = year * 10000 + month * 100 + day 
         return addedDate
-    except Exception as e:
-        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] AddOneDay Failed \n" \
-                + "[E] Exception :  \n" + exceptionInfo
-        LogInfo(logFile, infoStr)    
-        raise(Exception(infoStr)) 
+    except Exception as e:   
+        raise(e)   
 
-def minusOneDay(oriDate, logFile):
+def minusOneDay(oriDate):
     try:
-        year, month, day = getYearMonthDay(oriDate, logFile)
+        year, month, day = getYearMonthDay(oriDate)
         if year % 4 == 0:
             monthArray = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         else:
@@ -98,25 +81,17 @@ def minusOneDay(oriDate, logFile):
                 day = monthArray[month-1]
         addedDate = year * 10000 + month * 100 + day 
         return addedDate
-    except Exception as e:
-        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] MinusOneDay()  Failed \n" \
-                + "[E] Exception :  \n" + exceptionInfo
-        LogInfo(logFile, infoStr)    
-        raise(Exception(infoStr)) 
+    except Exception as e: 
+        raise(e)   
 
-def getIntegerDateNow(logFile):
+def getIntegerDateNow():
     try:
         curDate = datetime.datetime.now().strftime('%Y%m%d')
         curHourTime = datetime.datetime.now().strftime('%H')
         curDate = long(curDate)
         if long(curHourTime) < 15:
-            curDate = minusOneDay(curDate, logFile)
+            curDate = minusOneDay(curDate)
         integerDate = long(curDate)
         return integerDate
     except Exception as e:
-        exceptionInfo = '\n' + str(traceback.format_exc()) + '\n'
-        infoStr = "[X] getCurDate  Failed \n" \
-                + "[E] Exception :  \n" + exceptionInfo
-        LogInfo(logFile, infoStr)    
-        raise(Exception(infoStr)) 
+        raise(e)   

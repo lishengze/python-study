@@ -5,48 +5,43 @@ import datetime
 import pymssql
 
 from CONFIG import *
+from databaseClass import MSSQL
 from toolFunc import *
-
-from databaseClass import Database
-from TinyConn import TinySoft
+from databaseFunc import *
+from netdataFunc import *
 
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
-g_writeLogLock = threading.Lock()
 
-def test_insert_data():
+# 'SZ300512'
+
+def testInserData():
+    try:
         starttime = datetime.datetime.now()
-        log_str = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
-        LogInfo(g_logFile, log_str)   
+        infoStr = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
 
-        database_obj = Database()
-        tinysoft_obj = TinySoft(g_logFile, g_writeLogLock)
+        databaseObj = MSSQL() 
+        result = testGetStockData()
+        print len(result)
 
-        secode_all = tinysoft_obj.getSecodeInfo()
-        secode = secode_all[10]
-        start_time = 20171001
-        end_time = 20171101
-
-        market_data = tinysoft_obj.getStockData(secode, start_time, end_time)
-        print len(market_data)
-
-        database_name = "TestData"
-        table_name = secode
-        
-        table_name_array = database_obj.getDatabaseTableInfo(database_name)
-        complete_table_name = u'[' + database_name + '].[dbo].['+ table_name +']'
-        if table_name not in table_name_array:            
-            database_obj.createTableByName(complete_table_name)
-
-        for cur_market_data in market_data:
-            insert_str = tinysoft_obj.getInsertStockDataStr(cur_market_data, complete_table_name)
-            database_obj.changeDatabase(insert_str)
+        desTableName = '[HistData].[dbo].[LCY_STK_01MS_1]'
+        for i in range(len(result)):
+            insertStr = getInsertStockDataStr(result[i], desTableName, g_logFile)
+            insertRst = databaseObj.ExecStoreProduce(insertStr)
           
+        databaseObj.CloseConnect()
+
         endtime = datetime.datetime.now()
-        cost_time = (endtime - starttime).seconds
-        log_str = "++++++++++ End Time: " + str(endtime) \
-                + ' Sum Cost Time: ' + str(cost_time)  + "s ++++++++\n"  
-        LogInfo(g_logFile, log_str)                           
+        deletaTime = endtime - starttime
+        infoStr = "++++++++++ End Time: " + str(endtime) \
+                + ' Sum Cost Time: ' + str(deletaTime.seconds)  + "s ++++++++\n"  
+        LogInfo(g_logFile, infoStr)                           
+    except Exception as e:
+        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        infoStr = "TestInserData Failed \n" \
+                + "[E] Exception : \n" + exceptionInfo
+        LogInfo(g_logFile, infoStr)  
+        raise(infoStr)
     
 def testGetMaxMinDataTime():
     database = "MarketData"
@@ -57,8 +52,8 @@ def testGetMaxMinDataTime():
 def testMultiThreadWriteData():
     try:
         starttime = datetime.datetime.now()
-        log_str = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
-        LogInfo(g_logFile, log_str)   
+        infoStr = "\n+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
+        LogInfo(g_logFile, infoStr)   
         thread_count = 8
         threads = []
 
@@ -86,15 +81,15 @@ def testMultiThreadWriteData():
         aveTime = deletaTime.seconds / thread_count
         sumCostDays = getAllStockDataCostDays(aveTime, g_logFile)
 
-        log_str = "++++++++++ End Time: " + str(endtime) \
+        infoStr = "++++++++++ End Time: " + str(endtime) \
                 + " AveTime: " + str(aveTime) + "s Sum Cost Days: " + str(sumCostDays) + " days ++++++++\n"  
-        LogInfo(g_logFile, log_str)                                   
+        LogInfo(g_logFile, infoStr)                                   
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        log_str = "testMultiThreadWriteData Failed \n" \
+        infoStr = "testMultiThreadWriteData Failed \n" \
                 + "[E] Exception : \n" + exceptionInfo
-        LogInfo(g_logFile, log_str)   
-        raise(log_str)
+        LogInfo(g_logFile, infoStr)   
+        raise(infoStr)
 
 def testGetTableDataStartEndTime():
     try:
@@ -107,10 +102,10 @@ def testGetTableDataStartEndTime():
             print ("startTime: %d, endTime: %d")%(startTime, endTime)
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        log_str = "[X] TestCompleteDatabase Failed \n" \
+        infoStr = "[X] TestCompleteDatabase Failed \n" \
                 + "[E] Exception : \n" + exceptionInfo
-        LogInfo(g_logFile, log_str) 
-        raise(log_str)
+        LogInfo(g_logFile, infoStr) 
+        raise(infoStr)
 
 def testCompleteDatabase():
     try:
@@ -119,10 +114,10 @@ def testCompleteDatabase():
         completeDatabaseTable(database, tableArray, g_logFile)
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        log_str = "[X] TestCompleteDatabase Failed \n" \
+        infoStr = "[X] TestCompleteDatabase Failed \n" \
                 + "[E] Exception : \n" + exceptionInfo
-        LogInfo(g_logFile, log_str) 
-        raise(log_str)
+        LogInfo(g_logFile, infoStr) 
+        raise(infoStr)
 
 def testGetStartEndTime():
     oriTimeArray = [[20130902, 22000101],
@@ -154,43 +149,43 @@ def testInsertSamePrimaryValue():
         databaseObj.CloseConnect()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        log_str = "TestInsertSamePrimaryValue Failed \n" \
+        infoStr = "TestInsertSamePrimaryValue Failed \n" \
                 + "[E] Exception :  \n" + exceptionInfo  
-        raise(Exception(log_str))
+        raise(Exception(infoStr))
 
 def changeDatabase():
     try:
         database = "MarketData"
         secodeArray = getSecodeInfoFromTianRuan(g_logFile)
 
-        log_str = "Secode Numb : " + str(len(secodeArray)) + '\n'
-        LogInfo(g_logFile, log_str)   
+        infoStr = "Secode Numb : " + str(len(secodeArray)) + '\n'
+        LogInfo(g_logFile, infoStr)   
 
         refreshDatabase(database, secodeArray, g_logFile)
         addPrimaryKey(database, g_logFile)
         
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        log_str = "ChangeDatabase Failed \n" \
+        infoStr = "ChangeDatabase Failed \n" \
                 + "[E] Exception :  \n" + exceptionInfo  
-        raise(Exception(log_str))
+        raise(Exception(infoStr))
 
 def addPrimaryKeyToDatabase():
     try:
         database = "MarketData"
         secodeArray = getSecodeInfoFromTianRuan(g_logFile)
 
-        log_str = "Secode Numb : " + str(len(secodeArray)) + '\n'
-        LogInfo(g_logFile, log_str)   
+        infoStr = "Secode Numb : " + str(len(secodeArray)) + '\n'
+        LogInfo(g_logFile, infoStr)   
 
         completeDatabaseTable(database, secodeArray, g_logFile)
         addPrimaryKey(database, g_logFile)
         
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        log_str = "AddPrimaryKeyToDatabase Failed \n" \
+        infoStr = "AddPrimaryKeyToDatabase Failed \n" \
                 + "[E] Exception :  \n" + exceptionInfo  
-        raise(Exception(log_str))    
+        raise(Exception(infoStr))    
 
 def testConnectRemoteDatabaseServer():
     try:
@@ -208,21 +203,20 @@ def testConnectRemoteDatabaseServer():
 
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        log_str = "__Main__ Failed \n" \
+        infoStr = "__Main__ Failed \n" \
                 + "[E] Exception :  \n" + exceptionInfo  
-        raise(Exception(log_str))
+        raise(Exception(infoStr))
      
 if __name__ == "__main__":
     try:
         # changeDatabase()
         # testInsertSamePrimaryValue()
-        # testConnectRemoteDatabaseServer()
-        test_insert_data()
+        testConnectRemoteDatabaseServer()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        log_str = "__Main__ Failed \n" \
+        infoStr = "__Main__ Failed \n" \
                 + "[E] Exception :  \n" + exceptionInfo  
-        LogInfo(g_logFile, log_str)
+        LogInfo(g_logFile, infoStr)
 
     
     

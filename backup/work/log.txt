@@ -1,0 +1,44 @@
++++++++++ Start Time: 2017-11-04 15:36:34.447000 +++++++++++
+Secode Numb : 3406
+refreshTestDatabase Failed 
+[E] Exception :  
+
+Traceback (most recent call last):
+  File "D:\github\TinySoft\work\databaseFunc.py", line 40, in completeDatabaseTable
+    databaseObj = MSSQL()
+  File "D:\github\TinySoft\work\databaseClass.py", line 13, in __init__
+    self.conn = pymssql.connect(host=self.host,user=self.user,password=self.pwd,database=self.db,timeout=5,login_timeout=2,charset="utf8")
+  File "pymssql.pyx", line 641, in pymssql.connect (pymssql.c:10824)
+OperationalError: (18456, "\xe7\x94\xa8\xe6\x88\xb7 'sa' \xe7\x99\xbb\xe5\xbd\x95\xe5\xa4\xb1\xe8\xb4\xa5\xe3\x80\x82DB-Lib error message 20018, severity 14:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20002, severity 9:\nAdaptive Server connection failed (localhost:1433)\n")
+
+__Main__ Failed[E] Exception : 
+
+Traceback (most recent call last):
+  File "D:/github/TinySoft/work/main.py", line 159, in <module>
+    MultiThreadWriteData()
+  File "D:/github/TinySoft/work/main.py", line 155, in MultiThreadWriteData
+    raise(Exception(infoStr))
+Exception: [X] ThreadName: MainThread
+MultiThreadWriteData Failed[E] Exception : 
+
+Traceback (most recent call last):
+  File "D:/github/TinySoft/work/main.py", line 106, in MultiThreadWriteData
+    completeDatabaseTable(databaseName, secodeArray, g_logFile)
+  File "D:\github\TinySoft\work\databaseFunc.py", line 52, in completeDatabaseTable
+    raise(Exception(infoStr))
+Exception: refreshTestDatabase Failed 
+[E] Exception :  
+
+Traceback (most recent call last):
+  File "D:\github\TinySoft\work\databaseFunc.py", line 40, in completeDatabaseTable
+    databaseObj = MSSQL()
+  File "D:\github\TinySoft\work\databaseClass.py", line 13, in __init__
+    self.conn = pymssql.connect(host=self.host,user=self.user,password=self.pwd,database=self.db,timeout=5,login_timeout=2,charset="utf8")
+  File "pymssql.pyx", line 641, in pymssql.connect (pymssql.c:10824)
+OperationalError: (18456, "\xe7\x94\xa8\xe6\x88\xb7 'sa' \xe7\x99\xbb\xe5\xbd\x95\xe5\xa4\xb1\xe8\xb4\xa5\xe3\x80\x82DB-Lib error message 20018, severity 14:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20002, severity 9:\nAdaptive Server connection failed (localhost:1433)\n")
+
+
+
+
+
+

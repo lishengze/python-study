@@ -1,5 +1,5 @@
 EXCELFILE_DIR = "E:\DataBase\original-data-20160910-20170910-1m"
-DATABASE_NAME = "TestData"
+DATABASE_NAME = "HistData"
 DATABASE_USER = "sa"
 DATABASE_PWD = "sasa"
 DATABASE_HOST = "localhost"
