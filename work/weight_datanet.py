@@ -26,7 +26,13 @@ class WeightTinySoft(TinySoft):
         tsl = "secode:=\'" + str(secode) + "\'; \
                endt:=" + str(end_date) +"T; \
                GetBkWeightByDate(secode, endt, result);\
-               return result; "
+               emptyResult := array(); \
+               emptyResult[0]:= -1; \
+               if result then \
+                   return result \
+               else    \
+                   return emptyResult " 
+
         return tsl
 
     def get_netdata(self, secode, ori_start_date, ori_end_date):
@@ -35,7 +41,6 @@ class WeightTinySoft(TinySoft):
         while start_date <= ori_end_date:
             tsl_str = self.get_netdata_tslstr(secode, start_date)
             start_date = addOneDay(start_date)
-
             try:
                 self.curs.execute(tsl_str)
             except Exception as e:
@@ -45,7 +50,7 @@ class WeightTinySoft(TinySoft):
                 raise(e)       
                      
             tmp_result = self.curs.fetchall()
-            if len(tmp_result) == 0:
+            if len(tmp_result) == 1 and tmp_result[0][0] == -1:
                 continue
             for item in tmp_result:
                 result.append(item)

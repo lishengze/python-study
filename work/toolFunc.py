@@ -45,23 +45,20 @@ def getYearMonthDay(oriDate):
         raise(e)   
 
 def addOneDay(oriDate):
-    try:
-        year, month, day = getYearMonthDay(oriDate)
-        day = day + 1
-        if year % 4 == 0:
-            monthArray = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-        else:
-            monthArray = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-        if day > monthArray[month-1]:
-            day = 1
-            month = month + 1
-            if month > 12:
-                month = 1
-                year = year + 1
-        addedDate = year * 10000 + month * 100 + day 
-        return addedDate
-    except Exception as e:   
-        raise(e)   
+    year, month, day = getYearMonthDay(oriDate)
+    day = day + 1
+    if year % 4 == 0:
+        monthArray = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    else:
+        monthArray = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    if day > monthArray[month-1]:
+        day = 1
+        month = month + 1
+        if month > 12:
+            month = 1
+            year = year + 1
+    addedDate = year * 10000 + month * 100 + day 
+    return addedDate
 
 def minusOneDay(oriDate):
     try:
@@ -95,3 +92,5 @@ def getIntegerDateNow():
         return integerDate
     except Exception as e:
         raise(e)   
+
+    

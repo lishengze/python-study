@@ -28,6 +28,20 @@ g_logFile = open(g_logFileName, 'w')
 g_susCount = 0
 g_susCountLock = threading.Lock()
 
+def get_database_obj(database_name, host='localhost'):
+    if "WeightData" in database_name:
+        return WeightDatabase(host=host, db=database_name)
+
+    if "MarketData" in database_name:
+        return MarketDatabase(host=host, db=database_name)
+
+def get_netconn_obj(database_type):
+    if "WeightData" in database_type:
+        return WeightTinySoft(database_type)
+
+    if "MarketData" in database_type:
+        return MarketTinySoft(database_type) 
+
 def getSusCount():    
     global g_susCountLock, g_susCount
     g_susCountLock.acquire()
@@ -76,20 +90,6 @@ def startWriteThread(netdata_array, source_array, database_obj):
         thread.join()      
     
     print ("threading.active_count(): %d\n") % (threading.active_count())
-
-def get_database_obj(database_name, host='localhost'):
-    if "WeightData" in database_name:
-        return WeightDatabase(host=host, db=database_name)
-
-    if "MarketData" in database_name:
-        return MarketDatabase(host=host, db=database_name)
-
-def get_netconn_obj(database_type):
-    if "WeightData" in database_type:
-        return WeightTinySoft(database_type)
-
-    if "MarketData" in database_type:
-        return MarketTinySoft(database_type)     
 
 def MultiThreadWriteData(data_type, ori_startdate, database_host=DATABASE_HOST):
     starttime = datetime.datetime.now()
@@ -162,12 +162,11 @@ def MultiThreadWriteData(data_type, ori_startdate, database_host=DATABASE_HOST):
     LogInfo(g_logFile, info_str)
 
 if __name__ == "__main__":
+    data_type = "WeightDataTest"
+    ori_startdate = 20171106    
     try:
         # data_type = "WeightData"
-        data_type = "WeightDataTest"
-        ori_startdate = 20171106
         MultiThreadWriteData(data_type, ori_startdate)
-
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \
@@ -180,7 +179,7 @@ if __name__ == "__main__":
             time.sleep(connFailedWaitTime)
             info_str = "[RS] MultiThreadWriteData  Restart : \n"
             recordInfoWithLock(info_str)
-            MultiThreadWriteData()
+            MultiThreadWriteData(data_type, ori_startdate)
 
 # def MultiThreadWriteMarketData():
 #     starttime = datetime.datetime.now()

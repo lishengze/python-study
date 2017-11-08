@@ -14,10 +14,23 @@ from market_database import MarketDatabase
 from weight_datanet import WeightTinySoft
 from market_datanet import MarketTinySoft
 
-
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
 g_writeLogLock = threading.Lock()
+
+def get_database_obj(database_name, host='localhost'):
+    if "WeightData" in database_name:
+        return WeightDatabase(host=host, db=database_name)
+
+    if "MarketData" in database_name:
+        return MarketDatabase(host=host, db=database_name)
+
+def get_netconn_obj(database_type):
+    if "WeightData" in database_type:
+        return WeightTinySoft(database_type)
+
+    if "MarketData" in database_type:
+        return MarketTinySoft(database_type)     
 
 def test_getSecodeInfo():
     tinysoft_connect = TinySoft(g_logFile, g_writeLogLock)
@@ -25,24 +38,28 @@ def test_getSecodeInfo():
     print len(result)
     # print result[1:10]
         
-def test_get_stockdata():
-    tinysoft_connect = TinySoft(g_logFile, g_writeLogLock)
-    secode = "SH600000"
-    start_date = 20171101
-    end_date = 20171101
-    result = tinysoft_connect.getStockData(secode, start_date, end_date)
-    if result is None:
-        print secode + ' has no data between ' + str(start_date) + ' and ' + str(end_date)
-    else:
-        print result[1:4]
-
 def test_get_weight_data():
-    tiny_obj = TinySoft(g_logFile, g_writeLogLock)
-    secode_array = tiny_obj.getIndexSecode()
-    start_date = 20171104
-    end_date = 20171107 
-    secode ="SH000016"
-    result = tiny_obj.getWeightData(secode, start_date, end_date)
+    netconn_obj = get_netconn_obj('WeightData')
+    source_array = netconn_obj.get_sourceinfo()
+    start_date = 20101030
+    end_date = 20101030
+    for source in source_array:
+        result = netconn_obj.get_netdata(source, start_date, end_date)
+        if result == None:
+            print "source: " + source + " has no data between " + str(start_date) + " and " + str(end_date)
+            
+    # if result is None:
+    #     print secode + ' has no data between ' + str(start_date) + ' and ' + str(end_date)
+    # else:
+    #     print result[1:4]
+
+# def test_get_weight_data():
+#     tiny_obj = TinySoft(g_logFile, g_writeLogLock)
+#     secode_array = tiny_obj.getIndexSecode()
+#     start_date = 20171104
+#     end_date = 20171107 
+#     secode ="SH000016"
+#     result = tiny_obj.getWeightData(secode, start_date, end_date)
     # print result
     # for secode in secode_array:
     #     result = tiny_obj.getWeightData(secode, start_date, end_date)
@@ -76,18 +93,6 @@ def test_connect():
 def write_weightdata(database_obj, oridata, table_name):
     for item in oridata:
         database_obj.insert_data(item, table_name)
-
-def get_database_netconn_obj(database_name, host='localhost'):
-    if "WeightData" in database_name:
-        database_obj = WeightDatabase(host=host, db=database_name)
-        netconn_obj = WeightTinySoft(database_name)
-        return (database_obj, netconn_obj)
-
-    if "MarketData" in database_name:
-        database_obj = MarketDatabase(host=host, db=database_name)
-        netconn_obj = MarketTinySoft(database_name)
-        return (database_obj, netconn_obj)  
-
         
 def test_singlethread_write_weightdata():
     database_name = "WeightDataTest"
@@ -110,8 +115,8 @@ if __name__ == "__main__":
         # test_getSecodeInfo()
         # test_multi_thread_connect()
         # test_get_stockdata()
-        # test_get_weight_data()
-        test_singlethread_write_weightdata()
+        test_get_weight_data()
+        # test_singlethread_write_weightdata()
     except Exception as exp:
         exception_info = '\n' + str(traceback.format_exc()) + '\n'
         info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \
