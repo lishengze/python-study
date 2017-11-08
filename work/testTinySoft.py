@@ -8,6 +8,13 @@ from toolFunc import *
 from tinysoft import TinySoft
 from database import Database
 
+from weight_database import WeightDatabase
+from market_database import MarketDatabase
+
+from weight_datanet import WeightTinySoft
+from market_datanet import MarketTinySoft
+
+
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
 g_writeLogLock = threading.Lock()
@@ -67,23 +74,35 @@ def test_connect():
     tinyConn = TinySoft(g_logFile, g_writeLogLock)
 
 def write_weightdata(database_obj, oridata, table_name):
-    for oneday_data in oridata:
-        for item in oneday_data:
-            database_obj.insert_data(item, table_name)
+    for item in oridata:
+        database_obj.insert_data(item, table_name)
 
+def get_database_netconn_obj(database_name, host='localhost'):
+    if "WeightData" in database_name:
+        database_obj = WeightDatabase(host=host, db=database_name)
+        netconn_obj = WeightTinySoft(database_name)
+        return (database_obj, netconn_obj)
+
+    if "MarketData" in database_name:
+        database_obj = MarketDatabase(host=host, db=database_name)
+        netconn_obj = MarketTinySoft(database_name)
+        return (database_obj, netconn_obj)  
+
+        
 def test_singlethread_write_weightdata():
     database_name = "WeightDataTest"
-    start_date = 20171101
-    end_date = 20171103
+    ori_startdate = 20171101
+    ori_enddate = 20171103
 
-    database_obj = Database(db=database_name)
-    tinysoft_obj = TinySoft(g_logFile, g_writeLogLock)
-    secode_array = tinysoft_obj.getIndexSecode()
-    database_obj.completeDatabaseTable(secode_array)
+    database_obj, tinysoft_obj = get_database_netconn_obj(database_name)
+    source_array = tinysoft_obj.get_sourceinfo()
+    # database_obj.completeDatabaseTable(source_array)
+    database_obj.refreshDatabase(source_array)
 
-    for secode in secode_array:
-        result = tinysoft_obj.getWeightData(secode, start_date, end_date)
-        write_weightdata(database_obj, result, secode)
+    for source in source_array:
+        result = tinysoft_obj.get_netdata(source, ori_startdate, ori_enddate)
+        print len(result)
+        write_weightdata(database_obj, result, source)
 
 if __name__ == "__main__":
     try:

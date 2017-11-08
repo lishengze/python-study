@@ -1,10 +1,14 @@
 # -*- coding: UTF-8 -*-
 from CONFIG import *
 from toolFunc import *
+from database import Database
 
-class MarketDatabaseFunc(object):
-    def __init__(self, database_name):
-        self.db = database_name
+class MarketDatabase(Database):
+    def __init__(self, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):
+        Database.__init__(self, host, user, pwd, db)
+
+    def __del__(self):
+        Database.__del__(self)
 
     def get_create_str(self, table_name):
         value_str = "(TDATE int, TIME int, SECODE varchar(10), \
@@ -36,3 +40,22 @@ class MarketDatabaseFunc(object):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
         return insert_str        
+
+    def getTableDataStartEndTime(self, table_name):
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        sql_str = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
+        result = self.get_database_data(sql_str)
+        startTime = result[0][0]
+        endTime = result[0][1]
+        return (startTime, endTime)  
+
+    def addPrimaryKey(self):
+        databaseTableInfo = self.getDatabaseTableInfo()
+        for table in databaseTableInfo:
+            complete_tablename = u'[' + self.db + '].[dbo].['+ table +']'
+            alterNullColumnsql_str = "alter table "+ complete_tablename +" alter column TDATE int not null\
+                                alter table "+ complete_tablename +" alter column TIME int not null"                
+            self.changeDatabase(alterNullColumnsql_str)
+
+            addPrimaryKeysql_str = " alter table "+ complete_tablename +" add primary key (TDATE, TIME)"
+            self.changeDatabase(addPrimaryKeysql_str)    

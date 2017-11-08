@@ -14,8 +14,13 @@ from toolFunc import *
 # from netdataFunc import *
 
 from wind import Wind
-from tinysoft import TinySoft
+
 from database import Database
+from weight_database import WeightDatabase
+from market_database import MarketDatabase
+
+from weight_datanet import WeightTinySoft
+from market_datanet import MarketTinySoft
 
 g_writeLogLock = threading.Lock()
 g_logFileName = os.getcwd() + '\log.txt'
@@ -38,185 +43,119 @@ def recordInfoWithLock(info_str):
     g_logFile.write(info_str + '\n')
     g_writeLogLock.release()      
 
-def writeDataToDatabase(result, databaseName, secode, netconn_obj):
+def writeDataToDatabase(result_array, source, mainthread_database_obj):
     try:
-        database_obj = Database()
-        table_name = secode
-        desTableName = "["+ databaseName +"].[dbo].[" + table_name + "]"
-        for i in range(len(result)):
-            insertStr = netconn_obj.getInsertStockDataStr(result[i], desTableName)
-            database_obj.changeDatabase(insertStr)
+        database_obj = get_database_obj(mainthread_database_obj.db, mainthread_database_obj.host)
+        table_name = source
+        for item in result_array:
+            database_obj.insert_data(item, table_name)
 
-        tmpSuccessCount = getSusCount()
+        tmp_successcount = getSusCount()
 
         info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-                + "Stock: " + secode +" Write " + str(len(result)) +" Items to Database, CurSuccessCount:  " + str(tmpSuccessCount) + " \n" 
+                + "Source: " + source +" Write " + str(len(result_array)) +" Items to Database, CurSuccessCount:  " + str(tmp_successcount) + " \n" 
 
         recordInfoWithLock(info_str)        
     except Exception as e:
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "\n" \
                 + "writeDataToDatabase Failed \n" \
-                + "[E] Exception : \n" + exceptionInfo
+                + "[E] Exception : \n" + exception_info
         recordInfoWithLock(info_str)  
 
-def startWriteThread(databaseName, resultArray, secodeArray, netconn_obj):
-    try:
-        threads = []
-        for i in range(len(resultArray)):
-            tmpThread = threading.Thread(target=writeDataToDatabase, args=(resultArray[i], databaseName, str(secodeArray[i]), netconn_obj,))
-            threads.append(tmpThread)
+def startWriteThread(netdata_array, source_array, database_obj):
+    threads = []
+    for i in range(len(netdata_array)):
+        tmp_thread = threading.Thread(target=writeDataToDatabase, args=(netdata_array[i], str(source_array[i]), database_obj,))
+        threads.append(tmp_thread)
 
-        for thread in threads:
-            thread.start()
+    for thread in threads:
+        thread.start()
 
-        for thread in threads:
-            thread.join()      
-        
-        print ("threading.active_count(): %d\n") % (threading.active_count())
+    for thread in threads:
+        thread.join()      
+    
+    print ("threading.active_count(): %d\n") % (threading.active_count())
 
-    except:
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
-        info_str = "\n[X]: MainThread StartWriteThread Failed \n" \
-                + "[E] Exception : \n" + exceptionInfo
-        # recordInfoWithLock(info_str)       
-        raise(Exception(info_str))    
+def get_database_obj(database_name, host='localhost'):
+    if "WeightData" in database_name:
+        return WeightDatabase(host=host, db=database_name)
 
-def MultiThreadWriteMarketData():
+    if "MarketData" in database_name:
+        return MarketDatabase(host=host, db=database_name)
+
+def get_netconn_obj(database_type):
+    if "WeightData" in database_type:
+        return WeightTinySoft(database_type)
+
+    if "MarketData" in database_type:
+        return MarketTinySoft(database_type)     
+
+def MultiThreadWriteData(data_type, ori_startdate, database_host=DATABASE_HOST):
     starttime = datetime.datetime.now()
     info_str = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
     LogInfo(g_logFile, info_str)   
+    
+    # data_type = "WeightData"
+    database_name = data_type
+
+    # ori_startdate = 20161101
+    ori_enddate = getIntegerDateNow()
+
+    database_obj = get_database_obj(database_name, host=database_host)
+    netconn_obj = get_netconn_obj(data_type)
+
+    source_array = netconn_obj.get_sourceinfo()
+    tablename_array = source_array
 
     thread_count = 12
-    databaseName = "MarketData"
-    oriStartDate = 20171101
-    oriEndDate = getIntegerDateNow()
 
-    tinysoft_obj = TinySoft(g_logFile, g_writeLogLock)
-    netconn_obj = tinysoft_obj
+    database_obj.completeDatabaseTable(source_array)
+    # database_obj.refreshDatabase(source_array)
 
-    databaseServer = "localhost"
-    database_obj = Database(host=databaseServer)
-
-    tmpMarketDataArray = []        
-    tmpSecodeDataArray = []
-    secodeArray = netconn_obj.getSecodeInfo()
-
-    info_str = "Secode Numb : " + str(len(secodeArray)) + '\n'
+    info_str = "Source Numb : " + str(len(source_array)) + '\n'
     LogInfo(g_logFile, info_str)   
 
-    secodeArray = secodeArray[0:thread_count*2]
-    # print secodeArray
+    time_count = 0
+    tmp_netdata_array = []
+    tmp_source_array = []
+    for i in range(len(source_array)):
+        cur_source = source_array[i]
+        cur_tablename = cur_source
+        tabledata_startdate, tabledata_enddate = database_obj.getTableDataStartEndTime(cur_tablename)
+        timeArray = netconn_obj.getStartEndTime(ori_startdate, ori_enddate, tabledata_startdate, tabledata_enddate)
 
-    database_obj.refreshDatabase(secodeArray)
-    # database_obj.completeDatabaseTable(secodeArray)
-
-    timeCount = 0
-    for i in range(len(secodeArray)):
-        curSecode = secodeArray[i]
-        tableDataStartTime, tableDataEndTime = database_obj.getTableDataStartEndTime(curSecode)
-        timeArray = netconn_obj.getStartEndTime(oriStartDate, oriEndDate, tableDataStartTime, tableDataEndTime)
-        for j in range(len(timeArray)):     
+        for j in range(len(timeArray)):
             startDate = timeArray[j][0]
-            endDate = timeArray[j][1]             
+            endDate = timeArray[j][1]
+            ori_netdata = netconn_obj.get_netdata(cur_source, startDate, endDate)
+            if ori_netdata is not None:
+                time_count = time_count + 1 
 
-            stockHistMarketData = netconn_obj.getStockData(curSecode, startDate, endDate)
-            if stockHistMarketData is not None:
-                timeCount = timeCount + 1 
-
-                info_str = "[B] Stock: " + str(curSecode) + ", from "+ str(startDate) +" to "+ str(endDate) \
-                        + ", dataNumb: " + str(len(stockHistMarketData)) \
-                        + ' , timeCount: ' + str(timeCount) + ", stockCount: "+ str(i+1) + "\n"
+                info_str = "[B] Source: " + str(cur_source) + ", from "+ str(startDate) +" to "+ str(endDate) \
+                        + ", dataNumb: " + str(len(ori_netdata)) \
+                        + ' , time_count: ' + str(time_count) + ", stockCount: "+ str(i+1) + "\n"
                 LogInfo(g_logFile, info_str)  
 
-                tmpMarketDataArray.append(stockHistMarketData)
-                tmpSecodeDataArray.append(curSecode)
+                tmp_netdata_array.append(ori_netdata)
+                tmp_source_array.append(cur_source)
 
-                if (timeCount % thread_count == 0) or (i == len(secodeArray)-1 and j == len(timeArray) -1):
-                    # print ("tmpMarketDataArray len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmpMarketDataArray), len(tmpSecodeDataArray), i)
-                    startWriteThread(databaseName, tmpMarketDataArray, tmpSecodeDataArray, netconn_obj)
-                    tmpMarketDataArray = []
-                    tmpSecodeDataArray = [] 
+                if (time_count % thread_count == 0) or (i == len(source_array)-1 and j == len(timeArray) -1):
+                    # print ("tmp_netdata_array len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmp_netdata_array), len(tmpSecodeDataArray), i)
+                    startWriteThread(tmp_netdata_array, tmp_source_array, database_obj)
+                    tmp_netdata_array = []
+                    tmp_source_array = [] 
             else:
-                info_str = "[C] Stock: " + str(curSecode) + " has no data beteen "+ str(startDate) +" and "+ str(endDate) + " \n"
+                info_str = "[C] Source: " + str(cur_source) + " has no data beteen "+ str(startDate) +" and "+ str(endDate) + " \n"
                 LogInfo(g_logFile, info_str) 
         
         if len(timeArray) == 0:
-                info_str = "[C] Stock: " + str(curSecode) + " already has data beteen "+ str(oriStartDate) +" and "+ str(oriEndDate) + " \n"
+                info_str = "[C] source: " + str(cur_source) + " already has data beteen "+ str(ori_startdate) +" and "+ str(ori_enddate) + " \n"
                 LogInfo(g_logFile, info_str)
+
     endtime = datetime.datetime.now()
     costTime = (endtime - starttime).seconds
-    aveTime = costTime / len(secodeArray)
-
-    info_str = "++++++++++ End Time: " + str(endtime) \
-            + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
-    LogInfo(g_logFile, info_str)
-
-def MultiThreadWriteWeightData():
-    starttime = datetime.datetime.now()
-    info_str = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
-    LogInfo(g_logFile, info_str)   
-
-    thread_count = 12
-    database_name = "MarketData"
-    oriStartDate = 20171101
-    oriEndDate = getIntegerDateNow()
-
-    tinysoft_obj = TinySoft(g_logFile, g_writeLogLock)
-    netconn_obj = tinysoft_obj
-
-    database_server = "localhost"
-    database_obj = Database(host=database_server, db=database_name)
-
-    tmpMarketDataArray = []        
-    tmpSecodeDataArray = []
-    indexcode_array = netconn_obj.getIndexSecode()
-
-    info_str = "Secode Numb : " + str(len(indexcode_array)) + '\n'
-    LogInfo(g_logFile, info_str)   
-
-    # indexcode_array = indexcode_array[0:thread_count*2]
-    # print indexcode_array
-
-    # database_obj.refreshDatabase(indexcode_array)
-    # database_obj.completeDatabaseTable(indexcode_array)
-
-    timeCount = 0
-    for i in range(len(indexcode_array)):
-        curSecode = indexcode_array[i]
-        tableDataStartTime, tableDataEndTime = database_obj.getTableDataStartEndTime(curSecode)
-        timeArray = netconn_obj.getStartEndTime(oriStartDate, oriEndDate, tableDataStartTime, tableDataEndTime)
-        for j in range(len(timeArray)):     
-            startDate = timeArray[j][0]
-            endDate = timeArray[j][1]             
-
-            stockHistMarketData = netconn_obj.getStockData(curSecode, startDate, endDate)
-            if stockHistMarketData is not None:
-                timeCount = timeCount + 1 
-
-                info_str = "[B] Stock: " + str(curSecode) + ", from "+ str(startDate) +" to "+ str(endDate) \
-                        + ", dataNumb: " + str(len(stockHistMarketData)) \
-                        + ' , timeCount: ' + str(timeCount) + ", stockCount: "+ str(i+1) + "\n"
-                LogInfo(g_logFile, info_str)  
-
-                tmpMarketDataArray.append(stockHistMarketData)
-                tmpSecodeDataArray.append(curSecode)
-
-                if (timeCount % thread_count == 0) or (i == len(indexcode_array)-1 and j == len(timeArray) -1):
-                    # print ("tmpMarketDataArray len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmpMarketDataArray), len(tmpSecodeDataArray), i)
-                    startWriteThread(databaseName, tmpMarketDataArray, tmpSecodeDataArray, netconn_obj)
-                    tmpMarketDataArray = []
-                    tmpSecodeDataArray = [] 
-            else:
-                info_str = "[C] Stock: " + str(curSecode) + " has no data beteen "+ str(startDate) +" and "+ str(endDate) + " \n"
-                LogInfo(g_logFile, info_str) 
-        
-        if len(timeArray) == 0:
-                info_str = "[C] Stock: " + str(curSecode) + " already has data beteen "+ str(oriStartDate) +" and "+ str(oriEndDate) + " \n"
-                LogInfo(g_logFile, info_str)
-    endtime = datetime.datetime.now()
-    costTime = (endtime - starttime).seconds
-    aveTime = costTime / len(indexcode_array)
+    aveTime = costTime / len(source_array)
 
     info_str = "++++++++++ End Time: " + str(endtime) \
             + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
@@ -224,12 +163,17 @@ def MultiThreadWriteWeightData():
 
 if __name__ == "__main__":
     try:
-        MultiThreadWriteMarketData()
+        # data_type = "WeightData"
+        data_type = "WeightDataTest"
+        ori_startdate = 20171106
+        MultiThreadWriteData(data_type, ori_startdate)
+
     except Exception as e:
-        exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
+        exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \
-                + "[E] Exception : \n" + exceptionInfo
+                + "[E] Exception : \n" + exception_info
         recordInfoWithLock(info_str)
+
         connFailedError = "Communication link failure---InternalConnect"
         connFailedWaitTime = 60 * 5
         if connFailedError in info_str:
@@ -237,3 +181,73 @@ if __name__ == "__main__":
             info_str = "[RS] MultiThreadWriteData  Restart : \n"
             recordInfoWithLock(info_str)
             MultiThreadWriteData()
+
+# def MultiThreadWriteMarketData():
+#     starttime = datetime.datetime.now()
+#     info_str = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
+#     LogInfo(g_logFile, info_str)   
+
+#     thread_count = 12
+#     databaseName = "MarketData"
+#     ori_startdate = 20171101
+#     ori_enddate = getIntegerDateNow()
+
+#     netconn_obj = TinySoft(g_logFile, g_writeLogLock)
+#     netconn_obj = netconn_obj
+
+#     databaseServer = "localhost"
+#     database_obj = Database(host=databaseServer)
+
+#     tmpMarketDataArray = []        
+#     tmpSecodeDataArray = []
+#     source_array = netconn_obj.getSecodeInfo()
+
+#     info_str = "Secode Numb : " + str(len(source_array)) + '\n'
+#     LogInfo(g_logFile, info_str)   
+
+#     source_array = source_array[0:thread_count*2]
+#     # print source_array
+
+#     database_obj.refreshDatabase(source_array)
+#     # database_obj.completeDatabaseTable(source_array)
+
+#     time_count = 0
+#     for i in range(len(source_array)):
+#         curSecode = source_array[i]
+#         tabledata_startdate, tabledata_enddate = database_obj.getTableDataStartEndTime(curSecode)
+#         timeArray = netconn_obj.getStartEndTime(ori_startdate, ori_enddate, tabledata_startdate, tabledata_enddate)
+#         for j in range(len(timeArray)):     
+#             startDate = timeArray[j][0]
+#             endDate = timeArray[j][1]             
+
+#             ori_netdata = netconn_obj.getStockData(curSecode, startDate, endDate)
+#             if ori_netdata is not None:
+#                 time_count = time_count + 1 
+
+#                 info_str = "[B] Stock: " + str(curSecode) + ", from "+ str(startDate) +" to "+ str(endDate) \
+#                         + ", dataNumb: " + str(len(ori_netdata)) \
+#                         + ' , time_count: ' + str(time_count) + ", stockCount: "+ str(i+1) + "\n"
+#                 LogInfo(g_logFile, info_str)  
+
+#                 tmpMarketDataArray.append(ori_netdata)
+#                 tmpSecodeDataArray.append(curSecode)
+
+#                 if (time_count % thread_count == 0) or (i == len(source_array)-1 and j == len(timeArray) -1):
+#                     # print ("tmpMarketDataArray len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmpMarketDataArray), len(tmpSecodeDataArray), i)
+#                     startWriteThread(databaseName, tmpMarketDataArray, tmpSecodeDataArray, netconn_obj)
+#                     tmpMarketDataArray = []
+#                     tmpSecodeDataArray = [] 
+#             else:
+#                 info_str = "[C] Stock: " + str(curSecode) + " has no data beteen "+ str(startDate) +" and "+ str(endDate) + " \n"
+#                 LogInfo(g_logFile, info_str) 
+        
+#         if len(timeArray) == 0:
+#                 info_str = "[C] Stock: " + str(curSecode) + " already has data beteen "+ str(ori_startdate) +" and "+ str(ori_enddate) + " \n"
+#                 LogInfo(g_logFile, info_str)
+#     endtime = datetime.datetime.now()
+#     costTime = (endtime - starttime).seconds
+#     aveTime = costTime / len(source_array)
+
+#     info_str = "++++++++++ End Time: " + str(endtime) \
+#             + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
+#     LogInfo(g_logFile, info_str)

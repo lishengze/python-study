@@ -3,8 +3,6 @@ import sys
 import pymssql  
 from CONFIG import *
 from toolFunc import *
-from weightdatabasefunc import WeightDatabaseFunc
-from marketdatabasefunc import MarketDatabaseFunc
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -16,7 +14,6 @@ class Database:
         self.user = user
         self.pwd = pwd
         self.db = db
-        self.dbfunc = self.get_databasefunc()
         self.startConnect()
 
     def __del__(self):
@@ -28,13 +25,6 @@ class Database:
         self.cur = self.conn.cursor()
         if not self.cur:
             raise(NameError, "Connect Data Base Failed! ")
-
-    def get_databasefunc(self):
-        if "WeightData" in self.db:
-            return WeightDatabaseFunc(self.db)
-        
-        if "MarketData" in self.db:
-            return MarketDatabaseFunc(self.db)
 
     def closeConnect(self):
         self.conn.close()  
@@ -49,11 +39,18 @@ class Database:
         self.conn.commit()  
 
     def dropTableByName(self, table_name):
-        sql_str = "drop table " + table_name 
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        sql_str = "drop table " + complete_tablename 
         self.changeDatabase(sql_str)
 
+    def get_create_str(self,table_name):
+        pass
+
+    def get_insert_str(self,oridata, table_name):
+        pass
+
     def createTableByName(self, table_name):
-        create_str = self.dbfunc.get_create_str(table_name)
+        create_str = self.get_create_str(table_name)
         self.changeDatabase(create_str)
 
     def completeDatabaseTable (self, tableNameArray):
@@ -65,22 +62,13 @@ class Database:
     def refreshDatabase(self, tableNameArray):
         table_info = self.getDatabaseTableInfo()
         for table_name in tableNameArray:
-            complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-
             if table_name in table_info:
-                self.dropTableByName(complete_tablename)
-            self.createTableByName(complete_tablename)    
+                self.dropTableByName(table_name)
+            self.createTableByName(table_name)    
 
     def insert_data(self, oridata, table_name):
-        insert_str = self.dbfunc.get_insert_str(oridata, table_name)
-        print insert_str
+        insert_str = self.get_insert_str(oridata, table_name)
         self.changeDatabase(insert_str)
-        # try:
-        #     self.changeDatabase(insert_str)
-        # except Exception as e:
-        #     print str(traceback.format_exc())
-        #     if "Violation of PRIMARY KEY constraint" not in e[1]:
-        #         raise(e)
 
     def getDatabaseTableInfo(self):
         queryString = "select name from "+ self.db +"..sysobjects where xtype= 'U'"
@@ -90,32 +78,9 @@ class Database:
             transRst.append(str(result[i][0]))
         return transRst    
 
-    def getTableDataStartEndTime(self, table):
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table +']'
-        sql_str = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
-        result = self.get_database_data(sql_str)
-        startTime = result[0][0]
-        endTime = result[0][1]
-        return (startTime, endTime)
-
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-        sql_str = 'select * from ' + complete_tablename
-        result = self.get_database_data(sql_str)
-        return result
-
     def getDataByTableName(self, table_name):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         sql_str = 'select * from ' + complete_tablename
         result = self.get_database_data(sql_str)
         return result
 
-    def addPrimaryKey(self):
-        databaseTableInfo = self.getDatabaseTableInfo()
-        for table in databaseTableInfo:
-            complete_tablename = u'[' + self.db + '].[dbo].['+ table +']'
-            alterNullColumnsql_str = "alter table "+ complete_tablename +" alter column TDATE int not null\
-                                alter table "+ complete_tablename +" alter column TIME int not null"                
-            self.changeDatabase(alterNullColumnsql_str)
-
-            addPrimaryKeysql_str = " alter table "+ complete_tablename +" add primary key (TDATE, TIME)"
-            self.changeDatabase(addPrimaryKeysql_str)
