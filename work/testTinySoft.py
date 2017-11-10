@@ -2,6 +2,7 @@
 import threading
 from multiprocessing import cpu_count
 import datetime
+import sys
 
 from CONFIG import *
 from toolFunc import *
@@ -13,6 +14,10 @@ from market_database import MarketDatabase
 
 from weight_datanet import WeightTinySoft
 from market_datanet import MarketTinySoft
+from industry_datanet import IndustryTinySoft
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
@@ -31,6 +36,47 @@ def get_netconn_obj(database_type):
 
     if "MarketData" in database_type:
         return MarketTinySoft(database_type)     
+
+def test_exec_tslstr():
+    tinysoft_obj = TinySoft()
+
+    industry_type = "申万"
+
+    if industry_type == "申万":        
+        indutry_name = u"申万行业"
+        primary_industry_name = u"申万一级行业"
+        second_industry_name = u"申万二级行业"
+    
+    if industry_type == "中证":
+        indutry_name = u"中证证监会行业"
+        primary_industry_name = u"中证一级行业"
+        second_industry_name = u"中证二级行业"
+
+    tsl_str = u"indutry_name:=\'" + indutry_name + "\'; \n \
+        primary_industry_name := \'" + primary_industry_name + "\'; \n \
+        second_industry_name := \'" + second_industry_name + "\'; \n \
+        a := GetBkList(indutry_name); \n \
+        r:=array(); \n \
+        for i:=0 to length(a)-1 do \n  \
+        begin \n  \
+           primary_industry := a[i]; \n  \
+           secondary_industry := getbklist(indutry_name+'\\\\'+ primary_industry);  //得到每个一级行业下的二级行业 \n \
+           for j:=0 to length(secondary_industry)-1 do \n \
+           begin \n \
+                  tmp:=getbk(secondary_industry[j]); \n \
+                  tmp:=select thisrow as '代码',primary_industry as primary_industry_name,secondary_industry[j] as second_industry_name from tmp end; \n \
+                  r&=tmp;     //相当于r:=r union tmp; \n \
+           end; \n \
+        end; \n \
+        return r; \n "
+    # print tsl_str
+
+    # tsl_str = u"name:='中证证监会行业';\
+    #             return GetBklist2(name);"
+
+    result = tinysoft_obj.test_tsl(tsl_str)
+    print result[0:10]
+    print len(result)
 
 def test_getSecodeInfo():
     tinysoft_connect = TinySoft(g_logFile, g_writeLogLock)
@@ -53,13 +99,7 @@ def test_get_weight_data():
     # else:
     #     print result[1:4]
 
-# def test_get_weight_data():
-#     tiny_obj = TinySoft(g_logFile, g_writeLogLock)
-#     secode_array = tiny_obj.getIndexSecode()
-#     start_date = 20171104
-#     end_date = 20171107 
-#     secode ="SH000016"
-#     result = tiny_obj.getWeightData(secode, start_date, end_date)
+
     # print result
     # for secode in secode_array:
     #     result = tiny_obj.getWeightData(secode, start_date, end_date)
@@ -109,14 +149,39 @@ def test_singlethread_write_weightdata():
         print len(result)
         write_weightdata(database_obj, result, source)
 
+def test_industry():
+    date = 20171109
+    industry_obj = IndustryTinySoft()
+    result = industry_obj.get_netdata(date)
+    
+    print len(result)
+    print result[0]
+
+    # test_data = ['SH600000']
+    # test_data.extend(result[0][1:len(result[0])])
+    # print test_data
+
+    # test_data_b = result[0]
+    # test_data_b.extend(test_data)
+    # print test_data_b
+
+
+
+    # secode_info = industry_obj.get_allA_secode()
+    # print len(secode_info)
+    # print secode_info[0][0]
+
+
 if __name__ == "__main__":
     try:
         # test_connect()
         # test_getSecodeInfo()
         # test_multi_thread_connect()
         # test_get_stockdata()
-        test_get_weight_data()
+        # test_get_weight_data()
         # test_singlethread_write_weightdata()
+        # test_exec_tslstr()
+        test_industry()
     except Exception as exp:
         exception_info = '\n' + str(traceback.format_exc()) + '\n'
         info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \

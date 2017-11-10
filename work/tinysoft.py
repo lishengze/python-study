@@ -4,9 +4,13 @@ import traceback
 import datetime
 import threading
 import math
+import sys
 
 from CONFIG import *
 from toolFunc import *
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 class TinySoft(object):
     '''
@@ -31,11 +35,15 @@ class TinySoft(object):
         self.conn.close()
         # print 'tinysoft_close_connect'
 
-    # def record_with_rock(self, info):
-    #     self.file_lock.acquire()
-    #     self.log_file.write(info + "\n")
-    #     print(info)
-    #     self.file_lock.release()        
+    def test_tsl(self, tsl_str):
+        self.curs.execute(tsl_str)
+        return self.curs.fetchall()
+
+    def get_allA_secode(self):
+        tsl_str = u"StockID:=getbk(\"A股\"); \n \
+                   return StockID;"
+        self.curs.execute(tsl_str)
+        return self.curs.fetchall()
 
     def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):
         timeArray = []

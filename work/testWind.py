@@ -57,12 +57,19 @@ def test_multi_thread_connect():
 def test_connect():
     wind_obj = Wind(g_logFile, g_writeLogLock)
 
+def test_get_industry_data():
+    wind_obj = Wind()
+    date = 20171031
+    result = wind_obj.get_industry_data(date)
+    print result[0]
+
 if __name__ == "__main__":
     try:
         # test_connect()
         # test_getSecodeInfo()
         # test_multi_thread_connect()
-        test_get_stockdata()
+        # test_get_stockdata()
+        test_get_industry_data()
     except Exception as exp:
         exception_info = '\n' + str(traceback.format_exc()) + '\n'
         info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \
