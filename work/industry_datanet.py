@@ -24,8 +24,17 @@ class IndustryNetConnect(TinySoft, Wind):
         Wind.__del__(self)
 
     def get_sourceinfo(self, params=[]):
-        source_info = ["申万", "中证"]
-        return source_info
+        start_date = params[0]
+        end_date = params[1]
+        tmp_date = start_date
+        source_array = []
+        source_array.append(start_date)
+
+        while tmp_date <= end_date:
+            source_array.append(tmp_date)
+            tmp_date = addOneDay(tmp_date)
+
+        return source_array
 
     def get_netdata_tslstr_b(self, industry_type):
         if industry_type == "申万":        
@@ -100,7 +109,7 @@ class IndustryNetConnect(TinySoft, Wind):
         # print tsl_str
         return tsl_str
 
-    def get_netdata(self, date):
+    def get_netdata(self, date, conditions=[]):
         tsl_str = self.get_netdata_tslstr(date)
         self.curs.execute(tsl_str)
         result  = self.curs.fetchall()

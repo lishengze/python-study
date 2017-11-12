@@ -189,7 +189,6 @@ def MultiThreadWriteIndustryData(data_type, source_conditions, database_host=DAT
     thread_count = 12
 
     database_obj.completeDatabaseTable(tablename_array)
-    # database_obj.refreshDatabase(source_array)
 
     info_str = "Source Numb : " + str(len(source_array)) + '\n'
     LogInfo(g_logFile, info_str)
@@ -205,12 +204,11 @@ def MultiThreadWriteIndustryData(data_type, source_conditions, database_host=DAT
         database_transed_conditions = database_obj.get_transed_conditions(cur_tablename, source_conditions)
 
         for j in range(len(database_transed_conditions)):
-            ori_netdata = netconn_obj.get_netdata(cur_source, database_transed_conditions)
+            ori_netdata = netconn_obj.get_netdata(cur_source, database_transed_conditions[j])
             if ori_netdata is not None:
                 time_count = time_count + 1
 
-                info_str = "[B] Source: " + str(cur_source) + ", from "+ str(startDate) +" to "+ str(endDate) \
-                        + ", dataNumb: " + str(len(ori_netdata)) \
+                info_str = "[B] Source: " + str(cur_source) + ", dataNumb: " + str(len(ori_netdata)) \
                         + ' , time_count: ' + str(time_count) + ", stockCount: "+ str(i+1) + "\n"
                 LogInfo(g_logFile, info_str)
 
@@ -223,11 +221,11 @@ def MultiThreadWriteIndustryData(data_type, source_conditions, database_host=DAT
                     tmp_netdata_array = []
                     tmp_tablename_array = [] 
             else:
-                info_str = "[C] Source: " + str(cur_source) + " has no data beteen "+ str(startDate) +" and "+ str(endDate) + " \n"
+                info_str = "[C] Source: " + str(cur_source) + " has no data under cur_conditons " + " \n"
                 LogInfo(g_logFile, info_str) 
         
         if len(database_transed_conditions) == 0:
-                info_str = "[C] source: " + str(cur_source) + " already has data beteen "+ str(ori_startdate) +" and "+ str(ori_enddate) + " \n"
+                info_str = "[C] source: " + str(cur_source) + " already has data beteen under cur_conditons" + " \n"
                 LogInfo(g_logFile, info_str)
 
 
