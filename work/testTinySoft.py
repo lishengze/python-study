@@ -11,10 +11,11 @@ from database import Database
 
 from weight_database import WeightDatabase
 from market_database import MarketDatabase
+from industry_database import IndustryDatabase
 
 from weight_datanet import WeightTinySoft
 from market_datanet import MarketTinySoft
-from industry_datanet import IndustryTinySoft
+from industry_datanet import IndustryNetConnect
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -128,7 +129,7 @@ def test_multi_thread_connect():
         raise(info_str)        
 
 def test_connect():
-    tinyConn = TinySoft(g_logFile, g_writeLogLock)
+    tinyConn = TinySoft()
 
 def write_weightdata(database_obj, oridata, table_name):
     for item in oridata:
@@ -151,11 +152,16 @@ def test_singlethread_write_weightdata():
 
 def test_industry():
     date = 20171109
-    industry_obj = IndustryTinySoft()
-    result = industry_obj.get_netdata(date)
     
+    industry_obj = IndustryNetConnect()
+    result = industry_obj.get_netdata(date)
     print len(result)
     print result[0]
+
+    industry_database = IndustryDatabase(db="IndustryDataTest")
+    # industry_database.completeDatabaseTable([date])
+    for i in range(len(result)):
+        industry_database.insert_data(result[i], date)
 
     # test_data = ['SH600000']
     # test_data.extend(result[0][1:len(result[0])])
@@ -164,8 +170,6 @@ def test_industry():
     # test_data_b = result[0]
     # test_data_b.extend(test_data)
     # print test_data_b
-
-
 
     # secode_info = industry_obj.get_allA_secode()
     # print len(secode_info)

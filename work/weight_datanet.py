@@ -17,7 +17,7 @@ class WeightTinySoft(TinySoft):
     def __del__(self):
         TinySoft.__del__(self)
 
-    def get_sourceinfo(self):
+    def get_sourceinfo(self, params=[]):
         secode = ["SH000300", "SH000016", "SZ399903", \
                   "SH000904", "SH000905", "SH000906", "SH000852"]
         return secode

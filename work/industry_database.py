@@ -11,11 +11,11 @@ class IndustryDatabase(Database):
         Database.__del__(self)
 
     def get_create_str(self, table_name):
-        value_str = "(Secode varchar(10) not null, Date int not null Primary Key(Secode), 中证一级行业 varchar(50), 中证二级行业 varchar(50), \
+        value_str = "(Secode varchar(10) not null Primary Key(Secode), Date int not null , 中证一级行业 varchar(50), 中证二级行业 varchar(50), \
                     申万一级行业 varchar(50), 申万二级行业 varchar(50), 申万三级行业 varchar(50), \
                     万得一级行业 varchar(50), 万得二级行业 varchar(50), 万得三级行业 varchar(50), 万得四级行业 varchar(50))"
 
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        complete_tablename = u'[' + self.db + '].[dbo].['+ str(table_name) +']'
         create_str = "create table " + complete_tablename + value_str
         return create_str
 
@@ -28,6 +28,11 @@ class IndustryDatabase(Database):
                 + "\'" + oridata[4] + "\', \'" +  oridata[5] + "\', \'"  +  oridata[6] + "\',"  \
                 + "\'" + oridata[7] + "\', \'" +  oridata[8] + "\', \'"  +  oridata[9] + "\', \'" + oridata[10] + "\'"
 
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        complete_tablename = u'[' + self.db + '].[dbo].['+ str(table_name) +']'
         insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
         return insert_str        
+
+    def get_transed_conditions(self, table_name, source_conditions):
+        trans_conditons = []
+        trans_conditons.append(source_conditions)
+        return trans_conditons

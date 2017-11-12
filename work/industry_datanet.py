@@ -8,19 +8,22 @@ import math
 from CONFIG import *
 from toolFunc import *
 from tinysoft import TinySoft
+from wind import Wind
 
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-class IndustryTinySoft(TinySoft):
+class IndustryNetConnect(TinySoft, Wind):
     def __init__(self):
         TinySoft.__init__(self)
+        Wind.__init__(self)
 
     def __del__(self):
         TinySoft.__del__(self)
+        Wind.__del__(self)
 
-    def get_sourceinfo(self):
+    def get_sourceinfo(self, params=[]):
         source_info = ["申万", "中证"]
         return source_info
 
@@ -101,11 +104,15 @@ class IndustryTinySoft(TinySoft):
         tsl_str = self.get_netdata_tslstr(date)
         self.curs.execute(tsl_str)
         result  = self.curs.fetchall()
-        if len(result) == 0:
-            result = None
+        wind_industry_data = self.get_industry_data(date)
+        # if len(result) == 0:
+        #     result = None
         trans_rst = []
         for i in range(len(result)):
             trans_rst.append([])
             trans_rst[i].extend(result[i])
             trans_rst[i].insert(1, date)
+            for j in range(len(wind_industry_data)):
+                if trans_rst[i][0] == wind_industry_data[j][0]:
+                    trans_rst[i].extend(wind_industry_data[j][1:])        
         return trans_rst        

@@ -18,9 +18,11 @@ from wind import Wind
 from database import Database
 from weight_database import WeightDatabase
 from market_database import MarketDatabase
+from industry_database import IndustryDatabase
 
 from weight_datanet import WeightTinySoft
 from market_datanet import MarketTinySoft
+from industry_datanet import IndustryTinySoft
 
 g_writeLogLock = threading.Lock()
 g_logFileName = os.getcwd() + '\log.txt'
@@ -35,12 +37,18 @@ def get_database_obj(database_name, host='localhost'):
     if "MarketData" in database_name:
         return MarketDatabase(host=host, db=database_name)
 
+    if "IndustryData" in database_name:
+        return IndustryDatabase(host=host, db=database_name)
+
 def get_netconn_obj(database_type):
     if "WeightData" in database_type:
         return WeightTinySoft(database_type)
 
     if "MarketData" in database_type:
         return MarketTinySoft(database_type) 
+
+    if "IndustryData" in database_type:
+        return IndustryTinySoft(database_type)     
 
 def getSusCount():    
     global g_susCountLock, g_susCount
@@ -161,11 +169,11 @@ def MultiThreadWriteData(data_type, ori_startdate, database_host=DATABASE_HOST):
             + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
     LogInfo(g_logFile, info_str)
 
-def MultiThreadWriteIndustryData(data_type, ori_startdate, database_host=DATABASE_HOST):
+def MultiThreadWriteIndustryData(data_type, source_conditions, database_host=DATABASE_HOST):
     starttime = datetime.datetime.now()
     info_str = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
-    LogInfo(g_logFile, info_str)   
-    
+    LogInfo(g_logFile, info_str)
+
     # data_type = "WeightData"
     database_name = data_type
 
@@ -175,20 +183,62 @@ def MultiThreadWriteIndustryData(data_type, ori_startdate, database_host=DATABAS
     database_obj = get_database_obj(database_name, host=database_host)
     netconn_obj = get_netconn_obj(data_type)
 
-    source_array = netconn_obj.get_sourceinfo()
+    source_array = netconn_obj.get_sourceinfo(source_conditions)
     tablename_array = source_array
 
     thread_count = 12
 
-    database_obj.completeDatabaseTable(source_array)
+    database_obj.completeDatabaseTable(tablename_array)
     # database_obj.refreshDatabase(source_array)
 
     info_str = "Source Numb : " + str(len(source_array)) + '\n'
-    LogInfo(g_logFile, info_str)   
+    LogInfo(g_logFile, info_str)
 
     time_count = 0
     tmp_netdata_array = []
-    tmp_source_array = []    
+    tmp_tablename_array = []
+
+    for i in range(len(source_array)):
+        cur_source = source_array[i]
+        cur_tablename = cur_source
+
+        database_transed_conditions = database_obj.get_transed_conditions(cur_tablename, source_conditions)
+
+        for j in range(len(database_transed_conditions)):
+            ori_netdata = netconn_obj.get_netdata(cur_source, database_transed_conditions)
+            if ori_netdata is not None:
+                time_count = time_count + 1
+
+                info_str = "[B] Source: " + str(cur_source) + ", from "+ str(startDate) +" to "+ str(endDate) \
+                        + ", dataNumb: " + str(len(ori_netdata)) \
+                        + ' , time_count: ' + str(time_count) + ", stockCount: "+ str(i+1) + "\n"
+                LogInfo(g_logFile, info_str)
+
+                tmp_netdata_array.append(ori_netdata)
+                tmp_tablename_array.append(cur_source)
+
+                if (time_count % thread_count == 0) or (i == len(source_array)-1 and j == len(database_transed_conditions) -1):
+                    # print ("tmp_netdata_array len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmp_netdata_array), len(tmpSecodeDataArray), i)
+                    startWriteThread(tmp_netdata_array, tmp_tablename_array, database_obj)
+                    tmp_netdata_array = []
+                    tmp_tablename_array = [] 
+            else:
+                info_str = "[C] Source: " + str(cur_source) + " has no data beteen "+ str(startDate) +" and "+ str(endDate) + " \n"
+                LogInfo(g_logFile, info_str) 
+        
+        if len(database_transed_conditions) == 0:
+                info_str = "[C] source: " + str(cur_source) + " already has data beteen "+ str(ori_startdate) +" and "+ str(ori_enddate) + " \n"
+                LogInfo(g_logFile, info_str)
+
+
+
+    endtime = datetime.datetime.now()
+    costTime = (endtime - starttime).seconds
+    aveTime = costTime / len(source_array)
+
+    info_str = "++++++++++ End Time: " + str(endtime) \
+            + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
+    LogInfo(g_logFile, info_str)      
 
 if __name__ == "__main__":
     data_type = "MarketDataTest"

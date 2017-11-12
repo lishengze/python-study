@@ -17,7 +17,7 @@ class MarketTinySoft(TinySoft):
     def __del__(self):
         TinySoft.__del__(self)
 
-    def get_sourceinfo(self):
+    def get_sourceinfo(self, params=[]):
         tsl_str = u"name:='A股';StockID:=getbk(name);return StockID;"
         self.curs.execute(tsl_str)
         result = self.curs.fetchall()
