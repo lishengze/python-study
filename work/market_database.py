@@ -53,6 +53,27 @@ class MarketDatabase(Database):
             endTime = result[0][1]
         return (startTime, endTime)  
 
+    def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):
+        timeArray = []
+        if tableDataStartTime is None or tableDataEndTime is None:
+            timeArray.append([oriStartTime, oriEndTime])
+        else:
+            if oriStartTime >=  tableDataStartTime and oriEndTime > tableDataEndTime:
+                startTime = addOneDay(tableDataEndTime)
+                endTime = oriEndTime
+                timeArray.append([startTime, endTime])
+            
+            if oriStartTime < tableDataStartTime and oriEndTime <= tableDataEndTime:
+                startTime = oriStartTime
+                endTime = minusOneDay(tableDataStartTime)
+                timeArray.append([startTime, endTime])
+            
+            if oriStartTime < tableDataStartTime and oriEndTime > tableDataEndTime:
+                timeArray.append([oriStartTime, minusOneDay(tableDataStartTime)])
+                timeArray.append([addOneDay(tableDataEndTime), oriEndTime])
+        return timeArray
+
+
     def addPrimaryKey(self):
         databaseTableInfo = self.getDatabaseTableInfo()
         for table in databaseTableInfo:

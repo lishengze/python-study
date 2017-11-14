@@ -100,77 +100,7 @@ def startWriteThread(netdata_array, source_array, database_obj):
     
     print ("threading.active_count(): %d\n") % (threading.active_count())
 
-def MultiThreadWriteData(data_type, ori_startdate, database_host=DATABASE_HOST):
-    starttime = datetime.datetime.now()
-    info_str = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
-    LogInfo(g_logFile, info_str)   
-    
-    # data_type = "WeightData"
-    database_name = data_type
-
-    # ori_startdate = 20161101
-    ori_enddate = getIntegerDateNow()
-
-    database_obj = get_database_obj(database_name, host=database_host)
-    netconn_obj = get_netconn_obj(data_type)
-
-    source_array = netconn_obj.get_sourceinfo()
-    tablename_array = source_array
-
-    thread_count = 12
-
-    database_obj.completeDatabaseTable(source_array)
-    # database_obj.refreshDatabase(source_array)
-
-    info_str = "Source Numb : " + str(len(source_array)) + '\n'
-    LogInfo(g_logFile, info_str)   
-
-    condition_count = 0
-    tmp_netdata_array = []
-    tmp_source_array = []
-    for i in range(len(source_array)):
-        cur_source = source_array[i]
-        cur_tablename = cur_source
-        tabledata_startdate, tabledata_enddate = database_obj.getTableDataStartEndTime(cur_tablename)
-        timeArray = netconn_obj.getStartEndTime(ori_startdate, ori_enddate, tabledata_startdate, tabledata_enddate)
-
-        for j in range(len(timeArray)):
-            startDate = timeArray[j][0]
-            endDate = timeArray[j][1]
-            ori_netdata = netconn_obj.get_netdata(cur_source, startDate, endDate)
-            if ori_netdata is not None:
-                condition_count = condition_count + 1 
-
-                info_str = "[B] Source: " + str(cur_source) + ", from "+ str(startDate) +" to "+ str(endDate) \
-                        + ", dataNumb: " + str(len(ori_netdata)) \
-                        + ' , condition_count: ' + str(condition_count) + ", stockCount: "+ str(i+1) + "\n"
-                LogInfo(g_logFile, info_str)  
-
-                tmp_netdata_array.append(ori_netdata)
-                tmp_source_array.append(cur_source)
-
-                if (condition_count % thread_count == 0) or (i == len(source_array)-1 and j == len(timeArray) -1):
-                    # print ("tmp_netdata_array len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmp_netdata_array), len(tmpSecodeDataArray), i)
-                    startWriteThread(tmp_netdata_array, tmp_source_array, database_obj)
-                    tmp_netdata_array = []
-                    tmp_source_array = [] 
-            else:
-                info_str = "[C] Source: " + str(cur_source) + " has no data beteen "+ str(startDate) +" and "+ str(endDate) + " \n"
-                LogInfo(g_logFile, info_str) 
-        
-        if len(timeArray) == 0:
-                info_str = "[C] source: " + str(cur_source) + " already has data beteen "+ str(ori_startdate) +" and "+ str(ori_enddate) + " \n"
-                LogInfo(g_logFile, info_str)
-
-    endtime = datetime.datetime.now()
-    costTime = (endtime - starttime).seconds
-    aveTime = costTime / len(source_array)
-
-    info_str = "++++++++++ End Time: " + str(endtime) \
-            + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
-    LogInfo(g_logFile, info_str)
-
-def MultiThreadWriteIndustryData(data_type, source_conditions, database_host=DATABASE_HOST):
+def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HOST):
     starttime = datetime.datetime.now()
     info_str = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
     LogInfo(g_logFile, info_str)
@@ -231,19 +161,33 @@ def MultiThreadWriteIndustryData(data_type, source_conditions, database_host=DAT
             + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
     LogInfo(g_logFile, info_str)      
 
+def update_marketdata():
+    # data_type = "MarketData"
+    data_type = "MarketDataTest"
+    host = "localhost"
+    ori_startdate = 20171114
+    curHourTime = float(datetime.datetime.now().strftime('%H'))
+    
+    while curHourTime <= 15:        
+        ori_enddate = getIntegerDateNow(data_type)    
+        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
+        sleep(60)
+        curHourTime = float(datetime.datetime.now().strftime('%H'))
+
 if __name__ == "__main__":
-    # data_type = "MarketDataTest"
+    data_type = "MarketDataTest"
     # data_type = "WeightDataTest"
     # data_type = "IndustryDataTest"
     # data_type = "IndustryData"
     # data_type = "WeightData"
-    data_type = "MarketData"
-    remote_server = "192.168.211.165"
-    ori_startdate = 20131030
-    ori_enddate = getIntegerDateNow()
+    # data_type = "MarketData"
+    data_type = "MarketDataTest"
+    remote_server = "localhost"
+    ori_startdate = 20171114
+    ori_enddate = getIntegerDateNow(data_type)
     try:
         # MultiThreadWriteData(data_type, ori_startdate)
-        MultiThreadWriteIndustryData(data_type, [ori_startdate, ori_enddate], database_host=remote_server)
+        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=remote_server)
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \
@@ -256,4 +200,4 @@ if __name__ == "__main__":
             time.sleep(connFailedWaitTime)
             info_str = "[RS] MultiThreadWriteData  Restart : \n"
             recordInfoWithLock(info_str)
-            MultiThreadWriteData(data_type, ori_startdate)
+            MultiThreadWriteIndustryData(data_type, [ori_startdate, ori_enddate], database_host=remote_server)

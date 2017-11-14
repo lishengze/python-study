@@ -6,6 +6,7 @@ import datetime
 from CONFIG import *
 from toolFunc import *
 from wind import Wind
+from WindPy import *
 
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
@@ -63,13 +64,59 @@ def test_get_industry_data():
     result = wind_obj.get_industry_data(date)
     print result[0]
 
+def exec_str():
+    w.start()
+
+    # data_type = 'daily'
+    data_type = "quarter"
+    # data_type = 'month'
+
+    allparams_str = "dividendyield2,gr_ttm,profit_ttm,netprofit_ttm,deductedprofit_ttm, \
+                        profitnotice_style, profitnotice_date,profitnotice_change,profitnotice_lasteps,\
+                        performanceexpress_date,performanceexpress_perfexincome,performanceexpress_perfexprofit,\
+                        performanceexpress_perfextotalprofit,performanceexpress_perfexnetprofittoshareholder,performanceexpress_perfexepsdiluted,\
+                        performanceexpress_perfexroediluted,performanceexpress_perfextotalassets,performanceexpress_perfexnetassets,\
+                        eps_basic,grps,roe_avg,yoyeps_basic,yoy_tr,yoy_or,yoyop,yoyebt,yoyprofit,yoynetprofit,yoynetprofit_deducted,yoy_equity,yoy_assets,\
+                        div_cashandstock,div_recorddate,div_exdate,div_paydate,div_prelandate,div_smtgdate,div_impdate"
+
+    quarter_paramsstr = "profitnotice_style, profitnotice_date,profitnotice_change,profitnotice_lasteps,\
+                        performanceexpress_date,performanceexpress_perfexincome,performanceexpress_perfexprofit,\
+                        performanceexpress_perfextotalprofit,performanceexpress_perfexnetprofittoshareholder,performanceexpress_perfexepsdiluted,\
+                        performanceexpress_perfexroediluted,performanceexpress_perfextotalassets,performanceexpress_perfexnetassets,\
+                        eps_basic,grps,roe_avg,yoyeps_basic,yoy_tr,yoy_or,yoyop,yoyebt,yoyprofit,yoynetprofit,yoynetprofit_deducted,yoy_equity,yoy_assets,\
+                        div_cashandstock,div_recorddate,div_exdate,div_paydate,div_prelandate,div_smtgdate,div_impdate"
+
+    quarter_datestr = "unit=1;currencyType=;Period=Q;Days=Alldays;Fill=Previous"
+
+    daily_paramsstr = "ev,pe_ttm,val_pe_deducted_ttm,pb_lf,dividendyield2, gr_ttm, profit_ttm, netprofit_ttm, deductedprofit_ttm"
+    daily_datestr = "unit=1;currencyType=;Days=Alldays;Fill=Previous"
+
+    if data_type == 'daily':
+        params_str = daily_paramsstr
+        date_str =  daily_datestr
+        start_date = "2017-10-31"
+        end_date = "2017-10-31"        
+
+    if data_type == 'quarter':
+        params_str = quarter_paramsstr
+        date_str =  quarter_datestr  
+        start_date = "20161030"
+        end_date = "20161231"              
+
+    result = w.wsd("600000.SH", params_str, start_date, end_date, date_str)
+    print result.Data
+
+    w.close()
+    
+
 if __name__ == "__main__":
     try:
         # test_connect()
         # test_getSecodeInfo()
         # test_multi_thread_connect()
         # test_get_stockdata()
-        test_get_industry_data()
+        # test_get_industry_data()
+        exec_str()
     except Exception as exp:
         exception_info = '\n' + str(traceback.format_exc()) + '\n'
         info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \

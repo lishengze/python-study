@@ -2,12 +2,11 @@
 import threading
 from multiprocessing import cpu_count
 import datetime
+import math
 
 from CONFIG import *
-from databaseClass import MSSQL
 from toolFunc import *
-from databaseFunc import *
-from netdataFunc import *
+
 
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
@@ -21,6 +20,13 @@ def testDate():
     print minusDate
 
 def testGetIntegerDateNow():
-    integerDate = getIntegerDateNow(g_logFile)
+    data_type = 'MarketData'
+    data_type = 'WeightData'
+    integerDate = getIntegerDateNow(data_type)
     print type(integerDate)
     print integerDate
+    print math.ceil(integerDate)
+    print int(integerDate)
+
+if __name__ == '__main__':
+    testGetIntegerDateNow()

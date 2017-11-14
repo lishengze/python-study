@@ -34,16 +34,17 @@ class MarketTinySoft(TinySoft):
         return result
 
     def get_netdata_tslstr(self, secode, start_date, end_date):
+        end_time = end_date - int(end_date)
         tsl_str = "code := \'" + secode + "\'; \
         beginDate := " + str(start_date) + "; \
-        endDate := " + str(end_date) + "; \
+        endDate := " + str(int(end_date)) + "; \
         begt:=inttodate(beginDate); \
         endt:=inttodate(endDate); \
         Setsysparam(PN_Cycle(),cy_1m()); \
         result := select datetimetostr(['date']) as 'date',\
         ['StockID'] as 'secode', ['open'] as 'open',  ['close'] as 'close', \
         ['high']as 'high', ['low']as 'low', ['amount'] as 'VATRUNOVER', ['vol'] as 'VOTRUNOVER',['yclose'] as 'yclose'\
-        from markettable datekey  begt to endt + 0.999 of code end;\
+        from markettable datekey  begt to endt + "+ str(end_time) +" of code end;\
         emptyResult := array(); \
         emptyResult[0]:= -1; \
         if result then \

@@ -89,11 +89,11 @@ class Database:
         if tableDataStartTime is None or tableDataEndTime is None:
             timeArray.append([oriStartTime, oriEndTime])
         else:
-            if oriEndTime > getIntegerDateNow():
-                oriEndTime = getIntegerDateNow()
+            # if oriEndTime > getIntegerDateNow():
+            #     oriEndTime = getIntegerDateNow()
 
-            if tableDataEndTime > getIntegerDateNow():
-                tableDataEndTime = getIntegerDateNow()
+            # if tableDataEndTime > getIntegerDateNow():
+            #     tableDataEndTime = getIntegerDateNow()
 
             if oriStartTime >=  tableDataStartTime and oriEndTime > tableDataEndTime:
                 startTime = addOneDay(tableDataEndTime)
