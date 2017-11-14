@@ -7,8 +7,10 @@ import pymssql
 from CONFIG import *
 from toolFunc import *
 
-from databaseClass import Database
-from TinyConn import TinySoft
+from database import Database
+from tinysoft import TinySoft
+
+from market_database import MarketDatabase
 
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
@@ -228,13 +230,22 @@ def testRefreshDatabase():
 
     databaseObj.refreshDatabase(databaseName, secodeArray)
 
+def cleanMarketDatabase():
+    database_name = "MarketDataTest"
+    database_obj = MarketDatabase(db=database_name)
+    table_array = database_obj.getDatabaseTableInfo()
+    for table in table_array:
+        database_obj.dropTableByName(table)
+
+
 if __name__ == "__main__":
     try:
         # changeDatabase()
         # testInsertSamePrimaryValue()
-        testConnectRemoteDatabaseServer()
+        # testConnectRemoteDatabaseServer()
         # testRefreshDatabase()
         # test_insert_data()
+        cleanMarketDatabase()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         log_str = "__Main__ Failed \n" \

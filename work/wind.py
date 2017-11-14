@@ -35,12 +35,19 @@ class Wind(object):
 
     def get_industry_data(self, date):
         stockid_array = self.get_allstock_secode()
-        tmp_result = self.wind.wsd(stockid_array, "industry_gics", str(date), str(date), "industryType=9")
+        tmp_result = self.wind.wsd(stockid_array, "industry_gics", str(date), str(date), "industryType=9;Days=Alldays")
         tmp_data = tmp_result.Data[0]
         result = []
         for i in range(len(stockid_array)):
             secode = stockid_array[i][7:9] + stockid_array[i][0:6]
-            industry_array = tmp_data[i].split('--')
+            try:
+                industry_array = tmp_data[i].split('--')
+            except Exception as e:
+                print i 
+                print secode 
+                print tmp_data
+                raise(e)
+            
             # print industry_array
             result.append([secode])
             result[i].extend(industry_array)

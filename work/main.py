@@ -22,7 +22,7 @@ from industry_database import IndustryDatabase
 
 from weight_datanet import WeightTinySoft
 from market_datanet import MarketTinySoft
-from industry_datanet import IndustryTinySoft
+from industry_datanet import IndustryNetConnect
 
 g_writeLogLock = threading.Lock()
 g_logFileName = os.getcwd() + '\log.txt'
@@ -48,7 +48,7 @@ def get_netconn_obj(database_type):
         return MarketTinySoft(database_type) 
 
     if "IndustryData" in database_type:
-        return IndustryTinySoft(database_type)     
+        return IndustryNetConnect(database_type)     
 
 def getSusCount():    
     global g_susCountLock, g_susCount
@@ -67,8 +67,9 @@ def recordInfoWithLock(info_str):
 
 def writeDataToDatabase(result_array, source, mainthread_database_obj):
     try:
-        database_obj = get_database_obj(mainthread_database_obj.db, mainthread_database_obj.host)
+        database_obj = get_database_obj(mainthread_database_obj.db, mainthread_database_obj.host)        
         table_name = source
+        database_obj.completeDatabaseTable([table_name])        
         for item in result_array:
             database_obj.insert_data(item, table_name)
 
@@ -124,7 +125,7 @@ def MultiThreadWriteData(data_type, ori_startdate, database_host=DATABASE_HOST):
     info_str = "Source Numb : " + str(len(source_array)) + '\n'
     LogInfo(g_logFile, info_str)   
 
-    time_count = 0
+    condition_count = 0
     tmp_netdata_array = []
     tmp_source_array = []
     for i in range(len(source_array)):
@@ -138,17 +139,17 @@ def MultiThreadWriteData(data_type, ori_startdate, database_host=DATABASE_HOST):
             endDate = timeArray[j][1]
             ori_netdata = netconn_obj.get_netdata(cur_source, startDate, endDate)
             if ori_netdata is not None:
-                time_count = time_count + 1 
+                condition_count = condition_count + 1 
 
                 info_str = "[B] Source: " + str(cur_source) + ", from "+ str(startDate) +" to "+ str(endDate) \
                         + ", dataNumb: " + str(len(ori_netdata)) \
-                        + ' , time_count: ' + str(time_count) + ", stockCount: "+ str(i+1) + "\n"
+                        + ' , condition_count: ' + str(condition_count) + ", stockCount: "+ str(i+1) + "\n"
                 LogInfo(g_logFile, info_str)  
 
                 tmp_netdata_array.append(ori_netdata)
                 tmp_source_array.append(cur_source)
 
-                if (time_count % thread_count == 0) or (i == len(source_array)-1 and j == len(timeArray) -1):
+                if (condition_count % thread_count == 0) or (i == len(source_array)-1 and j == len(timeArray) -1):
                     # print ("tmp_netdata_array len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmp_netdata_array), len(tmpSecodeDataArray), i)
                     startWriteThread(tmp_netdata_array, tmp_source_array, database_obj)
                     tmp_netdata_array = []
@@ -174,75 +175,75 @@ def MultiThreadWriteIndustryData(data_type, source_conditions, database_host=DAT
     info_str = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
     LogInfo(g_logFile, info_str)
 
-    # data_type = "WeightData"
     database_name = data_type
-
-    # ori_startdate = 20161101
-    ori_enddate = getIntegerDateNow()
 
     database_obj = get_database_obj(database_name, host=database_host)
     netconn_obj = get_netconn_obj(data_type)
 
-    source_array = netconn_obj.get_sourceinfo(source_conditions)
-    tablename_array = source_array
+    source = netconn_obj.get_sourceinfo(source_conditions)
+    tablename_array = netconn_obj.get_tablename(source_conditions)
 
     thread_count = 12
 
-    database_obj.completeDatabaseTable(tablename_array)
-
-    info_str = "Source Numb : " + str(len(source_array)) + '\n'
+    info_str = "Table Numb : " + str(len(tablename_array)) + '\n'
     LogInfo(g_logFile, info_str)
 
-    time_count = 0
+    condition_count = 0
     tmp_netdata_array = []
     tmp_tablename_array = []
 
-    for i in range(len(source_array)):
-        cur_source = source_array[i]
-        cur_tablename = cur_source
+    for i in range(len(tablename_array)):        
+        cur_tablename = tablename_array[i]
+        cur_source = netconn_obj.get_cursource(cur_tablename, source)
 
-        database_transed_conditions = database_obj.get_transed_conditions(cur_tablename, source_conditions)
+        database_transed_conditions = database_obj.get_transed_conditions(cur_tablename, cur_source)
 
         for j in range(len(database_transed_conditions)):
-            ori_netdata = netconn_obj.get_netdata(cur_source, database_transed_conditions[j])
+            cur_condition = database_transed_conditions[j]
+            ori_netdata = netconn_obj.get_netdata(cur_condition)
             if ori_netdata is not None:
-                time_count = time_count + 1
+                condition_count = condition_count + 1
 
-                info_str = "[B] Source: " + str(cur_source) + ", dataNumb: " + str(len(ori_netdata)) \
-                        + ' , time_count: ' + str(time_count) + ", stockCount: "+ str(i+1) + "\n"
+                info_str = "[B] Source: " + str(cur_condition) + ", dataNumb: " + str(len(ori_netdata)) \
+                        + ' , condition_count: ' + str(condition_count) + ", sourceCount: "+ str(i+1) + "\n"
                 LogInfo(g_logFile, info_str)
 
                 tmp_netdata_array.append(ori_netdata)
-                tmp_tablename_array.append(cur_source)
+                tmp_tablename_array.append(cur_tablename)
 
-                if (time_count % thread_count == 0) or (i == len(source_array)-1 and j == len(database_transed_conditions) -1):
-                    # print ("tmp_netdata_array len: %d, tmpSecodeDataArray len: %d, i: %d") % (len(tmp_netdata_array), len(tmpSecodeDataArray), i)
+                if (condition_count % thread_count == 0) or (i == len(tablename_array)-1 and j == len(database_transed_conditions) -1):
                     startWriteThread(tmp_netdata_array, tmp_tablename_array, database_obj)
                     tmp_netdata_array = []
                     tmp_tablename_array = [] 
             else:
-                info_str = "[C] Source: " + str(cur_source) + " has no data under cur_conditons " + " \n"
+                info_str = "[C] Source: " + str(cur_source) + " has no data under conditons: " + str(cur_condition) +" \n"
                 LogInfo(g_logFile, info_str) 
         
         if len(database_transed_conditions) == 0:
-                info_str = "[C] source: " + str(cur_source) + " already has data beteen under cur_conditons" + " \n"
+                info_str = "[C] source: " + str(cur_source) + " already has data under current conditons: " + str(cur_source) +" \n"
                 LogInfo(g_logFile, info_str)
-
-
 
     endtime = datetime.datetime.now()
     costTime = (endtime - starttime).seconds
-    aveTime = costTime / len(source_array)
+    aveTime = costTime / len(tablename_array)
 
     info_str = "++++++++++ End Time: " + str(endtime) \
             + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
     LogInfo(g_logFile, info_str)      
 
 if __name__ == "__main__":
-    data_type = "MarketDataTest"
-    ori_startdate = 20171006    
+    # data_type = "MarketDataTest"
+    # data_type = "WeightDataTest"
+    # data_type = "IndustryDataTest"
+    # data_type = "IndustryData"
+    # data_type = "WeightData"
+    data_type = "MarketData"
+    remote_server = "192.168.211.165"
+    ori_startdate = 20131030
+    ori_enddate = getIntegerDateNow()
     try:
-        MultiThreadWriteData(data_type, ori_startdate)
+        # MultiThreadWriteData(data_type, ori_startdate)
+        MultiThreadWriteIndustryData(data_type, [ori_startdate, ori_enddate], database_host=remote_server)
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \

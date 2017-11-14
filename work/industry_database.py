@@ -33,12 +33,8 @@ class IndustryDatabase(Database):
         return insert_str        
 
     def get_transed_conditions(self, table_name, source_conditions):
-        trans_conditons = []
-        trans_conditons.append(source_conditions)
-        complete_tablename = u'[' + self.db + '].[dbo].['+ str(table_name) +']'
-        sqlstr = 'select * from' + complete_tablename
-        result = self.get_database_data(sqlstr)
-        if len(result) != 0:
-            self.dropTableByName(table_name)
-            self.createTableByName(table_name)
-        return result
+        trans_conditons = []        
+        database_tableinfo = self.getDatabaseTableInfo()
+        if table_name not in database_tableinfo:            
+            trans_conditons.append(source_conditions)
+        return trans_conditons

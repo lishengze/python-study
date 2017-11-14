@@ -42,11 +42,15 @@ class MarketDatabase(Database):
         return insert_str        
 
     def getTableDataStartEndTime(self, table_name):
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-        sql_str = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
-        result = self.get_database_data(sql_str)
-        startTime = result[0][0]
-        endTime = result[0][1]
+        startTime = None
+        endTime = None
+        tablename_array = self.getDatabaseTableInfo()
+        if table_name in tablename_array:          
+            complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+            sql_str = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
+            result = self.get_database_data(sql_str)
+            startTime = result[0][0]
+            endTime = result[0][1]
         return (startTime, endTime)  
 
     def addPrimaryKey(self):
@@ -59,3 +63,13 @@ class MarketDatabase(Database):
 
             addPrimaryKeysql_str = " alter table "+ complete_tablename +" add primary key (TDATE, TIME)"
             self.changeDatabase(addPrimaryKeysql_str)    
+
+    def get_transed_conditions(self, table_name, source_conditions):
+        secode = table_name
+        ori_startdate = source_conditions[1]
+        ori_enddate = source_conditions[2]
+        tabledata_startdate, tabledata_enddate = self.getTableDataStartEndTime(table_name)
+        transed_time_array  = self.getStartEndTime(ori_startdate, ori_enddate, tabledata_startdate, tabledata_enddate)
+        for i in range(len(transed_time_array)):
+            transed_time_array[i].insert(0, secode)       
+        return transed_time_array

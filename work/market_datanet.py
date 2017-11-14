@@ -18,13 +18,20 @@ class MarketTinySoft(TinySoft):
         TinySoft.__del__(self)
 
     def get_sourceinfo(self, params=[]):
-        tsl_str = u"name:='A股';StockID:=getbk(name);return StockID;"
-        self.curs.execute(tsl_str)
-        result = self.curs.fetchall()
-        transResult = []
-        for data in result:
-            transResult.append(data[0])
-        return transResult   
+        time_array = params
+        source = {
+            'secode': self.get_allA_secode(),
+            'time': time_array
+        }
+        return source
+
+    def get_tablename(self, params=[]):
+        return self.get_allA_secode()
+
+    def get_cursource(self, table_name, source):
+        result = [table_name]
+        result.extend(source['time'])
+        return result
 
     def get_netdata_tslstr(self, secode, start_date, end_date):
         tsl_str = "code := \'" + secode + "\'; \
@@ -45,7 +52,11 @@ class MarketTinySoft(TinySoft):
             return emptyResult "
         return tsl_str
 
-    def get_netdata(self, secode, start_date, end_date):
+    def get_netdata(self, conditions=[]):
+        result = []
+        secode = conditions[0]
+        start_date = conditions[1]
+        end_date = conditions[2]
         tsl_str = self.get_netdata_tslstr(secode, start_date, end_date)
         self.curs.execute(tsl_str)
         result = self.curs.fetchall()

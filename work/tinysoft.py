@@ -42,8 +42,12 @@ class TinySoft(object):
     def get_allA_secode(self):
         tsl_str = u"StockID:=getbk(\"A股\"); \n \
                    return StockID;"
-        self.curs.execute(tsl_str)
-        return self.curs.fetchall()
+        self.curs.execute(tsl_str)                
+        result = self.curs.fetchall()
+        transResult = []
+        for data in result:
+            transResult.append(data[0])
+        return transResult   
 
     def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):
         timeArray = []

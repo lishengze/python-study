@@ -84,3 +84,29 @@ class Database:
         result = self.get_database_data(sql_str)
         return result
 
+    def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):
+        timeArray = []
+        if tableDataStartTime is None or tableDataEndTime is None:
+            timeArray.append([oriStartTime, oriEndTime])
+        else:
+            if oriEndTime > getIntegerDateNow():
+                oriEndTime = getIntegerDateNow()
+
+            if tableDataEndTime > getIntegerDateNow():
+                tableDataEndTime = getIntegerDateNow()
+
+            if oriStartTime >=  tableDataStartTime and oriEndTime > tableDataEndTime:
+                startTime = addOneDay(tableDataEndTime)
+                endTime = oriEndTime
+                timeArray.append([startTime, endTime])
+            
+            if oriStartTime < tableDataStartTime and oriEndTime <= tableDataEndTime:
+                startTime = oriStartTime
+                endTime = minusOneDay(tableDataStartTime)
+                timeArray.append([startTime, endTime])
+            
+            if oriStartTime < tableDataStartTime and oriEndTime > tableDataEndTime:
+                timeArray.append([oriStartTime, minusOneDay(tableDataStartTime)])
+                timeArray.append([addOneDay(tableDataEndTime), oriEndTime])
+        return timeArray
+

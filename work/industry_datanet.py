@@ -15,7 +15,8 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 class IndustryNetConnect(TinySoft, Wind):
-    def __init__(self):
+    def __init__(self,database_type):
+        self.data_type = database_type
         TinySoft.__init__(self)
         Wind.__init__(self)
 
@@ -24,17 +25,35 @@ class IndustryNetConnect(TinySoft, Wind):
         Wind.__del__(self)
 
     def get_sourceinfo(self, params=[]):
+        '''
+        根据传入条件，生成获取网络数据的参数。
+        针对于行业分类数据, 所需要设置的参数是获取数据的起止时间。
+        Args：
+            params: 一个list 参数，这里它的第一个数值是 start_date, 第二个是 end_date。
+        Returns:
+            返回一个以起止时间为上下限的时间序列数组。
+        '''
         start_date = params[0]
         end_date = params[1]
         tmp_date = start_date
         source_array = []
-        source_array.append(start_date)
 
         while tmp_date <= end_date:
             source_array.append(tmp_date)
             tmp_date = addOneDay(tmp_date)
 
         return source_array
+
+    def get_cursource(self, table_name, source):
+        result = table_name
+        return result
+
+    def get_tablename(self, params=[]):
+        '''
+        获取数据库表名数组
+        这里就是起止时间为限的时间数组
+        '''
+        return self.get_sourceinfo(params)
 
     def get_netdata_tslstr_b(self, industry_type):
         if industry_type == "申万":        
@@ -109,7 +128,11 @@ class IndustryNetConnect(TinySoft, Wind):
         # print tsl_str
         return tsl_str
 
-    def get_netdata(self, date, conditions=[]):
+    def get_netdata(self, conditions=[]):
+        '''
+        从天软与万得分别获取行业分类的数据并整合到一起。
+        '''
+        date = conditions
         tsl_str = self.get_netdata_tslstr(date)
         self.curs.execute(tsl_str)
         result  = self.curs.fetchall()

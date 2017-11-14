@@ -12,15 +12,29 @@ from tinysoft import TinySoft
 class WeightTinySoft(TinySoft):
     def __init__(self, datatype):
         self.datatype = datatype
+        self.indexcode = ["SH000300", "SH000016", "SZ399903", \
+                  "SH000904", "SH000905", "SH000906", "SH000852"]
         TinySoft.__init__(self)
 
     def __del__(self):
         TinySoft.__del__(self)
 
     def get_sourceinfo(self, params=[]):
-        secode = ["SH000300", "SH000016", "SZ399903", \
-                  "SH000904", "SH000905", "SH000906", "SH000852"]
-        return secode
+        time_array = params
+        source = {
+            'indexcode': self.indexcode,
+            'time': time_array
+        }
+        return source
+
+    def get_tablename(self, params=[]):
+        return self.indexcode
+
+    def get_cursource(self, table_name, source):
+        result = [table_name]
+        # print source
+        result.extend(source['time'])
+        return result
 
     def get_netdata_tslstr(self, secode, end_date):
         tsl = "secode:=\'" + str(secode) + "\'; \
@@ -35,8 +49,11 @@ class WeightTinySoft(TinySoft):
 
         return tsl
 
-    def get_netdata(self, secode, ori_start_date, ori_end_date):
+    def get_netdata(self, conditions=[]):
         result = []
+        secode = conditions[0]
+        ori_start_date = conditions[1]
+        ori_end_date = conditions[2]
         start_date = ori_start_date
         while start_date <= ori_end_date:
             tsl_str = self.get_netdata_tslstr(secode, start_date)
