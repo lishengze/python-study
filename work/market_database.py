@@ -11,7 +11,7 @@ class MarketDatabase(Database):
         Database.__del__(self)
 
     def get_create_str(self, table_name):
-        value_str = "(TDATE int, TIME int, SECODE varchar(10), \
+        value_str = "(TDATE int not null, TIME int not null Primary Key(TDATE, TIME), SECODE varchar(10), \
                     TOPEN decimal(10,4), TCLOSE decimal(10,4), HIGH decimal(10,4), LOW decimal(10,4), \
                     VATRUNOVER decimal(18,4), VOTRUNOVER decimal(18,4), PCTCHG decimal(10,4))"
 
@@ -42,16 +42,35 @@ class MarketDatabase(Database):
         return insert_str        
 
     def getTableDataStartEndTime(self, table_name):
-        startTime = None
-        endTime = None
+        starttime = None
+        endtime = None
         tablename_array = self.getDatabaseTableInfo()
         if table_name in tablename_array:          
             complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-            sql_str = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
-            result = self.get_database_data(sql_str)
-            startTime = result[0][0]
-            endTime = result[0][1]
-        return (startTime, endTime)  
+            get_date_sqlstr = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
+            date = self.get_database_data(get_date_sqlstr)
+
+            if date[0][0] == None or date[0][1] == None:
+                return (starttime, endtime)
+            
+            startdate = float(date[0][0])
+            enddate = float(date[0][1])
+
+            get_starttime_sqlstr = "SELECT MIN(TIME) FROM"  + complete_tablename + ' where TDATE='+str(startdate)            
+            starttime = self.get_database_data(get_starttime_sqlstr)
+            starttime = float(starttime[0][0])
+
+            get_endtime_sqlstr = "SELECT MAX(TIME) FROM"  + complete_tablename + ' where TDATE='+str(enddate)
+            endtime = self.get_database_data(get_endtime_sqlstr)
+            endtime = float(endtime[0][0])
+
+            # print startdate, starttime, enddate, endtime
+
+            starttime = startdate + getpercenttime(starttime)
+            endtime = enddate + getpercenttime(endtime)
+
+            # print starttime, endtime
+        return (starttime, endtime)
 
     def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):
         timeArray = []
@@ -59,18 +78,18 @@ class MarketDatabase(Database):
             timeArray.append([oriStartTime, oriEndTime])
         else:
             if oriStartTime >=  tableDataStartTime and oriEndTime > tableDataEndTime:
-                startTime = addOneDay(tableDataEndTime)
+                startTime = tableDataEndTime
                 endTime = oriEndTime
                 timeArray.append([startTime, endTime])
             
             if oriStartTime < tableDataStartTime and oriEndTime <= tableDataEndTime:
                 startTime = oriStartTime
-                endTime = minusOneDay(tableDataStartTime)
+                endTime = tableDataStartTime
                 timeArray.append([startTime, endTime])
             
             if oriStartTime < tableDataStartTime and oriEndTime > tableDataEndTime:
-                timeArray.append([oriStartTime, minusOneDay(tableDataStartTime)])
-                timeArray.append([addOneDay(tableDataEndTime), oriEndTime])
+                timeArray.append([oriStartTime, tableDataStartTime])
+                timeArray.append([tableDataEndTime, oriEndTime])
         return timeArray
 
 

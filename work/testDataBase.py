@@ -237,6 +237,19 @@ def cleanMarketDatabase():
     for table in table_array:
         database_obj.dropTableByName(table)
 
+def testMarketDatabase():
+    data_type = "MarketDataTest"
+    marketdatabase_obj = MarketDatabase(db=data_type)
+    tablename = "1"
+    table_starttime , table_endtime = marketdatabase_obj.getTableDataStartEndTime(tablename)
+    ori_starttime = 20171114.40
+    ori_endtime = getDateNow(data_type)
+
+    print 'ori_time'
+    print ori_starttime, ori_endtime
+    print 'table_time'
+    print table_starttime, table_endtime
+    print marketdatabase_obj.getStartEndTime(ori_starttime, ori_endtime, table_starttime, table_endtime)
 
 if __name__ == "__main__":
     try:
@@ -245,7 +258,8 @@ if __name__ == "__main__":
         # testConnectRemoteDatabaseServer()
         # testRefreshDatabase()
         # test_insert_data()
-        cleanMarketDatabase()
+        # cleanMarketDatabase()
+        testMarketDatabase()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         log_str = "__Main__ Failed \n" \

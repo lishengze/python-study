@@ -68,7 +68,12 @@ class Database:
 
     def insert_data(self, oridata, table_name):
         insert_str = self.get_insert_str(oridata, table_name)
-        self.changeDatabase(insert_str)
+        try:
+            self.changeDatabase(insert_str)
+        except Exception as e:
+            if "Violation of PRIMARY KEY constraint" not in e[1]:
+                raise(e)
+        
 
     def getDatabaseTableInfo(self):
         queryString = "select name from "+ self.db +"..sysobjects where xtype= 'U'"

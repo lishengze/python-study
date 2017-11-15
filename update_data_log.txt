@@ -1,0 +1,6 @@
++++++++++ Start Time: 2017-11-15 14:56:41.142000 +++++++++++
+Table Numb : 3423
+++++++++++ End Time: 2017-11-15 15:02:37.724000 SumCostTime: 356 AveCostTime: 0s ++++++++
++++++++++ Start Time: 2017-11-15 15:02:37.724000 +++++++++++
+Table Numb : 3423
+++++++++++ End Time: 2017-11-15 15:07:37.180000 SumCostTime: 299 AveCostTime: 0s ++++++++

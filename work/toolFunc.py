@@ -81,12 +81,10 @@ def minusOneDay(oriDate):
     except Exception as e: 
         raise(e)   
 
-def getIntegerDateNow(data_type):
+def getDateNow(data_type):
     curDate = datetime.datetime.now().strftime('%Y%m%d')
     curHourTime = float(datetime.datetime.now().strftime('%H'))
     curMinuTime = float(datetime.datetime.now().strftime('%M'))
-    curHourTime = 9.0
-    curMinuTime = 33.0
     date = float(curDate)
 
     if "MarketData" in data_type:
@@ -97,5 +95,11 @@ def getIntegerDateNow(data_type):
         if curHourTime < 15:
             date = int(minusOneDay(date))
     return date
+
+def getpercenttime(time):
+    hour = int(time) / 10000
+    minu = int(time) % 10000 / 100
+    time = float(hour * 60 + minu) / (24 * 60)
+    return time
 
     

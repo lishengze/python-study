@@ -35,22 +35,24 @@ class MarketTinySoft(TinySoft):
 
     def get_netdata_tslstr(self, secode, start_date, end_date):
         end_time = end_date - int(end_date)
-        tsl_str = "code := \'" + secode + "\'; \
-        beginDate := " + str(start_date) + "; \
-        endDate := " + str(int(end_date)) + "; \
-        begt:=inttodate(beginDate); \
-        endt:=inttodate(endDate); \
-        Setsysparam(PN_Cycle(),cy_1m()); \
-        result := select datetimetostr(['date']) as 'date',\
-        ['StockID'] as 'secode', ['open'] as 'open',  ['close'] as 'close', \
-        ['high']as 'high', ['low']as 'low', ['amount'] as 'VATRUNOVER', ['vol'] as 'VOTRUNOVER',['yclose'] as 'yclose'\
-        from markettable datekey  begt to endt + "+ str(end_time) +" of code end;\
-        emptyResult := array(); \
-        emptyResult[0]:= -1; \
-        if result then \
-            return result \
-        else    \
+        start_time = start_date - int(start_date)
+        tsl_str = "code := \'" + secode + "\'; \n \
+        beginDate := " + str(int(start_date)) + "; \n \
+        endDate := " + str(int(end_date)) + "; \n \
+        begt:=inttodate(beginDate); \n \
+        endt:=inttodate(endDate); \n \
+        Setsysparam(PN_Cycle(),cy_1m()); \n \
+        result := select datetimetostr(['date']) as 'date',\n \
+        ['StockID'] as 'secode', ['open'] as 'open',  ['close'] as 'close', \n \
+        ['high']as 'high', ['low']as 'low', ['amount'] as 'VATRUNOVER', ['vol'] as 'VOTRUNOVER',['yclose'] as 'yclose'\n \
+        from markettable datekey  begt + " + str(start_time) + " to endt + "+ str(end_time) +" of code end; \n \
+        emptyResult := array(); \n \
+        emptyResult[0]:= -1; \n \
+        if result then \n \
+            return result \n \
+        else    \n \
             return emptyResult "
+        # print tsl_str
         return tsl_str
 
     def get_netdata(self, conditions=[]):

@@ -25,7 +25,7 @@ from market_datanet import MarketTinySoft
 from industry_datanet import IndustryNetConnect
 
 g_writeLogLock = threading.Lock()
-g_logFileName = os.getcwd() + '\log.txt'
+g_logFileName = os.getcwd() + '\update_data_log.txt'
 g_logFile = open(g_logFileName, 'w')
 g_susCount = 0
 g_susCountLock = threading.Lock()
@@ -68,12 +68,11 @@ def recordInfoWithLock(info_str):
 def writeDataToDatabase(result_array, source, mainthread_database_obj):
     try:
         database_obj = get_database_obj(mainthread_database_obj.db, mainthread_database_obj.host)        
-        table_name = source
-        database_obj.completeDatabaseTable([table_name])        
+        table_name = source     
         for item in result_array:
             database_obj.insert_data(item, table_name)
 
-        tmp_successcount = getSusCount()
+        # tmp_successcount = getSusCount()
 
         # info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
         #         + "Source: " + source +" Write " + str(len(result_array)) +" Items to Database, CurSuccessCount:  " + str(tmp_successcount) + " \n" 
@@ -104,7 +103,7 @@ def startWriteThread(netdata_array, source_array, database_obj):
     for thread in threads:
         thread.join()      
     
-    print ("threading.active_count(): %d\n") % (threading.active_count())
+    # print ("threading.active_count(): %d\n") % (threading.active_count())
 
 def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HOST):
     starttime = datetime.datetime.now()
@@ -118,6 +117,8 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
 
     source = netconn_obj.get_sourceinfo(source_conditions)
     tablename_array = netconn_obj.get_tablename(source_conditions)
+
+    database_obj.completeDatabaseTable(tablename_array)
 
     thread_count = 12
 
@@ -163,7 +164,7 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
 
     endtime = datetime.datetime.now()
     costTime = (endtime - starttime).seconds
-    aveTime = costTime / len(tablename_array)
+    aveTime = float(costTime) / float(len(tablename_array))
 
     info_str = "++++++++++ End Time: " + str(endtime) \
             + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
@@ -236,60 +237,44 @@ def SingleThreadWriteData(data_type, source_conditions, database_host=DATABASE_H
             + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
     LogInfo(g_logFile, info_str)      
     
-
 def update_marketdata():
     # data_type = "MarketData"
     data_type = "MarketDataTest"
     host = "localhost"
-    ori_startdate = 20171114
+    ori_startdate = 20171114.40
     curHourTime = float(datetime.datetime.now().strftime('%H'))
-    ori_enddate = getIntegerDateNow(data_type) 
+    ori_enddate = getDateNow(data_type) 
 
     # program_tyep = "SingleThread"
-    program_tyep = "MultiThread"
+    program_type = "MultiThread"
 
-    if program_tyep == "SingleThread":
-        SingleThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
-    else:
-        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
-    while curHourTime <= 15:        
-        ori_enddate = getIntegerDateNow(data_type)    
-        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
 
+    while curHourTime <= 15:     
         curHourTime = float(datetime.datetime.now().strftime('%H'))
         curMinuTime = float(datetime.datetime.now().strftime('%M')) / 60
-
+        curHourTime += curMinuTime
         # 中午休息, 不采集数据;
         if 11.5 < curHourTime < 13:
-            sleep(60 * 90)
+            sleep(60 * 60 * (13-curHourTime))           
+        ori_enddate = getDateNow(data_type)    
 
-def download_data():
-    data_type = "MarketDataTest"
-    # data_type = "WeightDataTest"
-    # data_type = "IndustryDataTest"
-    # data_type = "IndustryData"
-    # data_type = "WeightData"
-    # data_type = "MarketData"
-    data_type = "MarketDataTest"
-    remote_server = "localhost"
-    ori_startdate = 20171114
-    ori_enddate = getIntegerDateNow(data_type)    
-    MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=remote_server)
+        if program_type == "SingleThread":
+            SingleThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
+        else:
+            MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
 
 if __name__ == "__main__":
     try:
-        # download_data()
         update_marketdata()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \
                 + "[E] Exception : \n" + exception_info
         recordInfoWithLock(info_str)
-
         connFailedError = "Communication link failure---InternalConnect"
         connFailedWaitTime = 60 * 5
         if connFailedError in info_str:
             time.sleep(connFailedWaitTime)
             info_str = "[RS] MultiThreadWriteData  Restart : \n"
             recordInfoWithLock(info_str)
-            MultiThreadWriteIndustryData(data_type, [ori_startdate, ori_enddate], database_host=remote_server)
+            update_marketdata(data_type, [ori_startdate, ori_enddate], database_host=remote_server)

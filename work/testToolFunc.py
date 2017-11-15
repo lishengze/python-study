@@ -21,7 +21,7 @@ def testDate():
 
 def testGetIntegerDateNow():
     data_type = 'MarketData'
-    data_type = 'WeightData'
+    # data_type = 'WeightData'
     integerDate = getIntegerDateNow(data_type)
     print type(integerDate)
     print integerDate
