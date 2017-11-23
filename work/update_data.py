@@ -10,19 +10,12 @@ import threading
 
 from CONFIG import *
 from toolFunc import *
-# from databaseFunc import *
-# from netdataFunc import *
-
-from wind import Wind
 
 from database import Database
-from weight_database import WeightDatabase
-from market_database import MarketDatabase
-from industry_database import IndustryDatabase
 
-from weight_datanet import WeightTinySoft
+from market_database import MarketDatabase
 from market_datanet import MarketTinySoft
-from industry_datanet import IndustryNetConnect
+
 
 g_writeLogLock = threading.Lock()
 g_logFileName = os.getcwd() + '\update_data_log.txt'
@@ -72,12 +65,12 @@ def writeDataToDatabase(result_array, source, mainthread_database_obj):
         for item in result_array:
             database_obj.insert_data(item, table_name)
 
-        # tmp_successcount = getSusCount()
+        tmp_successcount = getSusCount()
 
-        # info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-        #         + "Source: " + source +" Write " + str(len(result_array)) +" Items to Database, CurSuccessCount:  " + str(tmp_successcount) + " \n" 
+        info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
+                + "Source: " + source +" Write " + str(len(result_array)) +" Items to Database, CurSuccessCount:  " + str(tmp_successcount) + " \n" 
 
-        # recordInfoWithLock(info_str)        
+        recordInfoWithLock(info_str)        
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "\n" \
@@ -141,9 +134,9 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
             if ori_netdata is not None:
                 condition_count = condition_count + 1
 
-                # info_str = "[B] Source: " + str(cur_condition) + ", dataNumb: " + str(len(ori_netdata)) \
-                #         + ' , condition_count: ' + str(condition_count) + ", sourceCount: "+ str(i+1) + "\n"
-                # LogInfo(g_logFile, info_str)
+                info_str = "[B] Source: " + str(cur_condition) + ", dataNumb: " + str(len(ori_netdata)) \
+                        + ' , condition_count: ' + str(condition_count) + ", sourceCount: "+ str(i+1) + "\n"
+                LogInfo(g_logFile, info_str)
                 # print i
 
                 tmp_netdata_array.append(ori_netdata)
@@ -154,13 +147,13 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
                     tmp_netdata_array = []
                     tmp_tablename_array = [] 
             else:
-                # info_str = "[C] Source: " + str(cur_source) + " has no data under conditons: " + str(cur_condition) +" \n"
-                # LogInfo(g_logFile, info_str) 
+                info_str = "[C] Source: " + str(cur_source) + " has no data under conditons: " + str(cur_condition) +" \n"
+                LogInfo(g_logFile, info_str) 
                 pass
         
-        # if len(database_transed_conditions) == 0:
-        #         info_str = "[C] source: " + str(cur_source) + " already has data under current conditons: " + str(cur_source) +" \n"
-        #         LogInfo(g_logFile, info_str)
+        if len(database_transed_conditions) == 0:
+                info_str = "[C] source: " + str(cur_source) + " already has data under current conditons: " + str(cur_source) +" \n"
+                LogInfo(g_logFile, info_str)
 
     endtime = datetime.datetime.now()
     costTime = (endtime - starttime).seconds
@@ -239,20 +232,20 @@ def SingleThreadWriteData(data_type, source_conditions, database_host=DATABASE_H
     
 def update_marketdata():
     # data_type = "MarketData"
-    data_type = "MarketDataTest"
+    data_type = "MarketData"
     host = "localhost"
-    ori_startdate = 20171114.40
+    # host = "192.168.211.165"
+    ori_startdate = 20170914.40
     curHourTime = float(datetime.datetime.now().strftime('%H'))
+    curMinuTime = float(datetime.datetime.now().strftime('%M')) / 60
+    curHourTime += curMinuTime
+
     ori_enddate = getDateNow(data_type) 
 
     # program_tyep = "SingleThread"
     program_type = "MultiThread"
 
-
-    while curHourTime <= 15:     
-        curHourTime = float(datetime.datetime.now().strftime('%H'))
-        curMinuTime = float(datetime.datetime.now().strftime('%M')) / 60
-        curHourTime += curMinuTime
+    while 9.5 < curHourTime <= 15:     
         # 中午休息, 不采集数据;
         if 11.5 < curHourTime < 13:
             sleep(60 * 60 * (13-curHourTime))           
@@ -262,6 +255,10 @@ def update_marketdata():
             SingleThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
         else:
             MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
+
+        curHourTime = float(datetime.datetime.now().strftime('%H'))
+        curMinuTime = float(datetime.datetime.now().strftime('%M')) / 60
+        curHourTime += curMinuTime        
 
 if __name__ == "__main__":
     try:

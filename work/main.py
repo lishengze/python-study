@@ -75,10 +75,10 @@ def writeDataToDatabase(result_array, source, mainthread_database_obj):
 
         tmp_successcount = getSusCount()
 
-        # info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-        #         + "Source: " + source +" Write " + str(len(result_array)) +" Items to Database, CurSuccessCount:  " + str(tmp_successcount) + " \n" 
+        info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
+                + "Source: " + source +" Write " + str(len(result_array)) +" Items to Database, CurSuccessCount:  " + str(tmp_successcount) + " \n" 
 
-        # recordInfoWithLock(info_str)        
+        recordInfoWithLock(info_str)        
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "\n" \
@@ -119,6 +119,8 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     source = netconn_obj.get_sourceinfo(source_conditions)
     tablename_array = netconn_obj.get_tablename(source_conditions)
 
+    # database_obj.completeDatabaseTable(tablename_array)
+
     thread_count = 12
 
     info_str = "Table Numb : " + str(len(tablename_array)) + '\n'
@@ -140,10 +142,9 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
             if ori_netdata is not None:
                 condition_count = condition_count + 1
 
-                # info_str = "[B] Source: " + str(cur_condition) + ", dataNumb: " + str(len(ori_netdata)) \
-                #         + ' , condition_count: ' + str(condition_count) + ", sourceCount: "+ str(i+1) + "\n"
-                # LogInfo(g_logFile, info_str)
-                # print i
+                info_str = "[B] Source: " + str(cur_condition) + ", dataNumb: " + str(len(ori_netdata)) \
+                        + ' , condition_count: ' + str(condition_count) + ", sourceCount: "+ str(i+1) + "\n"
+                LogInfo(g_logFile, info_str)
 
                 tmp_netdata_array.append(ori_netdata)
                 tmp_tablename_array.append(cur_tablename)
@@ -153,13 +154,13 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
                     tmp_netdata_array = []
                     tmp_tablename_array = [] 
             else:
-                # info_str = "[C] Source: " + str(cur_source) + " has no data under conditons: " + str(cur_condition) +" \n"
-                # LogInfo(g_logFile, info_str) 
+                info_str = "[C] Source: " + str(cur_source) + " has no data under conditons: " + str(cur_condition) +" \n"
+                LogInfo(g_logFile, info_str) 
                 pass
         
-        # if len(database_transed_conditions) == 0:
-        #         info_str = "[C] source: " + str(cur_source) + " already has data under current conditons: " + str(cur_source) +" \n"
-        #         LogInfo(g_logFile, info_str)
+        if len(database_transed_conditions) == 0:
+                info_str = "[C] source: " + str(cur_source) + " already has data under current conditons: " + str(cur_source) +" \n"
+                LogInfo(g_logFile, info_str)
 
     endtime = datetime.datetime.now()
     costTime = (endtime - starttime).seconds
@@ -168,118 +169,24 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     info_str = "++++++++++ End Time: " + str(endtime) \
             + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
     LogInfo(g_logFile, info_str)      
-
-def SingleThreadWriteData(data_type, source_conditions, database_host=DATABASE_HOST):
-    starttime = datetime.datetime.now()
-    info_str = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
-    LogInfo(g_logFile, info_str)
-
-    database_name = data_type
-
-    database_obj = get_database_obj(database_name, host=database_host)
-    netconn_obj = get_netconn_obj(data_type)
-
-    source = netconn_obj.get_sourceinfo(source_conditions)
-    tablename_array = netconn_obj.get_tablename(source_conditions)
-
-    database_obj.completeDatabaseTable(tablename_array)
-
-    thread_count = 12
-
-    info_str = "Table Numb : " + str(len(tablename_array)) + '\n'
-    LogInfo(g_logFile, info_str)
-
-    condition_count = 0
-    tmp_netdata_array = []
-    tmp_tablename_array = []
-
-    for i in range(len(tablename_array)):        
-        cur_tablename = tablename_array[i]
-        cur_source = netconn_obj.get_cursource(cur_tablename, source)
-
-        database_transed_conditions = database_obj.get_transed_conditions(cur_tablename, cur_source)
-
-        for j in range(len(database_transed_conditions)):
-            cur_condition = database_transed_conditions[j]
-            ori_netdata = netconn_obj.get_netdata(cur_condition)
-            if ori_netdata is not None:
-                condition_count = condition_count + 1
-
-                # info_str = "[B] Source: " + str(cur_condition) + ", dataNumb: " + str(len(ori_netdata)) \
-                #         + ' , condition_count: ' + str(condition_count) + ", sourceCount: "+ str(i+1) + "\n"
-                # LogInfo(g_logFile, info_str)
-
-                singleThreadWriteDataToDatabase(ori_netdata, cur_tablename, database_obj)
-                # print i
-
-                # tmp_netdata_array.append(ori_netdata)
-                # tmp_tablename_array.append(cur_tablename)
-
-                # if (condition_count % thread_count == 0) or (i == len(tablename_array)-1 and j == len(database_transed_conditions) -1):
-                #     startWriteThread(tmp_netdata_array, tmp_tablename_array, database_obj)
-                #     tmp_netdata_array = []
-                #     tmp_tablename_array = [] 
-            else:
-                # info_str = "[C] Source: " + str(cur_source) + " has no data under conditons: " + str(cur_condition) +" \n"
-                # LogInfo(g_logFile, info_str) 
-                pass
-        
-        # if len(database_transed_conditions) == 0:
-        #         info_str = "[C] source: " + str(cur_source) + " already has data under current conditons: " + str(cur_source) +" \n"
-        #         LogInfo(g_logFile, info_str)
-
-    endtime = datetime.datetime.now()
-    costTime = (endtime - starttime).seconds
-    aveTime = costTime / len(tablename_array)
-
-    info_str = "++++++++++ End Time: " + str(endtime) \
-            + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
-    LogInfo(g_logFile, info_str)      
-    
-
-def update_marketdata():
-    # data_type = "MarketData"
-    data_type = "MarketDataTest"
-    host = "localhost"
-    ori_startdate = 20171114
-    curHourTime = float(datetime.datetime.now().strftime('%H'))
-    ori_enddate = getIntegerDateNow(data_type) 
-
-    # program_tyep = "SingleThread"
-    program_tyep = "MultiThread"
-
-    if program_tyep == "SingleThread":
-        SingleThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
-    else:
-        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
-    while curHourTime <= 15:        
-        ori_enddate = getIntegerDateNow(data_type)    
-        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
-
-        curHourTime = float(datetime.datetime.now().strftime('%H'))
-        curMinuTime = float(datetime.datetime.now().strftime('%M')) / 60
-
-        # 中午休息, 不采集数据;
-        if 11.5 < curHourTime < 13:
-            sleep(60 * 90)
 
 def download_data():
-    data_type = "MarketDataTest"
+    # data_type = "MarketDataTest"
     # data_type = "WeightDataTest"
     # data_type = "IndustryDataTest"
-    # data_type = "IndustryData"
+    data_type = "IndustryData"
     # data_type = "WeightData"
     # data_type = "MarketData"
-    data_type = "MarketDataTest"
-    remote_server = "localhost"
-    ori_startdate = 20171114
-    ori_enddate = getIntegerDateNow(data_type)    
-    MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=remote_server)
+    # host = "localhost"
+    host = "192.168.211.165"
+    ori_startdate = 20171001
+    ori_enddate = getDateNow(data_type)    
+    MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
 
 if __name__ == "__main__":
     try:
-        # download_data()
-        update_marketdata()
+        download_data()
+        # update_marketdata()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \

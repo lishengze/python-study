@@ -51,6 +51,7 @@ class Database:
 
     def createTableByName(self, table_name):
         create_str = self.get_create_str(table_name)
+        # print create_str
         self.changeDatabase(create_str)
 
     def completeDatabaseTable (self, tableNameArray):
@@ -68,10 +69,12 @@ class Database:
 
     def insert_data(self, oridata, table_name):
         insert_str = self.get_insert_str(oridata, table_name)
+        # print insert_str
         try:
             self.changeDatabase(insert_str)
         except Exception as e:
             if "Violation of PRIMARY KEY constraint" not in e[1]:
+                print e
                 raise(e)
         
 

@@ -11,7 +11,8 @@ class IndustryDatabase(Database):
         Database.__del__(self)
 
     def get_create_str(self, table_name):
-        value_str = "(Secode varchar(10) not null Primary Key(Secode), Date int not null , 中证一级行业 varchar(50), 中证二级行业 varchar(50), \
+        value_str = "(日期 int not null , 股票代码 varchar(10) not null Primary Key(股票代码),  股票名称 varchar(50), \
+                    中证一级行业 varchar(50), 中证二级行业 varchar(50), 中证三级行业 varchar(50), \
                     申万一级行业 varchar(50), 申万二级行业 varchar(50), 申万三级行业 varchar(50), \
                     万得一级行业 varchar(50), 万得二级行业 varchar(50), 万得三级行业 varchar(50), 万得四级行业 varchar(50))"
 
@@ -20,13 +21,15 @@ class IndustryDatabase(Database):
         return create_str
 
     def get_insert_str(self, oridata, table_name):
-        col_str = "(Secode, Date, 中证一级行业, 中证二级行业, 申万一级行业, 申万二级行业, 申万三级行业, \
+        col_str = "(日期, 股票代码, 股票名称,\
+                    中证一级行业, 中证二级行业, 中证三级行业, \
+                    申万一级行业, 申万二级行业, 申万三级行业, \
                     万得一级行业, 万得二级行业, 万得三级行业, 万得四级行业) "
  
-        val_str = "\'" + oridata[0] + "\', " + str(oridata[1]) + "," \
-                + "\'" + oridata[2] + "\', \'" +  oridata[3] + "\',"  \
-                + "\'" + oridata[4] + "\', \'" +  oridata[5] + "\', \'"  +  oridata[6] + "\',"  \
-                + "\'" + oridata[7] + "\', \'" +  oridata[8] + "\', \'"  +  oridata[9] + "\', \'" + oridata[10] + "\'"
+        val_str = "" + str(oridata[0]) + ", \'" + oridata[1] + "\', \'" + oridata[2] + "\'," \
+                + "\'" + oridata[3] + "\', \'" +  oridata[4] + "\', \'" + oridata[5] + "\'," \
+                + "\'" + oridata[6] + "\', \'" +  oridata[7] + "\', \'"  +  oridata[8] + "\',"  \
+                + "\'" + oridata[9] + "\', \'" +  oridata[10] + "\', \'"  +  oridata[11] + "\', \'" + oridata[12] + "\'"
 
         complete_tablename = u'[' + self.db + '].[dbo].['+ str(table_name) +']'
         insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"

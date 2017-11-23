@@ -118,11 +118,13 @@ class IndustryNetConnect(TinySoft, Wind):
                             setsysparam(pn_stock(),code);\n \
                             result[i] := array();\n \
                             result[i][0] := code;\n \
-                            result[i][1] := StockIndustryName();\n \
-                            result[i][2] := StockIndustryName2();\n \
-                            result[i][3] := StockSWIndustryNameLv1();\n \
-                            result[i][4] := StockSWIndustryNameLv2();\n \
-                            result[i][5] := StockSWIndustryNameLv3();\n \
+                            result[i][1] := spec(base(10004),code);\n \
+                            result[i][2] := spec(base(10032),code);\n \
+                            result[i][3] := spec(base(10033),code);\n \
+                            result[i][4] := spec(base(10034),code);\n \
+                            result[i][5] := StockSWIndustryNameLv1();//  所属申万一级行业名称\n \
+                            result[i][6] := StockSWIndustryNameLv2();//  所属申万二级行业名称\n \
+                            result[i][7] := StockSWIndustryNameLv3();//  所属申万三级行业名称\n \
                     end;\n \
                     return result;"
         # print tsl_str
@@ -143,8 +145,9 @@ class IndustryNetConnect(TinySoft, Wind):
         for i in range(len(result)):
             trans_rst.append([])
             trans_rst[i].extend(result[i])
-            trans_rst[i].insert(1, date)
+            trans_rst[i].insert(0, date)
             for j in range(len(wind_industry_data)):
-                if trans_rst[i][0] == wind_industry_data[j][0]:
-                    trans_rst[i].extend(wind_industry_data[j][1:])        
+                if trans_rst[i][1] == wind_industry_data[j][0]:
+                    trans_rst[i].extend(wind_industry_data[j][1:])    
+            
         return trans_rst        
