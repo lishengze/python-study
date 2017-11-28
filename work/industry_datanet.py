@@ -34,7 +34,7 @@ class IndustryNetConnect(TinySoft, Wind):
             返回一个以起止时间为上下限的时间序列数组。
         '''
         start_date = params[0]
-        end_date = params[1]
+        end_date = int(params[1])
         tmp_date = start_date
         source_array = []
 

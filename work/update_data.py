@@ -62,6 +62,7 @@ def writeDataToDatabase(result_array, source, mainthread_database_obj):
     try:
         database_obj = get_database_obj(mainthread_database_obj.db, mainthread_database_obj.host)        
         table_name = source     
+        database_obj.completeDatabaseTable([table_name])
         for item in result_array:
             database_obj.insert_data(item, table_name)
 
@@ -111,7 +112,7 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     source = netconn_obj.get_sourceinfo(source_conditions)
     tablename_array = netconn_obj.get_tablename(source_conditions)
 
-    database_obj.completeDatabaseTable(tablename_array)
+    # database_obj.completeDatabaseTable(tablename_array)
 
     thread_count = 12
 
@@ -232,7 +233,8 @@ def SingleThreadWriteData(data_type, source_conditions, database_host=DATABASE_H
     
 def update_marketdata():
     # data_type = "MarketData"
-    data_type = "MarketData"
+    timeFrequency = "day" 
+    data_type = "MarketData" + "_" + timeFrequency
     host = "localhost"
     # host = "192.168.211.165"
     ori_startdate = 20170914.40

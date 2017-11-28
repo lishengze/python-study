@@ -12,6 +12,8 @@ from tinysoft import TinySoft
 class MarketTinySoft(TinySoft):
     def __init__(self, datatype):
         self.datatype = datatype
+        tmpData = datatype.split('_')
+        self.timeType = tmpData[1]
         TinySoft.__init__(self)
 
     def __del__(self):
@@ -33,15 +35,20 @@ class MarketTinySoft(TinySoft):
         result.extend(source['time'])
         return result
 
+    def get_timetypeTslstr(self):
+        timeTypeStr = "Cy_" + self.timeType + "()"
+        return timeTypeStr 
+
     def get_netdata_tslstr(self, secode, start_date, end_date):
         end_time = end_date - int(end_date)
         start_time = start_date - int(start_date)
+        timeTypeStr = self.get_timetypeTslstr()
         tsl_str = "code := \'" + secode + "\'; \n \
         beginDate := " + str(int(start_date)) + "; \n \
         endDate := " + str(int(end_date)) + "; \n \
         begt:=inttodate(beginDate); \n \
         endt:=inttodate(endDate); \n \
-        Setsysparam(PN_Cycle(),cy_1m()); \n \
+        Setsysparam(PN_Cycle()," + timeTypeStr + "); \n \
         result := select datetimetostr(['date']) as 'date',\n \
         ['StockID'] as 'secode', ['open'] as 'open',  ['close'] as 'close', \n \
         ['high']as 'high', ['low']as 'low', ['amount'] as 'VATRUNOVER', ['vol'] as 'VOTRUNOVER',['yclose'] as 'yclose'\n \
@@ -68,12 +75,13 @@ class MarketTinySoft(TinySoft):
         return result      
 
     def get_dailydata_str(self, secode, start_date, end_date):
+        timeTypeStr = self.get_timetypeTslstr()
         tsl_str = "code := \'" + secode + "\'; \n \
         beginDate := " + str(int(start_date)) + "; \n \
         endDate := " + str(int(end_date)) + "; \n \
         begt:=inttodate(beginDate); \n \
         endt:=inttodate(endDate); \n \
-        Setsysparam(PN_Cycle(),cy_1m()); \n \
+        Setsysparam(PN_Cycle(),"+ timeTypeStr + "); \n \
         result := select datetimetostr(['date']) as 'date',\n \
         ['StockID'] as 'secode', ['open'] as 'open',  ['close'] as 'close', \n \
         ['high']as 'high', ['low']as 'low', ['amount'] as 'VATRUNOVER', ['vol'] as 'VOTRUNOVER',['yclose'] as 'yclose'\n \
@@ -84,7 +92,7 @@ class MarketTinySoft(TinySoft):
             return result \n \
         else    \n \
             return emptyResult "
-        # print tsl_str
+        print tsl_str
         return tsl_str
 
     def get_dailydata(self, conditions=[]):

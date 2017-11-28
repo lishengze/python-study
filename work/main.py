@@ -174,19 +174,29 @@ def download_data():
     # data_type = "MarketDataTest"
     # data_type = "WeightDataTest"
     # data_type = "IndustryDataTest"
-    data_type = "IndustryData"
+    # data_type = "IndustryData"
     # data_type = "WeightData"
     # data_type = "MarketData"
-    # host = "localhost"
-    host = "192.168.211.165"
-    ori_startdate = 20171001
+    host = "localhost"
+    #  host = "192.168.211.165"
+    timeFrequency = "day" 
+    data_type = "MarketData" + "_" + timeFrequency   
+    ori_startdate = 20131001
     ori_enddate = getDateNow(data_type)    
     MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
+
+def download_Marketdata():
+    timeFrequency = ["day", "month", "week", "3m", "5m", "10m", "20m", "30m", "40m", "60m", "120m"]
+    host = "192.168.211.165"    
+    ori_startdate = 20161001
+    ori_enddate = getDateNow(data_type)   
+    for timeType in timeFrequency:         
+        data_type = "MarketData" + "_" + timeType
+        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)    
 
 if __name__ == "__main__":
     try:
         download_data()
-        # update_marketdata()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \

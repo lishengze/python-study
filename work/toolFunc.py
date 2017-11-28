@@ -28,13 +28,12 @@ def getSimpleDate (oriDateStr):
         raise(e)   
 
 def getSimpleTime(oriTimeStr):
-    try:
+    if ' ' in oriTimeStr :            
         timeArray = oriTimeStr.split(' ')
         timeStr = timeArray[1].replace(':','').split('.')[0]
-        return timeStr   
-    except Exception as e:
-        raise(e)  
-
+    else:
+        timeStr = "150000"
+    return timeStr   
 def getYearMonthDay(oriDate):
     try:
         year = oriDate / 10000
@@ -87,13 +86,14 @@ def getDateNow(data_type):
     curMinuTime = float(datetime.datetime.now().strftime('%M'))
     date = float(curDate)
 
-    if "MarketData" in data_type:
+    if "MarketData" in data_type and "day" not in data_type and "month" not in data_type and "week" not in data_type :
         leftday = (curHourTime * 60 + curMinuTime)/ (24 * 60)
         date += leftday
     else:
         date = int(curDate) 
         if curHourTime < 15:
             date = int(minusOneDay(date))
+            date = float(date) + 0.99
     return date
 
 def getpercenttime(time):
