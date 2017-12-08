@@ -49,6 +49,10 @@ class TinySoft(object):
             transResult.append(data[0])
         return transResult   
 
+    def get_Index_secode(self):
+        indexCodeArray = ["SH000300", "SH000016", "SH000852", "SH000904", "SH000905", "SH000906", "SZ399903"]
+        return indexCodeArray
+
     def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):
         timeArray = []
         if tableDataStartTime is None or tableDataEndTime is None:

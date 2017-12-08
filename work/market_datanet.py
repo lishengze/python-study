@@ -21,14 +21,16 @@ class MarketTinySoft(TinySoft):
 
     def get_sourceinfo(self, params=[]):
         time_array = params
+        stockidArray = self.get_allA_secode()
+        indexidArray = self.get_Index_secode()
         source = {
-            'secode': self.get_allA_secode(),
+            'secode': indexidArray,
             'time': time_array
         }
         return source
 
     def get_tablename(self, params=[]):
-        return self.get_allA_secode()
+        return self.get_sourceinfo()['secode']
 
     def get_cursource(self, table_name, source):
         result = [table_name]
