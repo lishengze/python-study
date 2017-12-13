@@ -49,6 +49,12 @@ class Database:
     def get_insert_str(self,oridata, table_name):
         pass
 
+    def filter_source(self, source):
+        return source
+
+    def filter_tableArray(self, tableArray):
+        return tableArray
+
     def createTableByName(self, table_name):
         create_str = self.get_create_str(table_name)
         # print create_str

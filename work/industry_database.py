@@ -10,6 +10,19 @@ class IndustryDatabase(Database):
     def __del__(self):
         Database.__del__(self)
 
+    def filter_source(self, source):
+        database_tableNameArray = self.getDatabaseTableInfo()
+        # print database_tableNameArray
+        # print source
+        filteredSource = []
+        for tableName in source:
+            if str(tableName) not in database_tableNameArray:
+                filteredSource.append(tableName)
+        return filteredSource
+
+    def filter_tableArray(self, tableArray):
+        return self.filter_source(tableArray)
+
     def get_create_str(self, table_name):
         value_str = "(日期 int not null , 股票代码 varchar(10) not null Primary Key(股票代码),  股票名称 varchar(50), \
                     中证一级行业 varchar(50), 中证二级行业 varchar(50), 中证三级行业 varchar(50), \

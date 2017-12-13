@@ -119,8 +119,9 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     source = netconn_obj.get_sourceinfo(source_conditions)
     tablename_array = netconn_obj.get_tablename(source_conditions)
 
-    # database_obj.completeDatabaseTable(tablename_array)
-
+    source = database_obj.filter_source(source)
+    tablename_array = database_obj.filter_tableArray(tablename_array)
+    
     thread_count = 12
 
     info_str = "Table Numb : " + str(len(tablename_array)) + '\n'
@@ -164,7 +165,10 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
 
     endtime = datetime.datetime.now()
     costTime = (endtime - starttime).seconds
-    aveTime = costTime / len(tablename_array)
+    if len(tablename_array) == 0:
+        aveTime = costTime
+    else:
+        aveTime = costTime / len(tablename_array)
 
     info_str = "++++++++++ End Time: " + str(endtime) \
             + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
@@ -174,14 +178,14 @@ def download_data():
     # data_type = "MarketDataTest"
     # data_type = "WeightDataTest"
     # data_type = "IndustryDataTest"
-    # data_type = "IndustryData"
-    data_type = "WeightData"
+    data_type = "IndustryData"
+    # data_type = "WeightData"
     # data_type = "MarketData"
-    # host = "localhost"
-    host = "192.168.211.165"
+    host = "localhost"
+    # host = "192.168.211.165"
     # timeFrequency = "day" 
     # data_type = "MarketData" + "_" + timeFrequency   
-    ori_startdate = 20171001
+    ori_startdate = 20171101
     ori_enddate = getDateNow(data_type)    
     MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
 
@@ -198,8 +202,8 @@ def download_Marketdata():
 
 if __name__ == "__main__":
     try:
-        # download_data()
-        download_Marketdata()
+        download_data()
+        # download_Marketdata()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \
