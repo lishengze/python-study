@@ -183,27 +183,28 @@ def download_data():
     # data_type = "MarketData"
     host = "localhost"
     # host = "192.168.211.165"
-    # timeFrequency = "day" 
-    # data_type = "MarketData" + "_" + timeFrequency   
+    # time_frequency = "day" 
+    # data_type = "MarketData" + "_" + time_frequency   
     ori_startdate = 20171101
     ori_enddate = getDateNow(data_type)    
     MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
 
 def download_Marketdata():
-    timeFrequency = ["day", "week", "month",  "1m", "5m", "10m", "30m", "60m", "120m"]
+    # time_frequency = ["day", "week", "month",  "1m", "5m", "10m", "30m", "60m", "120m"]
+    time_frequency = ["day"]
     # host = "192.168.211.165"
     host = "localhost"
     ori_startdate = 20131001
 
-    for timeType in timeFrequency:         
+    for timeType in time_frequency:         
         data_type = "MarketData" + "_" + timeType
         ori_enddate = getDateNow(data_type)   
         MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)    
 
 if __name__ == "__main__":
     try:
-        download_data()
-        # download_Marketdata()
+        # download_data()
+        download_Marketdata()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \
@@ -216,4 +217,4 @@ if __name__ == "__main__":
             time.sleep(connFailedWaitTime)
             info_str = "[RS] MultiThreadWriteData  Restart : \n"
             recordInfoWithLock(info_str)
-            MultiThreadWriteIndustryData(data_type, [ori_startdate, ori_enddate], database_host=remote_server)
+            download_data()

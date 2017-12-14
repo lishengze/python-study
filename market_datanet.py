@@ -25,7 +25,7 @@ class MarketTinySoft(TinySoft):
         indexidArray = self.get_Index_secode()
         sourceArray = stockidArray.extend(indexidArray)
         source = {
-            'secode': stockidArray,
+            'secode': sourceArray,
             'time': time_array
         }
         return source

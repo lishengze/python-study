@@ -200,11 +200,12 @@ def addPrimaryKeyToDatabase():
 
 def testConnectRemoteDatabaseServer():
     try:
-        remoteServer = "192.168.211.165"
+        # remoteServer = "192.168.211.165"
+        remoteServer = "localhost"
         databaseName = 'MarketData'
         databaseObj = Database(host=remoteServer, db=databaseName)
 
-        databaseTableInfo = databaseObj.getDatabaseTableInfo(databaseName)
+        databaseTableInfo = databaseObj.getDatabaseTableInfo()
         print len(databaseTableInfo)
 
     except Exception as e:
@@ -255,11 +256,11 @@ if __name__ == "__main__":
     try:
         # changeDatabase()
         # testInsertSamePrimaryValue()
-        # testConnectRemoteDatabaseServer()
+        testConnectRemoteDatabaseServer()
         # testRefreshDatabase()
         # test_insert_data()
         # cleanMarketDatabase()
-        testMarketDatabase()
+        # testMarketDatabase()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         log_str = "__Main__ Failed \n" \
