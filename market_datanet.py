@@ -23,7 +23,11 @@ class MarketTinySoft(TinySoft):
         time_array = params
         stockidArray = self.get_allA_secode()
         indexidArray = self.get_Index_secode()
-        sourceArray = stockidArray.extend(indexidArray)
+        sourceArray = []
+        for secode in stockidArray:
+            sourceArray.append(secode)
+        for indexCode in indexidArray:
+            sourceArray.append(indexCode)
         source = {
             'secode': sourceArray,
             'time': time_array

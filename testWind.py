@@ -2,6 +2,7 @@
 import threading
 from multiprocessing import cpu_count
 import datetime
+import time
 
 from CONFIG import *
 from toolFunc import *
@@ -108,6 +109,21 @@ def exec_str():
 
     w.close()
     
+def getSnapData(windObj, secodelist):
+    windObj.get_snapshoot_data(secodelist)
+
+    timer = threading.Timer(timeInterval, getSnapData, [windObj, secodelist])
+    timer.start();
+
+
+def test_get_snapshoot_data():
+    windObj = Wind()
+    secodelist = ["000001.SZ", "000002.SZ"]
+    
+    global timeInterval
+    timeInterval = 2.0
+    timer = threading.Timer(timeInterval, getSnapData, [windObj, secodelist])
+    timer.start();
 
 if __name__ == "__main__":
     try:
@@ -116,7 +132,8 @@ if __name__ == "__main__":
         # test_multi_thread_connect()
         # test_get_stockdata()
         # test_get_industry_data()
-        exec_str()
+        # exec_str()
+        test_get_snapshoot_data()
     except Exception as exp:
         exception_info = '\n' + str(traceback.format_exc()) + '\n'
         info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \

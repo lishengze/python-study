@@ -52,3 +52,27 @@ class Wind(object):
             result.append([secode])
             result[i].extend(industry_array)
         return result
+
+    def get_snapshoot_data(self, secodelist):
+        result = {}
+        for secode in secodelist:
+            result[secode] = []
+        # print result
+
+        indicators = "rt_date,rt_time,rt_latest,rt_pre_close,rt_amt"
+        tmp = self.wind.wsq(secodelist, indicators)
+        # print tmp
+
+        tmp_data = tmp.Data
+        # print tmp_data
+
+        for i in range(len(tmp_data)):
+            for j in range(len(secodelist)):
+                # print tmp_data[i][j]
+                result[secodelist[j]].append(tmp_data[i][j])
+
+        for secode in secodelist:
+            result[secode].append(secode)
+
+        # print result
+        return result

@@ -38,10 +38,16 @@ class Database:
         result = self.cur.execute(sql)  
         self.conn.commit()  
 
+
     def dropTableByName(self, table_name):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         sql_str = "drop table " + complete_tablename 
         self.changeDatabase(sql_str)
+
+    def clearDatabase(self):
+        table_info = self.getDatabaseTableInfo()
+        for table_name in table_info: 
+                self.dropTableByName(table_name)        
 
     def get_create_str(self,table_name):
         pass

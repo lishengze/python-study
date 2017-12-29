@@ -191,9 +191,9 @@ def download_data():
 
 def download_Marketdata():
     # time_frequency = ["day", "week", "month",  "1m", "5m", "10m", "30m", "60m", "120m"]
-    time_frequency = ["day"]
-    # host = "192.168.211.165"
-    host = "localhost"
+    time_frequency = ["60m"]
+    host = "192.168.211.165"
+    # host = "localhost"
     ori_startdate = 20131001
 
     for timeType in time_frequency:         
