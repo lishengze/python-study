@@ -8,6 +8,7 @@ from CONFIG import *
 from toolFunc import *
 from wind import Wind
 from WindPy import *
+from market_realtime_database import MarketRealTimeDatabase
 
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
@@ -112,8 +113,8 @@ def exec_str():
 def getSnapData(windObj, secodelist):
     windObj.get_snapshoot_data(secodelist)
 
-    timer = threading.Timer(timeInterval, getSnapData, [windObj, secodelist])
-    timer.start();
+    # timer = threading.Timer(timeInterval, getSnapData, [windObj, secodelist])
+    # timer.start();
 
 
 def test_get_snapshoot_data():
@@ -125,18 +126,25 @@ def test_get_snapshoot_data():
     timer = threading.Timer(timeInterval, getSnapData, [windObj, secodelist])
     timer.start();
 
+def test_checkdata():
+    dbname = "MarketData_RealTime"
+    dbhost = "localhost"
+
+    database_obj = MarketRealTimeDatabase(db=dbname, host=dbhost)    
+    result = database_obj.check_data("股票", "000001.SZ", "000001.SZ")
+    if result:
+        update_data = ['20180101', "151501", "18", "18", "19000000", "000001.SZ"]
+        table_name = "000001.SZ"
+        database_obj.update_data(update_data, table_name)
+
+
 if __name__ == "__main__":
-    try:
-        # test_connect()
-        # test_getSecodeInfo()
-        # test_multi_thread_connect()
-        # test_get_stockdata()
-        # test_get_industry_data()
-        # exec_str()
-        test_get_snapshoot_data()
-    except Exception as exp:
-        exception_info = '\n' + str(traceback.format_exc()) + '\n'
-        info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \
-                 + "__main__ Failed" + "\n" \
-                 + "[E] Exception : " + exception_info
-        LogInfo(g_logFile, info_str) 
+    # test_connect()
+    # test_getSecodeInfo()
+    # test_multi_thread_connect()
+    # test_get_stockdata()
+    # test_get_industry_data()
+    # exec_str()
+    test_get_snapshoot_data()
+    # test_checkdata()
+

@@ -102,4 +102,29 @@ def getpercenttime(time):
     time = float(hour * 60 + minu) / (24 * 60)
     return time
 
-    
+def trans_code_to_windstyle(oricode):
+    wind_code = str(oricode)
+    while len(wind_code) < 6:
+        wind_code = '0' + wind_code
+    if wind_code.startswith('0'):
+        wind_code += '.SZ'
+    else:
+        wind_code += '.SH'
+    return wind_code
+
+def get_indexcode(style="ori"):
+    indexCodeArray = []
+    if style == "wind":
+        indexCodeArray = ["000300.SH", "000016.SH", "000852.SH", \
+                          "000904.SH", "000905.SH", "000906.SH", "399903.SZ"]
+    elif style == "tinysoft":
+        indexCodeArray = ["SH000300", "SH000016", "SH000852", \
+                          "SH000904", "SH000905", "SH000906", "SZ399903"]
+    else:
+        indexCodeArray = ["000300", "000016", "000852", \
+                          "000904", "000905", "000906", "399903"]
+    return indexCodeArray
+
+def get_filename_array(dirname):
+    file_name = os.listdir(dirname)
+    return file_name

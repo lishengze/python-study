@@ -30,11 +30,12 @@ class MarketRealTimeDatabase(Database):
 
         set_str = "  set 日期 = " +  str(date) + ", 时间 = " + str(time) \
                 + ", 现价 = " + str(last) + ", 成交额 = " + str(amt) \
-                + " where 股票 = " + secode
+                + " where 股票 = \'" + secode + "\'"
 
                
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-        insert_str = "update "+ complete_tablename + set_str 
+        update_str = "update "+ complete_tablename + set_str 
+        return update_str
 
     def get_insert_str(self, oridata, table_name):
         col_str = "(股票, 日期, 时间, 现价, 前收, 成交额)"
@@ -61,13 +62,15 @@ class MarketRealTimeDatabase(Database):
     def check_data(self, colname, keyvalue, table_name):
         check_str = self.get_check_str(colname, keyvalue, table_name)
         result = self.get_database_data(check_str)
+        # print "result: ", result
         if len(result) > 0:
             return True
-        else 
+        else:
             return False
 
     def update_data (self, oridata, table_name):
         update_str = self.get_update_str(oridata, table_name)
+        print "update_str: ", update_str
         self.changeDatabase(update_str)
 
 

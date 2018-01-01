@@ -9,6 +9,7 @@ from toolFunc import *
 from wind import Wind
 from WindPy import *
 from market_realtime_database import MarketRealTimeDatabase
+from excel import EXCEL
 
 def writeDataToDatabase(nedata_array, tablename_array):
     databaseobj = MarketRealTimeDatabase(db=dbname, host=dbhost)
@@ -32,18 +33,24 @@ def startWriteThread(netdata_array, tablename_array):
 
 def writeDataToOneChart(nedata_array, secode_list, table_name):
     databaseobj = MarketRealTimeDatabase(db=dbname, host=dbhost)
-    databaseobj.completeDatabaseTable([tableName])
+    databaseobj.completeDatabaseTable([table_name])
+    update_numb = 0
+    insert_numb = 0
     colname = "股票"
-    for secode in secode_list):
-        if databaseobj.check_data(colname, secode, table_name):
-            databaseobj.update_data(nedata_array[secode], table_name)
+    for secode in secode_list:
+        if databaseobj.check_data(colname, secode, table_name):            
+            if len(nedata_array[secode]) == 6: 
+                update_numb += 1
+                databaseobj.update_data(nedata_array[secode], table_name)
         else:
-            databaseobj.insert_data(nedata_array[secode], table_name)
+            if len(nedata_array[secode]) == 6: 
+                insert_numb += 1            
+                databaseobj.insert_data(nedata_array[secode], table_name)
 
+    print "update_numb: ", update_numb       
+    print "insert_numb: ", insert_numb     
 
-def getSnapData(windObj, secodelist):
-    ori_data = windObj.get_snapshoot_data(secodelist)
-
+def allocate_threaddata(ori_data, secodelist):
     tablename_array = secodelist
     trans_data = []
     tablename_array = []
@@ -53,7 +60,7 @@ def getSnapData(windObj, secodelist):
         tablename_array.append([])
 
     i = 0
-    while i < len(secodelist):           
+    while i < len(secodelist, secodelist):           
         j = 0
         while j < thread_count and i + j < len(secodelist):
             secode = secodelist[i + j]
@@ -64,38 +71,80 @@ def getSnapData(windObj, secodelist):
 
     for i in range(len(trans_data)):
         print trans_data[i]
-        print tablename_array[i]
+        print tablename_array[i]    
 
-    startWriteThread(trans_data, tablename_array)
+    return trans_data, tablename_array
 
-    # timer = threading.Timer(timeInterval, getSnapData, [windObj, secodelist])
-    # timer.start();
+def getSnapData(secodelist):
+    global windObj
+    
+    ori_data = windObj.get_snapshoot_data(secodelist)
+
+    if g_IsWriteToOneChart:
+        table_name = "AllData"
+        writeDataToOneChart(ori_data, secodelist, table_name)
+    else:
+        trans_data, tablename_array = allocate_threaddata(ori_data, secodelist)
+        startWriteThread(trans_data, tablename_array)
+
+def scan_excelfile():
+    global secodelist, dirname, update_time
+    filename_array = get_filename_array(dirname)
+    
+    for filename in filename_array:
+        complete_filename = dirname + '/' + filename
+        excelobj = EXCEL(complete_filename)
+        tmp_secodelist = excelobj.get_data_byindex()
+        for code in tmp_secodelist:
+            transcode = trans_code_to_windstyle(code)
+            if transcode not in secodelist:
+                secodelist.append(transcode)
+                    
+    print "secodenumb: ", len(secodelist)
+
+    getSnapData(secodelist)
+
+    timer = threading.Timer(update_time, scan_excelfile, )
+    timer.start();
+
+def set_secodelist():
+    global secodelist, dirname, update_time
+    dirname =  "D:/strategy"
+    # secodelist = get_indexcode(style="wind")
+
+    timer = threading.Timer(update_time, scan_excelfile, )
+    timer.start();
 
 def main():
-    windObj = Wind()
-    secodelist = ["000001.SZ", "000002.SZ", "600000.SH", "600006.SH", "600007.SH", "600008.SH", \
-                  "600009.SH", "600010.SH", "600011.SH" , "600012.SH", "600015.SH", "600016.SH", \
-                  "600017.SH", "600018.SH", "600019.SH", "600020.SH", "600021.SH", "600022.SH"]
-    global timeInterval, thread_count, dbname, dbhost
+    global g_IsWriteToOneChart, update_time, thread_count, secodelist
+    global dbname, dbhost, windObj, g_testUpdate, g_testInsert
 
+    secodelist = []
     dbname = "MarketData_RealTime"
     dbhost = "localhost"
     thread_count = 12
-    timeInterval = 2.0
+    update_time = 3.0
+    g_IsWriteToOneChart = True
+
+    g_testUpdate = 0;
+    g_testInsert = 0;
+
+    windObj = Wind()
+    # set_secodelist()
 
     database_obj = MarketRealTimeDatabase(db=dbname, host=dbhost)
     database_obj.clearDatabase()
-    database_obj.completeDatabaseTable(secodelist)
+    # database_obj.completeDatabaseTable(secodelist)
 
-    timer = threading.Timer(timeInterval, getSnapData, [windObj, secodelist])
-    timer.start();
+    # secodelist = ["000001.SZ", "000002.SZ", "600000.SH", "600006.SH", "600007.SH", "600008.SH", \
+    #               "600009.SH", "600010.SH", "600011.SH" , "600012.SH", "600015.SH", "600016.SH", \
+    #               "600017.SH", "600018.SH", "600019.SH", "600020.SH", "600021.SH", "600022.SH"]
+
+    secodelist = ["000001.SZ"]                  
+    getSnapData(secodelist)
+
+    # timer = threading.Timer(timeInterval, getSnapData, [windObj,])
+    # timer.start();
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as exp:
-        exception_info = '\n' + str(traceback.format_exc()) + '\n'
-        info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "  \n" \
-                 + "__main__ Failed" + "\n" \
-                 + "[E] Exception : " + exception_info
-        print info_str
+    main()

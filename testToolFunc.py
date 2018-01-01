@@ -6,6 +6,7 @@ import math
 
 from CONFIG import *
 from toolFunc import *
+from excel import EXCEL
 
 
 g_logFileName = 'log.txt'
@@ -28,5 +29,38 @@ def testGetIntegerDateNow():
     print math.ceil(integerDate)
     print int(integerDate)
 
+def test_get_filename_array():
+    dirname =  "D:/strategy"
+    print get_filename_array(dirname)
+
+def scan_excelfile():
+    global secodelist, dirname
+    filename_array = get_filename_array(dirname)
+    
+    for filename in filename_array:
+        complete_filename = dirname + '/' + filename
+        excelobj = EXCEL(complete_filename)
+        tmp_secodelist = excelobj.get_data_byindex()
+        for code in tmp_secodelist:
+            transcode = trans_code_to_windstyle(code)
+            if transcode not in secodelist:
+                secodelist.append(transcode)
+    
+    print secodelist
+    timer = threading.Timer(timeInterval, scan_excelfile, )
+    timer.start();
+
+def get_secodelist():
+    global secodelist, dirname, timeInterval
+    timeInterval = 2
+    dirname =  "D:/strategy"
+    secodelist = get_indexcode(style="wind")
+
+    timer = threading.Timer(timeInterval, scan_excelfile, )
+    timer.start();
+    
+
 if __name__ == '__main__':
-    testGetIntegerDateNow()
+    # testGetIntegerDateNow()
+    # test_get_filename_array()
+    get_secodelist()
