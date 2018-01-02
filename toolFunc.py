@@ -106,10 +106,10 @@ def trans_code_to_windstyle(oricode):
     wind_code = str(oricode)
     while len(wind_code) < 6:
         wind_code = '0' + wind_code
-    if wind_code.startswith('0'):
-        wind_code += '.SZ'
-    else:
+    if wind_code.startswith('6'):
         wind_code += '.SH'
+    else:
+        wind_code += '.SZ'
     return wind_code
 
 def get_indexcode(style="ori"):

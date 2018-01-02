@@ -76,7 +76,7 @@ def writeDataToDatabase(result_array, source, mainthread_database_obj):
         tmp_successcount = getSusCount()
 
         info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-                + "Source: " + source +" Write " + str(len(result_array)) +" Items to Database, CurSuccessCount:  " + str(tmp_successcount) + " \n" 
+                + "Source: " + source +" Write " + str(len(result_array)) +" Items to " + database_obj.db +", CurSuccessCount:  " + str(tmp_successcount) + " \n" 
 
         recordInfoWithLock(info_str)        
     except Exception as e:
@@ -190,8 +190,8 @@ def download_data():
     MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
 
 def download_Marketdata():
-    # time_frequency = ["day", "week", "month",  "1m", "5m", "10m", "30m", "60m", "120m"]
-    time_frequency = ["60m"]
+    time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
+    # time_frequency = ["10m"]
     host = "192.168.211.165"
     # host = "localhost"
     ori_startdate = 20131001
@@ -199,11 +199,11 @@ def download_Marketdata():
     for timeType in time_frequency:         
         data_type = "MarketData" + "_" + timeType
         ori_enddate = getDateNow(data_type)   
-        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)    
+        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)  
+        g_susCount = 0
 
 if __name__ == "__main__":
     try:
-        # download_data()
         download_Marketdata()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
@@ -217,4 +217,4 @@ if __name__ == "__main__":
             time.sleep(connFailedWaitTime)
             info_str = "[RS] MultiThreadWriteData  Restart : \n"
             recordInfoWithLock(info_str)
-            download_data()
+            download_Marketdata()

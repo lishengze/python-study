@@ -9,6 +9,7 @@ from toolFunc import *
 from wind import Wind
 from WindPy import *
 from market_realtime_database import MarketRealTimeDatabase
+from market_preclose_database import MarketPreCloseDatabase
 
 g_logFileName = 'log.txt'
 g_logFile = open(g_logFileName, 'w')
@@ -137,6 +138,33 @@ def test_checkdata():
         table_name = "000001.SZ"
         database_obj.update_data(update_data, table_name)
 
+def test_get_preclose_data():
+    windObj = Wind()
+    secode_list = ["000001.SZ", "000002.SZ"]
+    result = windObj.get_preclose_data(secode_list)
+
+    dbname = "MarketData_RealTime"
+    dbhost = "localhost"
+    table_name = "PreCloseData"
+
+    databaseobj = MarketPreCloseDatabase(host=dbhost, db=dbname)
+    databaseobj.completeDatabaseTable([table_name])
+
+    colname = "股票"
+    update_numb = 0
+    insert_numb = 0
+    for secode in secode_list:
+        if databaseobj.check_data(colname, secode, table_name):            
+            if len(result[secode]) == 2: 
+                update_numb += 1
+                databaseobj.update_data(result[secode], table_name)
+        else:
+            if len(result[secode]) == 2: 
+                insert_numb += 1            
+                databaseobj.insert_data(result[secode], table_name)
+
+    print "update_numb: ", update_numb       
+    print "insert_numb: ", insert_numb  
 
 if __name__ == "__main__":
     # test_connect()
@@ -145,6 +173,7 @@ if __name__ == "__main__":
     # test_get_stockdata()
     # test_get_industry_data()
     # exec_str()
-    test_get_snapshoot_data()
+    # test_get_snapshoot_data()
     # test_checkdata()
+    test_get_preclose_data()
 

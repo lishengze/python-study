@@ -54,18 +54,18 @@ class Wind(object):
         return result
 
     def get_snapshoot_data(self, secodelist):
-        print "get_snapshoot_data: ", secodelist
+        # print "get_snapshoot_data: ", secodelist
         result = {}
         for secode in secodelist:
             result[secode] = []
         # print result
 
-        indicators = "rt_date,rt_time,rt_last,rt_pre_close,rt_amt"
+        indicators = "rt_date,rt_time,rt_latest,rt_pre_close,rt_amt"
         tmp = self.wind.wsq(secodelist, indicators)
-        print tmp
+        # print tmp
 
         tmp_data = tmp.Data
-        print tmp_data
+        # print tmp_data
 
         for i in range(len(tmp_data)):
             for j in range(len(secodelist)):
@@ -75,5 +75,33 @@ class Wind(object):
         for secode in secodelist:
             result[secode].append(secode)
 
-        print result
+        # print result
         return result
+
+    def get_preclose_data(self, secodelist):
+        # print "get_snapshoot_data: ", secodelist
+        result = {}
+        for secode in secodelist:
+            result[secode] = []
+        # print result
+
+        indicators = "pre_close"
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        options = "Days=Alldays"
+        tmp = self.wind.wsd(secodelist, indicators, date, date, options)
+
+        # print tmp
+
+        tmp_data = tmp.Data
+        # print tmp_data
+
+        for i in range(len(tmp_data)):
+            for j in range(len(secodelist)):
+                # print tmp_data[i][j]
+                result[secodelist[j]].append(tmp_data[i][j])
+
+        for secode in secodelist:
+            result[secode].append(secode)
+
+        # print result
+        return result        
