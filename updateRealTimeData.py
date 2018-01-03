@@ -115,8 +115,15 @@ def setPreCloseData(secodelist):
 
 def scan_excelfile():
     global secodelist, dirname, update_time
-    filename_array = get_filename_array(dirname)
-    
+
+    # wsqTime = datetime.datetime.now().strftime("%H%M%S")
+    # trading_endtime = 150020
+    # if int(wsqTime) > trading_endtime:
+    #     return
+
+    filename_array = get_filename_array(dirname)    
+    newFileIn = False
+
     for filename in filename_array:
         complete_filename = dirname + '/' + filename
         excelobj = EXCEL(complete_filename)
@@ -124,19 +131,23 @@ def scan_excelfile():
         for code in tmp_secodelist:
             transcode = trans_code_to_windstyle(code)
             if transcode not in secodelist:
+                newFileIn = True
                 secodelist.append(transcode)
                     
     print "secodenumb: ", len(secodelist)
 
     setSnapData(secodelist)
-    setPreCloseData(secodelist)
+
+    if newFileIn == True:
+        setPreCloseData(secodelist)
 
     timer = threading.Timer(update_time, scan_excelfile, )
     timer.start()
 
 def set_secodelist():
     global secodelist, dirname, update_time
-    dirname =  "D:/strategy"
+    # dirname =  "D:/strategy"
+    dirname = u"//192.168.211.182/1分钟数据 20160910-20170910/strategy"
     secodelist = get_indexcode(style="wind")
 
     timer = threading.Timer(update_time, scan_excelfile, )
@@ -148,9 +159,10 @@ def main():
 
     secodelist = []
     dbname = "MarketData_RealTime"
-    dbhost = "localhost"
+    # dbhost = "localhost"
+    dbhost = "192.168.211.165"
     thread_count = 12
-    update_time = 3.0
+    update_time = 2.0
     g_IsWriteToOneChart = False
 
     g_testUpdate = 0;

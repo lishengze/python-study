@@ -72,8 +72,10 @@ class Wind(object):
                 # print tmp_data[i][j]
                 result[secodelist[j]].append(tmp_data[i][j])
 
+        wsqTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         for secode in secodelist:
             result[secode].append(secode)
+            result[secode].append(wsqTime)
 
         # print result
         return result
