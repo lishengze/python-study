@@ -12,7 +12,7 @@ class MarketRealTimeDatabase(Database):
 
     def get_create_str(self, table_name):
         value_str = "(股票 varchar(15), 日期 int not null, 时间 int not null Primary Key(股票, 日期, 时间), \
-                      最新成交价 decimal(15,4), 前收 decimal(15,4), 成交额 decimal(25,4), 请求时间 int)"
+                      最新成交价 decimal(15,4), 前收 decimal(15,4), 成交额 decimal(25,4), 请求时间 varchar(25))"
 
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         create_str = "create table " + complete_tablename + value_str
@@ -31,7 +31,7 @@ class MarketRealTimeDatabase(Database):
 
         set_str = "  set 日期 = " +  str(date) + ", 时间 = " + str(time) \
                 + ", 最新成交价 = " + str(last) + ", 前收 = " + str(pre_close) \
-                + ", 成交额 = " + str(amt) + ", 请求时间 = " + str(wsqtime) \
+                + ", 成交额 = " + str(amt) + ", 请求时间 = \'" + str(wsqtime) + "\'"\
                 + " where 股票 = \'" + secode + "\'"
                
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
@@ -49,7 +49,7 @@ class MarketRealTimeDatabase(Database):
         wsqtime = oridata[6]
 
         val_str = "\'" + str(secode) + "\', " + str(date) + ", " + str(time) + ", "+ str(last) + "," \
-                + str(pre_close) + ", " + str(amt) + ", " + str(wsqtime)
+                + str(pre_close) + ", " + str(amt) + ", \'" + str(wsqtime) + "\' "
                
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"

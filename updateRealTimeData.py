@@ -141,13 +141,13 @@ def scan_excelfile():
     if newFileIn == True:
         setPreCloseData(secodelist)
 
-    timer = threading.Timer(update_time, scan_excelfile, )
-    timer.start()
+    # timer = threading.Timer(update_time, scan_excelfile, )
+    # timer.start()
 
 def set_secodelist():
     global secodelist, dirname, update_time
-    # dirname =  "D:/strategy"
-    dirname = u"//192.168.211.182/1分钟数据 20160910-20170910/strategy"
+    dirname =  "D:/strategy"
+    # dirname = u"//192.168.211.182/1分钟数据 20160910-20170910/strategy"
     secodelist = get_indexcode(style="wind")
 
     timer = threading.Timer(update_time, scan_excelfile, )
@@ -159,8 +159,8 @@ def main():
 
     secodelist = []
     dbname = "MarketData_RealTime"
-    # dbhost = "localhost"
-    dbhost = "192.168.211.165"
+    dbhost = "localhost"
+    # dbhost = "192.168.211.165"
     thread_count = 12
     update_time = 2.0
     g_IsWriteToOneChart = False
