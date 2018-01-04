@@ -60,7 +60,12 @@ def get_secodelist():
     timer.start();
     
 
+def testTradingTime():
+    isTradingRest()
+    isTradingOver()
+
 if __name__ == '__main__':
     # testGetIntegerDateNow()
     # test_get_filename_array()
-    get_secodelist()
+    # get_secodelist()
+    testTradingTime()

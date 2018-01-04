@@ -6,6 +6,7 @@ import traceback
 import threading
 import pyodbc
 import datetime
+import math
 
 from CONFIG import *
 
@@ -128,3 +129,42 @@ def get_indexcode(style="ori"):
 def get_filename_array(dirname):
     file_name = os.listdir(dirname)
     return file_name
+
+def isTradingRest():
+     wsq_time = int(datetime.datetime.now().strftime("%H%M%S"))     
+     am_starttime = 93000
+     am_endtime = 113020
+     pm_starttime = 130000
+     pm_endtime = 150020
+     if wsq_time > am_endtime and wsq_time < pm_starttime:
+         print wsq_time
+         print 'Rest'
+         return True
+     else:
+         return False
+
+def isTradingOver():
+     wsq_time = int(datetime.datetime.now().strftime("%H%M%S"))     
+     am_starttime = 93000
+     am_endtime = 113020
+     pm_starttime = 130000
+     pm_endtime = 150020
+     if wsq_time > pm_endtime:
+         print wsq_time
+         print "Over"
+         return True
+     else:
+         return False
+
+def isTradingStart():
+     wsq_time = int(datetime.datetime.now().strftime("%H%M%S"))
+    #  print wsq_time
+     am_starttime = 93000
+     am_endtime = 113020
+     pm_starttime = 130000
+     pm_endtime = 150020
+     if wsq_time > am_starttime:
+         return True
+     else:
+         print "Too early"
+         return False    

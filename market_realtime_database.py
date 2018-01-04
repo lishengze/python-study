@@ -11,8 +11,8 @@ class MarketRealTimeDatabase(Database):
         Database.__del__(self)
 
     def get_create_str(self, table_name):
-        value_str = "(股票 varchar(15), 日期 int not null, 时间 int not null Primary Key(股票, 日期, 时间), \
-                      最新成交价 decimal(15,4), 前收 decimal(15,4), 成交额 decimal(25,4), 请求时间 varchar(25))"
+        value_str = "(股票 varchar(15) not null, 日期 int not null, 时间 int not null, \
+                      最新成交价 decimal(15,4), 前收 decimal(15,4), 成交额 decimal(25,4), 请求时间 varchar(35) not null,  Primary Key(股票, 请求时间))"
 
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         create_str = "create table " + complete_tablename + value_str
@@ -39,7 +39,7 @@ class MarketRealTimeDatabase(Database):
         return update_str
 
     def get_insert_str(self, oridata, table_name):
-        col_str = "(股票, 日期, 时间, 最新成交价, 前收, 成交额, 请求时间)"
+        col_str = " (股票, 日期, 时间, 最新成交价, 前收, 成交额, 请求时间)"
         date = int(oridata[0])
         time = int(oridata[1])
         last = oridata[2]

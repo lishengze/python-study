@@ -75,7 +75,7 @@ class Wind(object):
         wsqTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         for secode in secodelist:
             result[secode].append(secode)
-            result[secode].append(wsqTime)
+            result[secode].append(str(wsqTime))
 
         # print result
         return result
