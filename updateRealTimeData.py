@@ -92,6 +92,7 @@ def setSnapData(secodelist):
 def setPreCloseData(secodelist):
     global windObj, dbhost, dbname
     result = windObj.get_preclose_data(secodelist)    
+    
     table_name = "PreCloseData"
 
     databaseobj = MarketPreCloseDatabase(host=dbhost, db=dbname)
@@ -119,10 +120,9 @@ def scan_excelfile():
     if isTradingOver():
         return
 
-    if not isTradingRest():
+    try:
         filename_array = get_filename_array(dirname)    
         newFileIn = False
-
         for filename in filename_array:
             complete_filename = dirname + '/' + filename
             excelobj = EXCEL(complete_filename)
@@ -131,20 +131,43 @@ def scan_excelfile():
                 transcode = trans_code_to_windstyle(code)
                 if transcode not in secodelist:
                     newFileIn = True
-                    secodelist.append(transcode)
-                        
-        print "secodenumb: ", len(secodelist)
-
-        if isTradingStart():
-            setSnapData(secodelist)
-
+                    secodelist.append(transcode)                        
+        print "secodenumb: ", len(secodelist)    
+        
         if newFileIn == True:
             setPreCloseData(secodelist)
 
-    # scan_excelfile()
+        if isTradingStart() and not isTradingRest():
+            setSnapData(secodelist)
 
-    timer = threading.Timer(update_time, scan_excelfile, )
-    timer.start()
+    except Exception as e:
+        exception_info = "\n" + str(traceback.format_exc()) + '\n'
+        info_str = "__Main__ Failed" \
+                + "[E] Exception : \n" + exception_info
+        print info_str
+
+        get_snapshoot_data_error = "Get SnapShoot Data Failed"  
+        get_preclose_data_error = "Get PreCLose Data Failed"
+        excel_error = "Permission denied"
+
+        isWindError = False
+        isExcelError = False
+        if get_snapshoot_data_error in exception_info:
+            isWindError = True
+        
+        if get_preclose_data_error in exception_info:
+            isWindError = True
+            newFileIn = False
+
+        if excel_error in exception_info:
+            isExcelError = True
+
+        if not isWindError or not isExcelError:
+            raise(e)
+    finally:
+        timer = threading.Timer(update_time, scan_excelfile, )
+        timer.start()
+
 
 def set_secodelist():
     global secodelist, dirname, update_time
@@ -174,7 +197,9 @@ def main():
     set_secodelist()
 
     database_obj = MarketRealTimeDatabase(db=dbname, host=dbhost)
-    database_obj.clearDatabase()
+
+    if not isTradingStart():
+        database_obj.clearDatabase()
 
     # database_obj.completeDatabaseTable(secodelist)
 

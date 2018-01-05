@@ -64,46 +64,55 @@ class Wind(object):
         tmp = self.wind.wsq(secodelist, indicators)
         # print tmp
 
-        tmp_data = tmp.Data
-        # print tmp_data
+        if tmp.ErrorCode == 0:
+            tmp_data = tmp.Data
+            # print tmp_data
+            for i in range(len(tmp_data)):
+                for j in range(len(secodelist)):
+                    # print tmp_data[i][j]
+                    result[secodelist[j]].append(tmp_data[i][j])
 
-        for i in range(len(tmp_data)):
-            for j in range(len(secodelist)):
-                # print tmp_data[i][j]
-                result[secodelist[j]].append(tmp_data[i][j])
+            wsqTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            for secode in secodelist:
+                result[secode].append(secode)
+                result[secode].append(str(wsqTime))
+            # print result
+            return result
+        else:
+            # print tmp.ErrorCode
+            raise(Exception("Get SnapShoot Data Failed , ErroCode is: " + str(tmp.ErrorCode)))
 
-        wsqTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        for secode in secodelist:
-            result[secode].append(secode)
-            result[secode].append(str(wsqTime))
-
-        # print result
-        return result
 
     def get_preclose_data(self, secodelist):
         # print "get_snapshoot_data: ", secodelist
         result = {}
         for secode in secodelist:
             result[secode] = []
-        # print result
+        print "len(result): ", len(result)
 
         indicators = "pre_close"
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         options = "Days=Alldays"
         tmp = self.wind.wsd(secodelist, indicators, date, date, options)
+        print tmp
 
-        # print tmp
+        if tmp.ErrorCode == 0:
+            tmp_data = tmp.Data
+            # print tmp_data
+            # print "len(tmp_data): ", len(tmp_data)
+            # print "len(tmp_data[0]): ", len(tmp_data[0])
 
-        tmp_data = tmp.Data
-        # print tmp_data
+            for i in range(len(tmp_data)):
+                for j in range(len(secodelist)):
+                    # print tmp_data[i][j]
+                    result[secodelist[j]].append(tmp_data[i][j])
 
-        for i in range(len(tmp_data)):
-            for j in range(len(secodelist)):
-                # print tmp_data[i][j]
-                result[secodelist[j]].append(tmp_data[i][j])
+            for secode in secodelist:
+                result[secode].append(secode)
 
-        for secode in secodelist:
-            result[secode].append(secode)
+            # print result
+            return result        
+        else:
+            # print tmp.ErrorCode
+            raise(Exception("Get PreCLose Data Failed , ErroCode is: " + str(tmp.ErrorCode)))
 
-        # print result
-        return result        

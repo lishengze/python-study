@@ -137,8 +137,7 @@ def isTradingRest():
      pm_starttime = 130000
      pm_endtime = 150020
      if wsq_time > am_endtime and wsq_time < pm_starttime:
-         print wsq_time
-         print 'Rest'
+         print wsq_time, 'is rest time.\n'
          return True
      else:
          return False
@@ -150,8 +149,7 @@ def isTradingOver():
      pm_starttime = 130000
      pm_endtime = 150020
      if wsq_time > pm_endtime:
-         print wsq_time
-         print "Over"
+         print wsq_time, " is over time.\n"
          return True
      else:
          return False
@@ -166,5 +164,5 @@ def isTradingStart():
      if wsq_time > am_starttime:
          return True
      else:
-         print "Too early"
+         print wsq_time, " is too early.\n"
          return False    

@@ -178,11 +178,11 @@ def download_data():
     # data_type = "MarketDataTest"
     # data_type = "WeightDataTest"
     # data_type = "IndustryDataTest"
-    data_type = "IndustryData"
-    # data_type = "WeightData"
+    # data_type = "IndustryData"
+    data_type = "WeightData"
     # data_type = "MarketData"
-    host = "localhost"
-    # host = "192.168.211.165"
+    # host = "localhost"
+    host = "192.168.211.165"
     # time_frequency = "day" 
     # data_type = "MarketData" + "_" + time_frequency   
     ori_startdate = 20171101
@@ -205,7 +205,8 @@ def download_Marketdata():
 
 if __name__ == "__main__":
     try:
-        download_Marketdata()
+        # download_Marketdata()
+        download_data()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \
