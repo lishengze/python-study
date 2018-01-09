@@ -197,6 +197,7 @@ def main():
     set_secodelist()
 
     database_obj = MarketRealTimeDatabase(db=dbname, host=dbhost)
+    # database_obj.clearDatabase()
 
     if not isTradingStart():
         database_obj.clearDatabase()

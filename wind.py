@@ -98,9 +98,6 @@ class Wind(object):
 
         if tmp.ErrorCode == 0:
             tmp_data = tmp.Data
-            # print tmp_data
-            # print "len(tmp_data): ", len(tmp_data)
-            # print "len(tmp_data[0]): ", len(tmp_data[0])
 
             for i in range(len(tmp_data)):
                 for j in range(len(secodelist)):
@@ -116,3 +113,20 @@ class Wind(object):
             # print tmp.ErrorCode
             raise(Exception("Get PreCLose Data Failed , ErroCode is: " + str(tmp.ErrorCode)))
 
+    def get_restore_historydata(self, startdate, enddate, secode):
+        tmp = self.wind.wsd("600000.SH", "close", startdate, enddate, "PriceAdj=F")
+        if tmp.ErrorCode == 0:
+            result = []
+            # print tmp
+
+            for i in range(len(tmp.Times)):
+                result.append([])
+
+            for i in range(len(tmp.Times)):
+                result[i].append(tmp.Times[i])
+                result[i].append(tmp.Data[0][i])
+
+            return result    
+        else:
+            # print tmp.ErrorCode
+            raise(Exception("get_restore_historydata Failed , ErroCode is: " + str(tmp.ErrorCode)))

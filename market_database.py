@@ -10,7 +10,7 @@ class MarketDatabase(Database):
     def __del__(self):
         Database.__del__(self)
 
-    def get_create_str(self, table_name):
+    def get_create_str_old(self, table_name):
         value_str = "(TDATE int not null, TIME int not null Primary Key(TDATE, TIME), SECODE varchar(10), \
                     TOPEN decimal(15,4), TCLOSE decimal(15,4), HIGH decimal(15,4), LOW decimal(15,4), \
                     VATRUNOVER decimal(28,4), VOTRUNOVER decimal(28,4), PCTCHG decimal(10,4))"
@@ -19,7 +19,7 @@ class MarketDatabase(Database):
         create_str = "create table " + complete_tablename + value_str
         return create_str
 
-    def get_insert_str(self, oridata, table_name):
+    def get_insert_str_old(self, oridata, table_name):
         col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
         TDATE = getSimpleDate(oridata[0])
         TIME = getSimpleTime(oridata[0])
@@ -39,7 +39,45 @@ class MarketDatabase(Database):
 
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
-        return insert_str        
+        return insert_str     
+
+    def get_create_str(self, table_name):
+        value_str = "(TDATE int not null, TIME int not null Primary Key(TDATE, TIME), SECODE varchar(10), \
+                    TOPEN decimal(15,4), TCLOSE decimal(15,4), HIGH decimal(15,4), LOW decimal(15,4), \
+                    VATRUNOVER decimal(28,4), VOTRUNOVER decimal(28,4), PCTCHG decimal(10,4), YCLOSE decimal(15, 4))"
+
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        create_str = "create table " + complete_tablename + value_str
+        return create_str
+
+    def get_insert_str(self, oridata, table_name):
+        col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG, YCLOSE) "
+        TDATE = getSimpleDate(oridata[0])
+        TIME = getSimpleTime(oridata[0])
+        SECODE = oridata[1]
+        TOPEN = oridata[2]
+        TCLOSE = oridata[3]
+        HIGH = oridata[4]
+        LOW = oridata[5]
+        VOTRUNOVER = oridata[6]
+        VATRUNOVER = oridata[7]
+        TYClOSE = oridata[8]
+        PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+
+        val_str = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
+                + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
+                + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG) + ", " + str(TYClOSE)
+
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
+        return insert_str       
+
+    def get_histdata_bytime(self, startdate, enddate, table_name):
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        sql_str = "select * from " + complete_tablename \
+                + " where TDATE <= " + enddate + " and TDATE >= " + startdate
+        data = self.get_database_data(sql_str)
+        return data
 
     def getTableDataStartEndTime(self, table_name):
         starttime = None
@@ -91,7 +129,6 @@ class MarketDatabase(Database):
                 timeArray.append([oriStartTime, tableDataStartTime])
                 timeArray.append([tableDataEndTime, oriEndTime])
         return timeArray
-
 
     def addPrimaryKey(self):
         databaseTableInfo = self.getDatabaseTableInfo()

@@ -108,7 +108,7 @@ def startWriteThread(netdata_array, source_array, database_obj):
 
 def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HOST):
     starttime = datetime.datetime.now()
-    info_str = "+++++++++ Start Time: " + str(starttime) + " +++++++++++\n"
+    info_str = "+++++++++ "+ data_type +" Start Time: " + str(starttime) + " +++++++++++\n"
     LogInfo(g_logFile, info_str)
 
     database_name = data_type
@@ -170,8 +170,8 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     else:
         aveTime = costTime / len(tablename_array)
 
-    info_str = "++++++++++ End Time: " + str(endtime) \
-            + " SumCostTime: " + str(costTime) + " AveCostTime: " + str(aveTime) + "s ++++++++\n"
+    info_str = "++++++++++"+ data_type +" End Time: " + str(endtime) \
+            + " SumCostTime: " + str(costTime) + "s, AveCostTime: " + str(aveTime) + "s ++++++++\n"
     LogInfo(g_logFile, info_str)      
 
 def download_data():
@@ -190,12 +190,12 @@ def download_data():
     MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
 
 def download_Marketdata():
-    time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
-    time_frequency = ["5m", "10m", "30m", "60m", "120m", "week", "month"]
-    # time_frequency = ["10m"]
-    host = "192.168.211.165"
-    # host = "localhost"
-    ori_startdate = 20131001
+    # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
+    # time_frequency = ["5m", "10m", "30m", "60m", "120m", "week", "month"]
+    time_frequency = ["day"]
+    # host = "192.168.211.165"
+    host = "localhost"
+    ori_startdate = 20151008
 
     for timeType in time_frequency:         
         data_type = "MarketData" + "_" + timeType
@@ -204,9 +204,13 @@ def download_Marketdata():
         g_susCount = 0
 
 if __name__ == "__main__":
+    starttime = datetime.datetime.now()
+    info_str = "********** Main Start Time: " + str(starttime) + " **********\n"
+    LogInfo(g_logFile, info_str)
+
     try:
-        # download_Marketdata()
-        download_data()
+        download_Marketdata()
+        # download_data()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \
@@ -220,3 +224,8 @@ if __name__ == "__main__":
             info_str = "[RS] MultiThreadWriteData  Restart : \n"
             recordInfoWithLock(info_str)
             download_Marketdata()
+
+    endtime = datetime.datetime.now()
+    costTime = (endtime - starttime).seconds
+    info_str = "++++++++++ Main End Time: " + str(endtime) + " SumCostTime: " + str(costTime/60) + " m **********\n"
+    LogInfo(g_logFile, info_str)      

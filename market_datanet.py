@@ -46,6 +46,16 @@ class MarketTinySoft(TinySoft):
         timeTypeStr = "Cy_" + self.timeType + "()"
         return timeTypeStr 
 
+    def get_preclose_tslstr(self, secode, date):
+        tsl_str = "SetSysParam(PN_Stock(), \'"+ secode + " \'); \
+                   EndT:=inttodate("+ str(date) + "); \
+                   return StockPrevClose4(EndT);"
+
+    def get_preclose_data(self, secode, startdate, enddate):
+        tsl_str = self.get_preclose_tslstr(secode, enddate)
+        self.curs.execute(tsl_str)
+        result = self.curs.fetchall()        
+
     def get_netdata_tslstr(self, secode, start_date, end_date):
         end_time = end_date - int(end_date)
         start_time = start_date - int(start_date)
