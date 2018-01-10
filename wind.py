@@ -123,8 +123,8 @@ class Wind(object):
                 result.append([])
 
             for i in range(len(tmp.Times)):
-                result[i].append(tmp.Times[i])
-                result[i].append(tmp.Data[0][i])
+                result[i].append(str(tmp.Times[i]).replace('-', ''))
+                result[i].append(float("%.2f " % tmp.Data[0][i]))
 
             return result    
         else:

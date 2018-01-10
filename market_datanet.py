@@ -24,15 +24,31 @@ class MarketTinySoft(TinySoft):
         stockidArray = self.get_allA_secode()
         indexidArray = self.get_Index_secode()
         sourceArray = []
-        for secode in stockidArray:
-            sourceArray.append(secode)
         for indexCode in indexidArray:
             sourceArray.append(indexCode)
+
+        for secode in stockidArray:
+            sourceArray.append(secode)
+
         source = {
             'secode': sourceArray,
             'time': time_array
         }
         return source
+
+    def get_index_source_info(self, params=[]):
+        time_array = params
+        stockidArray = self.get_allA_secode()
+        indexidArray = self.get_Index_secode()
+        sourceArray = []
+        for indexCode in indexidArray:
+            sourceArray.append(indexCode)
+
+        source = {
+            'secode': sourceArray,
+            'time': time_array
+        }
+        return source        
 
     def get_tablename(self, params=[]):
         return self.get_sourceinfo()['secode']

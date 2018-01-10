@@ -106,6 +106,26 @@ def startWriteThread(netdata_array, source_array, database_obj):
     
     print ("threading.active_count(): %d\n") % (threading.active_count())
 
+def get_tradetime_byindex(netconn_obj, database_obj, source_conditions):
+    starttime = source_conditions[0]
+    endtime = source_conditions[1]
+    tablename_array = netconn_obj.get_Index_secode()
+    source = netconn_obj.get_index_source_info(source_conditions)
+    tradetime_array = []
+
+    for table_name in tablename_array:
+        cur_source = netconn_obj.get_cursource(table_name, source)
+        trans_conditions = database_obj.get_transed_conditions(table_name, source_conditions)
+        print "table_name: ", table_name,",  trans_conditions: ", trans_conditions
+        for cur_condition in trans_conditions:
+            print "cur_condition: ", cur_condition , ", datanumb: ", len(ori_netdata)
+            ori_netdata = netconn_obj.get_netdata(cur_condition)            
+            for item in ori_netdata:
+                datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
+                if datetime not in tradetime_array:
+                    tradetime_array.append(datetime)
+    return tradetime_array
+
 def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HOST):
     starttime = datetime.datetime.now()
     info_str = "+++++++++ "+ data_type +" Start Time: " + str(starttime) + " +++++++++++\n"
@@ -131,6 +151,10 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     tmp_netdata_array = []
     tmp_tablename_array = []
 
+    tradetime_array = []
+    # if "MarketData" in data_type:
+    #     tradetime_array = get_tradetime_byindex(netconn_obj, database_obj, source_conditions)
+
     for i in range(len(tablename_array)):        
         cur_tablename = tablename_array[i]
         cur_source = netconn_obj.get_cursource(cur_tablename, source)
@@ -146,6 +170,9 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
                 info_str = "[B] Source: " + str(cur_condition) + ", dataNumb: " + str(len(ori_netdata)) \
                         + ' , condition_count: ' + str(condition_count) + ", sourceCount: "+ str(i+1) + "\n"
                 LogInfo(g_logFile, info_str)
+
+                # complete_data = add_suspdata(tradetime_array, ori_netdata)
+                # tmp_netdata_array.append(complete_data)
 
                 tmp_netdata_array.append(ori_netdata)
                 tmp_tablename_array.append(cur_tablename)
@@ -203,14 +230,31 @@ def download_Marketdata():
         MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)  
         g_susCount = 0
 
+def test_get_tradetime_byindex():
+    # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
+    # time_frequency = ["5m", "10m", "30m", "60m", "120m", "week", "month"]
+    time_frequency = ["day"]
+    # host = "192.168.211.165"
+    host = "localhost"
+    ori_startdate = 20151008
+
+    for timeType in time_frequency:         
+        data_type = "MarketData" + "_" + timeType
+        database_obj = get_database_obj(data_type, host=host)
+        netconn_obj = get_netconn_obj(data_type)
+        ori_enddate = getDateNow(data_type)   
+        get_tradetime_byindex(netconn_obj, database_obj, [ori_startdate, ori_enddate])  
+
+
 if __name__ == "__main__":
     starttime = datetime.datetime.now()
     info_str = "********** Main Start Time: " + str(starttime) + " **********\n"
     LogInfo(g_logFile, info_str)
 
     try:
-        download_Marketdata()
+        download_Marketdata()        
         # download_data()
+        # test_get_tradetime_byindex()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \
