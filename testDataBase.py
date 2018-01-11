@@ -1,20 +1,54 @@
 # -*- coding: UTF-8 -*-
-import threading
-from multiprocessing import cpu_count
+import time
+
+import os, sys
+import traceback
+import pyodbc
+
 import datetime
-import pymssql
+import threading
 
 from CONFIG import *
 from toolFunc import *
 
+from wind import Wind
+
 from database import Database
-from tinysoft import TinySoft
+
+from weight_database import WeightDatabase
+from weight_datanet import WeightTinySoft
 
 from market_database import MarketDatabase
+from market_datanet import MarketTinySoft
 
-g_logFileName = 'log.txt'
-g_logFile = open(g_logFileName, 'w')
+from industry_database import IndustryDatabase
+from industry_datanet import IndustryNetConnect
+
 g_writeLogLock = threading.Lock()
+g_logFileName = os.getcwd() + '\log.txt'
+g_logFile = open(g_logFileName, 'w')
+g_susCount = 0
+g_susCountLock = threading.Lock()
+
+def get_database_obj(database_name, host='localhost'):
+    if "WeightData" in database_name:
+        return WeightDatabase(host=host, db=database_name)
+
+    if "MarketData" in database_name:
+        return MarketDatabase(host=host, db=database_name)
+
+    if "IndustryData" in database_name:
+        return IndustryDatabase(host=host, db=database_name)
+
+def get_netconn_obj(database_type):
+    if "WeightData" in database_type:
+        return WeightTinySoft(database_type)
+
+    if "MarketData" in database_type:
+        return MarketTinySoft(database_type) 
+
+    if "IndustryData" in database_type:
+        return IndustryNetConnect(database_type)     
 
 def test_insert_data():
         starttime = datetime.datetime.now()
@@ -252,15 +286,29 @@ def testMarketDatabase():
     print table_starttime, table_endtime
     print marketdatabase_obj.getStartEndTime(ori_starttime, ori_endtime, table_starttime, table_endtime)
 
+def testGetLatestData():
+    timeType = "1m"
+    # host = "localhost"
+    host = "192.168.211.165"
+    data_type = "MarketData" + "_" + timeType
+    database_obj = get_database_obj(data_type, host=host)
+    secode = "SH000016"
+    secode = "SH600000"
+    latest_data = database_obj.getLatestData(secode)
+    # print_data("latest_data: ", latest_data)
+    latest_data_array = database_obj.getAllLatestData([secode])
+    print  latest_data_array
+
 if __name__ == "__main__":
     try:
         # changeDatabase()
         # testInsertSamePrimaryValue()
-        testConnectRemoteDatabaseServer()
+        # testConnectRemoteDatabaseServer()
         # testRefreshDatabase()
         # test_insert_data()
         # cleanMarketDatabase()
         # testMarketDatabase()
+        testGetLatestData()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         log_str = "__Main__ Failed \n" \

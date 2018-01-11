@@ -64,8 +64,13 @@ def testTradingTime():
     isTradingRest()
     isTradingOver()
 
+def test_transto_tinytime():
+    datetime = [20171226, 110000]
+    print transto_tinytime(datetime)
+
 if __name__ == '__main__':
     # testGetIntegerDateNow()
     # test_get_filename_array()
     # get_secodelist()
-    testTradingTime()
+    # testTradingTime()
+    test_transto_tinytime()

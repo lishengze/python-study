@@ -130,6 +130,28 @@ class MarketDatabase(Database):
                 timeArray.append([tableDataEndTime, oriEndTime])
         return timeArray
 
+    def getLatestData(self, table_name):
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        sql_str = "select * from" + complete_tablename + \
+                  "where TDATE = (select max(TDATE) from " + complete_tablename + ")"
+        data = self.get_database_data(sql_str)
+
+        if len(data) > 1:
+            max_time = int(data[0][1])
+            result = data[0]
+            for item in data:
+                if int(item[1]) > max_time:
+                    result = item
+            return result
+        else:
+            return data
+
+    def getAllLatestData(self, tablename_array):
+        result = {}
+        for table_name in tablename_array:
+            result[table_name] = self.getLatestData(table_name)
+        return result
+
     def addPrimaryKey(self):
         databaseTableInfo = self.getDatabaseTableInfo()
         for table in databaseTableInfo:

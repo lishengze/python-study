@@ -10,18 +10,18 @@ import threading
 
 from CONFIG import *
 from toolFunc import *
-# from databaseFunc import *
-# from netdataFunc import *
 
 from wind import Wind
 
 from database import Database
-from weight_database import WeightDatabase
-from market_database import MarketDatabase
-from industry_database import IndustryDatabase
 
+from weight_database import WeightDatabase
 from weight_datanet import WeightTinySoft
+
+from market_database import MarketDatabase
 from market_datanet import MarketTinySoft
+
+from industry_database import IndustryDatabase
 from industry_datanet import IndustryNetConnect
 
 g_writeLogLock = threading.Lock()
@@ -111,19 +111,56 @@ def get_tradetime_byindex(netconn_obj, database_obj, source_conditions):
     endtime = source_conditions[1]
     tablename_array = netconn_obj.get_Index_secode()
     source = netconn_obj.get_index_source_info(source_conditions)
+
     tradetime_array = []
+    tradetime_count = 10
+    for i in range(tradetime_count):
+        tradetime_array.append([])
+
+    # database_obj.clearDatabase()
+    database_obj.completeDatabaseTable(tablename_array)
 
     for table_name in tablename_array:
         cur_source = netconn_obj.get_cursource(table_name, source)
-        trans_conditions = database_obj.get_transed_conditions(table_name, source_conditions)
-        print "table_name: ", table_name,",  trans_conditions: ", trans_conditions
+        trans_conditions = database_obj.get_transed_conditions(table_name, cur_source)
+        print "trans_conditions.size: ", len(trans_conditions)
+        # print "table_name: ", table_name,",  trans_conditions: ", trans_conditions
+        for i in range(len(trans_conditions)):
+            cur_condition = trans_conditions[i]
+            ori_netdata = netconn_obj.get_netdata(cur_condition)       
+            # print "cur_condition: ", cur_condition , ", datanumb: ", len(ori_netdata)                 
+            for item in ori_netdata:
+                datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
+                if datetime not in tradetime_array[i]:
+                    tradetime_array[i].append(datetime)
+
+    print_data("tradetime_array: ", tradetime_array)
+    return tradetime_array
+
+def get_tradetime_byindex_old(netconn_obj, database_obj, source_conditions):
+    starttime = source_conditions[0]
+    endtime = source_conditions[1]
+    tablename_array = netconn_obj.get_Index_secode()
+    source = netconn_obj.get_index_source_info(source_conditions)
+    tradetime_array = []
+
+    # database_obj.clearDatabase()
+    database_obj.completeDatabaseTable(tablename_array)
+
+    for table_name in tablename_array:
+        cur_source = netconn_obj.get_cursource(table_name, source)
+        trans_conditions = database_obj.get_transed_conditions(table_name, cur_source)
+        print "trans_conditions.size: ", len(trans_conditions)
+        # print "table_name: ", table_name,",  trans_conditions: ", trans_conditions
         for cur_condition in trans_conditions:
-            print "cur_condition: ", cur_condition , ", datanumb: ", len(ori_netdata)
-            ori_netdata = netconn_obj.get_netdata(cur_condition)            
+            ori_netdata = netconn_obj.get_netdata(cur_condition)       
+            # print "cur_condition: ", cur_condition , ", datanumb: ", len(ori_netdata)                 
             for item in ori_netdata:
                 datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
                 if datetime not in tradetime_array:
                     tradetime_array.append(datetime)
+
+    # print_data("tradetime_array: ", tradetime_array)
     return tradetime_array
 
 def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HOST):
@@ -136,14 +173,18 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     database_obj = get_database_obj(database_name, host=database_host)
     netconn_obj = get_netconn_obj(data_type)
 
+    # database_obj.clearDatabase()
+
     source = netconn_obj.get_sourceinfo(source_conditions)
     tablename_array = netconn_obj.get_tablename(source_conditions)
 
     source = database_obj.filter_source(source)
     tablename_array = database_obj.filter_tableArray(tablename_array)
     
-    thread_count = 12
+    database_obj.completeDatabaseTable(tablename_array)
+    latest_data = database_obj.getAllLatestData(tablename_array)
 
+    thread_count = 12
     info_str = "Table Numb : " + str(len(tablename_array)) + '\n'
     LogInfo(g_logFile, info_str)
 
@@ -151,9 +192,11 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     tmp_netdata_array = []
     tmp_tablename_array = []
 
+    sus_secode = []
+
     tradetime_array = []
-    # if "MarketData" in data_type:
-    #     tradetime_array = get_tradetime_byindex(netconn_obj, database_obj, source_conditions)
+    if "MarketData" in data_type:
+        tradetime_array = get_tradetime_byindex(netconn_obj, database_obj, source_conditions)
 
     for i in range(len(tablename_array)):        
         cur_tablename = tablename_array[i]
@@ -171,10 +214,14 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
                         + ' , condition_count: ' + str(condition_count) + ", sourceCount: "+ str(i+1) + "\n"
                 LogInfo(g_logFile, info_str)
 
-                # complete_data = add_suspdata(tradetime_array, ori_netdata)
-                # tmp_netdata_array.append(complete_data)
+                old_oridata_numb = len(ori_netdata)
+                if "MarketData" in data_type:
+                    complete_data = add_suspdata(tradetime_array[j], ori_netdata)
+                    if len(complete_data) != old_oridata_numb:
+                        sus_secode.append([cur_tablename, len(complete_data) - old_oridata_numb])
+                    tmp_netdata_array.append(complete_data)
 
-                tmp_netdata_array.append(ori_netdata)
+                # tmp_netdata_array.append(ori_netdata)
                 tmp_tablename_array.append(cur_tablename)
 
                 if (condition_count % thread_count == 0) or (i == len(tablename_array)-1 and j == len(database_transed_conditions) -1):
@@ -197,6 +244,7 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     else:
         aveTime = costTime / len(tablename_array)
 
+    print_data("sus_secode: ", sus_secode)
     info_str = "++++++++++"+ data_type +" End Time: " + str(endtime) \
             + " SumCostTime: " + str(costTime) + "s, AveCostTime: " + str(aveTime) + "s ++++++++\n"
     LogInfo(g_logFile, info_str)      
@@ -222,11 +270,12 @@ def download_Marketdata():
     time_frequency = ["day"]
     # host = "192.168.211.165"
     host = "localhost"
-    ori_startdate = 20151008
+    ori_startdate = 20141108
+    ori_enddate = 20171108
 
     for timeType in time_frequency:         
         data_type = "MarketData" + "_" + timeType
-        ori_enddate = getDateNow(data_type)   
+        # ori_enddate = getDateNow(data_type)   
         MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)  
         g_susCount = 0
 
@@ -236,15 +285,55 @@ def test_get_tradetime_byindex():
     time_frequency = ["day"]
     # host = "192.168.211.165"
     host = "localhost"
-    ori_startdate = 20151008
+    ori_startdate = 20140508
+    ori_enddate = 20151208
 
     for timeType in time_frequency:         
         data_type = "MarketData" + "_" + timeType
         database_obj = get_database_obj(data_type, host=host)
         netconn_obj = get_netconn_obj(data_type)
-        ori_enddate = getDateNow(data_type)   
+        # ori_enddate = getDateNow(data_type)   
         get_tradetime_byindex(netconn_obj, database_obj, [ori_startdate, ori_enddate])  
 
+def test_complete_susdata():
+    timeType = "day"
+    host = "localhost"
+    ori_startdate = 20141108
+    ori_enddate = 20151108
+    data_type = "MarketData" + "_" + timeType
+    database_obj = get_database_obj(data_type, host=host)
+    netconn_obj = get_netconn_obj(data_type)
+    # ori_enddate = getDateNow(data_type)   
+
+    database_obj.clearDatabase()
+
+    source_conditions = [ori_startdate, ori_enddate]
+    tradetime_array = get_tradetime_byindex(netconn_obj, database_obj, source_conditions)  
+    # print_data("tradetime_array: ", tradetime_array)
+    print "tradetime_array.size: ", len(tradetime_array)
+
+    secode = "SZ002578"
+    database_obj.completeDatabaseTable([secode])
+    cur_condition = [secode, ori_startdate, ori_enddate]
+    ori_netdata = netconn_obj.get_netdata(cur_condition) 
+    # print_data("ori_netdata: ", ori_netdata)
+    print "ori_netdata.size: ", len(ori_netdata)
+
+    ori_time_array = get_time_array(ori_netdata)
+    missing_time_array = get_missing_time_array(tradetime_array, ori_time_array)
+    # print_data("ori_time_array: ",  ori_time_array)
+    print_data("missing_time_array: ", missing_time_array)
+    # print "missing_time_array.size: ", len(missing_time_array)
+    
+    complete_data = add_suspdata(tradetime_array, ori_netdata)
+    complete_time_array = get_time_array(complete_data)
+    # print_data("complete_data: ", complete_data)
+    # print "complete_data.size: ", len(complete_data)
+    # print_data("complete_time_array: ", complete_time_array)
+
+    com_missing_time_array = get_missing_time_array(tradetime_array, complete_time_array)
+    print_data("com_missing_time_array.size: ", com_missing_time_array)
+    # print "com_missing_time_array.size: ", len(com_missing_time_array)
 
 if __name__ == "__main__":
     starttime = datetime.datetime.now()
@@ -255,6 +344,7 @@ if __name__ == "__main__":
         download_Marketdata()        
         # download_data()
         # test_get_tradetime_byindex()
+        # test_complete_susdata()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" \

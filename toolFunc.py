@@ -35,14 +35,20 @@ def getSimpleTime(oriTimeStr):
     else:
         timeStr = "150000"
     return timeStr   
+
 def getYearMonthDay(oriDate):
-    try:
-        year = oriDate / 10000
-        month = (oriDate - year * 10000) / 100
-        day = oriDate - year * 10000 - month * 100
-        return (year, month, day)
-    except Exception as e:  
-        raise(e)   
+    oriDate = int(oriDate)
+    year = oriDate / 10000
+    month = (oriDate - year * 10000) / 100
+    day = oriDate - year * 10000 - month * 100
+    return (year, month, day)
+
+def getHourMinuSec(oriTime):
+    time = int(oriTime)
+    hour = time / 10000
+    minute = (time - hour * 10000) / 100
+    second = time - hour * 10000 - minute * 100
+    return (hour, minute, second)
 
 def addOneDay(oriDate):
     year, month, day = getYearMonthDay(oriDate)
@@ -175,7 +181,7 @@ def print_data(msg, data):
 def is_time_equal(timea, timeb):
     if timea[0] == timeb[0] and timea[1] == timeb[1]:
         return True
-    else 
+    else:
         return False
 
 def is_time_late(timea, timeb):
@@ -195,49 +201,145 @@ def is_time_early(timea, timeb):
         return False
 
 def transto_tinytime(datetime):
-    date = datetime[0]
-    time = datetime[1]
-    date_str = date[]
-    return date_str
+    date = str(datetime[0])
+    time = str(datetime[1])
+    # year, month, day = getYearMonthDay(date)
+    # hour, minute, second = getHourMinuSec(time)
+    date_str = date[0:4] + '-' + date[4:6] + '-' + date[6:8]
+    time_str = time[0:2] + ':' + time[2:4] + ':' + time[4:6]
+    datetime_str = date_str + ' ' + time_str
+    return datetime_str
 
-def add_suspdata(tradetime_array, ori_netdata):
+def get_market_susdata(added_datetime, secode, close_price):
+    appenddata = []
+    appenddata.append(added_datetime)
+    appenddata.append(secode)
+    appenddata.append(close_price)
+    appenddata.append(close_price)
+    appenddata.append(close_price)
+    appenddata.append(close_price)
+    appenddata.append(0)
+    appenddata.append(0)
+    appenddata.append(close_price)
+
+def add_suspdata_old(tradetime_array, ori_netdata):
     complete_data = []
     tradetime_index = 0
     for i in range(len(tradetime_array)):
         item = tradetime_array[i]
-        if int(item[0]) == int(getSimpleDate(ori_netdata[0])) \
-            and  int(item[1]) == int(getSimpleTime(ori_netdata[0])):
-                tradetime_index = i
-                break
+        if is_time_equal(item, [int(getSimpleDate(ori_netdata[0][0])), int(getSimpleTime(ori_netdata[0][0]))]):
+            tradetime_index = i
+            break                
     
+    # print "tradetime_index: ", tradetime_index
     oridata_index = 0
+    add_count = 0
     while tradetime_index < len(tradetime_array) and oridata_index < len(ori_netdata):
-        cur_oridatetime = [int(getSimpleDate(ori_netdata[oridata_index][0])), int(getSimpleDate(ori_netdata[oridata_index][0]))]
+        cur_oridatetime = [int(getSimpleDate(ori_netdata[oridata_index][0])), int(getSimpleTime(ori_netdata[oridata_index][0]))]
         cur_tradetime = tradetime_array[tradetime_index]
 
         if is_time_late(cur_tradetime, cur_oridatetime):
-            datatime = transto_tinytime(cur_tradetime)
+            # print tradetime_index, cur_tradetime, oridata_index, cur_oridatetime
+            added_datetime = transto_tinytime(cur_tradetime)
+            # print "added_datetime: " , added_datetime
             secode = ori_netdata[oridata_index][1]
-            close_price = ori_netdata[oridata_index][3]
-            appenddata = []
-            appenddata.append(datatime)
-            appenddata.append(secode)
-            appenddata.append(close_price)
-            appenddata.append(close_price)
-            appenddata.append(close_price)
-            appenddata.append(close_price)
-            appenddata.append(0)
-            appenddata.append(0)
-            appenddata.append(1)
-            ori_netdata.insert(oridata_index-1, appenddata)
+            close_price = ori_netdata[oridata_index-1][3]
+            appenddata = get_market_susdata(added_datetime, secode, close_price)
+            ori_netdata.insert(oridata_index, appenddata)
+            add_count += 1
 
         oridata_index = oridata_index + 1
         tradetime_index = tradetime_index + 1
-            
 
+    while tradetime_index < len(tradetime_array):
+        cur_tradetime = tradetime_array[tradetime_index]
+        added_datetime = transto_tinytime(cur_tradetime)
+        secode = ori_netdata[oridata_index-1][1]
+        close_price = ori_netdata[oridata_index-1][3]
+        appenddata = get_market_susdata(added_datetime, secode, close_price)
+        ori_netdata.insert(oridata_index, appenddata)
+
+        tradetime_index += 1
+        oridata_index += 1
+        add_count += 1
+
+    # print "add_count: ", add_count    
+    complete_data = ori_netdata
     return complete_data
 
-# def get_time_array(ori_netdata):
-#     time_array = []
-#     for item in ori_netdata:
-#         time_array.append([item[0], ])
+def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_data=[]):
+    complete_data = []
+    tradetime_index = 0
+    if isfirstInterval:
+        for i in range(len(tradetime_array)):
+            item = tradetime_array[i]
+            if is_time_equal(item, [int(getSimpleDate(ori_netdata[0][0])), int(getSimpleTime(ori_netdata[0][0]))]):
+                tradetime_index = i
+                break                
+    
+    # print "tradetime_index: ", tradetime_index
+    oridata_index = 0
+    add_count = 0
+    while tradetime_index < len(tradetime_array) and oridata_index < len(ori_netdata):
+        cur_oridatetime = [int(getSimpleDate(ori_netdata[oridata_index][0])), int(getSimpleTime(ori_netdata[oridata_index][0]))]
+        cur_tradetime = tradetime_array[tradetime_index]
+
+        if is_time_late(cur_tradetime, cur_oridatetime):
+            # print tradetime_index, cur_tradetime, oridata_index, cur_oridatetime
+            added_datetime = transto_tinytime(cur_tradetime)
+            # print "added_datetime: " , added_datetime
+            if oridata_index == 0:
+                secode = latest_data[1]
+                close_price = latest_data[3]
+            else:
+                secode = ori_netdata[oridata_index][1]
+                close_price = ori_netdata[oridata_index-1][3]
+
+            appenddata = get_market_susdata(added_datetime, secode, close_price)
+            ori_netdata.insert(oridata_index, appenddata)
+            add_count += 1
+
+        oridata_index = oridata_index + 1
+        tradetime_index = tradetime_index + 1
+
+    while tradetime_index < len(tradetime_array):
+        cur_tradetime = tradetime_array[tradetime_index]
+        added_datetime = transto_tinytime(cur_tradetime)
+        if oridata_index == 0:
+            secode = latest_data[1]
+            close_price = latest_data[3]
+        else:
+            secode = ori_netdata[oridata_index][1]
+            close_price = ori_netdata[oridata_index-1][3]
+        appenddata = get_market_susdata(added_datetime, secode, close_price)
+        ori_netdata.insert(oridata_index, appenddata)
+
+        tradetime_index += 1
+        oridata_index += 1
+        add_count += 1
+
+    # print "add_count: ", add_count    
+    complete_data = ori_netdata
+    return complete_data
+
+def get_time_array(ori_netdata):
+    time_array = []
+    for item in ori_netdata:
+        time_array.append([int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))])
+    return time_array
+
+def get_missing_time_array(complete_time_array, ori_time_array):
+    missing_time_array = []
+
+    complete_time_index = 0
+    while complete_time_index < len(complete_time_array) and \
+          is_time_equal(complete_time_array[complete_time_index], ori_time_array[0]) :
+          complete_time_index += 1
+
+    while complete_time_index < len(complete_time_array):
+        item = complete_time_array[complete_time_index]
+        if item not in ori_time_array:
+            missing_time_array.append(item)
+        complete_time_index += 1
+
+    return missing_time_array
