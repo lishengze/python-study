@@ -287,17 +287,17 @@ def testMarketDatabase():
     print marketdatabase_obj.getStartEndTime(ori_starttime, ori_endtime, table_starttime, table_endtime)
 
 def testGetLatestData():
-    timeType = "1m"
-    # host = "localhost"
-    host = "192.168.211.165"
+    timeType = "day"
+    host = "localhost"
+    # host = "192.168.211.165"
     data_type = "MarketData" + "_" + timeType
     database_obj = get_database_obj(data_type, host=host)
-    secode = "SH000016"
+    # secode = "SH000016"
     secode = "SH600000"
     latest_data = database_obj.getLatestData(secode)
     # print_data("latest_data: ", latest_data)
     latest_data_array = database_obj.getAllLatestData([secode])
-    print  latest_data_array
+    print  latest_data_array[secode]
 
 if __name__ == "__main__":
     try:
@@ -315,6 +315,5 @@ if __name__ == "__main__":
                 + "[E] Exception :  \n" + exceptionInfo  
         LogInfo(g_logFile, log_str)
 
-    
     
     

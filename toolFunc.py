@@ -221,6 +221,7 @@ def get_market_susdata(added_datetime, secode, close_price):
     appenddata.append(0)
     appenddata.append(0)
     appenddata.append(close_price)
+    return appenddata
 
 def add_suspdata_old(tradetime_array, ori_netdata):
     complete_data = []
@@ -267,7 +268,7 @@ def add_suspdata_old(tradetime_array, ori_netdata):
     complete_data = ori_netdata
     return complete_data
 
-def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_data=[]):
+def add_suspdata_oldb(tradetime_array, ori_netdata, isfirstInterval=False, latest_data=[]):
     complete_data = []
     tradetime_index = 0
     if isfirstInterval:
@@ -322,6 +323,69 @@ def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_dat
     complete_data = ori_netdata
     return complete_data
 
+def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_data=[]):
+    complete_data = []
+    tradetime_index = 0
+    if isfirstInterval:
+        if len(ori_netdata) == 0:
+            return ori_netdata
+        else:
+            for i in range(len(tradetime_array)):
+                item = tradetime_array[i]
+                if is_time_equal(item, [int(getSimpleDate(ori_netdata[0][0])), int(getSimpleTime(ori_netdata[0][0]))]):
+                    tradetime_index = i
+                    break  
+
+    oridata_index = 0
+    add_count = 0
+    print "tradetime_index: ", tradetime_index, ", isfirstInterval: ", isfirstInterval
+
+    while tradetime_index < len(tradetime_array) and oridata_index < len(ori_netdata):
+        cur_oridatetime = [int(getSimpleDate(ori_netdata[oridata_index][0])), int(getSimpleTime(ori_netdata[oridata_index][0]))]
+        cur_tradetime = tradetime_array[tradetime_index]
+
+        if is_time_late(cur_tradetime, cur_oridatetime):
+            # print tradetime_index, cur_tradetime, oridata_index, cur_oridatetime
+            added_datetime = transto_tinytime(cur_tradetime)
+            # print "oridata_index: ", oridata_index, ori_netdata[oridata_index-1]
+            if oridata_index == 0:
+                secode = latest_data[2]
+                close_price = latest_data[3]
+            else:
+                secode = ori_netdata[oridata_index][1]
+                close_price = ori_netdata[oridata_index-1][3]
+            
+            appenddata = get_market_susdata(added_datetime, secode, close_price)
+            # print "appenddata, ", appenddata
+            ori_netdata.insert(oridata_index, appenddata)
+            add_count += 1
+
+        oridata_index = oridata_index + 1
+        tradetime_index = tradetime_index + 1
+
+    while tradetime_index < len(tradetime_array):
+        cur_tradetime = tradetime_array[tradetime_index]
+        added_datetime = transto_tinytime(cur_tradetime)
+        secode = ""
+        close_price = 0
+        if oridata_index == 0:
+            secode = latest_data[2]
+            close_price = latest_data[3]
+        else:
+            secode = ori_netdata[oridata_index-1][1]
+            close_price = ori_netdata[oridata_index-1][3]
+        appenddata = get_market_susdata(added_datetime, secode, close_price)
+        # print "appenddata, ", appenddata
+        ori_netdata.insert(oridata_index, appenddata)
+
+        tradetime_index += 1
+        oridata_index += 1
+        add_count += 1
+
+    print "add_count: ", add_count    
+    complete_data = ori_netdata
+    return complete_data
+    
 def get_time_array(ori_netdata):
     time_array = []
     for item in ori_netdata:
@@ -343,3 +407,87 @@ def get_missing_time_array(complete_time_array, ori_time_array):
         complete_time_index += 1
 
     return missing_time_array
+
+def get_tradetime_byindex_interval(netconn_obj, database_obj, source_conditions):
+    starttime = source_conditions[0]
+    endtime = source_conditions[1]
+    tablename_array = netconn_obj.get_Index_secode()
+    source = netconn_obj.get_index_source_info(source_conditions)
+
+    tradetime_array = []
+    tradetime_count = 10
+    for i in range(tradetime_count):
+        tradetime_array.append([])
+
+    # database_obj.clearDatabase()
+    database_obj.completeDatabaseTable(tablename_array)
+
+    for table_name in tablename_array:
+        cur_source = netconn_obj.get_cursource(table_name, source)
+        trans_conditions = database_obj.get_transed_conditions(table_name, cur_source)
+        print "trans_conditions.size: ", len(trans_conditions)
+        # print "table_name: ", table_name,",  trans_conditions: ", trans_conditions
+        for i in range(len(trans_conditions)):
+            cur_condition = trans_conditions[i]
+            ori_netdata = netconn_obj.get_netdata(cur_condition)       
+            # print "cur_condition: ", cur_condition , ", datanumb: ", len(ori_netdata)                 
+            for item in ori_netdata:
+                datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
+                if datetime not in tradetime_array[i]:
+                    tradetime_array[i].append(datetime)
+
+    print_data("tradetime_array: ", tradetime_array)
+    return tradetime_array
+
+def get_tradetime_byindex(netconn_obj, database_obj, source_conditions):
+    starttime = source_conditions[0]
+    endtime = source_conditions[1]
+    tablename_array = netconn_obj.get_Index_secode()
+    source = netconn_obj.get_index_source_info(source_conditions)
+    tradetime_array = []
+
+    # database_obj.clearDatabase()
+    database_obj.completeDatabaseTable(tablename_array)
+
+    for table_name in tablename_array:
+        cur_source = netconn_obj.get_cursource(table_name, source)
+        trans_conditions = database_obj.get_transed_conditions(table_name, cur_source)
+        print "trans_conditions.size: ", len(trans_conditions)
+        # print "table_name: ", table_name,",  trans_conditions: ", trans_conditions
+        for cur_condition in trans_conditions:
+            ori_netdata = netconn_obj.get_netdata(cur_condition)       
+            # print "cur_condition: ", cur_condition , ", datanumb: ", len(ori_netdata)                 
+            for item in ori_netdata:
+                datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
+                if datetime not in tradetime_array:
+                    tradetime_array.append(datetime)
+
+    # print_data("tradetime_array: ", tradetime_array)
+    return tradetime_array
+
+def get_index_tradetime(netconn_obj, starttime, endtime):
+    tablename_array = get_indexcode(style="tinysoft")
+    tradetime_array = []
+
+    for table_name in tablename_array:
+        condition = [table_name, starttime, endtime]
+        ori_netdata = netconn_obj.get_netdata(condition)
+        for item in ori_netdata:
+            datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
+            if datetime not in tradetime_array:
+                tradetime_array.append(datetime)     
+
+    return tradetime_array   
+
+def get_sub_index_tradetime(complete_tradetime, startdate, enddate):
+    start_index = 0
+    end_index = len(complete_tradetime) -1
+    while start_index < len(complete_tradetime) \
+        and int(complete_tradetime[start_index][0]) < int(startdate):
+        start_index += 1
+
+    while end_index > -1 and int(complete_tradetime[end_index][0] > int (enddate)):
+        end_index -= 1
+    # print start_index, end_index
+    return complete_tradetime[start_index:end_index+1]
+    

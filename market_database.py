@@ -20,27 +20,34 @@ class MarketDatabase(Database):
         return create_str
 
     def get_insert_str_old(self, oridata, table_name):
-        col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
-        TDATE = getSimpleDate(oridata[0])
-        TIME = getSimpleTime(oridata[0])
-        SECODE = oridata[1]
-        TOPEN = oridata[2]
-        TCLOSE = oridata[3]
-        HIGH = oridata[4]
-        LOW = oridata[5]
-        VOTRUNOVER = oridata[6]
-        VATRUNOVER = oridata[7]
-        TYClOSE = oridata[8]
-        PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+        try:
+            col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG) "
+            TDATE = getSimpleDate(oridata[0])
+            TIME = getSimpleTime(oridata[0])
+            SECODE = oridata[1]
+            TOPEN = oridata[2]
+            TCLOSE = oridata[3]
+            HIGH = oridata[4]
+            LOW = oridata[5]
+            VOTRUNOVER = oridata[6]
+            VATRUNOVER = oridata[7]
+            TYClOSE = oridata[8]
+            PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
 
-        val_str = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
-                + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
-                + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG)
+            val_str = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
+                    + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
+                    + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG)
 
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-        insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
-        return insert_str     
-
+            complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+            insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
+            return insert_str  
+        except Exception as e:
+            error = "cannot concatenate"
+            exception_info = "\n" + str(traceback.format_exc()) + '\n'
+            if error in exception_info:
+                print "oridata: ", oridata
+            raise(Exception(exception_info))
+           
     def get_create_str(self, table_name):
         value_str = "(TDATE int not null, TIME int not null Primary Key(TDATE, TIME), SECODE varchar(10), \
                     TOPEN decimal(15,4), TCLOSE decimal(15,4), HIGH decimal(15,4), LOW decimal(15,4), \
@@ -51,26 +58,33 @@ class MarketDatabase(Database):
         return create_str
 
     def get_insert_str(self, oridata, table_name):
-        col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG, YCLOSE) "
-        TDATE = getSimpleDate(oridata[0])
-        TIME = getSimpleTime(oridata[0])
-        SECODE = oridata[1]
-        TOPEN = oridata[2]
-        TCLOSE = oridata[3]
-        HIGH = oridata[4]
-        LOW = oridata[5]
-        VOTRUNOVER = oridata[6]
-        VATRUNOVER = oridata[7]
-        TYClOSE = oridata[8]
-        PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+        try:
+            col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG, YCLOSE) "
+            TDATE = getSimpleDate(oridata[0])
+            TIME = getSimpleTime(oridata[0])
+            SECODE = oridata[1]
+            TOPEN = oridata[2]
+            TCLOSE = oridata[3]
+            HIGH = oridata[4]
+            LOW = oridata[5]
+            VOTRUNOVER = oridata[6]
+            VATRUNOVER = oridata[7]
+            TYClOSE = oridata[8]
+            PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
 
-        val_str = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
-                + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
-                + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG) + ", " + str(TYClOSE)
+            val_str = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
+                    + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
+                    + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG) + ", " + str(TYClOSE)
 
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-        insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
-        return insert_str       
+            complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+            insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
+            return insert_str      
+        except Exception as e:
+            error = "cannot concatenate"
+            exception_info = "\n" + str(traceback.format_exc()) + '\n'
+            if error in exception_info:
+                print "oridata: ", oridata
+            raise(Exception(exception_info)) 
 
     def get_histdata_bytime(self, startdate, enddate, table_name):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
@@ -136,7 +150,7 @@ class MarketDatabase(Database):
                   "where TDATE = (select max(TDATE) from " + complete_tablename + ")"
         data = self.get_database_data(sql_str)
 
-        if len(data) > 1:
+        if len(data) > 0:
             max_time = int(data[0][1])
             result = data[0]
             for item in data:

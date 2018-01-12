@@ -38,7 +38,6 @@ class Database:
         result = self.cur.execute(sql)  
         self.conn.commit()  
 
-
     def dropTableByName(self, table_name):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         sql_str = "drop table " + complete_tablename 
@@ -89,7 +88,6 @@ class Database:
                 print e
                 raise(e)
         
-
     def getDatabaseTableInfo(self):
         queryString = "select name from "+ self.db +"..sysobjects where xtype= 'U'"
         result = self.get_database_data(queryString)
