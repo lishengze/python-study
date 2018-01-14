@@ -4,10 +4,14 @@ import traceback
 import datetime
 import threading
 import math
+import random
 
 from CONFIG import *
 from toolFunc import *
 from tinysoft import TinySoft
+
+from market_database import MarketDatabase
+
 
 class MarketTinySoft(TinySoft):
     def __init__(self, datatype):
@@ -24,11 +28,25 @@ class MarketTinySoft(TinySoft):
         stockidArray = self.get_allA_secode()
         indexidArray = self.get_Index_secode()
         sourceArray = []
-        for indexCode in indexidArray:
-            sourceArray.append(indexCode)
 
-        for secode in stockidArray:
-            sourceArray.append(secode)
+        bTest = True
+        if bTest:
+            # print "self.datatype: ", self.datatype
+            database_obj = MarketDatabase(host="localhost", db=self.datatype)
+            table_name = database_obj.getDatabaseTableInfo()
+            # print "table_name: ", table_name
+
+            if len(table_name) == 0:                    
+                test_numb = 50
+                sourceArray = random.sample(stockidArray, test_numb)
+            else:
+                sourceArray = table_name               
+        else:
+            for indexCode in indexidArray:
+                sourceArray.append(indexCode)
+
+            for secode in stockidArray:
+                sourceArray.append(secode)            
 
         source = {
             'secode': sourceArray,

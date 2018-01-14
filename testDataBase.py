@@ -299,6 +299,41 @@ def testGetLatestData():
     latest_data_array = database_obj.getAllLatestData([secode])
     print  latest_data_array[secode]
 
+def testTimeData():
+    timeType = "1m"
+    host = "localhost"
+    # host = "192.168.211.165"
+    data_type = "MarketData" + "_" + timeType
+    database_obj = get_database_obj(data_type, host=host)
+    netconn_obj = get_netconn_obj(data_type)
+
+    ori_startdate = 20141108
+    ori_enddate = 20160608
+
+    trade_time_array = get_index_tradetime(netconn_obj,ori_startdate, ori_enddate)
+    print "trade_time_array numb: ", len(trade_time_array)
+
+    tablename_array = database_obj.getDatabaseTableInfo()
+    testData = {}
+    for tablename in tablename_array:
+        curdata = []
+        dataNumb = database_obj.get_datacount(tablename)
+        date = database_obj.getStartEndDate(tablename)
+        curdata.append(dataNumb)
+        curdata.append(date)
+        if len(date) !=0 and date[0] != None and date[1] != None:
+            # print date[0], date[1]
+            index_data= get_sub_index_tradetime(trade_time_array, date[0], date[1])
+            curdata.append("indexDatanumb: ")
+            curdata.append(len(index_data))          
+            if dataNumb != len(index_data):
+                curdata.append("FALSE")
+            else:
+                curdata.append("TRUE")
+        testData[tablename] = curdata
+
+    print_dict_data("testData: ", testData)
+
 if __name__ == "__main__":
     try:
         # changeDatabase()
@@ -308,7 +343,8 @@ if __name__ == "__main__":
         # test_insert_data()
         # cleanMarketDatabase()
         # testMarketDatabase()
-        testGetLatestData()
+        # testGetLatestData()
+        testTimeData()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         log_str = "__Main__ Failed \n" \

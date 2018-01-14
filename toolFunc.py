@@ -10,6 +10,14 @@ import math
 
 from CONFIG import *
 
+import time
+
+
+import datetime
+import threading
+
+from CONFIG import *
+
 def LogInfo(wfile, info):
     try:
         wfile.write(info)    
@@ -127,6 +135,7 @@ def get_indexcode(style="ori"):
     elif style == "tinysoft":
         indexCodeArray = ["SH000300", "SH000016", "SH000852", \
                           "SH000904", "SH000905", "SH000906", "SZ399903"]
+        # indexCodeArray = ["SH000300"]                          
     else:
         indexCodeArray = ["000300", "000016", "000852", \
                           "000904", "000905", "000906", "399903"]
@@ -177,6 +186,11 @@ def print_data(msg, data):
     print "\n", msg, len(data)
     for item in data:
         print item
+
+def print_dict_data(msg, data):
+    print "\n", msg, len(data)
+    for item in data:
+        print item,": ", data[item]
 
 def is_time_equal(timea, timeb):
     if timea[0] == timeb[0] and timea[1] == timeb[1]:
@@ -456,22 +470,25 @@ def get_tradetime_byindex(netconn_obj, database_obj, source_conditions):
         # print "table_name: ", table_name,",  trans_conditions: ", trans_conditions
         for cur_condition in trans_conditions:
             ori_netdata = netconn_obj.get_netdata(cur_condition)       
-            # print "cur_condition: ", cur_condition , ", datanumb: ", len(ori_netdata)                 
+            print "cur_condition: ", cur_condition , ", datanumb: ", len(ori_netdata)                 
             for item in ori_netdata:
                 datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
                 if datetime not in tradetime_array:
+                    print datetime
                     tradetime_array.append(datetime)
 
-    # print_data("tradetime_array: ", tradetime_array)
+    print_data("tradetime_array: ", tradetime_array)
     return tradetime_array
 
 def get_index_tradetime(netconn_obj, starttime, endtime):
-    tablename_array = get_indexcode(style="tinysoft")
+    # tablename_array = get_indexcode(style="tinysoft")
+    tablename_array = ["SH000300"]
     tradetime_array = []
 
     for table_name in tablename_array:
         condition = [table_name, starttime, endtime]
         ori_netdata = netconn_obj.get_netdata(condition)
+        print table_name, " dataNumb: ", len(ori_netdata)
         for item in ori_netdata:
             datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
             if datetime not in tradetime_array:
@@ -490,4 +507,4 @@ def get_sub_index_tradetime(complete_tradetime, startdate, enddate):
         end_index -= 1
     # print start_index, end_index
     return complete_tradetime[start_index:end_index+1]
-    
+

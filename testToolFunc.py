@@ -68,9 +68,15 @@ def test_transto_tinytime():
     datetime = [20171226, 110000]
     print transto_tinytime(datetime)
 
+def test_getdatabase_tablename():
+    database_name = "MarketData_1m"
+    tablename_array = get_database_tablename(database_name)
+    print "tablename_array: ", tablename_array
+
 if __name__ == '__main__':
     # testGetIntegerDateNow()
     # test_get_filename_array()
     # get_secodelist()
     # testTradingTime()
-    test_transto_tinytime()
+    # test_transto_tinytime()
+    test_getdatabase_tablename()

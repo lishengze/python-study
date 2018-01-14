@@ -124,6 +124,13 @@ class MarketDatabase(Database):
             # print starttime, endtime
         return (starttime, endtime)
 
+    def getStartEndDate(self, table_name):        
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        get_date_sqlstr = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
+        date = self.get_database_data(get_date_sqlstr)
+        return date[0]
+
+
     def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):
         timeArray = []
         if tableDataStartTime is None or tableDataEndTime is None:
@@ -159,6 +166,35 @@ class MarketDatabase(Database):
             return result
         else:
             return data
+
+    def getFirstData(self, table_name):
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        sql_str = "select * from" + complete_tablename + \
+                  "where TDATE = (select min(TDATE) from " + complete_tablename + ")"
+        data = self.get_database_data(sql_str)
+
+        if len(data) > 0:
+            min_time = int(data[0][1])
+            result = data[0]
+            for item in data:
+                if int(item[1]) < min_time:
+                    result = item
+            return result[0:2]
+        else:
+            return data
+
+    def getTimeData(self, table_name):
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        sql_str = "select TDATE, TIME from " + complete_tablename 
+        data = self.get_database_data(sql_str)  
+        return data    
+
+    def getTimeDataCount(self, table_name, startdate, enddate):
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        sql_str = "select count(*) from " + complete_tablename \
+                + " where TDATE <= " + str(enddate) + " and TDATE >= " + str(startdate)
+        data = self.get_database_data(sql_str)
+        return data          
 
     def getAllLatestData(self, tablename_array):
         result = {}

@@ -51,6 +51,7 @@ class TinySoft(object):
 
     def get_Index_secode(self):
         indexCodeArray = ["SH000300", "SH000016", "SH000852", "SH000904", "SH000905", "SH000906", "SZ399903"]
+        # indexCodeArray = ["SH000300"]
         return indexCodeArray
 
     def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):

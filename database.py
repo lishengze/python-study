@@ -87,7 +87,13 @@ class Database:
             if "Violation of PRIMARY KEY constraint" not in e[1]:
                 print e
                 raise(e)
-        
+
+    def get_datacount(self, table_name):
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        sql_str = 'select count(*) from ' + complete_tablename
+        result = self.get_database_data(sql_str)
+        return result[0][0]
+
     def getDatabaseTableInfo(self):
         queryString = "select name from "+ self.db +"..sysobjects where xtype= 'U'"
         result = self.get_database_data(queryString)

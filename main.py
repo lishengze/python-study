@@ -140,8 +140,12 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
 
     sus_secode = []
 
+    print 0
+
     if "MarketData" in data_type:
         com_tradetime_array = get_index_tradetime(netconn_obj, source_conditions[0], source_conditions[1])
+
+    print 1
 
     for i in range(len(tablename_array)):        
         cur_tablename = tablename_array[i]
@@ -225,8 +229,8 @@ def download_Marketdata():
     time_frequency = ["1m"]
     # host = "192.168.211.165"
     host = "localhost"
-    ori_startdate = 20151108
-    ori_enddate = 20161108
+    ori_startdate = 20141108
+    ori_enddate = 20160608
 
     for timeType in time_frequency:         
         data_type = "MarketData" + "_" + timeType
@@ -313,8 +317,11 @@ if __name__ == "__main__":
 
         connFailedError = "Communication link failure---InternalConnect"
         driver_error = "The dirver did not supply an error"
-        connFailedWaitTime = 60 * 5
-        if connFailedError in info_str or driver_error in info_str:
+        tiny_error = "self.curs.execute(tsl_str)"
+        connFailedWaitTime = 10
+        if connFailedError in info_str \
+        or driver_error in info_str \
+        or tiny_error in info_str:
             time.sleep(connFailedWaitTime)
             info_str = "[RS] MultiThreadWriteData  Restart : \n"
             recordInfoWithLock(info_str)

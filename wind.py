@@ -82,7 +82,6 @@ class Wind(object):
             # print tmp.ErrorCode
             raise(Exception("Get SnapShoot Data Failed , ErroCode is: " + str(tmp.ErrorCode)))
 
-
     def get_preclose_data(self, secodelist):
         # print "get_snapshoot_data: ", secodelist
         result = {}
