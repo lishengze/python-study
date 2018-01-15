@@ -93,6 +93,13 @@ class MarketDatabase(Database):
         data = self.get_database_data(sql_str)
         return data
 
+    def get_histdata_bydatetime(self, startdate, table_name):
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        sql_str = "select * from " + complete_tablename \
+                + " where TDATE <= " + enddate
+        data = self.get_database_data(sql_str)
+        return data
+
     def getTableDataStartEndTime(self, table_name):
         starttime = None
         endtime = None
@@ -129,7 +136,6 @@ class MarketDatabase(Database):
         get_date_sqlstr = "SELECT MIN(TDATE), MAX(TDATE) FROM"  + complete_tablename
         date = self.get_database_data(get_date_sqlstr)
         return date[0]
-
 
     def getStartEndTime(self, oriStartTime, oriEndTime, tableDataStartTime, tableDataEndTime):
         timeArray = []

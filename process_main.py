@@ -7,6 +7,7 @@ import pyodbc
 
 import datetime
 import threading
+import multiprocessing 
 
 from CONFIG import *
 from toolFunc import *
@@ -59,11 +60,12 @@ def getSusCount():
     return tmpSusCount
 
 def recordInfoWithLock(info_str):
-    global g_writeLogLock, g_logFile
-    g_writeLogLock.acquire()
     print info_str
-    g_logFile.write(info_str + '\n')
-    g_writeLogLock.release()      
+    # global g_writeLogLock, g_logFile
+    # g_writeLogLock.acquire()
+    # print info_str
+    # g_logFile.write(info_str + '\n')
+    # g_writeLogLock.release()      
 
 def writeDataToDatabase(result_array, source, mainthread_database_obj):
     try:
@@ -73,10 +75,12 @@ def writeDataToDatabase(result_array, source, mainthread_database_obj):
         for item in result_array:
             database_obj.insert_data(item, table_name)
 
-        tmp_successcount = getSusCount()
+        # tmp_successcount = getSusCount()
 
         info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-                + "Source: " + source +" Write " + str(len(result_array)) +" Items to " + database_obj.db +", CurSuccessCount:  " + str(tmp_successcount) + " \n" 
+                + "Source: " + source +" Write " + str(len(result_array)) +" Items to " + database_obj.db \
+                + ", procss id: "+ str(os.getpid())  +"\n"
+                # +", CurSuccessCount:  " + str(tmp_successcount) + " \n" 
 
         recordInfoWithLock(info_str)        
     except Exception as e:
@@ -111,17 +115,33 @@ def startWriteThread(netdata_array, source_array, database_obj):
     
     print ("threading.active_count(): %d\n") % (threading.active_count())
 
+def startWriteProcess(netdata_array, source_array, database_obj):
+    process_list = []
+    for i in range(len(netdata_array)):
+        tmp_process = multiprocessing.Process(target=writeDataToDatabase, args=(netdata_array[i], str(source_array[i]), database_obj,))
+        process_list.append(tmp_process)
+
+    for process in process_list:
+        process.start()
+
+    for process in process_list:
+        process.join()     
+    
+    print ("threading.active_count(): %d\n") % (threading.active_count())
+
+
 def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HOST):
     starttime = datetime.datetime.now()
     info_str = "+++++++++ "+ data_type +" Start Time: " + str(starttime) + " +++++++++++\n"
     LogInfo(g_logFile, info_str)
 
     database_name = data_type
+    
+    struct_type = "process"
+    # struct_type = "thread"
 
     database_obj = get_database_obj(database_name, host=database_host)
     netconn_obj = get_netconn_obj(data_type)
-
-    # database_obj.clearDatabase()
 
     source = netconn_obj.get_sourceinfo(source_conditions)
     tablename_array = netconn_obj.get_tablename(source_conditions)
@@ -132,9 +152,6 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     database_obj.completeDatabaseTable(tablename_array)
     latest_data = database_obj.getAllLatestData(tablename_array)
 
-    # secode = "SH600021"
-    # print "latest_data[SH600021]: ", latest_data[secode][0]
-
     thread_count = 12
     info_str = "Table Numb : " + str(len(tablename_array)) + '\n'
     LogInfo(g_logFile, info_str)
@@ -144,13 +161,10 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     tmp_tablename_array = []
 
     sus_secode = []
-
-    # print 0
+    restore_data = []
 
     if "MarketData" in data_type:
         com_tradetime_array = get_index_tradetime(netconn_obj, source_conditions[0], source_conditions[1])
-
-    # print 1
 
     for i in range(len(tablename_array)):        
         cur_tablename = tablename_array[i]
@@ -181,6 +195,9 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
 
                 old_oridata_numb = len(ori_netdata)
                 if "MarketData" in data_type:
+                    cur_restore_data = get_restore_info(cur_tablename, ori_netdata, latest_data[cur_tablename])
+                    restore_data.append(cur_restore_data)
+
                     complete_data = add_suspdata(tradetime_array, ori_netdata, isfirstInterval, latest_data[cur_tablename])
                     info_str += ", CompleteDataNumb: " + str(len(complete_data))
                     ori_netdata = complete_data
@@ -191,7 +208,11 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
                 tmp_tablename_array.append(cur_tablename)
 
                 if (condition_count % thread_count == 0) or (i == len(tablename_array)-1 and j == len(database_transed_conditions) -1):
-                    startWriteThread(tmp_netdata_array, tmp_tablename_array, database_obj)
+                    if struct_type == "process":
+                        startWriteProcess(tmp_netdata_array, tmp_tablename_array, database_obj)                    
+                    if struct_type == "thread":
+                        startWriteThread(tmp_netdata_array, tmp_tablename_array, database_obj)
+
                     tmp_netdata_array = []
                     tmp_tablename_array = []                 
 
@@ -208,10 +229,45 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     else:
         aveTime = costTime / len(tablename_array)
 
-    print_data("sus_secode: ", sus_secode)
+    # print_data("sus_secode: ", sus_secode)
+    print_data("restore_data: ", restore_data)
     info_str = "++++++++++"+ data_type +" End Time: " + str(endtime) \
             + " SumCostTime: " + str(costTime) + "s, AveCostTime: " + str(aveTime) + "s ++++++++\n"
     LogInfo(g_logFile, info_str)      
+    return restore_data
+
+def update_restore_data(database_obj, restore_data):
+    for item in restore_data:
+        secode = item[0]
+        startdate = item[1]
+        oridata = database_obj.get_histdata_bydatetime(startdate, secode)
+
+def restore_database(database_obj, restore_data, compute_count):    
+    trans_restore_data = []
+    for j in range(compute_count):
+        trans_restore_data.append([])
+
+    i = 0
+    while i < len(restore_data):
+        j = 0
+        while j < compute_count and i + j < len(restore_data):
+            if len(restore_data[i]) != 0:
+                trans_restore_data[j].append(restore_data[i+j])
+            j += 1
+        i += j
+
+    process_list = []
+    for j in range(compute_count):
+        if len(trans_restore_data[j]) != 0:
+            tmp_process = multiprocessing.Process(target=compute_restore_data, args=(database_obj, trans_restore_data[j],))
+            process_list.append(tmp_process)
+
+    for process in process_list:
+        process.start()
+
+    for process in process_list:
+        process.join()    
+
 
 def download_data():
     # data_type = "MarketDataTest"
@@ -231,10 +287,10 @@ def download_data():
 def download_Marketdata():
     # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
     # time_frequency = ["5m", "10m", "30m", "60m", "120m", "week", "month"]
-    time_frequency = ["10m"]
+    time_frequency = ["day"]
     # host = "192.168.211.165"
     host = "localhost"
-    ori_startdate = 20160108
+    ori_startdate = 20150608
     # ori_enddate = 20160408
 
     for timeType in time_frequency:         

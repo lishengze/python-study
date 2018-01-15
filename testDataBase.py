@@ -11,8 +11,6 @@ import threading
 from CONFIG import *
 from toolFunc import *
 
-from wind import Wind
-
 from database import Database
 
 from weight_database import WeightDatabase
@@ -21,8 +19,6 @@ from weight_datanet import WeightTinySoft
 from market_database import MarketDatabase
 from market_datanet import MarketTinySoft
 
-from industry_database import IndustryDatabase
-from industry_datanet import IndustryNetConnect
 
 g_writeLogLock = threading.Lock()
 g_logFileName = os.getcwd() + '\log.txt'
@@ -299,22 +295,23 @@ def testGetLatestData():
     latest_data_array = database_obj.getAllLatestData([secode])
     print  latest_data_array[secode]
 
-def testTimeData():
-    timeType = "1m"
+def testTimeData(timeType="day", ori_startdate=0, ori_enddate=0):
+    timeType = "day"
     host = "localhost"
     # host = "192.168.211.165"
     data_type = "MarketData" + "_" + timeType
     database_obj = get_database_obj(data_type, host=host)
     netconn_obj = get_netconn_obj(data_type)
 
-    ori_startdate = 20141108
-    ori_enddate = 20160608
+    ori_startdate = 20130108
+    ori_enddate = getDateNow(data_type)  
 
     trade_time_array = get_index_tradetime(netconn_obj,ori_startdate, ori_enddate)
     print "trade_time_array numb: ", len(trade_time_array)
 
     tablename_array = database_obj.getDatabaseTableInfo()
-    testData = {}
+    right_Data = {}
+    error_data = {}
     for tablename in tablename_array:
         curdata = []
         dataNumb = database_obj.get_datacount(tablename)
@@ -328,11 +325,14 @@ def testTimeData():
             curdata.append(len(index_data))          
             if dataNumb != len(index_data):
                 curdata.append("FALSE")
+                error_data[tablename] = curdata
             else:
                 curdata.append("TRUE")
-        testData[tablename] = curdata
+                right_Data[tablename] = curdata
+        
 
-    print_dict_data("testData: ", testData)
+    # print_dict_data("right_Data: ", right_Data)
+    print_dict_data("error_Data: ", error_data)
 
 if __name__ == "__main__":
     try:

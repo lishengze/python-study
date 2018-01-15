@@ -38,7 +38,8 @@ class MarketTinySoft(TinySoft):
 
             if len(table_name) == 0:                    
                 test_numb = 50
-                sourceArray = random.sample(stockidArray, test_numb)
+                # sourceArray = random.sample(stockidArray, test_numb)
+                sourceArray = stockidArray[0:test_numb]
             else:
                 sourceArray = table_name               
         else:

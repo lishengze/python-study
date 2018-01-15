@@ -7,7 +7,7 @@ import threading
 import pyodbc
 import datetime
 import math
-
+from operator import itemgetter, attrgetter
 from CONFIG import *
 
 import time
@@ -144,6 +144,18 @@ def get_indexcode(style="ori"):
 def get_filename_array(dirname):
     file_name = os.listdir(dirname)
     return file_name
+
+def is_minute_type(data_type):
+    if "m" in data_type and "month" not in data_type:
+        return True
+    else:
+        return False
+
+def is_minute_data(time_data):
+    if int(getSimpleTime(time_data)) != 150000:
+        return True
+    else:
+        return False
 
 def isTradingRest():
      wsq_time = int(datetime.datetime.now().strftime("%H%M%S"))     
@@ -341,14 +353,16 @@ def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_dat
     complete_data = []
     tradetime_index = 0
     if isfirstInterval:
-        if len(ori_netdata) == 0:
+        if len(ori_netdata) == 0 or (len(ori_netdata) == 1 and is_minute_data(ori_netdata[0][0])):
             return ori_netdata
         else:
-            for i in range(len(tradetime_array)):
+            i = 0
+            while i < len(tradetime_array):
                 item = tradetime_array[i]
                 if is_time_equal(item, [int(getSimpleDate(ori_netdata[0][0])), int(getSimpleTime(ori_netdata[0][0]))]):
                     tradetime_index = i
                     break  
+                i += 1
 
     oridata_index = 0
     add_count = 0
@@ -363,6 +377,8 @@ def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_dat
             added_datetime = transto_tinytime(cur_tradetime)
             # print "oridata_index: ", oridata_index, ori_netdata[oridata_index-1]
             if oridata_index == 0:
+                print "tradetime_index: ", tradetime_index, ", oridata_index: ", oridata_index, ", dataNumb: ", len(ori_netdata)
+                print "cur_tradetime: ", cur_tradetime, ", cur_oridatetime: ", cur_oridatetime
                 secode = latest_data[2]
                 close_price = latest_data[3]
             else:
@@ -482,7 +498,7 @@ def get_tradetime_byindex(netconn_obj, database_obj, source_conditions):
 
 def get_index_tradetime(netconn_obj, starttime, endtime):
     # tablename_array = get_indexcode(style="tinysoft")
-    tablename_array = ["SH000300"]
+    tablename_array = ["SH000300", "SH000016"]
     tradetime_array = []
 
     for table_name in tablename_array:
@@ -508,3 +524,50 @@ def get_sub_index_tradetime(complete_tradetime, startdate, enddate):
     # print start_index, end_index
     return complete_tradetime[start_index:end_index+1]
 
+def cmp_net_time(oritimea, oritimeb):
+    timea = [int(getSimpleDate(oritimea)), int(getSimpleTime(oritimea))]
+    timeb = [int(getSimpleDate(oritimeb)), int(getSimpleTime(oritimeb))]
+
+    # print "oritimea: ", oritimea ,", timea: ", timea
+    # print "oritimeb: ", oritimeb ,", timeb: ", timeb
+    # print timea, timeb, is_time_late(timea, timeb)
+
+    if is_time_late(timea, timeb):
+        return -1
+    if is_time_equal(timea, timeb):
+        return 0
+    if is_time_early(timea, timeb):
+        return 1
+
+def cmp_database_time(timea, timeb):
+    if is_time_late(timea, timeb):
+        return -1
+    if is_time_equal(timea, timeb):
+        return 0
+    if is_time_early(timea, timeb):
+        return 1
+
+def get_restore_info(secode, ori_netdata, latestdata):
+    # sorted_data = sorted(ori_netdata, key=itemgetter(0))
+    # sorted_data = sorted(ori_netdata, cmp=cmp_net_time_late, key=itemgetter(0))
+    ori_netdata.sort(cmp=cmp_net_time, key=itemgetter(0))
+    
+    restore_data = []
+    i = len(ori_netdata) - 1
+    while i > 0:
+        if ori_netdata[i][8] != ori_netdata[i-1][3]:
+            restore_data.append(secode)
+            restore_data.append(int(getSimpleDate(ori_netdata[i][0])))
+            restore_data.append(int(getSimpleTime(ori_netdata[i][0])))
+            break
+        i -= 1
+
+    if len(restore_data) == 0 and len(latestdata) != 0:
+        if ori_netdata[i][8] != latestdata[4]:
+            restore_data.append(secode)
+            restore_data.append(int(getSimpleDate(ori_netdata[i][0])))
+            restore_data.append(int(getSimpleTime(ori_netdata[i][0])))
+    return restore_data
+
+def compute_restore_data(oridatabase_data):
+    pass
