@@ -236,6 +236,9 @@ def transto_tinytime(datetime):
     datetime_str = date_str + ' ' + time_str
     return datetime_str
 
+def trans_floattime_to_datetime(floattime):
+    pass
+
 def get_market_susdata(added_datetime, secode, close_price):
     appenddata = []
     appenddata.append(added_datetime)
@@ -504,7 +507,7 @@ def get_index_tradetime(netconn_obj, starttime, endtime):
     for table_name in tablename_array:
         condition = [table_name, starttime, endtime]
         ori_netdata = netconn_obj.get_netdata(condition)
-        print table_name, " dataNumb: ", len(ori_netdata)
+        # print table_name, " dataNumb: ", len(ori_netdata)
         for item in ori_netdata:
             datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
             if datetime not in tradetime_array:
@@ -512,15 +515,38 @@ def get_index_tradetime(netconn_obj, starttime, endtime):
 
     return tradetime_array   
 
-def get_sub_index_tradetime(complete_tradetime, startdate, enddate):
+def get_detail_time(minutes):
+    minutes = minutes * 24 * 60
+    hour = int(minutes / 60)
+    minu = int(minutes - hour*60)
+    time = hour * 10000 + minu * 100
+    return time
+
+def get_sub_index_tradetime(complete_tradetime, startdate, enddate, starttime=93100, endtime=150000):
+    if float(startdate) - int(startdate) != 0:
+        starttime = get_detail_time(float(startdate) - int(startdate))
+        # print "starttime: ", starttime
+
+    if float(enddate) - int(enddate) != 0:
+        endtime = get_detail_time(float(enddate) - int(enddate))
+        # print "endtime: ", endtime
+
     start_index = 0
     end_index = len(complete_tradetime) -1
     while start_index < len(complete_tradetime) \
         and int(complete_tradetime[start_index][0]) < int(startdate):
         start_index += 1
 
+    while start_index < len(complete_tradetime) \
+        and int(complete_tradetime[start_index][1]) < int(starttime):
+        start_index += 1
+
     while end_index > -1 and int(complete_tradetime[end_index][0] > int (enddate)):
         end_index -= 1
+
+    while end_index > -1 and int(complete_tradetime[end_index][1] > int (endtime)):
+        end_index -= 1
+
     # print start_index, end_index
     return complete_tradetime[start_index:end_index+1]
 
@@ -547,14 +573,29 @@ def cmp_database_time(timea, timeb):
     if is_time_early(timea, timeb):
         return 1
 
-def get_restore_info(secode, ori_netdata, latestdata):
-    # sorted_data = sorted(ori_netdata, key=itemgetter(0))
-    # sorted_data = sorted(ori_netdata, cmp=cmp_net_time_late, key=itemgetter(0))
-    ori_netdata.sort(cmp=cmp_net_time, key=itemgetter(0))
-    
+def get_restore_info(secode, ori_netdata, latestdata=[], firstdata=[]):
+    ori_netdata.sort(cmp=cmp_net_time, key=itemgetter(0)) 
     restore_data = []
-    i = len(ori_netdata) - 1
-    while i > 0:
+
+    if len(ori_netdata) <2:
+        return restore_data
+
+    if len(firstdata)!= 0:
+        i = len(ori_netdata) - 2
+        ori_time = [int(getSimpleDate(ori_netdata[i][0])), int(getSimpleTime(ori_netdata[i][0]))]
+        first_time = [firstdata[0], firstdata[1]]
+        yclose = float(firstdata[10])
+        close = float(ori_netdata[i][3])
+        if  yclose != close and is_time_late(ori_time, first_time):
+            print "firstdata: ", firstdata
+            print "ori_nedata["+ str(i) +"]: ", ori_netdata[i]
+            restore_data.append(secode)
+            restore_data.append(firstdata[0])
+            restore_data.append(firstdata[1])
+    else:
+        i = len(ori_netdata) - 1
+    
+    while i > 0 and len(restore_data) == 0:
         if ori_netdata[i][8] != ori_netdata[i-1][3]:
             restore_data.append(secode)
             restore_data.append(int(getSimpleDate(ori_netdata[i][0])))
@@ -562,12 +603,37 @@ def get_restore_info(secode, ori_netdata, latestdata):
             break
         i -= 1
 
-    if len(restore_data) == 0 and len(latestdata) != 0:
-        if ori_netdata[i][8] != latestdata[4]:
+    if len(restore_data) == 0 and len(latestdata) != 0 :
+        ori_time = [int(getSimpleDate(ori_netdata[i][0])), int(getSimpleTime(ori_netdata[i][0]))]
+        lastest_time = [latestdata[0], latestdata[1]]
+
+        if float(ori_netdata[i][8]) != float(latestdata[4]) and \
+            is_time_late(lastest_time, ori_time):
+            print "ori_nedata["+ str(i) +"]: ", ori_netdata[i]
+            print "latestdata: ", latestdata
             restore_data.append(secode)
             restore_data.append(int(getSimpleDate(ori_netdata[i][0])))
             restore_data.append(int(getSimpleTime(ori_netdata[i][0])))
     return restore_data
 
-def compute_restore_data(oridatabase_data):
-    pass
+def compute_restore_data(sort_data):
+    sort_data = list(sort_data)
+    i = len(sort_data) - 1
+    while i > 0:
+        sort_data[i] = list(sort_data[i])
+        sort_data[i-1] = list(sort_data[i-1])
+        sort_data[i-1][2] = sort_data[i][2] / (1 + sort_data[i][3])
+        sort_data[i][4] = sort_data[i-1][2]
+        i -= 1
+
+    sort_data[i] = list(sort_data[i])
+    sort_data[i][4] = sort_data[i][2] / (1 + sort_data[i][3])
+    return sort_data
+
+def get_restore_time_list(ori_restore_data):
+    restore_time_array = []
+    for item in ori_restore_data:
+        if len(ori_restore_data) == 3:
+            if [item[1], item[2]] not in restore_time_array:
+                restore_time_array.append([item[1], item[2]])
+    return restore_time_array

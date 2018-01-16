@@ -168,7 +168,6 @@ def scan_excelfile():
         timer = threading.Timer(update_time, scan_excelfile, )
         timer.start()
 
-
 def set_secodelist():
     global secodelist, dirname, update_time
     # dirname =  "D:/strategy"

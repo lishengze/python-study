@@ -74,11 +74,11 @@ def writeDataToDatabase(result_array, source, mainthread_database_obj):
         database_obj.completeDatabaseTable([table_name])        
         for item in result_array:
             database_obj.insert_data(item, table_name)
-
+        # result_array = None
         # tmp_successcount = getSusCount()
 
-        info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
-                + "Source: " + source +" Write " + str(len(result_array)) +" Items to " + database_obj.db \
+        # info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
+        info_str = "[I] Source: " + source +" Write " + str(len(result_array)) +" Items to " + database_obj.db \
                 + ", procss id: "+ str(os.getpid())  +"\n"
                 # +", CurSuccessCount:  " + str(tmp_successcount) + " \n" 
 
@@ -129,7 +129,6 @@ def startWriteProcess(netdata_array, source_array, database_obj):
     
     print ("threading.active_count(): %d\n") % (threading.active_count())
 
-
 def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HOST):
     starttime = datetime.datetime.now()
     info_str = "+++++++++ "+ data_type +" Start Time: " + str(starttime) + " +++++++++++\n"
@@ -151,6 +150,7 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     
     database_obj.completeDatabaseTable(tablename_array)
     latest_data = database_obj.getAllLatestData(tablename_array)
+    first_data = database_obj.getALLFirstData(tablename_array)
 
     thread_count = 12
     info_str = "Table Numb : " + str(len(tablename_array)) + '\n'
@@ -162,9 +162,13 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
 
     sus_secode = []
     restore_data = []
+    restore_dict_data = {}
 
     if "MarketData" in data_type:
         com_tradetime_array = get_index_tradetime(netconn_obj, source_conditions[0], source_conditions[1])
+
+    for table_name in tablename_array:
+        restore_dict_data[table_name] = []
 
     for i in range(len(tablename_array)):        
         cur_tablename = tablename_array[i]
@@ -184,20 +188,21 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
                     ori_netdata = []
                 if j == 0:
                     isfirstInterval = True
-                if "MarketData" in data_type:
-                    tradetime_array = get_sub_index_tradetime(com_tradetime_array, cur_condition[1], cur_condition[2])
 
                 condition_count = condition_count + 1
                 info_str = "[B] Source: " + str(cur_condition) + ", OriDataNumb: " + str(len(ori_netdata)) 
-                # info_str += ", latest_data[" + cur_tablename + "].size: " + str(len(latest_data[cur_tablename]))
-                # info_str += ", sourceCount: "+ str(i+1) + ", conIndex: "+ str(j) +"\n"
-                # LogInfo(g_logFile, info_str)
+                if "MarketData" in data_type:                    
+                    # Get Restore Info
+                    cur_restore_data = get_restore_info(cur_tablename, ori_netdata, \
+                                        latestdata = latest_data[cur_tablename], firstdata=first_data[cur_tablename])
+                    if len(restore_dict_data[cur_tablename]) == 0 or (len(cur_restore_data) != 0 and \
+                       is_time_late([restore_dict_data[cur_tablename][1], restore_dict_data[cur_tablename][2]], \
+                                    [cur_restore_data[1], cur_restore_data[2]])):
+                        restore_dict_data[cur_tablename] = cur_restore_data
 
-                old_oridata_numb = len(ori_netdata)
-                if "MarketData" in data_type:
-                    cur_restore_data = get_restore_info(cur_tablename, ori_netdata, latest_data[cur_tablename])
-                    restore_data.append(cur_restore_data)
-
+                    #Complete Suspend Data
+                    old_oridata_numb = len(ori_netdata)
+                    tradetime_array = get_sub_index_tradetime(com_tradetime_array, cur_condition[1], cur_condition[2])
                     complete_data = add_suspdata(tradetime_array, ori_netdata, isfirstInterval, latest_data[cur_tablename])
                     info_str += ", CompleteDataNumb: " + str(len(complete_data))
                     ori_netdata = complete_data
@@ -229,21 +234,38 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     else:
         aveTime = costTime / len(tablename_array)
 
-    # print_data("sus_secode: ", sus_secode)
+    print_data("sus_secode: ", sus_secode)
+    for secode in restore_dict_data:
+        if len(restore_dict_data[secode]) != 0:
+            restore_data.append(restore_dict_data[secode])
+
     print_data("restore_data: ", restore_data)
     info_str = "++++++++++"+ data_type +" End Time: " + str(endtime) \
             + " SumCostTime: " + str(costTime) + "s, AveCostTime: " + str(aveTime) + "s ++++++++\n"
     LogInfo(g_logFile, info_str)      
     return restore_data
 
-def update_restore_data(database_obj, restore_data):
+def update_restore_data(mainthread_database_obj, restore_data):
     for item in restore_data:
+        if len(item) == 0:
+            continue
         secode = item[0]
-        startdate = item[1]
-        oridata = database_obj.get_histdata_bydatetime(startdate, secode)
-
+        enddate = item[1]
+        col_str = "[TDATE], [TIME], [TCLOSE], [PCTCHG], [YCLOSE]"
+        database_obj = get_database_obj(mainthread_database_obj.db, mainthread_database_obj.host)
+        ori_data = database_obj.get_histdata_by_enddate(enddate, secode, col_str)
+        ori_data.sort(key=itemgetter(0,1))
+        ori_data = compute_restore_data(ori_data)
+        database_obj.update_restore_data(secode, ori_data)
+        info_str = "[I] Source: " + secode +" Update " + str(len(ori_data)) +" Items to " + database_obj.db \
+                 + ", procss id: "+ str(os.getpid())  +"\n"
+        recordInfoWithLock(info_str)   
+    # ori_data = None
+        
 def restore_database(database_obj, restore_data, compute_count):    
     trans_restore_data = []
+    if [] in restore_data:
+        restore_data.remove([])
     for j in range(compute_count):
         trans_restore_data.append([])
 
@@ -251,23 +273,27 @@ def restore_database(database_obj, restore_data, compute_count):
     while i < len(restore_data):
         j = 0
         while j < compute_count and i + j < len(restore_data):
-            if len(restore_data[i]) != 0:
-                trans_restore_data[j].append(restore_data[i+j])
+            trans_restore_data[j].append(restore_data[i+j])
             j += 1
         i += j
 
+    if [] in trans_restore_data:
+        trans_restore_data.remove([])
+    print_data("trans_restore_data: ", trans_restore_data)
+
     process_list = []
-    for j in range(compute_count):
+    for j in range(len(trans_restore_data)):
         if len(trans_restore_data[j]) != 0:
-            tmp_process = multiprocessing.Process(target=compute_restore_data, args=(database_obj, trans_restore_data[j],))
+            tmp_process = multiprocessing.Process(target=update_restore_data, args=(database_obj, trans_restore_data[j],))
             process_list.append(tmp_process)
+
+    # print_data("process_list: ", process_list)
 
     for process in process_list:
         process.start()
 
     for process in process_list:
         process.join()    
-
 
 def download_data():
     # data_type = "MarketDataTest"
@@ -287,22 +313,24 @@ def download_data():
 def download_Marketdata():
     # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
     # time_frequency = ["5m", "10m", "30m", "60m", "120m", "week", "month"]
-    time_frequency = ["day"]
+    time_frequency = ["1m"]
     # host = "192.168.211.165"
     host = "localhost"
-    ori_startdate = 20150608
-    # ori_enddate = 20160408
+    ori_startdate = 20160108
+    ori_enddate = 20170622
 
     for timeType in time_frequency:         
         data_type = "MarketData" + "_" + timeType
-        ori_enddate = getDateNow(data_type)   
+        # ori_enddate = getDateNow(data_type)   
 
         database_obj = get_database_obj(data_type, host=host)
-        database_obj.clearDatabase()
+        # database_obj.clearDatabase()
 
-        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)          
+        restore_data = MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)          
         compareTimeData(ori_startdate, ori_enddate, data_type, host)
-        g_susCount = 0
+
+        compute_count = 12
+        restore_database(database_obj, restore_data, compute_count)
 
 def test_get_tradetime_byindex():
     # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
@@ -377,7 +405,7 @@ def compareTimeData(ori_startdate=0, ori_enddate=0, data_type="MarketData_day", 
     netconn_obj = get_netconn_obj(data_type)
 
     trade_time_array = get_index_tradetime(netconn_obj,ori_startdate, ori_enddate)
-    print "trade_time_array numb: ", len(trade_time_array)
+    # print "trade_time_array numb: ", len(trade_time_array)
 
     tablename_array = database_obj.getDatabaseTableInfo()
     right_Data = {}

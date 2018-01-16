@@ -93,12 +93,26 @@ class MarketDatabase(Database):
         data = self.get_database_data(sql_str)
         return data
 
-    def get_histdata_bydatetime(self, startdate, table_name):
+    def get_histdata_by_enddate(self, enddate, table_name, cloumn_str="*"):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
-        sql_str = "select * from " + complete_tablename \
-                + " where TDATE <= " + enddate
+        sql_str = "select "+ cloumn_str + " from " + complete_tablename \
+                + " where TDATE <= " + str(enddate)
         data = self.get_database_data(sql_str)
         return data
+
+    def update_restore_data(self, table_name, restore_data):
+        col_str = "(TCLOSE, YCLOSE)"
+        for item in restore_data:
+            date = item[0]
+            time = item[1]
+            close = item[2]
+            yclose = item[4]
+
+            set_str = " set TCLOSE = " +  str(close) + ", YCLOSE = " + str(yclose) \
+                    + " where TDATE = " + str(date) + " and TIME = " + str(time)
+            complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+            update_str = "update "+ complete_tablename + set_str 
+            self.changeDatabase(update_str)
 
     def getTableDataStartEndTime(self, table_name):
         starttime = None
@@ -185,10 +199,16 @@ class MarketDatabase(Database):
             for item in data:
                 if int(item[1]) < min_time:
                     result = item
-            return result[0:2]
+            return result
         else:
             return data
 
+    def getALLFirstData(self, tablename_array):
+        result = {}
+        for table_name in tablename_array:
+            result[table_name] = self.getFirstData(table_name)
+        return result
+    
     def getTimeData(self, table_name):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         sql_str = "select TDATE, TIME from " + complete_tablename 

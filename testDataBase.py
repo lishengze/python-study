@@ -19,6 +19,7 @@ from weight_datanet import WeightTinySoft
 from market_database import MarketDatabase
 from market_datanet import MarketTinySoft
 
+from operator import itemgetter, attrgetter
 
 g_writeLogLock = threading.Lock()
 g_logFileName = os.getcwd() + '\log.txt'
@@ -334,6 +335,19 @@ def testTimeData(timeType="day", ori_startdate=0, ori_enddate=0):
     # print_dict_data("right_Data: ", right_Data)
     print_dict_data("error_Data: ", error_data)
 
+def test_get_histdata_by_enddate():
+    timeType = "10m"
+    host = "localhost"
+    data_type = "MarketData" + "_" + timeType
+    database_obj = get_database_obj(data_type, host=host)    
+    enddate = 20180101
+    secode = "SH600000"
+    col_str = "[TDATE], [TIME], [TCLOSE], [PCTCHG], [YCLOSE]"
+    ori_data = database_obj.get_histdata_by_enddate(enddate, secode, col_str)
+    # print_data("ori_data: ", ori_data)
+    ori_data.sort(key=itemgetter(0,1), reverse = True)
+    print_data("reversed data: ", ori_data[0:10])
+
 if __name__ == "__main__":
     try:
         # changeDatabase()
@@ -344,7 +358,8 @@ if __name__ == "__main__":
         # cleanMarketDatabase()
         # testMarketDatabase()
         # testGetLatestData()
-        testTimeData()
+        # testTimeData()
+        test_get_database()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         log_str = "__Main__ Failed \n" \
