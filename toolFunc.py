@@ -196,6 +196,9 @@ def isTradingStart():
 
 def print_data(msg, data):
     print "\n", msg, len(data)
+    if len(data) > 50:
+        data = data[0:50]
+
     for item in data:
         print item
 
@@ -369,7 +372,7 @@ def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_dat
 
     oridata_index = 0
     add_count = 0
-    print "tradetime_index: ", tradetime_index, ", isfirstInterval: ", isfirstInterval
+    print "Start: tradetime_index: ", tradetime_index, ", isfirstInterval: ", isfirstInterval
 
     while tradetime_index < len(tradetime_array) and oridata_index < len(ori_netdata):
         cur_oridatetime = [int(getSimpleDate(ori_netdata[oridata_index][0])), int(getSimpleTime(ori_netdata[oridata_index][0]))]
@@ -396,6 +399,7 @@ def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_dat
         oridata_index = oridata_index + 1
         tradetime_index = tradetime_index + 1
 
+    print "End: tradetime_index: ", tradetime_index, ", oridata_index: ", oridata_index
     while tradetime_index < len(tradetime_array):
         cur_tradetime = tradetime_array[tradetime_index]
         added_datetime = transto_tinytime(cur_tradetime)
@@ -408,7 +412,6 @@ def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_dat
             secode = ori_netdata[oridata_index-1][1]
             close_price = ori_netdata[oridata_index-1][3]
         appenddata = get_market_susdata(added_datetime, secode, close_price)
-        # print "appenddata, ", appenddata
         ori_netdata.insert(oridata_index, appenddata)
 
         tradetime_index += 1
@@ -507,7 +510,7 @@ def get_index_tradetime(netconn_obj, starttime, endtime):
     for table_name in tablename_array:
         condition = [table_name, starttime, endtime]
         ori_netdata = netconn_obj.get_netdata(condition)
-        # print table_name, " dataNumb: ", len(ori_netdata)
+        print table_name, " dataNumb: ", len(ori_netdata)
         for item in ori_netdata:
             datetime = [int(getSimpleDate(item[0])), int(getSimpleTime(item[0]))]
             if datetime not in tradetime_array:
@@ -531,6 +534,9 @@ def get_sub_index_tradetime(complete_tradetime, startdate, enddate, starttime=93
         endtime = get_detail_time(float(enddate) - int(enddate))
         # print "endtime: ", endtime
 
+    # print 'startdate: ', int(startdate), ', starttime: ', int(starttime)
+    # print 'enddate: ', int(enddate), ', endtime: ', int(endtime)
+
     start_index = 0
     end_index = len(complete_tradetime) -1
     while start_index < len(complete_tradetime) \
@@ -544,10 +550,12 @@ def get_sub_index_tradetime(complete_tradetime, startdate, enddate, starttime=93
     while end_index > -1 and int(complete_tradetime[end_index][0] > int (enddate)):
         end_index -= 1
 
-    while end_index > -1 and int(complete_tradetime[end_index][1] > int (endtime)):
+
+    while end_index > -1 and int(complete_tradetime[end_index][1] > int (endtime)) \
+    and int(complete_tradetime[end_index][0] == int (enddate)):
         end_index -= 1
 
-    # print start_index, end_index
+    # print "start_index: ", start_index, ", end_index: ", end_index
     return complete_tradetime[start_index:end_index+1]
 
 def cmp_net_time(oritimea, oritimeb):

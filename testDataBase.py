@@ -348,6 +348,68 @@ def test_get_histdata_by_enddate():
     ori_data.sort(key=itemgetter(0,1), reverse = True)
     print_data("reversed data: ", ori_data[0:10])
 
+def test_get_tradetime_byindex():
+    # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
+    # time_frequency = ["5m", "10m", "30m", "60m", "120m", "week", "month"]
+    time_frequency = ["day"]
+    # host = "192.168.211.165"
+    host = "localhost"
+    ori_startdate = 20140508
+    ori_enddate = 20151208
+
+    for timeType in time_frequency:         
+        data_type = "MarketData" + "_" + timeType
+        database_obj = get_database_obj(data_type, host=host)
+        netconn_obj = get_netconn_obj(data_type)
+        # ori_enddate = getDateNow(data_type)   
+        get_tradetime_byindex(netconn_obj, database_obj, [ori_startdate, ori_enddate])  
+
+def test_complete_susdata():
+    timeType = "day"
+    host = "localhost"
+    ori_startdate = 20141108
+    ori_enddate = 20151108
+    data_type = "MarketData" + "_" + timeType
+    database_obj = get_database_obj(data_type, host=host)
+    netconn_obj = get_netconn_obj(data_type)
+    # ori_enddate = getDateNow(data_type)   
+
+    # database_obj.clearDatabase()
+
+    source_conditions = [ori_startdate, ori_enddate]
+    # tradetime_array = get_tradetime_byindex(netconn_obj, database_obj, source_conditions)  
+    com_tradetime_array = get_index_tradetime(netconn_obj, ori_startdate, ori_enddate)
+    # print_data("tradetime_array: ", tradetime_array)
+    print "com_tradetime_array.size: ", len(com_tradetime_array)
+
+    secode = "SZ002578"
+    # database_obj.completeDatabaseTable([secode])
+    cur_condition = [secode, ori_startdate, ori_enddate]
+
+    tradetime_array = get_sub_index_tradetime(com_tradetime_array, cur_condition[1], cur_condition[2])
+    print "tradetime_array.size: ", len(tradetime_array)
+
+    ori_netdata = netconn_obj.get_netdata(cur_condition) 
+    # print_data("ori_netdata: ", ori_netdata)
+    # print "ori_netdata.size: ", len(ori_netdata)
+
+    ori_time_array = get_time_array(ori_netdata)
+    missing_time_array = get_missing_time_array(tradetime_array, ori_time_array)
+    # print_data("ori_time_array: ",  ori_time_array)
+    print_data("missing_time_array: ", missing_time_array)
+    # print "missing_time_array.size: ", len(missing_time_array)
+    
+    complete_data = add_suspdata(tradetime_array, ori_netdata, isfirstInterval=True)
+    complete_time_array = get_time_array(complete_data)
+    # print_data("complete_data: ", complete_data)
+    # print "complete_data.size: ", len(complete_data)
+    # print_data("complete_time_array: ", complete_time_array)
+
+    com_missing_time_array = get_missing_time_array(tradetime_array, complete_time_array)
+    print_data("com_missing_time_array.size: ", com_missing_time_array)
+    # print "com_missing_time_array.size: ", len(com_missing_time_array)
+
+
 if __name__ == "__main__":
     try:
         # changeDatabase()

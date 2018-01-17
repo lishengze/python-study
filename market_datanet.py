@@ -29,7 +29,8 @@ class MarketTinySoft(TinySoft):
         indexidArray = self.get_Index_secode()
         sourceArray = []
 
-        bTest = True
+        bTest = False
+        # bTest = True
         if bTest:
             # print "self.datatype: ", self.datatype
             database_obj = MarketDatabase(host="localhost", db=self.datatype)

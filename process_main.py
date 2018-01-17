@@ -12,8 +12,6 @@ import multiprocessing
 from CONFIG import *
 from toolFunc import *
 
-# from wind import Wind
-
 from database import Database
 
 from weight_database import WeightDatabase
@@ -22,8 +20,8 @@ from weight_datanet import WeightTinySoft
 from market_database import MarketDatabase
 from market_datanet import MarketTinySoft
 
-# from industry_database import IndustryDatabase
-# from industry_datanet import IndustryNetConnect
+from industry_database import IndustryDatabase
+from industry_datanet import IndustryNetConnect
 
 g_writeLogLock = threading.Lock()
 g_logFileName = os.getcwd() + '\log.txt'
@@ -31,12 +29,12 @@ g_logFile = open(g_logFileName, 'w')
 g_susCount = 0
 g_susCountLock = threading.Lock()
 
-def get_database_obj(database_name, host='localhost'):
+def get_database_obj(database_name, host='localhost', id=0):
     if "WeightData" in database_name:
         return WeightDatabase(host=host, db=database_name)
 
     if "MarketData" in database_name:
-        return MarketDatabase(host=host, db=database_name)
+        return MarketDatabase(id=id, host=host, db=database_name)
 
     if "IndustryData" in database_name:
         return IndustryDatabase(host=host, db=database_name)
@@ -67,19 +65,18 @@ def recordInfoWithLock(info_str):
     # g_logFile.write(info_str + '\n')
     # g_writeLogLock.release()      
 
-def writeDataToDatabase(result_array, source, mainthread_database_obj):
+def writeDataToDatabase(result_array, source, database_obj):
     try:
-        database_obj = get_database_obj(mainthread_database_obj.db, mainthread_database_obj.host)        
+        # database_obj = get_database_obj(mainthread_database_obj.db, mainthread_database_obj.host)        
         table_name = source
         database_obj.completeDatabaseTable([table_name])        
         for item in result_array:
             database_obj.insert_data(item, table_name)
-        # result_array = None
         # tmp_successcount = getSusCount()
 
         # info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
         info_str = "[I] Source: " + source +" Write " + str(len(result_array)) +" Items to " + database_obj.db \
-                + ", procss id: "+ str(os.getpid())  +"\n"
+                + ", database id: "+ str(database_obj.id)  +"\n"
                 # +", CurSuccessCount:  " + str(tmp_successcount) + " \n" 
 
         recordInfoWithLock(info_str)        
@@ -95,16 +92,37 @@ def writeDataToDatabase(result_array, source, mainthread_database_obj):
         print "[RS]: writeDataToDatabase restart!"
         writeDataToDatabase(result_array, source, mainthread_database_obj)
 
-def singleThreadWriteDataToDatabase(result_array, source, mainthread_database_obj):
-    database_obj = mainthread_database_obj        
-    table_name = source  
-    for item in result_array:
-        database_obj.insert_data(item, table_name)
+def writeDataToDatabaseProcess(result_array, source, database_obj_main):
+    try:
+        database_obj = get_database_obj(database_obj_main.db, database_obj_main.host)        
+        table_name = source
+        database_obj.completeDatabaseTable([table_name])        
+        for item in result_array:
+            database_obj.insert_data(item, table_name)
+        # tmp_successcount = getSusCount()
 
-def startWriteThread(netdata_array, source_array, database_obj):
+        # info_str = "[I] ThreadName: " + str(threading.currentThread().getName()) + "  " \
+        info_str = "[I] Source: " + source +" Write " + str(len(result_array)) +" Items to " + database_obj.db \
+                + ", database id: "+ str(database_obj.id)  +"\n"
+                # +", CurSuccessCount:  " + str(tmp_successcount) + " \n" 
+
+        recordInfoWithLock(info_str)        
+    except Exception as e:
+        exception_info = "\n" + str(traceback.format_exc()) + '\n'
+        info_str = "[X] ThreadName: " + str(threading.currentThread().getName()) + "\n" \
+                + "writeDataToDatabase Failed \n" \
+                + "[E] Exception : \n" + exception_info
+        recordInfoWithLock(info_str)  
+        sleeptime = 30
+        print "-------- writeDataToDatabase sleep: " + str(sleeptime) + " ----------"        
+        time.sleep(sleeptime)
+        print "[RS]: writeDataToDatabase restart!"
+        writeDataToDatabase(result_array, source, mainthread_database_obj)
+
+def startWriteThread(netdata_array, source_array, database_obj_array):
     threads = []
     for i in range(len(netdata_array)):
-        tmp_thread = threading.Thread(target=writeDataToDatabase, args=(netdata_array[i], str(source_array[i]), database_obj,))
+        tmp_thread = threading.Thread(target=writeDataToDatabase, args=(netdata_array[i], str(source_array[i]), database_obj_array[i],))
         threads.append(tmp_thread)
 
     for thread in threads:
@@ -136,8 +154,8 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
 
     database_name = data_type
     
-    struct_type = "process"
-    # struct_type = "thread"
+    # struct_type = "process"
+    struct_type = "thread"
 
     database_obj = get_database_obj(database_name, host=database_host)
     netconn_obj = get_netconn_obj(data_type)
@@ -147,14 +165,16 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
 
     source = database_obj.filter_source(source)
     tablename_array = database_obj.filter_tableArray(tablename_array)
-    
-    database_obj.completeDatabaseTable(tablename_array)
-    latest_data = database_obj.getAllLatestData(tablename_array)
-    first_data = database_obj.getALLFirstData(tablename_array)
-
-    thread_count = 12
     info_str = "Table Numb : " + str(len(tablename_array)) + '\n'
     LogInfo(g_logFile, info_str)
+
+    database_obj.completeDatabaseTable(tablename_array)
+
+    thread_count = 12
+    database_obj_array = []
+    for i in range(thread_count):
+        tmp_database_obj = get_database_obj(database_name, host=database_host, id=i)
+        database_obj_array.append(tmp_database_obj)
 
     condition_count = 0
     tmp_netdata_array = []
@@ -166,6 +186,8 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
 
     if "MarketData" in data_type:
         com_tradetime_array = get_index_tradetime(netconn_obj, source_conditions[0], source_conditions[1])
+        latest_data = database_obj.getAllLatestData(tablename_array)
+        first_data = database_obj.getALLFirstData(tablename_array)
 
     for table_name in tablename_array:
         restore_dict_data[table_name] = []
@@ -203,6 +225,7 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
                     #Complete Suspend Data
                     old_oridata_numb = len(ori_netdata)
                     tradetime_array = get_sub_index_tradetime(com_tradetime_array, cur_condition[1], cur_condition[2])
+                    # print "Current: tradetime_array.size: ", len(tradetime_array)
                     complete_data = add_suspdata(tradetime_array, ori_netdata, isfirstInterval, latest_data[cur_tablename])
                     info_str += ", CompleteDataNumb: " + str(len(complete_data))
                     ori_netdata = complete_data
@@ -216,7 +239,7 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
                     if struct_type == "process":
                         startWriteProcess(tmp_netdata_array, tmp_tablename_array, database_obj)                    
                     if struct_type == "thread":
-                        startWriteThread(tmp_netdata_array, tmp_tablename_array, database_obj)
+                        startWriteThread(tmp_netdata_array, tmp_tablename_array, database_obj_array)
 
                     tmp_netdata_array = []
                     tmp_tablename_array = []                 
@@ -245,6 +268,34 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
     LogInfo(g_logFile, info_str)      
     return restore_data
 
+def compareTimeData(ori_startdate=0, ori_enddate=0, data_type="MarketData_day", host = "localhost"):       
+    database_obj = get_database_obj(data_type, host=host)
+    netconn_obj = get_netconn_obj(data_type)
+
+    trade_time_array = get_index_tradetime(netconn_obj,ori_startdate, ori_enddate)
+
+    tablename_array = database_obj.getDatabaseTableInfo()
+    right_Data = {}
+    error_data = {}
+    for tablename in tablename_array:
+        curdata = []
+        dataNumb = database_obj.get_datacount(tablename)
+        date = database_obj.getStartEndDate(tablename)
+        curdata.append(dataNumb)
+        curdata.append(date)
+        if len(date) !=0 and date[0] != None and date[1] != None:
+            # print date[0], date[1]
+            index_data= get_sub_index_tradetime(trade_time_array, date[0], date[1])
+            curdata.append("indexDatanumb: ")
+            curdata.append(len(index_data))          
+            if dataNumb != len(index_data):
+                curdata.append("FALSE")
+                error_data[tablename] = curdata
+            else:
+                curdata.append("TRUE")
+                right_Data[tablename] = curdata
+    print_dict_data("error_sus_data: ", error_data)
+
 def update_restore_data(mainthread_database_obj, restore_data):
     for item in restore_data:
         if len(item) == 0:
@@ -259,10 +310,14 @@ def update_restore_data(mainthread_database_obj, restore_data):
         database_obj.update_restore_data(secode, ori_data)
         info_str = "[I] Source: " + secode +" Update " + str(len(ori_data)) +" Items to " + database_obj.db \
                  + ", procss id: "+ str(os.getpid())  +"\n"
-        recordInfoWithLock(info_str)   
+        # recordInfoWithLock(info_str)   
     # ori_data = None
         
-def restore_database(database_obj, restore_data, compute_count):    
+def restore_database(database_obj, restore_data, compute_count):   
+    starttime = datetime.datetime.now()
+    info_str = "********** Restore_database Start Time: " + str(starttime) + " **********\n"
+    LogInfo(g_logFile, info_str)
+
     trans_restore_data = []
     if [] in restore_data:
         restore_data.remove([])
@@ -295,12 +350,25 @@ def restore_database(database_obj, restore_data, compute_count):
     for process in process_list:
         process.join()    
 
+    endtime = datetime.datetime.now()
+    costTime = (endtime - starttime).seconds
+    info_str = "++++++++++ restore_database End Time: " + str(endtime) + " SumCostTime: " + str(float(costTime)/60.0) + " m"
+
+    ave_costtime = -1
+    if len(restore_data) != 0:
+        ave_costtime = costTime / len(restore_data)
+    if ave_costtime != -1:
+        info_str += ", ave_costtime: " + str(ave_costtime) + "s "
+
+    info_str += " **********\n"    
+    LogInfo(g_logFile, info_str) 
+
 def download_data():
     # data_type = "MarketDataTest"
     # data_type = "WeightDataTest"
     # data_type = "IndustryDataTest"
-    # data_type = "IndustryData"
-    data_type = "WeightData"
+    data_type = "IndustryData"
+    # data_type = "WeightData"
     # data_type = "MarketData"
     # host = "localhost"
     host = "192.168.211.165"
@@ -312,16 +380,16 @@ def download_data():
 
 def download_Marketdata():
     # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
-    # time_frequency = ["5m", "10m", "30m", "60m", "120m", "week", "month"]
-    time_frequency = ["1m"]
-    # host = "192.168.211.165"
-    host = "localhost"
-    ori_startdate = 20160108
-    ori_enddate = 20170622
+    # time_frequency = ["5m", "10m", "30m",  "week", "month"]
+    time_frequency = ["60m"]
+    host = "192.168.211.165"
+    # host = "localhost"
+    ori_startdate = 20130101
+    # ori_enddate = 20170622
 
     for timeType in time_frequency:         
         data_type = "MarketData" + "_" + timeType
-        # ori_enddate = getDateNow(data_type)   
+        ori_enddate = getDateNow(data_type)   
 
         database_obj = get_database_obj(data_type, host=host)
         # database_obj.clearDatabase()
@@ -332,106 +400,6 @@ def download_Marketdata():
         compute_count = 12
         restore_database(database_obj, restore_data, compute_count)
 
-def test_get_tradetime_byindex():
-    # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
-    # time_frequency = ["5m", "10m", "30m", "60m", "120m", "week", "month"]
-    time_frequency = ["day"]
-    # host = "192.168.211.165"
-    host = "localhost"
-    ori_startdate = 20140508
-    ori_enddate = 20151208
-
-    for timeType in time_frequency:         
-        data_type = "MarketData" + "_" + timeType
-        database_obj = get_database_obj(data_type, host=host)
-        netconn_obj = get_netconn_obj(data_type)
-        # ori_enddate = getDateNow(data_type)   
-        get_tradetime_byindex(netconn_obj, database_obj, [ori_startdate, ori_enddate])  
-
-def test_complete_susdata():
-    timeType = "day"
-    host = "localhost"
-    ori_startdate = 20141108
-    ori_enddate = 20151108
-    data_type = "MarketData" + "_" + timeType
-    database_obj = get_database_obj(data_type, host=host)
-    netconn_obj = get_netconn_obj(data_type)
-    # ori_enddate = getDateNow(data_type)   
-
-    # database_obj.clearDatabase()
-
-    source_conditions = [ori_startdate, ori_enddate]
-    # tradetime_array = get_tradetime_byindex(netconn_obj, database_obj, source_conditions)  
-    com_tradetime_array = get_index_tradetime(netconn_obj, ori_startdate, ori_enddate)
-    # print_data("tradetime_array: ", tradetime_array)
-    print "com_tradetime_array.size: ", len(com_tradetime_array)
-
-    secode = "SZ002578"
-    # database_obj.completeDatabaseTable([secode])
-    cur_condition = [secode, ori_startdate, ori_enddate]
-
-    tradetime_array = get_sub_index_tradetime(com_tradetime_array, cur_condition[1], cur_condition[2])
-    print "tradetime_array.size: ", len(tradetime_array)
-
-    ori_netdata = netconn_obj.get_netdata(cur_condition) 
-    # print_data("ori_netdata: ", ori_netdata)
-    # print "ori_netdata.size: ", len(ori_netdata)
-
-    ori_time_array = get_time_array(ori_netdata)
-    missing_time_array = get_missing_time_array(tradetime_array, ori_time_array)
-    # print_data("ori_time_array: ",  ori_time_array)
-    print_data("missing_time_array: ", missing_time_array)
-    # print "missing_time_array.size: ", len(missing_time_array)
-    
-    complete_data = add_suspdata(tradetime_array, ori_netdata, isfirstInterval=True)
-    complete_time_array = get_time_array(complete_data)
-    # print_data("complete_data: ", complete_data)
-    # print "complete_data.size: ", len(complete_data)
-    # print_data("complete_time_array: ", complete_time_array)
-
-    com_missing_time_array = get_missing_time_array(tradetime_array, complete_time_array)
-    print_data("com_missing_time_array.size: ", com_missing_time_array)
-    # print "com_missing_time_array.size: ", len(com_missing_time_array)
-
-def compareTimeData(ori_startdate=0, ori_enddate=0, data_type="MarketData_day", host = "localhost"):
-    # timeType = "day"
-    # host = "localhost"
-    # # host = "192.168.211.165"
-    # data_type = "MarketData" + "_" + timeType
-    # ori_startdate = 20130108
-    # ori_enddate = getDateNow(data_type)   
-       
-    database_obj = get_database_obj(data_type, host=host)
-    netconn_obj = get_netconn_obj(data_type)
-
-    trade_time_array = get_index_tradetime(netconn_obj,ori_startdate, ori_enddate)
-    # print "trade_time_array numb: ", len(trade_time_array)
-
-    tablename_array = database_obj.getDatabaseTableInfo()
-    right_Data = {}
-    error_data = {}
-    for tablename in tablename_array:
-        curdata = []
-        dataNumb = database_obj.get_datacount(tablename)
-        date = database_obj.getStartEndDate(tablename)
-        curdata.append(dataNumb)
-        curdata.append(date)
-        if len(date) !=0 and date[0] != None and date[1] != None:
-            # print date[0], date[1]
-            index_data= get_sub_index_tradetime(trade_time_array, date[0], date[1])
-            curdata.append("indexDatanumb: ")
-            curdata.append(len(index_data))          
-            if dataNumb != len(index_data):
-                curdata.append("FALSE")
-                error_data[tablename] = curdata
-            else:
-                curdata.append("TRUE")
-                right_Data[tablename] = curdata
-        
-
-    # print_dict_data("right_Data: ", right_Data)
-    print_dict_data("error_Data: ", error_data)
-
 def main():
     starttime = datetime.datetime.now()
     info_str = "********** Main Start Time: " + str(starttime) + " **********\n"
@@ -440,12 +408,9 @@ def main():
     try:
         download_Marketdata()        
         # download_data()
-        # test_get_tradetime_byindex()
-        # test_complete_susdata()
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
-        info_str = "__Main__ Failed" \
-                + "[E] Exception : \n" + exception_info
+        info_str = "__Main__ Failed" + "[E] Exception : \n" + exception_info
         recordInfoWithLock(info_str)
 
         connFailedError = "Communication link failure---InternalConnect"

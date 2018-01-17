@@ -3,6 +3,8 @@ import threading
 from multiprocessing import cpu_count
 import datetime
 import time
+import multiprocessing 
+
 
 from CONFIG import *
 from toolFunc import *
@@ -13,16 +15,30 @@ from market_preclose_database import MarketPreCloseDatabase
 
 from excel import EXCEL
 
-def writeDataToDatabase(nedata_array, tablename_array):
-    databaseobj = MarketRealTimeDatabase(db=dbname, host=dbhost)
+def writeDataToDatabase(nedata_array, tablename_array, databaseobj, dbname = "MarketData_RealTime", dbhost = "192.168.211.165"):
+    # databaseobj = MarketRealTimeDatabase(db=dbname, host=dbhost)
     databaseobj.completeDatabaseTable(tablename_array)
     for secode in tablename_array:
         databaseobj.insert_data(nedata_array[secode], secode)
 
-def startWriteThread(netdata_array, tablename_array):
+def startProcess(netdata_array, tablename_array, database_obj_array, dbname = "MarketData_RealTime", dbhost = "192.168.211.165"):
+    process_list = []
+    for i in range(len(netdata_array)):
+        tmp_process = multiprocessing.Process(target=writeDataToDatabase, \
+                                              args=(netdata_array[i], tablename_array[i], database_obj_array[i], dbname, dbhost,))
+        process_list.append(tmp_process)
+
+    for process in process_list:
+        process.start()
+
+    for process in process_list:
+        process.join()     
+
+def startWriteThread(netdata_array, tablename_array, database_obj_array, dbname = "MarketData_RealTime", dbhost = "192.168.211.165"):
     threads = []
     for i in range(len(netdata_array)):
-        tmp_thread = threading.Thread(target=writeDataToDatabase, args=(netdata_array[i], tablename_array[i],))
+        tmp_thread = threading.Thread(target=writeDataToDatabase, \
+                                      args=(netdata_array[i], tablename_array[i], database_obj_array[i], dbname, dbhost,))
         threads.append(tmp_thread)
 
     for thread in threads:
@@ -30,8 +46,6 @@ def startWriteThread(netdata_array, tablename_array):
 
     for thread in threads:
         thread.join()      
-    
-    print ("threading.active_count(): %d\n") % (threading.active_count())
 
 def writeRealTimeDataToOneChart(nedata_array, secodelist, table_name):
     databaseobj = MarketRealTimeDatabase(db=dbname, host=dbhost)
@@ -53,6 +67,7 @@ def writeRealTimeDataToOneChart(nedata_array, secodelist, table_name):
     print "insert_realtime_numb: ", insert_numb     
 
 def allocate_threaddata(ori_data, secodelist):
+    global thread_count
     tablename_array = secodelist
     trans_data = []
     tablename_array = []
@@ -71,15 +86,13 @@ def allocate_threaddata(ori_data, secodelist):
             j+=1
         i += thread_count
 
-    # for i in range(len(trans_data)):
-    #     print trans_data[i]
-    #     print tablename_array[i]    
-
     return trans_data, tablename_array
 
-def setSnapData(secodelist):
-    global windObj
+def setSnapData(secodelist, database_obj_array):
+    global windObj, struct_type, dbname, dbhost
     
+    # print_data("database_obj_array: ", database_obj_array)
+
     ori_data = windObj.get_snapshoot_data(secodelist)
 
     if g_IsWriteToOneChart:
@@ -87,7 +100,10 @@ def setSnapData(secodelist):
         writeRealTimeDataToOneChart(ori_data, secodelist, table_name)
     else:
         trans_data, tablename_array = allocate_threaddata(ori_data, secodelist)
-        startWriteThread(trans_data, tablename_array)
+        if struct_type == "Process":
+            startProcess(trans_data, tablename_array, database_obj_array, dbname, dbhost)
+        if struct_type == "Thread":
+            startWriteThread(trans_data, tablename_array, database_obj_array, dbname, dbhost)
 
 def setPreCloseData(secodelist):
     global windObj, dbhost, dbname
@@ -114,7 +130,7 @@ def setPreCloseData(secodelist):
     print "update_preclose_numb: ", update_numb       
     print "insert_preclose_numb: ", insert_numb     
 
-def scan_excelfile():
+def scan_excelfile(database_obj_array):
     global secodelist, dirname, update_time
 
     if isTradingOver():
@@ -132,13 +148,13 @@ def scan_excelfile():
                 if transcode not in secodelist:
                     newFileIn = True
                     secodelist.append(transcode)                        
-        print "secodenumb: ", len(secodelist)    
+        print "secodenumb: ", len(secodelist) , ", newFileIn: ", newFileIn
         
         if newFileIn == True:
             setPreCloseData(secodelist)
 
         if isTradingStart() and not isTradingRest():
-            setSnapData(secodelist)
+            setSnapData(secodelist, database_obj_array)
 
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
@@ -165,22 +181,24 @@ def scan_excelfile():
         if not isWindError or not isExcelError:
             raise(e)
     finally:
-        timer = threading.Timer(update_time, scan_excelfile, )
+        timer = threading.Timer(update_time, scan_excelfile, args=(database_obj_array,))
         timer.start()
 
-def set_secodelist():
+def set_secodelist(database_obj_array):
     global secodelist, dirname, update_time
     # dirname =  "D:/strategy"
     dirname = u"//192.168.211.182/1分钟数据 20160910-20170910/strategy"
     secodelist = get_indexcode(style="wind")
 
-    timer = threading.Timer(update_time, scan_excelfile, )
+    timer = threading.Timer(update_time, scan_excelfile, args=(database_obj_array,))
     timer.start();
 
 def main():
-    global g_IsWriteToOneChart, update_time, thread_count, secodelist
+    global g_IsWriteToOneChart, update_time, thread_count, secodelist, struct_type
     global dbname, dbhost, windObj, g_testUpdate, g_testInsert
 
+    # struct_type = "Process"
+    struct_type = "Thread"
     secodelist = []
     dbname = "MarketData_RealTime"
     # dbhost = "localhost"
@@ -189,11 +207,17 @@ def main():
     update_time = 3.0
     g_IsWriteToOneChart = False
 
-    g_testUpdate = 0;
-    g_testInsert = 0;
+    g_testUpdate = 0
+    g_testInsert = 0
+
+    database_obj_array = []
+    for i in range(thread_count):
+        database_obj = MarketRealTimeDatabase(db=dbname, host=dbhost)
+        database_obj_array.append(database_obj)
+
 
     windObj = Wind()
-    set_secodelist()
+    set_secodelist(database_obj_array)
 
     database_obj = MarketRealTimeDatabase(db=dbname, host=dbhost)
     # database_obj.clearDatabase()
