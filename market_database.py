@@ -33,7 +33,10 @@ class MarketDatabase(Database):
             VOTRUNOVER = oridata[6]
             VATRUNOVER = oridata[7]
             TYClOSE = oridata[8]
-            PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+            if TYClOSE != 0:
+                PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+            else:
+                PCTCHG = 0
 
             val_str = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
                     + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
@@ -71,7 +74,10 @@ class MarketDatabase(Database):
             VOTRUNOVER = oridata[6]
             VATRUNOVER = oridata[7]
             TYClOSE = oridata[8]
-            PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+            if TYClOSE != 0:
+                PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+            else:
+                PCTCHG = 0
 
             val_str = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
                     + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \

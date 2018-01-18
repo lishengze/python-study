@@ -160,9 +160,9 @@ def is_minute_data(time_data):
 def isTradingRest():
      wsq_time = int(datetime.datetime.now().strftime("%H%M%S"))     
      am_starttime = 93000
-     am_endtime = 113020
+     am_endtime = 113003
      pm_starttime = 130000
-     pm_endtime = 150020
+     pm_endtime = 150003
      if wsq_time > am_endtime and wsq_time < pm_starttime:
          print wsq_time, 'is rest time.\n'
          return True
@@ -172,9 +172,9 @@ def isTradingRest():
 def isTradingOver():
      wsq_time = int(datetime.datetime.now().strftime("%H%M%S"))     
      am_starttime = 93000
-     am_endtime = 113020
+     am_endtime = 113003
      pm_starttime = 130000
-     pm_endtime = 150020
+     pm_endtime = 150003
      if wsq_time > pm_endtime:
          print wsq_time, " is over time.\n"
          return True
@@ -185,9 +185,9 @@ def isTradingStart():
      wsq_time = int(datetime.datetime.now().strftime("%H%M%S"))
     #  print wsq_time
      am_starttime = 93000
-     am_endtime = 113020
+     am_endtime = 113003
      pm_starttime = 130000
-     pm_endtime = 150020
+     pm_endtime = 150003
      if wsq_time > am_starttime:
          return True
      else:

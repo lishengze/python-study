@@ -69,7 +69,7 @@ def writeDataToDatabase(result_array, source, database_obj):
     try:
         # database_obj = get_database_obj(mainthread_database_obj.db, mainthread_database_obj.host)        
         table_name = source
-        database_obj.completeDatabaseTable([table_name])        
+        # database_obj.completeDatabaseTable([table_name])        
         for item in result_array:
             database_obj.insert_data(item, table_name)
         # tmp_successcount = getSusCount()
@@ -334,7 +334,7 @@ def restore_database(database_obj, restore_data, compute_count):
 
     if [] in trans_restore_data:
         trans_restore_data.remove([])
-    print_data("trans_restore_data: ", trans_restore_data)
+    # print_data("trans_restore_data: ", trans_restore_data)
 
     process_list = []
     for j in range(len(trans_restore_data)):
@@ -381,7 +381,7 @@ def download_data():
 def download_Marketdata():
     # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
     # time_frequency = ["5m", "10m", "30m",  "week", "month"]
-    time_frequency = ["60m"]
+    time_frequency = ["30m"]
     host = "192.168.211.165"
     # host = "localhost"
     ori_startdate = 20130101
@@ -392,7 +392,7 @@ def download_Marketdata():
         ori_enddate = getDateNow(data_type)   
 
         database_obj = get_database_obj(data_type, host=host)
-        # database_obj.clearDatabase()
+        database_obj.clearDatabase()
 
         restore_data = MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)          
         compareTimeData(ori_startdate, ori_enddate, data_type, host)

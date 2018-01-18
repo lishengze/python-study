@@ -17,7 +17,7 @@ from excel import EXCEL
 
 def writeDataToDatabase(nedata_array, tablename_array, databaseobj, dbname = "MarketData_RealTime", dbhost = "192.168.211.165"):
     # databaseobj = MarketRealTimeDatabase(db=dbname, host=dbhost)
-    databaseobj.completeDatabaseTable(tablename_array)
+    # databaseobj.completeDatabaseTable(tablename_array)
     for secode in tablename_array:
         databaseobj.insert_data(nedata_array[secode], secode)
 
@@ -105,13 +105,13 @@ def setSnapData(secodelist, database_obj_array):
         if struct_type == "Thread":
             startWriteThread(trans_data, tablename_array, database_obj_array, dbname, dbhost)
 
-def setPreCloseData(secodelist):
+def setPreCloseData(secodelist, databaseobj):
     global windObj, dbhost, dbname
     result = windObj.get_preclose_data(secodelist)    
-    
+    # print result
     table_name = "PreCloseData"
 
-    databaseobj = MarketPreCloseDatabase(host=dbhost, db=dbname)
+    # databaseobj = MarketPreCloseDatabase(host=dbhost, db=dbname)
     databaseobj.completeDatabaseTable([table_name])
 
     colname = "股票"
@@ -151,7 +151,8 @@ def scan_excelfile(database_obj_array):
         print "secodenumb: ", len(secodelist) , ", newFileIn: ", newFileIn
         
         if newFileIn == True:
-            setPreCloseData(secodelist)
+            database_obj_array[0].completeDatabaseTable(secodelist)
+            setPreCloseData(secodelist, database_obj_array[len(database_obj_array)-1])
 
         if isTradingStart() and not isTradingRest():
             setSnapData(secodelist, database_obj_array)
@@ -215,6 +216,8 @@ def main():
         database_obj = MarketRealTimeDatabase(db=dbname, host=dbhost)
         database_obj_array.append(database_obj)
 
+    preclose_database_obj = MarketPreCloseDatabase(host=dbhost, db=dbname)
+    database_obj_array.append(preclose_database_obj)
 
     windObj = Wind()
     set_secodelist(database_obj_array)
