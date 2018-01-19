@@ -90,10 +90,10 @@ def allocate_threaddata(ori_data, secodelist):
 
 def setSnapData(secodelist, database_obj_array):
     global windObj, struct_type, dbname, dbhost
-    
     # print_data("database_obj_array: ", database_obj_array)
 
     ori_data = windObj.get_snapshoot_data(secodelist)
+    print "ori_data.numb: ", len(ori_data)
 
     if g_IsWriteToOneChart:
         table_name = "AllData"
@@ -159,8 +159,7 @@ def scan_excelfile(database_obj_array):
 
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
-        info_str = "__Main__ Failed" \
-                + "[E] Exception : \n" + exception_info
+        info_str = "__Main__ Failed: \n" + "[E] Exception : \n" + exception_info
         print info_str
 
         get_snapshoot_data_error = "Get SnapShoot Data Failed"  

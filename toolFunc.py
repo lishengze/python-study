@@ -167,6 +167,7 @@ def isTradingRest():
          print wsq_time, 'is rest time.\n'
          return True
      else:
+         print wsq_time, ' is trade time.\n'
          return False
 
 def isTradingOver():
