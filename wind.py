@@ -129,3 +129,9 @@ class Wind(object):
         else:
             # print tmp.ErrorCode
             raise(Exception("get_restore_historydata Failed , ErroCode is: " + str(tmp.ErrorCode)))
+
+    def get_secode_compname(self, secode_list):
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        result = self.wind.wsd(secode_list, "comp_name", date, date, "")
+        data = result.Data[0]        
+        return data

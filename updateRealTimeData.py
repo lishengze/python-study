@@ -47,6 +47,8 @@ def startWriteThread(netdata_array, tablename_array, database_obj_array, dbname 
     for thread in threads:
         thread.join()      
 
+    print ("threading.active_count(): %d\n") % (threading.active_count())
+
 def writeRealTimeDataToOneChart(nedata_array, secodelist, table_name):
     databaseobj = MarketRealTimeDatabase(db=dbname, host=dbhost)
     databaseobj.completeDatabaseTable([table_name])
@@ -93,7 +95,7 @@ def setSnapData(secodelist, database_obj_array):
     # print_data("database_obj_array: ", database_obj_array)
 
     ori_data = windObj.get_snapshoot_data(secodelist)
-    print "ori_data.numb: ", len(ori_data)
+    print "ori_data.numb: ", len(ori_data), ", data.len: ", len(ori_data[secodelist[0]])
 
     if g_IsWriteToOneChart:
         table_name = "AllData"

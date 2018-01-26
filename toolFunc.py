@@ -16,7 +16,8 @@ import time
 import datetime
 import threading
 
-from CONFIG import *
+from excel import EXCEL
+
 
 def LogInfo(wfile, info):
     try:
@@ -117,10 +118,18 @@ def getpercenttime(time):
     time = float(hour * 60 + minu) / (24 * 60)
     return time
 
+def complete_excel_code(oricode):
+    complete_code = str(oricode)
+    while len(complete_code) < 6:
+        complete_code = '0' + complete_code
+    return complete_code
+
+
 def trans_code_to_windstyle(oricode):
     wind_code = str(oricode)
     while len(wind_code) < 6:
         wind_code = '0' + wind_code
+
     if wind_code.startswith('6'):
         wind_code += '.SH'
     else:
@@ -167,7 +176,7 @@ def isTradingRest():
          print wsq_time, 'is rest time.\n'
          return True
      else:
-         print wsq_time, ' is trade time.\n'
+         print wsq_time, ' is trade time.'
          return False
 
 def isTradingOver():
@@ -193,6 +202,15 @@ def isTradingStart():
          return True
      else:
          print wsq_time, " is too early.\n"
+         return False    
+
+def isAnnouncementOver():
+     wsq_time = int(datetime.datetime.now().strftime("%H%M%S"))     
+     an_endtime = 170000
+     if wsq_time > an_endtime:
+         print wsq_time, " is over time.\n"
+         return True
+     else:
          return False    
 
 def print_data(msg, data):
@@ -634,9 +652,10 @@ def compute_restore_data(sort_data):
         sort_data[i-1][2] = sort_data[i][2] / (1 + sort_data[i][3])
         sort_data[i][4] = sort_data[i-1][2]
         i -= 1
-
-    sort_data[i] = list(sort_data[i])
-    sort_data[i][4] = sort_data[i][2] / (1 + sort_data[i][3])
+        
+    if i > -1:
+        sort_data[i] = list(sort_data[i])
+        sort_data[i][4] = sort_data[i][2] / (1 + sort_data[i][3])
     return sort_data
 
 def get_restore_time_list(ori_restore_data):
@@ -646,3 +665,17 @@ def get_restore_time_list(ori_restore_data):
             if [item[1], item[2]] not in restore_time_array:
                 restore_time_array.append([item[1], item[2]])
     return restore_time_array
+
+def get_excel_secode(dirname):
+    secodelist = []
+    filename_array = get_filename_array(dirname)    
+    newFileIn = False
+    for filename in filename_array:
+        complete_filename = dirname + '/' + filename
+        excelobj = EXCEL(complete_filename)
+        tmp_secodelist = excelobj.get_data_byindex()
+        for code in tmp_secodelist:
+            complete_code = complete_excel_code(code)
+            if complete_code not in secodelist:
+                secodelist.append(complete_code)      
+    return secodelist

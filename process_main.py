@@ -58,12 +58,12 @@ def getSusCount():
     return tmpSusCount
 
 def recordInfoWithLock(info_str):
-    print info_str
-    # global g_writeLogLock, g_logFile
-    # g_writeLogLock.acquire()
     # print info_str
-    # g_logFile.write(info_str + '\n')
-    # g_writeLogLock.release()      
+    global g_writeLogLock, g_logFile
+    g_writeLogLock.acquire()
+    print info_str
+    g_logFile.write(info_str + '\n')
+    g_writeLogLock.release()      
 
 def writeDataToDatabase(result_array, source, database_obj):
     try:
@@ -381,10 +381,12 @@ def download_data():
 def download_Marketdata():
     # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
     # time_frequency = ["5m", "10m", "30m",  "week", "month"]
-    time_frequency = ["5m"]
+    # time_frequency = ["5m", "10m", "30m", "60m", "120m"]
+    # time_frequency = ["week", "month"]
+    time_frequency = ["1m"]
     host = "192.168.211.165"
     # host = "localhost"
-    ori_startdate = 20130101
+    ori_startdate = 20170101
     # ori_enddate = 20170622
 
     for timeType in time_frequency:         
@@ -395,7 +397,7 @@ def download_Marketdata():
         database_obj.clearDatabase()
 
         restore_data = MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)          
-        compareTimeData(ori_startdate, ori_enddate, data_type, host)
+        # compareTimeData(ori_startdate, ori_enddate, data_type, host)
 
         compute_count = 12
         restore_database(database_obj, restore_data, compute_count)

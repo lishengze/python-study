@@ -3,6 +3,7 @@ import sys
 import pymssql  
 from CONFIG import *
 from toolFunc import *
+import time
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -36,7 +37,8 @@ class Database:
   
     def changeDatabase(self,sql):  
         result = self.cur.execute(sql)  
-        self.conn.commit()  
+        result2 = self.conn.commit()  
+        return result
 
     def dropTableByName(self, table_name):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
@@ -79,12 +81,26 @@ class Database:
             self.createTableByName(table_name)    
 
     def insert_data(self, oridata, table_name):
-        insert_str = self.get_insert_str(oridata, table_name)
-        # print insert_str
         try:
-            self.changeDatabase(insert_str)
+            insert_str = self.get_insert_str(oridata, table_name)
+        # print insert_str
+            result = self.changeDatabase(insert_str)
+
+            if result != None:
+                connFailedWaitTime = 5
+                print 'insert result: ', result
+                print '\n^^^^^ database insert_data restart! ^^^^^ \n'
+                time.sleep(connFailedWaitTime)
+                self.insert_data(oridata, table_name)
+            return result
         except Exception as e:
-            if "Violation of PRIMARY KEY constraint" not in e[1]:
+            connect_error = "20003"
+            if connect_error in e[1]:
+                connFailedWaitTime = 5
+                print '\n^^^^^20003 connection timed out database insert_data restart! ^^^^^ \n'
+                time.sleep(connFailedWaitTime)
+                self.insert_data(oridata, table_name)        
+            elif "Violation of PRIMARY KEY constraint" not in e[1]:
                 print e
                 raise(e)
 
