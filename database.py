@@ -9,12 +9,13 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 class Database:
-    def __init__(self, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):
+    def __init__(self, id=0, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):
         self.__name__ = "Database"
         self.host = host
         self.user = user
         self.pwd = pwd
         self.db = db
+        self.id = id
         self.startConnect()
 
     def __del__(self):

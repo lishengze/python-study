@@ -258,8 +258,9 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
         aveTime = costTime / len(tablename_array)
 
     print_data("sus_secode: ", sus_secode)
+    indexcode_list = get_indexcode(style = "tinysoft")
     for secode in restore_dict_data:
-        if len(restore_dict_data[secode]) != 0:
+        if len(restore_dict_data[secode]) != 0 and secode not in indexcode_list:
             restore_data.append(restore_dict_data[secode])
 
     print_data("restore_data: ", restore_data)
@@ -367,7 +368,7 @@ def download_data():
     # data_type = "MarketDataTest"
     # data_type = "WeightDataTest"
     # data_type = "IndustryDataTest"
-    data_type = "IndustryData"
+    data_type_list = ["IndustryData", "WeightData"]
     # data_type = "WeightData"
     # data_type = "MarketData"
     # host = "localhost"
@@ -375,18 +376,21 @@ def download_data():
     # time_frequency = "day" 
     # data_type = "MarketData" + "_" + time_frequency   
     ori_startdate = 20171101
-    ori_enddate = getDateNow(data_type)    
-    MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
+
+    for data_type in data_type_list:
+        ori_enddate = getDateNow(data_type)    
+        MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)
 
 def download_Marketdata():
     # time_frequency = ["day", "1m", "5m", "10m", "30m", "60m", "120m", "week", "month"]
     # time_frequency = ["5m", "10m", "30m",  "week", "month"]
-    # time_frequency = ["5m", "10m", "30m", "60m", "120m"]
+    time_frequency = ["5m", "10m", "30m", "60m", "120m", "day"]
     # time_frequency = ["week", "month"]
-    time_frequency = ["1m"]
+    # time_frequency = ["1m"]
+    # time_frequency = ["day"]
     host = "192.168.211.165"
     # host = "localhost"
-    ori_startdate = 20170101
+    ori_startdate = 20171220
     # ori_enddate = 20170622
 
     for timeType in time_frequency:         
@@ -394,7 +398,7 @@ def download_Marketdata():
         ori_enddate = getDateNow(data_type)   
 
         database_obj = get_database_obj(data_type, host=host)
-        database_obj.clearDatabase()
+        # database_obj.clearDatabase()
 
         restore_data = MultiThreadWriteData(data_type, [ori_startdate, ori_enddate], database_host=host)          
         # compareTimeData(ori_startdate, ori_enddate, data_type, host)
@@ -408,8 +412,9 @@ def main():
     LogInfo(g_logFile, info_str)
 
     try:
-        download_Marketdata()        
-        # download_data()
+            
+        download_data()
+        download_Marketdata()    
     except Exception as e:
         exception_info = "\n" + str(traceback.format_exc()) + '\n'
         info_str = "__Main__ Failed" + "[E] Exception : \n" + exception_info

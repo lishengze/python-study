@@ -46,14 +46,16 @@ def get_sh_announcement_detail(sh_secode_list):
     # print_data("title_text: ", title_text)
 
     announcement_info = sel.xpath('//em[@class="pdf-first"]/a/text()').extract()
+    href_info = sel.xpath('//em[@class="pdf-first"]/a/@href').extract()  
+    print_data("href_info: ", href_info)
     # print_data("announcement_info: ", announcement_info)
 
     for announcement in announcement_info:
         tmp_list = announcement.split('：')
         tmp_secode = tmp_list[0]
         if tmp_secode in sh_secode_list:
-            if '\t' in tmp_list[1]:
-                tmp_list[1].remove('\t')
+            # if ' ' in tmp_list[1]:
+            #     tmp_list[1].remove(' ')
             sh_announcement[tmp_secode].append(tmp_list[1])
     return sh_announcement
 
@@ -122,8 +124,10 @@ def get_sz_announcement_detail(sz_secode_list):
         html = driver.page_source.encode('utf-8')
         html_response = HtmlResponse(driver.current_url, body=html, encoding='utf-8')
         sel = scrapy.Selector(html_response)
-        announcement_info = sel.xpath('//td[@class="td2"]/a/text()').extract()        
-        print_data(secode + " announcement_info: ", announcement_info)    
+        announcement_info = sel.xpath('//td[@class="td2"]/a/text()').extract()    
+        href_info = sel.xpath('//td[@class="td2"]/a/@href').extract()  
+        print_data(secode + " announcement_info: ", announcement_info)  
+        print_data(secode + " href_info: ", href_info)  
 
         sz_announcement[secode] = announcement_info
         # time.sleep(3)
@@ -144,8 +148,8 @@ def get_secode_list(dirname):
     return sz_secode_list, sh_secode_list
 
 def get_announcement(sz_secode_list, sh_secode_list):
-    sz_announcement = get_sz_announcement_detail(sz_secode_list)
     sh_announcement = get_sh_announcement_detail(sh_secode_list)
+    sz_announcement = get_sz_announcement_detail(sz_secode_list)    
     return sz_announcement, sh_announcement
 
 def store_annnouncement(announcement_database_obj):
@@ -155,7 +159,7 @@ def store_annnouncement(announcement_database_obj):
     dirname = u"//192.168.211.182/1分钟数据 20160910-20170910/strategy"
     sz_secode_list, sh_secode_list = get_secode_list(dirname)
     secode_list = sz_secode_list + sh_secode_list
-
+    announcement_database_obj.completeDatabaseTable(secode_list)
     sz_announcement, sh_announcement = get_announcement(sz_secode_list, sh_secode_list)
 
     count = 0
@@ -176,16 +180,13 @@ def store_annnouncement(announcement_database_obj):
     timer = threading.Timer(updatetime, store_annnouncement, args=(announcement_database_obj,))
     timer.start()
 
-
 def main():
     global updatetime
-    updatetime = 60 * 60
+    updatetime = 2 * 60 * 60
 
     host = "192.168.211.165"
     dbname = "Announcement"
-    announcement_database_obj = AnnouncementDatabase(db=dbname, host=host)
-    announcement_database_obj.completeDatabaseTable(secode_list)
-
+    announcement_database_obj = AnnouncementDatabase(db=dbname, host=host)    
     store_annnouncement(announcement_database_obj)
 
                     

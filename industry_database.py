@@ -4,8 +4,8 @@ from toolFunc import *
 from database import Database
 
 class IndustryDatabase(Database):
-    def __init__(self, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):
-        Database.__init__(self, host, user, pwd, db)
+    def __init__(self, id=0, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):
+        Database.__init__(self, id, host, user, pwd, db)
 
     def __del__(self):
         Database.__del__(self)
