@@ -21,9 +21,10 @@ class AnnouncementDatabase(Database):
 
     def get_insert_str(self,secode, date, annnouncement):
         col_str = "(Secode, Date, Announcement)"
-        val_str = "\'" + secode + '\', ' + str(date) + ", \'" + annnouncement + "\'"
+        val_str = u"\'" + str(secode) + '\', ' + str(date) + ", \'" + str(annnouncement) + "\'"
         complete_tablename = u'[' + self.db + '].[dbo].['+ secode +']'
         insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
+        print insert_str
         return insert_str
 
     def insert_data(self, secode, date, annnouncement):

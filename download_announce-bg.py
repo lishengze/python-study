@@ -60,9 +60,61 @@ def get_sh_announcement_detail(sh_secode_list):
             sh_announcement[tmp_secode].append(tmp_list[1])
     return sh_announcement
 
+def get_sh_announcement_test(sh_secode_list):
+    # driver = webdriver.PhantomJS()
+    driver = webdriver.Chrome()
+    url = "http://www.sse.com.cn/disclosure/listedinfo/announcement/"
+
+    driver.set_page_load_timeout(30)
+
+    sh_announcement = {}
+    for secode in sh_secode_list:
+        sh_announcement[secode] = []
+
+    for secode in sh_secode_list:
+        driver.get(url)
+        time.sleep(3)
+
+        inputCode = driver.find_element_by_id('inputCode')
+        inputCode.clear()        
+        inputCode.send_keys(secode)
+        # time.sleep(10)
+
+        # inputStartTime = driver.find_element_by_id('start_date')
+        # inputStartTime.clear()
+        # inputStartTime.send_keys('2018-01-10')
+        # print inputStartTime.get_attribute('value')
+        # time.sleep(10)
+        
+
+        # inputEndTime = driver.find_element_by_id('end_date')
+        # inputEndTime.clear()
+        # time.sleep(10)
+        # inputEndTime.send_keys('2018-02-12')
+
+        driver.find_element_by_id('btnQuery').click()
+        time.sleep(3)
+
+        html = driver.page_source.encode('utf-8')
+        html_response = HtmlResponse(driver.current_url, body=html, encoding='utf-8')
+
+        sel = scrapy.Selector(html_response)
+
+        announcement_info = sel.xpath('//em[@class="pdf-first"]/a/text()').extract()
+        href_info = sel.xpath('//em[@class="pdf-first"]/a/@href').extract()  
+
+
+        for i in range(len(announcement_info)):
+            print announcement_info[i]
+            # announcement = announcement_info[i]
+            # href = href_info[i]
+            # tmp_list = announcement.split('：')
+            # sh_announcement[secode].append(tmp_list[1])
+    return sh_announcement
+
 def get_sz_announcement_detail(sz_secode_list):
-    driver = webdriver.PhantomJS()
-    # driver = webdriver.Chrome()
+    # driver = webdriver.PhantomJS()
+    driver = webdriver.Chrome()
     url = "http://disclosure.szse.cn/m/drgg.htm"
     sz_announcement = {}
     driver.set_page_load_timeout(30)
@@ -73,8 +125,22 @@ def get_sz_announcement_detail(sz_secode_list):
 
         driver.get(url)
         time.sleep(3)
+        end_date = datetime.datetime.now()
+        start_date = end_date + datetime.timedelta(days=-7)
+
+        print start_date.strftime('%Y-%m-%d')
+        print end_date.strftime('%Y-%m-%d')
 
         driver.find_element_by_id('stockCode').send_keys(secode)
+        inputStartTime = driver.find_element_by_id('startTime')
+        inputStartTime.clear()
+        inputStartTime.send_keys(start_date.strftime('%Y-%m-%d'))
+
+        inputEndTime = driver.find_element_by_id('endTime')
+        inputEndTime.clear()
+        inputEndTime.send_keys(end_date.strftime('%Y-%m-%d'))
+
+
         driver.find_element_by_name('imageField').click()
         time.sleep(1)
 
@@ -83,8 +149,8 @@ def get_sz_announcement_detail(sz_secode_list):
         sel = scrapy.Selector(html_response)
         announcement_info = sel.xpath('//td[@class="td2"]/a/text()').extract()    
         href_info = sel.xpath('//td[@class="td2"]/a/@href').extract()  
-        # print_data(secode + " announcement_info: ", announcement_info)  
-        # print_data(secode + " href_info: ", href_info)  
+        print_data(secode + " announcement_info: ", announcement_info)  
+        print_data(secode + " href_info: ", href_info)  
 
         for i in range(len(href_info)):
             href_info[i] = http_prex + href_info[i]
@@ -162,62 +228,18 @@ def main_new():
     announcement_database_obj = AnnouncementNewDatabase(db=dbname, host=host)    
     store_annnouncement(announcement_database_obj)
 
-
-def test_get_sz_announcement_detail():
-    sz_secode_list = ["300187", "000564"]
+def test_get_announcement():
+    sz_secode_list = ["000671"]
     sz_announcement = get_sz_announcement_detail(sz_secode_list)
-    # print_dict_data("sz_announcement: ", sz_announcement)
 
+    # sh_secode_list = ['600021']
+    # get_sh_announcement_test(sh_secode_list)
+ 
 if __name__ == "__main__":
-    main()
-    main_new()
+    # main()
+    # main_new()
     # get_sh_announcement()
     # get_sz_announcement()
     # get_secode_name()
     # get_announcement()
-    # test_get_sz_announcement_detail()
-
-# def get_sz_announcement():
-#     driver = webdriver.PhantomJS()
-#     # driver = webdriver.Chrome()
-#     url = "http://disclosure.szse.cn/m/drgg.htm"
-
-#     driver.set_page_load_timeout(30)
-#     driver.get(url)
-#     time.sleep(3)
-
-#     driver.find_element_by_id('stockCode').send_keys('002678')
-#     driver.find_element_by_name('imageField').click()
-#     # time.sleep(2)
-
-#     # starttime = driver.find_element_by_id('startTime')
-#     # starttime.send_keys('2017-01-01')
-#     # endtime = driver.find_element_by_id('endTime')
-#     # endtime.send_keys('2018-01-01')
-
-#     html = driver.page_source.encode('utf-8')
-#     html_response = HtmlResponse(driver.current_url, body=html, encoding='utf-8')
-#     sel = scrapy.Selector(html_response)
-
-#     announcement_info = sel.xpath('//td[@class="td2"]/a/text()').extract()
-#     print_data("announcement_info: ", announcement_info)
-
-#     # if sel.xpath('//iframe[@id="i_nr"]'):
-#     #     driver.switch_to_frame("i_nr")
-#     #     html = driver.page_source.encode('utf-8')
-#     #     html_response = HtmlResponse(driver.current_url, body=html, encoding='utf-8')
-
-#     #     sel = scrapy.Selector(html_response)
-
-#     #     # title = sel.xpath('//title/text()').extract()
-#     #     # print_data("title: ", title)
-
-#     #     # announcement_info = sel.xpath('//table[@class="ggnr"]//a/text()').extract()
-#     #     announcement_info = sel.xpath('//td[@class="td2"]/a/text()').extract()
-#     #     # announcement_info = sel.xpath('//td[@class="td2"]')
-#     #     # announcement_info = sel.xpath('//div[@id="sortAndPageAfficheDiv"]')
-#     #     # announcement_info = sel.xpath('//table[@class="ggnr"]')
-
-#     #     print_data("announcement_info: ", announcement_info)
-
-#     # return announcement_info
+    test_get_announcement()
