@@ -8,7 +8,6 @@ import threading
 
 import sys
 
-from wind import Wind
 from toolFunc import *
 from announcement_database import AnnouncementDatabase
 from announcement_newdatabase import AnnouncementNewDatabase

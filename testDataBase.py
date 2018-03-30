@@ -20,6 +20,8 @@ from market_database import MarketDatabase
 from market_datanet import MarketTinySoft
 
 from operator import itemgetter, attrgetter
+from math import *
+import random
 
 g_writeLogLock = threading.Lock()
 g_logFileName = os.getcwd() + '\log.txt'
@@ -409,6 +411,36 @@ def test_complete_susdata():
     print_data("com_missing_time_array.size: ", com_missing_time_array)
     # print "com_missing_time_array.size: ", len(com_missing_time_array)
 
+def test_insert_multieData():
+    database_name = "Test"
+    db_host = "192.168.211.165"
+    table_name = "test_multi_insert"
+
+    databaseObj = Database(host=db_host, db=database_name)    
+    complete_tablename = u'[' + database_name + '].[dbo].['+ table_name +']'
+    col_str = "(name, age, country, income)"
+
+    data_numb = 1000
+    value_str = ""
+    for i in range(1, data_numb):
+        value_str += "('lee', " + str(i+20) + ", 'China', " + str(random.randint(10,100)) + "),"
+
+    insert_str = "insert into " + complete_tablename + " " \
+                 + col_str + " values " + value_str
+
+    insert_str = insert_str[0:(len(insert_str)-1)]
+    # print insert_str
+
+    databaseObj.changeDatabase(insert_str)
+
+
+def test_tableTime():
+    host = "localhost"
+    data_type = "MarketData" + "_" + "day"
+    secode = "SH000300"    
+    databaseObj = MarketDatabase(host=host, db=data_type)
+    tableTime = databaseObj.getTableDataStartEndTime(secode)
+    print tableTime
 
 if __name__ == "__main__":
     try:
@@ -421,7 +453,9 @@ if __name__ == "__main__":
         # testMarketDatabase()
         # testGetLatestData()
         # testTimeData()
-        test_get_database()
+        # test_get_database()
+        # test_insert_multieData();
+        test_tableTime()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         log_str = "__Main__ Failed \n" \

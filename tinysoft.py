@@ -31,9 +31,11 @@ class TinySoft(object):
         self.curs = self.conn.cursor()   
 
     def close_connect(self):
-        self.curs.close()
-        self.conn.close()
-        # print 'tinysoft_close_connect'
+        if type(self.curs) != 'str':            
+            self.curs.close()
+
+        if type(self.conn) != 'str':            
+            self.conn.close()
 
     def test_tsl(self, tsl_str):
         self.curs.execute(tsl_str)
@@ -45,8 +47,10 @@ class TinySoft(object):
         self.curs.execute(tsl_str)                
         result = self.curs.fetchall()
         transResult = []
+        
         for data in result:
             transResult.append(data[0])
+        # print_list("all_A_Secode: ", transResult)
         return transResult   
 
     def get_Index_secode(self):

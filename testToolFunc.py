@@ -91,6 +91,13 @@ def test_split():
     print datestr, date_array
     print getSimpleDate(datestr)
 
+def test_waitForNextTradingDay():
+    waitForNextTradingDay()
+
+def test_pure_code():
+    indexcode = "SH000300"
+    print pure_secode(indexcode)
+
 if __name__ == '__main__':
     # testGetIntegerDateNow()
     # test_get_filename_array()
@@ -98,5 +105,7 @@ if __name__ == '__main__':
     # testTradingTime()
     # test_transto_tinytime()
     # test_getdatabase_tablename()
-    test_sortdata()
+    # test_sortdata()
+    # test_waitForNextTradingDay()
     # test_split()
+    test_pure_code()

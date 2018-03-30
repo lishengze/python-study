@@ -75,4 +75,8 @@ class MarketRealTimeDatabase(Database):
         # print "update_str: ", update_str
         self.changeDatabase(update_str)
 
-
+    def createSecodeListTable(self):
+        pass
+    
+    def insertSecodeList(self, secodeList):
+        pass

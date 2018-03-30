@@ -8,7 +8,6 @@ import threading
 
 import sys
 
-from wind import Wind
 from toolFunc import *
 from announcement_database import AnnouncementDatabase
 from announcement_newdatabase import AnnouncementNewDatabase
@@ -82,8 +81,8 @@ def get_sh_announcement_detail(sh_secode_list):
             an_time = time_info[i].replace('-','')
             cur_an = tmp_list[1]
             print an_time, tmp_list[0], cur_an 
-
-            sh_announcement[secode].append([cur_an, href, an_time])
+            if tmp_list[0] in sh_secode_list:
+                sh_announcement[tmp_list[0]].append([cur_an, href, an_time])
 
     return sh_announcement
 
@@ -159,9 +158,9 @@ def get_announcement(sz_secode_list, sh_secode_list):
 
 def store_annnouncement(announcement_database_obj):
     if isAnnouncementOver():
-        return
+        waitForNextDay()
 
-    # dirname = u"//192.168.211.182/1分钟数据 20160910-20170910/strategy"
+    # dirname = u"//192.168.211.182/it程序设计/strategy"
     dirname = STRATEGY_FILE_DIR
     sz_secode_list, sh_secode_list = get_secode_list(dirname)
     # sz_secode_list = ['000001']
@@ -199,7 +198,7 @@ def main():
     host = "192.168.211.165"
     dbname = "Announcement"
     announcement_database_obj = AnnouncementNewDatabase(db=dbname, host=host)    
-    announcement_database_obj.clearDatabase()
+    # announcement_database_obj.clearDatabase()
     store_annnouncement(announcement_database_obj)
 
 def test_get_announcement_detail():

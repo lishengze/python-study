@@ -117,7 +117,6 @@ def getSnapData(windObj, secodelist):
     # timer = threading.Timer(timeInterval, getSnapData, [windObj, secodelist])
     # timer.start();
 
-
 def test_get_snapshoot_data():
     windObj = Wind()
     secodelist = ["000001.SZ", "000002.SZ"]
@@ -166,6 +165,10 @@ def test_get_preclose_data():
     print "update_numb: ", update_numb       
     print "insert_numb: ", insert_numb  
 
+def test_getSecodelist():
+    windObj = Wind()
+    windObj.get_secodelist()
+
 if __name__ == "__main__":
     # test_connect()
     # test_getSecodeInfo()
@@ -175,5 +178,6 @@ if __name__ == "__main__":
     # exec_str()
     # test_get_snapshoot_data()
     # test_checkdata()
-    test_get_preclose_data()
+    # test_get_preclose_data()
+    test_getSecodelist()
 

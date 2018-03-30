@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 EXCELFILE_DIR = "E:\DataBase\original-data-20160910-20170910-1m"
 DATABASE_NAME = "TestData"
 DATABASE_USER = "sa"
@@ -9,4 +11,4 @@ QT_PWD = "UXLAS4YF"
 STARTDATE = 20130901
 ENDDATE = 20171024
 TIANRUAN_DATASOURCE = "dsn=t1"
-STRATEGY_FILE_DIR = u"D:/strategy/Real"
+STRATEGY_FILE_DIR = u"D:\strategy\Real"

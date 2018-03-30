@@ -135,3 +135,12 @@ class Wind(object):
         result = self.wind.wsd(secode_list, "comp_name", date, date, "")
         data = result.Data[0]        
         return data
+
+    def get_secodelist(self):
+        tmp = self.wind.wset("indexconstituent","date=2018-03-05;windcode=000906.SH")
+        print len(tmp.Data[2])
+        if tmp.ErrorCode == 0:
+            result = []
+            return result    
+        else:
+            raise(Exception("get_secodelist Failed , ErroCode is: " + str(tmp.ErrorCode)))

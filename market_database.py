@@ -54,7 +54,7 @@ class MarketDatabase(Database):
     def get_create_str(self, table_name):
         value_str = "(TDATE int not null, TIME int not null Primary Key(TDATE, TIME), SECODE varchar(10), \
                     TOPEN decimal(15,4), TCLOSE decimal(15,4), HIGH decimal(15,4), LOW decimal(15,4), \
-                    VATRUNOVER decimal(28,4), VOTRUNOVER decimal(28,4), PCTCHG decimal(10,4), YCLOSE decimal(15, 4))"
+                    VATRUNOVER decimal(28,4), VOTRUNOVER decimal(28,4), PCTCHG decimal(10,4), YCLOSE decimal(15, 4), TURNOVER decimal(15, 4))"
 
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         create_str = "create table " + complete_tablename + value_str
@@ -62,7 +62,7 @@ class MarketDatabase(Database):
 
     def get_insert_str(self, oridata, table_name):
         try:
-            col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG, YCLOSE) "
+            col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG, YCLOSE, TURNOVER) "
             TDATE = getSimpleDate(oridata[0])
             TIME = getSimpleTime(oridata[0])
             SECODE = oridata[1]
@@ -73,6 +73,10 @@ class MarketDatabase(Database):
             VOTRUNOVER = oridata[6]
             VATRUNOVER = oridata[7]
             TYClOSE = oridata[8]
+            if len(oridata) >= 10:
+                TURNOVER = oridata[9]
+            else:
+                TURNOVER = -1
             if TYClOSE != 0:
                 PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
             else:
@@ -80,10 +84,51 @@ class MarketDatabase(Database):
 
             val_str = TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
                     + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
-                    + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG) + ", " + str(TYClOSE)
+                    + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG) + ", " + str(TYClOSE) + ", " + str(TURNOVER)
 
             complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
             insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
+            return insert_str      
+        except Exception as e:
+            error = "cannot concatenate"
+            exception_info = "\n" + str(traceback.format_exc()) + '\n'
+            if error in exception_info:
+                print "oridata: ", oridata
+            raise(Exception(exception_info)) 
+
+    def get_multi_insert_str(self, oridataArray, table_name):
+        try:
+            col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, VATRUNOVER, VOTRUNOVER, PCTCHG, YCLOSE, TURNOVER) "
+            val_str = ""
+            for oridata in oridataArray:
+                TDATE = getSimpleDate(oridata[0])
+                TIME = getSimpleTime(oridata[0])
+                SECODE = oridata[1]
+                TOPEN = oridata[2]
+                TCLOSE = oridata[3]
+                HIGH = oridata[4]
+                LOW = oridata[5]
+                VOTRUNOVER = oridata[6]
+                VATRUNOVER = oridata[7]
+                TYClOSE = oridata[8]
+                if len(oridata) >= 10:
+                    TURNOVER = oridata[9]
+                else:
+                    TURNOVER = -1
+                if TYClOSE != 0:
+                    PCTCHG = (TCLOSE - TYClOSE) / TYClOSE
+                else:
+                    PCTCHG = 0
+
+                val_str += "(" + TDATE + ", " + TIME + ", \'"+ SECODE + "\'," \
+                         + str(TOPEN) + ", " + str(TCLOSE) + ", " + str(HIGH) + ", " + str(LOW) + ", " \
+                         + str(VATRUNOVER) + ", " + str(VOTRUNOVER) + ", " + str(PCTCHG) + ", " \
+                         + str(TYClOSE) + ", " + str(TURNOVER) +"),"
+
+            val_str = val_str[0: (len(val_str)-1)]
+
+            complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+            insert_str = "insert into "+ complete_tablename + col_str + "values "+ val_str
             return insert_str      
         except Exception as e:
             error = "cannot concatenate"
@@ -102,7 +147,7 @@ class MarketDatabase(Database):
     def get_histdata_by_enddate(self, enddate, table_name, cloumn_str="*"):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         sql_str = "select "+ cloumn_str + " from " + complete_tablename \
-                + " where TDATE <= " + str(enddate)
+                + " where TDATE <= " + str(enddate) + " order by TDATE, TIME;"
         data = self.get_database_data(sql_str)
         return data
 
@@ -121,8 +166,8 @@ class MarketDatabase(Database):
             self.changeDatabase(update_str)
 
     def getTableDataStartEndTime(self, table_name):
-        starttime = None
-        endtime = None
+        startdatetime = None
+        enddatetime = None
         tablename_array = self.getDatabaseTableInfo()
         if table_name in tablename_array:          
             complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
@@ -130,7 +175,7 @@ class MarketDatabase(Database):
             date = self.get_database_data(get_date_sqlstr)
 
             if date[0][0] == None or date[0][1] == None:
-                return (starttime, endtime)
+                return (startdatetime, enddatetime)
             
             startdate = float(date[0][0])
             enddate = float(date[0][1])
@@ -145,11 +190,14 @@ class MarketDatabase(Database):
 
             # print startdate, starttime, enddate, endtime
 
-            starttime = startdate + getpercenttime(starttime)
-            endtime = enddate + getpercenttime(endtime)
+            # startdatetime = startdate * 1000000 + starttime
+            # enddatetime = enddate * 1000000 + endtime
+
+            startdatetime = startdate
+            enddatetime = enddate
 
             # print starttime, endtime
-        return (starttime, endtime)
+        return (startdatetime, enddatetime)
 
     def getStartEndDate(self, table_name):        
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
@@ -163,18 +211,24 @@ class MarketDatabase(Database):
             timeArray.append([oriStartTime, oriEndTime])
         else:
             if oriStartTime >=  tableDataStartTime and oriEndTime > tableDataEndTime:
+                # startTime = addOneDay(tableDataEndTime)
                 startTime = tableDataEndTime
                 endTime = oriEndTime
                 timeArray.append([startTime, endTime])
             
             if oriStartTime < tableDataStartTime and oriEndTime <= tableDataEndTime:
                 startTime = oriStartTime
+                # endTime = minusOneDay(tableDataStartTime)
                 endTime = tableDataStartTime
                 timeArray.append([startTime, endTime])
             
             if oriStartTime < tableDataStartTime and oriEndTime > tableDataEndTime:
+                # timeArray.append([oriStartTime, minusOneDay(tableDataStartTime)])
+                # timeArray.append([addOneDay(tableDataEndTime), oriEndTime])
+
                 timeArray.append([oriStartTime, tableDataStartTime])
                 timeArray.append([tableDataEndTime, oriEndTime])
+
         return timeArray
 
     def getLatestData(self, table_name):
@@ -234,6 +288,19 @@ class MarketDatabase(Database):
             result[table_name] = self.getLatestData(table_name)
         return result
 
+    def get_data_bykey(self, key_list, table_name):
+        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        key_str = ""
+        for key in key_list:
+            key_str += key + ","
+        key_str = key_str[0 : (len(key_str)-1)]
+
+        sql_str = "select " + key_str + " from " + complete_tablename + " order by TDATE, TIME"
+        # print sql_str
+        data = self.get_database_data(sql_str)  
+       
+        return data    
+
     def addPrimaryKey(self):
         databaseTableInfo = self.getDatabaseTableInfo()
         for table in databaseTableInfo:
@@ -251,6 +318,9 @@ class MarketDatabase(Database):
         ori_enddate = source_conditions[2]
         tabledata_startdate, tabledata_enddate = self.getTableDataStartEndTime(table_name)
         transed_time_array  = self.getStartEndTime(ori_startdate, ori_enddate, tabledata_startdate, tabledata_enddate)
+        # print ori_startdate, ori_enddate
+        # print tabledata_startdate, tabledata_enddate
+        # print transed_time_array
         for i in range(len(transed_time_array)):
             transed_time_array[i].insert(0, secode)       
         return transed_time_array

@@ -16,6 +16,7 @@ class Database:
         self.pwd = pwd
         self.db = db
         self.id = id
+        self.insertDataNumbOnce = 1000
         self.startConnect()
 
     def __del__(self):
@@ -37,9 +38,18 @@ class Database:
         return result  
   
     def changeDatabase(self,sql):  
+        # try:
+        #     result = self.cur.execute(sql)  
+        #     result2 = self.conn.commit()  
+        #     return result
+        # except Exception as e:
+        #     exception_info = "\n" + str(traceback.format_exc()) + '\n'
+        #     duplicate_insert_error = "Violation of PRIMARY KEY constraint"
+        #     if duplicate_insert_error not in exception_info:
+        #         raise(Exception(exception_info))     
         result = self.cur.execute(sql)  
         result2 = self.conn.commit()  
-        return result
+        return result           
 
     def dropTableByName(self, table_name):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
@@ -84,11 +94,9 @@ class Database:
     def insert_data(self, oridata, table_name):
         try:
             insert_str = self.get_insert_str(oridata, table_name)
-        # print insert_str
             result = self.changeDatabase(insert_str)
 
             if result != None:
-                connFailedWaitTime = 5
                 print 'insert result: ', result
                 print '\n^^^^^ database insert_data restart! ^^^^^ \n'
                 time.sleep(connFailedWaitTime)
@@ -101,9 +109,20 @@ class Database:
                 print '\n^^^^^20003 connection timed out database insert_data restart! ^^^^^ \n'
                 time.sleep(connFailedWaitTime)
                 self.insert_data(oridata, table_name)        
-            elif "Violation of PRIMARY KEY constraint" not in e[1]:
-                print e
+            else:
                 raise(e)
+
+    def insert_multi_data(self, oridataArray, table_name):
+        start_index = 0
+        while start_index < len(oridataArray):
+            end_index = start_index + self.insertDataNumbOnce
+            if end_index > len(oridataArray):
+                end_index = len(oridataArray)
+
+            insert_str = self.get_multi_insert_str(oridataArray[start_index:end_index], table_name)
+            self.changeDatabase(insert_str)
+            
+            start_index = end_index
 
     def get_datacount(self, table_name):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'

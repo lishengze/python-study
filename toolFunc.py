@@ -98,18 +98,27 @@ def minusOneDay(oriDate):
 
 def getDateNow(data_type):
     curDate = datetime.datetime.now().strftime('%Y%m%d')
+    curTime = datetime.datetime.now().strftime('%H%M%S')
     curHourTime = float(datetime.datetime.now().strftime('%H'))
     curMinuTime = float(datetime.datetime.now().strftime('%M'))
     date = float(curDate)
 
-    if "MarketData" in data_type and "day" not in data_type and "month" not in data_type and "week" not in data_type :
-        leftday = (curHourTime * 60 + curMinuTime)/ (24 * 60)
-        date += leftday
-    else:
-        date = int(curDate) 
-        if curHourTime < 15:
-            date = int(minusOneDay(date))
-            date = float(date) + 0.99
+    date = int(curDate) 
+    if curHourTime < 15:
+        date = int(minusOneDay(date))
+    
+    # if "MarketData" in data_type:
+    #     date = int(curDate) * 1000000 + int(curTime)
+
+    # if "MarketData" in data_type and "day" not in data_type and "month" not in data_type and "week" not in data_type :
+    #     leftday = (curHourTime * 60 + curMinuTime)/ (24 * 60)
+    #     date += leftday
+    # else:
+    #     date = int(curDate) 
+    #     if curHourTime < 15:
+    #         date = int(minusOneDay(date))
+    #         # date = float(date) + 0.99
+
     return date
 
 def getpercenttime(time):
@@ -118,12 +127,33 @@ def getpercenttime(time):
     time = float(hour * 60 + minu) / (24 * 60)
     return time
 
+def getCompleteSecode(oricode, style="ori"):
+    complete_code = str(oricode)
+    if len(complete_code) > 6:
+        return complete_code
+
+    while len(complete_code) < 6:
+        complete_code = '0' + complete_code
+
+    if style == "tinysoft":
+        if complete_code.startswith("6"):
+            complete_code = "SH" + complete_code
+        else:
+            complete_code = "SZ" + complete_code
+    
+    if style == "wind":
+        if complete_code.startswith("6"):
+            complete_code = complete_code + ".SH"
+        else:
+            complete_code = complete_code + ".SZ"
+
+    return complete_code
+
 def complete_excel_code(oricode):
     complete_code = str(oricode)
     while len(complete_code) < 6:
         complete_code = '0' + complete_code
     return complete_code
-
 
 def trans_code_to_windstyle(oricode):
     wind_code = str(oricode)
@@ -213,10 +243,10 @@ def isAnnouncementOver():
      else:
          return False    
 
-def print_data(msg, data):
+def print_list(msg, data, numb=50):
     print "\n", msg, len(data)
-    if len(data) > 50:
-        data = data[0:50]
+    if len(data) > numb:
+        data = data[0:numb]
 
     for item in data:
         print item
@@ -272,6 +302,7 @@ def get_market_susdata(added_datetime, secode, close_price):
     appenddata.append(0)
     appenddata.append(0)
     appenddata.append(close_price)
+    appenddata.append(0)
     return appenddata
 
 def add_suspdata_old(tradetime_array, ori_netdata):
@@ -391,7 +422,7 @@ def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_dat
 
     oridata_index = 0
     add_count = 0
-    print "Start: tradetime_index: ", tradetime_index, ", isfirstInterval: ", isfirstInterval
+    # print "Start: tradetime_index: ", tradetime_index, ", isfirstInterval: ", isfirstInterval
 
     while tradetime_index < len(tradetime_array) and oridata_index < len(ori_netdata):
         cur_oridatetime = [int(getSimpleDate(ori_netdata[oridata_index][0])), int(getSimpleTime(ori_netdata[oridata_index][0]))]
@@ -418,7 +449,7 @@ def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_dat
         oridata_index = oridata_index + 1
         tradetime_index = tradetime_index + 1
 
-    print "End: tradetime_index: ", tradetime_index, ", oridata_index: ", oridata_index
+    # print "End: tradetime_index: ", tradetime_index, ", oridata_index: ", oridata_index
     while tradetime_index < len(tradetime_array):
         cur_tradetime = tradetime_array[tradetime_index]
         added_datetime = transto_tinytime(cur_tradetime)
@@ -437,7 +468,7 @@ def add_suspdata(tradetime_array, ori_netdata, isfirstInterval=False, latest_dat
         oridata_index += 1
         add_count += 1
 
-    print "add_count: ", add_count    
+    # print "add_count: ", add_count    
     complete_data = ori_netdata
     return complete_data
     
@@ -604,43 +635,55 @@ def get_restore_info(secode, ori_netdata, latestdata=[], firstdata=[]):
     ori_netdata.sort(cmp=cmp_net_time, key=itemgetter(0)) 
     restore_data = []
 
-    if len(ori_netdata) <2:
+    if len(ori_netdata) < 2:
         return restore_data
 
+    # 与可能需要复权的前面数据进行比较。
     if len(firstdata)!= 0:
-        i = len(ori_netdata) - 2
+        i = len(ori_netdata) - 1
+        # print "i: ", i, ori_netdata[i]
         ori_time = [int(getSimpleDate(ori_netdata[i][0])), int(getSimpleTime(ori_netdata[i][0]))]
         first_time = [firstdata[0], firstdata[1]]
+        while not is_time_late(ori_time, first_time) and i > 0:
+            i -= 1
+            # print "i: ", i, ori_netdata[i]
+            ori_time = [int(getSimpleDate(ori_netdata[i][0])), int(getSimpleTime(ori_netdata[i][0]))]
+
         yclose = float(firstdata[10])
         close = float(ori_netdata[i][3])
-        if  yclose != close and is_time_late(ori_time, first_time):
-            print "firstdata: ", firstdata
-            print "ori_nedata["+ str(i) +"]: ", ori_netdata[i]
+        if  yclose != close and i > 0:
             restore_data.append(secode)
             restore_data.append(firstdata[0])
             restore_data.append(firstdata[1])
-    else:
-        i = len(ori_netdata) - 1
-    
+            # print "first restore data: ", restore_data 
+
+    i = len(ori_netdata) - 1    
+    # 遍历当前下载的原始数据，考察是否需要复权；
     while i > 0 and len(restore_data) == 0:
         if ori_netdata[i][8] != ori_netdata[i-1][3]:
             restore_data.append(secode)
             restore_data.append(int(getSimpleDate(ori_netdata[i][0])))
             restore_data.append(int(getSimpleTime(ori_netdata[i][0])))
+            # print "i: ", i, ",", ori_netdata[i]
+            # print "ori restore data: ", restore_data
             break
         i -= 1
 
+    
+    # 与已存储的最新数据比较，是否存在复权;
     if len(restore_data) == 0 and len(latestdata) != 0 :
+        i = 0
         ori_time = [int(getSimpleDate(ori_netdata[i][0])), int(getSimpleTime(ori_netdata[i][0]))]
         lastest_time = [latestdata[0], latestdata[1]]
 
         if float(ori_netdata[i][8]) != float(latestdata[4]) and \
             is_time_late(lastest_time, ori_time):
-            print "ori_nedata["+ str(i) +"]: ", ori_netdata[i]
-            print "latestdata: ", latestdata
             restore_data.append(secode)
             restore_data.append(int(getSimpleDate(ori_netdata[i][0])))
             restore_data.append(int(getSimpleTime(ori_netdata[i][0])))
+            # print "i: ", i, ",", ori_netdata[i]
+            # print "latest restore data: ", restore_data
+
     return restore_data
 
 def compute_restore_data(sort_data):
@@ -672,10 +715,86 @@ def get_excel_secode(dirname):
     newFileIn = False
     for filename in filename_array:
         complete_filename = dirname + '/' + filename
-        excelobj = EXCEL(complete_filename)
-        tmp_secodelist = excelobj.get_data_byindex()
+        excelobj = EXCEL()
+        tmp_secodelist = excelobj.get_data_byindex(complete_filename)
         for code in tmp_secodelist:
             complete_code = complete_excel_code(code)
             if complete_code not in secodelist:
                 secodelist.append(complete_code)      
     return secodelist
+
+def pure_secode(secode):    
+    if len(secode) < 7:
+        return secode
+    
+    if len(secode) == 8:
+        secode = secode[2:8]
+
+    if len(secode) == 9:
+        secode = secode[0:7]
+
+    return secode
+
+def isTradingDay(datetime):
+    specialNoTradingDay = [20181230, 20181231, 20180101, \
+                           20180215, 20180216, 20180217, 20180218, 20180219, 20180220, 20180221, \
+                           20180405, 20180406, 20180407, \
+                           20180420, 20180430, 20180501, \
+                           20180616, 20180617, 20180618, \
+                           20180922, 20180923, 20180924, \
+                           20181001, 20181002, 20181003, 20181004, 20181005, 20181006, 20181007]
+    intDate = datetime.strftime('%Y%m%d')
+    dayOfWeek = datetime.date().isoweekday()
+    if dayOfWeek > 5 or intDate in specialNoTradingDay:
+        return False
+    else:
+        return True
+
+def waitForNextTradingDay():
+    curDateTime = datetime.datetime.now()
+    # curDateTime = datetime.datetime(2018, 4, 20, 8,0,0)
+    waitDays = -1
+    if not isTradingDay(curDateTime):
+        dayOfWeek = curDateTime.date().isoweekday() 
+        if dayOfWeek > 5:
+            waitDays = 8 - dayOfWeek
+        else:
+            waitDays = 1
+    elif isTradingOver():
+        print "Today's trading is over."
+        if dayOfWeek >= 5:
+            waitDays = 8 - dayOfWeek
+        else:
+            waitDays = 1
+
+    if waitDays != -1:
+        waitDays = datetime.timedelta(waitDays)
+        nextTradingDay = curDateTime + waitDays
+        
+
+        nextTradingDayTime = datetime.datetime(int(nextTradingDay.strftime('%Y')), \
+                                               int(nextTradingDay.strftime('%m')), \
+                                               int(nextTradingDay.strftime('%d')),\
+                                               8,0,0)
+
+        waitSecs = (nextTradingDayTime - curDateTime).total_seconds()
+        print "nextTradingDayTime: ", nextTradingDayTime, ", waitSecs: ", waitSecs
+        # time.sleep(waitSecs)
+    else:
+        # print "Don't need to wait!"
+        pass
+
+def waitForNextDay():
+    curDateTime = datetime.datetime.now()
+    # curDateTime = datetime.datetime(2018, 4, 20, 8,0,0)
+    waitDays = datetime.timedelta(1)
+    nextTradingDay = curDateTime + waitDays    
+
+    nextTradingDayTime = datetime.datetime(int(nextTradingDay.strftime('%Y')), \
+                                            int(nextTradingDay.strftime('%m')), \
+                                            int(nextTradingDay.strftime('%d')),\
+                                            8,0,0)
+
+    waitSecs = (nextTradingDayTime - curDateTime).total_seconds()
+    print "nextDayTime: ", nextTradingDayTime, ", waitSecs: ", waitSecs
+    time.sleep(waitSecs)

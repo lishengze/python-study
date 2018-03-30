@@ -33,6 +33,30 @@ class WeightDatabase(Database):
         # print insert_str
         return insert_str      
 
+    def get_multi_insert_str(self, oridataArray, table_name):
+        try:
+            col_str = " (指数代码, 指数名称, 指数成份日, 指数截止日, 代码, 名称, 比例, 排名, 数据来源)"
+            val_str = ""
+            for oridata in oridataArray:
+                    val_str += "(\'" + oridata[0] + "\', \'" + oridata[1] + "\', " \
+                            + str(oridata[2]) + ", " + str(oridata[3]) + "," \
+                            + "\'" + oridata[4] + "\', \'" + oridata[5] + "\', " \
+                            + str(oridata[6]) + ", " + str(oridata[7]) + "," \
+                            + "\'" + oridata[8] + "\'),"
+                         
+            val_str = val_str[0: (len(val_str)-1)]
+
+            complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+            insert_str = "insert into "+ complete_tablename + col_str + " values "+ val_str
+            # print insert_str
+            return insert_str      
+        except Exception as e:
+            error = "cannot concatenate"
+            exception_info = "\n" + str(traceback.format_exc()) + '\n'
+            if error in exception_info:
+                print "oridata: ", oridata
+            raise(Exception(exception_info))         
+
     def getTableDataStartEndTime(self, table_name):
         startTime = None
         endTime = None

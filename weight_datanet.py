@@ -74,3 +74,23 @@ class WeightTinySoft(TinySoft):
         if len(result) == 0:
             result = None
         return result
+
+    def get_secodeList(self, secode, date):
+        result = []
+        tsl_str = self.get_netdata_tslstr(secode, date)
+        try:
+            self.curs.execute(tsl_str)
+        except Exception as e:
+            error_str = "General error---Execute:"
+            if error_str in e[1]:
+                print '\n' + tsl_str + '\n'
+            raise(e)       
+                    
+        tmp_result = self.curs.fetchall()
+        if len(tmp_result) != 1 and tmp_result[0][0] != -1:
+            for item in tmp_result:
+                result.append(item[4])
+                
+        if len(result) == 0:
+            result = None
+        return result
