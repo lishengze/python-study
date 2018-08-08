@@ -3,12 +3,12 @@ from func_time import *
 
 def test_get_trans_data():
     data_type_list = ['MarketData_day']   
-    # dbhost = "192.168.211.162"
-    dbhost = "192.168.211.165"
+    dbhost = "192.168.211.162"
+    # dbhost = "192.168.211.165"
 
-    start_datetime = 20151101
-    # end_datetime = getDateNow()    
-    end_datetime = 20160201
+    start_datetime = 20100105
+    end_datetime = getDateNow()    
+    # end_datetime = 20160201
 
     clear_database = 'False'
     source_conditions = [start_datetime, end_datetime]

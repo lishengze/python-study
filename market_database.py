@@ -125,6 +125,7 @@ class MarketDatabase(Database):
 
             complete_tablename = u'[' + database_name + '].[dbo].['+ table_name +']'
             insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
+            # print(insert_str)
             return insert_str      
         except Exception as e:
             error = "cannot concatenate"
@@ -158,20 +159,13 @@ class MarketDatabase(Database):
 
     def get_multi_insert_str(self, oridataArray, table_name, database_name = ""):
         try:
-            col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, \
-                        LOW, VATRUNOVER, VOTRUNOVER, PCTCHG, YCLOSE, TURNOVER) "
+            col_str = "(TDATE, TIME, SECODE, TOPEN, TCLOSE, HIGH, LOW, \
+                        VATRUNOVER, VOTRUNOVER, PCTCHG, YCLOSE, TURNOVER, OpenRate, HighRate, LowRate) "
             val_str = ""
             for oridata in oridataArray:
                 if len(oridata) < 12:
                     print (oridata)
 
-                # open_price  = oridata[3]
-                # close_price = oridata[4]
-                # high_price  = oridata[5]
-                # low_price   = oridata[6]
-                # open_rate   = open_price / close_price
-                # high_rate   = high_price / close_price
-                # low_rate    = low_price / close_price
                 val_str += "(" + str(oridata[0]) + ", " + str(oridata[1]) + ", \'"+ str(oridata[2]) + "\'," \
                         + str(oridata[3]) + ", " + str(oridata[4]) + ", " + str(oridata[5]) + ", " \
                         + str(oridata[6]) + ", " + str(oridata[7]) + ", " + str(oridata[8]) + ", " \

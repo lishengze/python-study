@@ -44,9 +44,12 @@ class Database:
         sql_str = "drop table " + complete_tablename 
         self.changeDatabase(sql_str)
 
-    def clearDatabase(self):
-        table_info = self.getDatabaseTableInfo()
-        for table_name in table_info: 
+    def clearDatabase(self, table_list=[]):
+        all_table_list = self.getDatabaseTableInfo()
+        if table_list == []:
+            table_list = all_table_list
+        for table_name in table_list: 
+            if table_name in all_table_list:
                 self.dropTableByName(table_name)        
 
     def get_create_str(self,table_name, database_name = ""):

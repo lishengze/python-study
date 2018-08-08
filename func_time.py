@@ -272,7 +272,7 @@ def get_tradetime_byindex(netconn_obj, database_obj, source_conditions):
 def get_index_tradetime(netconn_obj, starttime, endtime):
     # tablename_array = get_indexcode(style="tinysoft")
     # tablename_array = ["SH000300", "SH000016"]
-    tablename_array = ["SH000300"]
+    tablename_array = ["SH000001"]
     tradetime_array = []
 
     for table_name in tablename_array:

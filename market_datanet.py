@@ -72,7 +72,16 @@ class MarketTinySoft(TinySoft):
         # sourceArray = ["SH600145"]
         # sourceArray = ["SZ000415"]
         # sourceArray = ["SH000300"]
-        sourceArray = sourceArray[0:100]
+        # sourceArray = sourceArray[0:100]
+        
+        # sourceArray = ["SH000300",'SH000908', 'SH000909', 'SH000910', \
+        #                 'SH000911', 'SH000912', 'SH000913','SH000914', 
+        #                 'SH000915', 'SH000917', \
+        #                 "SZ000001", "SZ000002", "SZ000063", "SH600009", \
+        #                 "SH600011", "SH600019", "SH600028", "SH600104", \
+        #                 "SH600276", "SH600519", "SH600588"]
+
+        # sourceArray = ['SH600588']
 
         source = {
             'secode': sourceArray,

@@ -103,7 +103,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         start_datetime = int(self.marketdata_starttime_edit.date().toString("yyyyMMdd"))
         end_datetime = getDateNow()
         source_contions = [start_datetime, end_datetime, 'stock']
-        data_type_list = ['MarketData_day', 'MarketData_10m', 'MarketData_15m', 'MarketData_30m', 'MarketData_60m']
+        data_type_list = ['MarketData_day', 'MarketData_10m', 'MarketData_15m', \
+                            'MarketData_30m', 'MarketData_60m', "'MarketData_120m"]
         # data_type_list = ['MarketData_15m']
         # data_type_list = ['MarketData_week', 'MarketData_month']
         # data_type_list = ['MarketData_week']

@@ -103,6 +103,11 @@ class DowloadHistData(object):
         self.write_sucess_count_lock.release()
         return self.write_sucess_count
 
+    def reset_write_success_count(self):
+        self.write_sucess_count_lock.acquire()
+        self.write_sucess_count = 0
+        self.write_sucess_count_lock.release()        
+
     def get_start_end_date(self, oridata):
         start_date = oridata[0][0]
         end_date = oridata[len(oridata-1)][0]
@@ -248,13 +253,13 @@ class DowloadHistData(object):
             database_name = data_type
             database_obj = get_database_obj(database_name, host=self.dbhost)
 
-            if 'True' == self.clear_database or True == self.clear_database:
-                self.log_info("** 清空 %s 数据库 **" % (data_type))
-                database_obj.clearDatabase()
-                
             netconn_obj = get_netconn_obj(data_type)
             source = netconn_obj.get_sourceinfo(source_conditions)
             tablename_array = netconn_obj.get_tablename(source_conditions)
+
+            if 'True' == self.clear_database or True == self.clear_database:
+                self.log_info("** 清空 %s 数据库 **" % (data_type))
+                database_obj.clearDatabase(tablename_array)
 
             source = database_obj.filter_source(source)
             tablename_array = database_obj.filter_tableArray(tablename_array)
@@ -350,6 +355,8 @@ class DowloadHistData(object):
                                 restore_info_dict[cur_tablename] = restore_info
                             
                             info_str += "前复权:%s \n" % (str(restore_info))
+                        else:
+                            info_str += "\n"
                             
                         self.log_info(info_str)
                     condition_index -= 1
@@ -407,15 +414,14 @@ class DowloadHistData(object):
         starttime = datetime.datetime.now()
         info_str = '周频 月频 开始更新时间: %s ' % \
                     (starttime.strftime("%Y-%m-%d %H:%M:%S"))        
-
+        self.reset_write_success_count()
 
         database_obj_list = self.get_database_obj_list(data_type)
-
         database_obj = get_database_obj(data_type, host=self.dbhost)
 
         table_list = database_obj.getDatabaseTableInfo()
         # table_list = ["SH000300"]
-        table_list = table_list[0:100]
+        # table_list = table_list[0:100]
         for data_type in self.day_trans_dict:            
             database_obj.completeDatabaseTable(table_list, self.day_trans_dict[data_type])
 
@@ -535,13 +541,16 @@ def download_info_data():
 
 def download_Marketdata():
     # data_type_list = ['IndustryData']  
-    data_type_list = ['MarketData_day']
-    # dbhost = "192.168.211.162"
-    dbhost = "192.168.211.165"
+    # data_type_list = ['MarketData_15m', 'MarketData_30m', \
+    #                   'MarketData_60m', 'MarketData_120m']
+    data_type_list = ['MarketData_120m']                      
+    dbhost = "192.168.211.162"
+    # dbhost = "192.168.211.165"
 
-    start_datetime = 20150105
+    start_datetime = 20050101
     end_datetime = getDateNow()
-    clear_database = 'False'
+    clear_database = True
+    # clear_database = False
     # ori_enddate = 20171220
     source_conditions = [start_datetime, end_datetime, 'stock_index']
 
@@ -608,13 +617,13 @@ def download_market_secodeList(dbhost, table_view = None):
     if connect_type == "wind":
         wind_connect_obj = Wind()
         marketinfo_dict = {
-            'a001010100000000': "A_Market",
-            'a001010200000000': "A_Market_SH",
-            'a001010300000000': "A_Market_SZ",
-            'a001010500000000': "A_Market_SZ_Main",
-            'a001010r00000000': "A_Market_GEM",
-            'a001010400000000': "A_Market_SME",
-            '1000009396000000': "A_Market_SME_With_ST"
+            'a001010100000000': ["A_Market", "A 股市场"],
+            'a001010200000000': ["A_Market_SH", "上证 A股"],
+            'a001010300000000': ["A_Market_SZ", "深证A股"],
+            'a001010500000000': ["A_Market_SZ_Main", "深圳主板A股"],
+            'a001010r00000000': ["A_Market_GEM", "创业板"],
+            'a001010400000000': ["A_Market_SME", "中小企业板"],
+            '1000009396000000': ["A_Market_SME_With_ST", "中小企业板(含ST)"]
         }
 
         # marketinfo_dict = {
@@ -622,8 +631,8 @@ def download_market_secodeList(dbhost, table_view = None):
         # }        
         for market_name in marketinfo_dict:
             market_secodelist = wind_connect_obj.get_market_secodelist(market_name)
-            database_obj.insertSecodeList(market_secodelist, marketinfo_dict[market_name])
-            info_str = '%s secode numb: %d' % (market_name, len(market_secodelist))
+            database_obj.insertSecodeList(market_secodelist, marketinfo_dict[market_name][0])
+            info_str = '%s secode numb: %d' % (marketinfo_dict[market_name][1], len(market_secodelist))
             # print_list("market_secodelist ", market_secodelist)
             update_tableinfo(table_view, info_str)
             print(info_str)
