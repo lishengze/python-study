@@ -199,7 +199,7 @@ class MarketDatabase(Database):
     def get_date_data(self, startdate, enddate):
         secode = 'SH000300'
         result = self.get_histdata_by_date(startdate=startdate, enddate=enddate, \
-                                            table_name=secode, cloumn_str='TDATE')
+                                            table_name=secode, value_list=['TDATE'])
         return result
 
     def get_histdata_by_enddate(self, enddate, table_name, cloumn_str="*"):

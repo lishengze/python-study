@@ -1,13 +1,10 @@
-# -*- coding: UTF-8 -*-
 import datetime
 import sys
 
 from CONFIG import *
 from func_tool import *
+from func_wind import *
 from wind import Wind
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 class FundamentalDataNet(Wind):
     def __init__(self,database_type):
@@ -17,47 +14,31 @@ class FundamentalDataNet(Wind):
     def __del__(self):
         Wind.__del__(self)    
 
-    def get_quarterly_windstr(self):
-        quarter_paramsstr = "profitnotice_style, profitnotice_date,profitnotice_change,profitnotice_lasteps,\
-                            performanceexpress_date,performanceexpress_perfexincome,performanceexpress_perfexprofit,\
-                            performanceexpress_perfextotalprofit,performanceexpress_perfexnetprofittoshareholder,performanceexpress_perfexepsdiluted,\
-                            performanceexpress_perfexroediluted,performanceexpress_perfextotalassets,performanceexpress_perfexnetassets,\
-                            eps_basic,grps,roe_avg,yoyeps_basic,yoy_tr,yoy_or,yoyop,yoyebt,yoyprofit,yoynetprofit,yoynetprofit_deducted,yoy_equity,yoy_assets,\
-                            div_cashandstock,div_recorddate,div_exdate,div_paydate,div_prelandate,div_smtgdate,div_impdate"
-
-        quarter_datestr = "unit=1;currencyType=;Period=Q;Days=Alldays;Fill=Previous"
-        return (quarter_paramsstr, quarter_datestr)
-
-    def get_daily_windstr(self):
-        daily_paramsstr = "ev,pe_ttm,val_pe_deducted_ttm,pb_lf,dividendyield2, gr_ttm, profit_ttm, netprofit_ttm, deductedprofit_ttm"
-        daily_datestr = "unit=1;currencyType=;Days=Alldays;Fill=Previous"
-        return (daily_paramsstr, daily_datestr)
-
     def get_sourceinfo(self, params=[]):
         '''
         根据传入条件，生成获取网络数据的参数。
-        针对于行业分类数据, 所需要设置的参数是获取数据的起止时间。
+        针对于基本面数据, 所需要设置的参数是获取数据的起止时间。
         Args：
             params: 一个list 参数，这里它的第一个数值是 start_date, 第二个是 end_date。
         Returns:
-            返回一个以起止时间为上下限的时间序列数组。
+            返回一个dict {
+                'secode':
+                'time':
+            }
         '''
-        time_array = params
+        time_list = params
         source = {
-            'secode': self.get_allstock_secode(),
-            'time': time_array
+            'secode': get_a_market_secodelist(),
+            'time': time_list
         }
         return source
 
+   def get_tablename(self, params=[]):
+        return self.get_sourceinfo(params)['secode']
+
     def get_cursource(self, table_name, source):
-        tmpdata = table_name.split('_')
-        secode = tmpdata[0][2:] + '.' + tmpdata[0][0:2]
-        datatype = tmpdata[1] + '_' + tmpdata[2]
-        time_array = source['time']
-        result = []
-        result.append(secode)
-        result.append(datatype)
-        result.extend(time_array)
+        result = [table_name]
+        result.extend(source['time'])
         return result
 
     def get_tablename(self, params=[]):
@@ -76,6 +57,9 @@ class FundamentalDataNet(Wind):
             tablename_array.append(quarterlydata_tablename)
         return tablename_array
 
+    def get_transed_data(self, col_result, ps_result, pb_result):
+        pass
+
     def get_netdata(self, conditions=[]):
         '''
         从天软与万得分别获取行业分类的数据并整合到一起。
@@ -84,15 +68,14 @@ class FundamentalDataNet(Wind):
         data_type = conditions[1]
         start_date = conditions[2]
         end_date = conditions[3]
-        
-        if data_type == 'daily_data':
-            params_str, date_str = self.get_daily_windstr()
-        elif data_type == 'quarterly_data':
-            params_str, date_str = self.get_quarterly_windstr()
-        else:
-            raise(Exception("Unknown data type"))  
 
-        result = self.wind.wsd(secode, params_str, start_date, end_date, date_str)
+        col_result = self.wind.wsd(secode, "pe, cfps, eps_ttm, mv_ref, roe,", start_date, end_date, \
+                                    "currencyType=;unit=1;ruleType=10")
+        ps_result = self.wind.wsd(secode, "ps", start_date, end_date, "ruleType=2")
+        pb_result = self.wind.wsd(secode, "pb", start_date, end_date, "ruleType=3")
+        # w.wsd("600000.SH", "estpeg_FTM,pe_ttm,pb_lf,ps_ttm,pcf_ocf_ttm,qfa_roe,eps_ttm,ev", "2017-07-05", "2018-08-08", "unit=1")
+        result = self.get_transed_data(col_result, ps_result, pb_result)
+
         oridata = result.Data
         transdata = []
         date_count = length(oridata[0])

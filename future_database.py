@@ -6,15 +6,19 @@ class FutureDatabase(Database):
                 pwd=DATABASE_PWD, db='Future_Info'):
         Database.__init__(self, id, host, user, pwd, db)
 
-    def get_create_str(self, table_name):
-        complete_tablename = '[%s].[dbo].[%s]' % (self.db, table_name)
+    def get_create_str(self, table_name, database_name =""):
+        if database_name == "":
+            database_name = self.db
+        complete_tablename = '[%s].[dbo].[%s]' % (database_name, table_name)
         value_str = u'(Code varchar(25) not null Primary Key(Code))'
         create_str = u'create table %s %s' % (complete_tablename, value_str)
         return create_str
 
-    def get_multi_insert_str(self, contract_list, table_name):
+    def get_multi_insert_str(self, contract_list, table_name, database_name =""):
         col_str = u'(Code)'        
-        complete_tablename = u'[%s].[dbo].[%s]' % (self.db, table_name)
+        if database_name == "":
+            database_name = self.db        
+        complete_tablename = u'[%s].[dbo].[%s]' % (database_name, table_name)
         val_str = ""
         for constract in contract_list:
             val_str += u"(\'%s\')," % (constract)

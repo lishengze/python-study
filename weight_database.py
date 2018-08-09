@@ -10,7 +10,9 @@ class WeightDatabase(Database):
     def __del__(self):
         Database.__del__(self)
 
-    def get_create_str(self, table_name):
+    def get_create_str(self, table_name, database_name = ""):
+        if database_name == "":
+            database_name = self.db
         value_str = u"(指数代码 varchar(10), 指数名称 varchar(50), 指数成份日 int, \
                     指数截止日 int not null, 代码 varchar(10) not null Primary Key(指数截止日, 代码), \
                     名称 varchar(50), 比例 decimal(10,4), 排名 int, 数据来源 varchar(50))"
@@ -19,21 +21,22 @@ class WeightDatabase(Database):
         create_str = "create table " + complete_tablename + value_str
         return create_str
 
-    def get_insert_str(self, oridata, table_name):
+    def get_insert_str(self, oridata, table_name, database_name = ""):
         col_str = " (指数代码, 指数名称, 指数成份日, 指数截止日, 代码, 名称, 比例, 排名, 数据来源)"
         val_str = "\'" + oridata[0] + "\', \'" + oridata[1] + "\', " \
                     + str(oridata[2]) + ", " + str(oridata[3]) + "," \
                     + "\'" + oridata[4] + "\', \'" + oridata[5] + "\', " \
                     + str(oridata[6]) + ", " + str(oridata[7]) + "," \
                     + "\'" + oridata[8] + "\'"
-
+        if database_name == "":
+            database_name = self.db
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         insert_str = u"insert into " + complete_tablename + col_str + " values ("+ val_str +")"
         # print oridata
         # print insert_str
         return insert_str      
 
-    def get_multi_insert_str(self, oridataArray, table_name):
+    def get_multi_insert_str(self, oridataArray, table_name, database_name = ""):
         try:
             col_str = " (指数代码, 指数名称, 指数成份日, 指数截止日, 代码, 名称, 比例, 排名, 数据来源)"
             val_str = ""
@@ -45,7 +48,8 @@ class WeightDatabase(Database):
                             + "\'" + oridata[8] + "\'),"
                          
             val_str = val_str[0: (len(val_str)-1)]
-
+            if database_name == "":
+                database_name = self.db
             complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
             insert_str = "insert into "+ complete_tablename + col_str + " values "+ val_str
             # print insert_str

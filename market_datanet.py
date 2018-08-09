@@ -10,9 +10,11 @@ from CONFIG import *
 from func_tool import *
 from func_secode import *
 from func_time import *
+from func_wind import *
 from tinysoft import TinySoft
 
 from market_database import MarketDatabase
+
 # from wind import Wind
 
 class MarketTinySoft(TinySoft):
@@ -32,7 +34,7 @@ class MarketTinySoft(TinySoft):
         if len(params) > 2:
             code_type = params[2]
 
-        stockidArray = self.get_a_market_secodelist()
+        stockidArray = get_a_market_secodelist()
         # file_name = 'D:/excel/2018成长分红.xlsx'
         # stockidArray = get_execl_code(file_name)   
 

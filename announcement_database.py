@@ -11,25 +11,31 @@ class AnnouncementDatabase(Database):
     def __del__(self):
         Database.__del__(self)
 
-    def get_create_str(self, table_name):
+    def get_create_str(self, table_name, database_name = ""):
         value_str = "(Secode varchar(10) not null, Date int not null, \
                      Announcement varchar(200) not null Primary Key(Date, Announcement))"
+        if database_name == "":
+            database_name = self.db
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         create_str = "create table " + complete_tablename + value_str
         # print create_str
         return create_str
 
-    def get_insert_str(self,secode, date, annnouncement):
+    def get_insert_str(self,secode, date, annnouncement, database_name = ""):
         col_str = "(Secode, Date, Announcement)"
         val_str = u"\'" + str(secode) + '\', ' + str(date) + ", \'" + str(annnouncement) + "\'"
+        if database_name == "":
+            database_name = self.db        
         complete_tablename = u'[' + self.db + '].[dbo].['+ secode +']'
         insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
         print (insert_str)
         return insert_str
 
-    def insert_data(self, secode, date, annnouncement):
+    def insert_data(self, secode, date, annnouncement, database_name = ""):
         try:
-            insert_str = self.get_insert_str(secode, date, annnouncement)
+            if database_name == "":
+                database_name = self.db            
+            insert_str = self.get_insert_str(secode, date, annnouncement, database_name)
             self.changeDatabase(insert_str)
         except Exception as e:
             connect_error = "20003"

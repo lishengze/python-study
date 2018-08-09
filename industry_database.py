@@ -23,17 +23,19 @@ class IndustryDatabase(Database):
     def filter_tableArray(self, tableArray):
         return self.filter_source(tableArray)
 
-    def get_create_str(self, table_name):
+    def get_create_str(self, table_name, database_name =""):
         value_str = "(日期 int not null , 股票代码 varchar(10) not null Primary Key(股票代码),  股票名称 varchar(50), \
                     中证一级行业 varchar(50), 中证二级行业 varchar(50), 中证三级行业 varchar(50), \
                     申万一级行业 varchar(50), 申万二级行业 varchar(50), 申万三级行业 varchar(50), \
                     万得一级行业 varchar(50), 万得二级行业 varchar(50), 万得三级行业 varchar(50), 万得四级行业 varchar(50))"
 
-        complete_tablename = u'[' + self.db + '].[dbo].['+ str(table_name) +']'
+        if database_name == "":
+            database_name = self.db
+        complete_tablename = u'[' + database_name + '].[dbo].['+ str(table_name) +']'
         create_str = "create table " + complete_tablename + value_str
         return create_str
 
-    def get_insert_str(self, oridata, table_name):
+    def get_insert_str(self, oridata, table_name, database_name =""):
         col_str = "(日期, 股票代码, 股票名称,\
                     中证一级行业, 中证二级行业, 中证三级行业, \
                     申万一级行业, 申万二级行业, 申万三级行业, \
@@ -45,11 +47,13 @@ class IndustryDatabase(Database):
                 + "\'" + oridata[9] + "\', \'" +  oridata[10] + "\', \'"  \
                 +  oridata[11] + "\', \'" + oridata[12] + "\'"
 
+        if database_name == "":
+            database_name = self.db
         complete_tablename = u'[' + self.db + '].[dbo].['+ str(table_name) +']'
         insert_str = "insert into "+ complete_tablename + col_str + "values ("+ val_str +")"
         return insert_str   
     
-    def get_multi_insert_str(self, oridataArray, table_name):
+    def get_multi_insert_str(self, oridataArray, table_name, database_name =""):
         try:
             col_str = "(日期, 股票代码, 股票名称,\
                         中证一级行业, 中证二级行业, 中证三级行业, \
@@ -65,8 +69,9 @@ class IndustryDatabase(Database):
                         +  oridata[11] + "\', \'" + oridata[12] + "\'),"
                          
             val_str = val_str[0: (len(val_str)-1)]
-
-            complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+            if database_name == "":
+                database_name = self.db
+            complete_tablename = u'[' + database_name + '].[dbo].['+ table_name +']'
             insert_str = "insert into "+ complete_tablename + col_str + " values "+ val_str
             return insert_str      
             

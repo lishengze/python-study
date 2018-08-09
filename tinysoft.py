@@ -8,7 +8,6 @@ import sys
 from CONFIG import *
 from func_tool import *
 from func_secode import *
-from wind import Wind
 
 class TinySoft(object):
     '''
@@ -44,16 +43,7 @@ class TinySoft(object):
     def test_tsl(self, tsl_str):
         self.curs.execute(tsl_str)
         return self.curs.fetchall()
-
-    def get_a_market_secodelist(self):
-        wind_connect_obj = Wind()
-        market_name = 'a001010100000000'
-        market_secodelist = wind_connect_obj.get_market_secodelist(market_name)
-        result = []
-        for item in market_secodelist:
-            result.append(getCompleteSecode(item[0], "tinysoft"))
-        return result
-
+        
     def get_allA_secode(self):
         tsl_str = u"StockID:=getbk(\"A股\"); \n \
                    return StockID;"
