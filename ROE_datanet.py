@@ -6,7 +6,7 @@ from func_tool import *
 from func_wind import *
 from wind import Wind
 
-class FundamentalDataNet(Wind):
+class ROEDataNet(Wind):
     def __init__(self,database_type):
         self.data_type = database_type
         Wind.__init__(self)
@@ -27,8 +27,9 @@ class FundamentalDataNet(Wind):
             }
         '''
         time_list = params
+        all_a_secode_list = get_a_market_secodelist()
         source = {
-            'secode': get_a_market_secodelist(),
+            'secode': all_a_secode_list,
             'time': time_list
         }
         return source
@@ -41,34 +42,24 @@ class FundamentalDataNet(Wind):
         result.extend(source['time'])
         return result
 
-    def get_transed_data(self, unit_result, key_list):
-        result = []
-        for i in range(len(unit_result.Times)):
-            result.append([])
-
-        for i in range(len(unit_result.Times)):
-            result[i].append(str(unit_result.Times[i]).replace('-', ''))
-            result[i].append('150000')
-            for j in range(len(key_list)):
-                result[i].append(unit_result.Data[j][i])
-            result[i][6] = 1 / result[i][6]
-        
-        return result
+    def get_transed_data(self, roe_result, time_result):
+        pass
             
 
     def get_netdata(self, conditions=[]):
         '''
-        从天软与万得分别获取行业分类的数据并整合到一起。
+        获取ROE数据
         '''
         secode = conditions[0]
         data_type = conditions[1]
         start_date = conditions[2]
         end_date = conditions[3]
-        key_list = ["estpeg_FTM", "pe_ttm", "pb_lf", "ps_ttm","pcf_ocf_ttm","eps_ttm","ev",]
-        unit_result = self.wind.wsd(secode,  ",".join(key_list), start_date, end_date, "unit=1")
 
-        if unit_result.ErrorCode != 0 
-            result = self.get_transed_data(unit_result, key_list)
+        roe_result = self.wind.wsd(secode,  "qfa_roe", "Days=Alldays,showblank=-1")
+        time_result = []
+
+        if roe_result.ErroCode != 0:
+            result = self.get_transed_data(roe_result, time_result)
         else:
             raise(Exception("Get_fundament Data Failed, ErroCode is: %s" %(str(tmp.ErrorCode))))
 

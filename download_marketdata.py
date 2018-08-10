@@ -110,7 +110,7 @@ class DowloadHistData(object):
 
     def get_start_end_date(self, oridata):
         start_date = oridata[0][0]
-        end_date = oridata[len(oridata-1)][0]
+        end_date = oridata[len(oridata)-1][0]
         return start_date, end_date
 
     def write_daydata_transed_data(self, result_array, table_name, database_obj):
@@ -137,13 +137,6 @@ class DowloadHistData(object):
             table_name = source 
             if database_name == "":
                 database_name = database_obj.db
-
-            # print(database_obj)
-
-            # print_list(database_name, result_array)
-
-            # start_date,end_date = self.get_start_end_date(result_array)
-            # database_obj.delete_data_by_date(start_date, end_date, table_name, database_name)
                                            
             duplicate_insert_numb = 0
             if self.clear_database == True:            
@@ -165,9 +158,15 @@ class DowloadHistData(object):
                             raise(Exception(exception_info))
 
             curr_write_sucess_count = self.get_write_success_count()
-            info_str = '[I] %d, %s, %s: 写入数据: %d, DP数据: %d \n' % \
-                        (curr_write_sucess_count, database_name, source, \
-                        len(result_array) - duplicate_insert_numb, duplicate_insert_numb)
+            if "MarketData" in database_name:
+                start_date,end_date = self.get_start_end_date(result_array)
+                info_str = '[I] %d, %s, %s, [%d, %d],: 写入数据: %d, DP数据: %d \n' % \
+                            (curr_write_sucess_count, database_name, source, start_date, end_date, \
+                            len(result_array) - duplicate_insert_numb, duplicate_insert_numb)
+            else:           
+                info_str = '[I] %d, %s, %s: 写入数据: %d, DP数据: %d \n' % \
+                            (curr_write_sucess_count, database_name, source, \
+                            len(result_array) - duplicate_insert_numb, duplicate_insert_numb)
 
             self.log_info(info_str)        
         except Exception as e:
@@ -295,7 +294,11 @@ class DowloadHistData(object):
 
                 database_transed_conditions = database_obj.get_transed_conditions(cur_tablename, cur_source)
                 if len(database_transed_conditions) == 0:
-                    info_str = '[D] %d, %s 已有数据\n' % (table_index+1, str(cur_source))
+                    if "MarketData" in data_type:
+                        info_str = '[D] %d, %s, [%d, %d] 已有数据\n' % (table_index+1, str(cur_source), \
+                                    source_conditions[0], source_conditions[1])
+                    else:
+                        info_str = '[D] %d, %s 已有数据\n' % (table_index+1, str(cur_source))
                     self.log_info(info_str)
                     table_index += 1
                     continue
@@ -383,7 +386,7 @@ class DowloadHistData(object):
                         (data_type, endtime.strftime("%Y-%m-%d %H:%M:%S"), costTime/60)
             self.log_info(info_str)
 
-            if data_type == "MarketData_day":
+            if data_type == "MarketData_day" and "stock" in source_conditions[2]:
                 ori_time = [source_conditions[0], source_conditions[1]]
                 self.store_transed_data(data_type, ori_time, restore_info_dict)
 

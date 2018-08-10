@@ -3,7 +3,7 @@ from CONFIG import *
 from func_tool import *
 from database import Database
 
-class FundamentalDatabase(Database):
+class ROEDatabase(Database):
     def __init__(self, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):
         Database.__init__(self, host, user, pwd, db)
 
@@ -14,12 +14,8 @@ class FundamentalDatabase(Database):
         if database_name == "":
             database_name = self.db
 
-        value_str = "(TDATE int not null , TIME int not null, Secode varchar(10) not null Primary Key(TDATE), \
-                    PEG decimal(28,4), PE decimal(28,4), \
-                    PB decimal(28,4), PB decimal(28,4), \
-                    PS decimal(28,4), CFP decimal(28,4), \
-                    EPS decimal(28,4),  MV decimal(28,4), ROE decimal(28,4))"
-        complete_tablename = "[%s].[dbo].[%s]" % (database_name, str(table_name))
+        value_str = "(TDATE int not null , TIME int not null,  ROE decimal(28,4) Primary Key(TDATE))"
+        complete_tablename = "[%s].[dbo].[%s]" % ("ROEData", str(table_name))
         create_str = "create table %s %s" % (complete_tablename, value_str)
 
         return create_str
@@ -27,23 +23,17 @@ class FundamentalDatabase(Database):
     def get_insert_str(self, oridata, table_name, database_name = ""):
         if database_name == "":
             database_name = self.db        
-
-        col_str = "(TDATE, TIME, Secode, PEG, PE, PB, PS, CFP, EPS, MV)"
-        val_str = "(%s, %s, '%s', %s, %s, %s, %s, %s, %s) " % \
-                    (oridata[0], oridata[1], oridata[2], oridata[3],oridata[4],\
-                     oridata[5], oridata[6], oridata[7], oridata[8])
-        unite_complete_tablename = "[%s].[dbo].[%s]" % (database_name, str(table_name))
-        insert_str = "insert into %s %s values %s" % (unite_complete_tablename, col_str, val_str)
+        
+        col_str = "(TDATE, TIME, ROE)"
+        val_str = "(%s, %s, %s) " % (oridata[0], oridata[1],  oridata[2])
+        complete_tablename = "[%s].[dbo].[%s]" % ("ROEData", str(table_name))
+        insert_str = "insert into %s %s values %s" % (complete_tablename, col_str, val_str)
 
         return insert_str
 
     def get_update_str(self, oridata, table_name, database_name = ""):
         try:
-            set_str = "PEG=%s, PE=%s, PB=%s, PS=%s, CFP=%s, EPS=%s, MV=%s \
-                       where TDATE=%s " % \
-                       (str(oridata[3]), str(oridata[4]), str(oridata[5]), str(oridata[6]),\
-                        str(oridata[7]), str(oridata[8]), str(oridata[9]), str(oridata[0])) 
-
+            set_str = "ROE=%s where TDATE=%s " % (str(oridata[2]),str(oridata[0])) 
             if database_name == "":
                 database_name = self.db
                 
@@ -144,4 +134,4 @@ class FundamentalDatabase(Database):
                                                    tabledata_startdate, tabledata_enddate)
         for i in range(len(transed_time_array)):
             transed_time_array[i].insert(0, secode)       
-        return transed_time_array
+        return transed_time_array        
