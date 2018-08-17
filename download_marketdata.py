@@ -158,7 +158,7 @@ class DowloadHistData(object):
                             raise(Exception(exception_info))
 
             curr_write_sucess_count = self.get_write_success_count()
-            if "MarketData" in database_name:
+            if "MarketData" in database_name and len(result_array) > 0:
                 start_date,end_date = self.get_start_end_date(result_array)
                 info_str = '[I] %d, %s, %s, [%d, %d],: 写入数据: %d, DP数据: %d \n' % \
                             (curr_write_sucess_count, database_name, source, start_date, end_date, \
@@ -294,11 +294,7 @@ class DowloadHistData(object):
 
                 database_transed_conditions = database_obj.get_transed_conditions(cur_tablename, cur_source)
                 if len(database_transed_conditions) == 0:
-                    if "MarketData" in data_type:
-                        info_str = '[D] %d, %s, [%d, %d] 已有数据\n' % (table_index+1, str(cur_source), \
-                                    source_conditions[0], source_conditions[1])
-                    else:
-                        info_str = '[D] %d, %s 已有数据\n' % (table_index+1, str(cur_source))
+                    info_str = '[D] %d, %s, 已有数据\n' % (table_index+1, str(cur_source))
                     self.log_info(info_str)
                     table_index += 1
                     continue
@@ -672,7 +668,9 @@ def update_index_data(dbhost='localhost', source_conditions=[], clear_database='
 
     data_type_list = ['MarketData_5m', 'MarketData_10m', \
                       'MarketData_15m', 'MarketData_30m', \
-                      'MarketData_60m', 'MarketData_day']   
+                      'MarketData_60m', 'MarketData_120m', \
+                      'MarketData_day', 'MarketData_week', \
+                      'MarketData_month']   
 
     # data_type_list = ['MarketData_day'] 
 

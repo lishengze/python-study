@@ -329,7 +329,7 @@ class MarketDatabase(Database):
         if database_name=="":
             database_name = self.db
         complete_tablename = u'[' + database_name + '].[dbo].['+ table_name +']'
-        sql_str = "select min(TDATE) from " + complete_tablename + ")"
+        sql_str = "select min(TDATE) from " + complete_tablename
         result = self.get_database_data(sql_str)
         return result
 
