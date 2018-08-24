@@ -693,7 +693,7 @@ if __name__ == "__main__":
     # download_market_secodeList(dbhost = "192.168.211.162")
     # update_future_contract(dbhost='192.168.211.162')
     # update_future_contract()
-    download_Marketdata()
-    # download_index_data()
+    # download_Marketdata()
+    download_index_data()
     # download_info_data()
  

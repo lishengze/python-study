@@ -71,7 +71,7 @@ class Database:
         if database_name == "":
             database_name = self.db
         create_str = self.get_create_str(table_name, database_name)
-        # print create_str
+        # print(create_str)
         self.changeDatabase(create_str)
 
     def completeDatabaseTable (self, table_name_list, database_name=""):

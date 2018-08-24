@@ -66,7 +66,10 @@ class TinySoft(object):
         return transResult            
 
     def get_Index_secode(self):
-        indexCodeArray = ["SH000300", "SH000016", "SH000852", \
+        indexCodeArray = ["SH000001", "SH000002", "SH000003", "SH000010", "SH000009",\
+                          "SZ399001", "SZ399006", "SZ399005", "SZ399008", "SZ399102", "SZ399673", \
+                          "SZ399101", "SZ399102", "SZ399106",  "SZ399107", "SZ399108", \
+                          "SH000300", "SH000016", "SH000852", \
                           "SH000904", "SH000905", "SH000906", "SZ399903", \
                           'SH000908', 'SH000909', 'SH000910', 'SH000911', \
                           'SH000912', 'SH000913', 'SH000951', 'SH000849', \
