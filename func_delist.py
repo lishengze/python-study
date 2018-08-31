@@ -65,6 +65,17 @@ def com_delist_data(tradetime_array, ori_netdata, isLeftInterval=False, latest_d
     add_count = 0
     tmp_tradetime_index = tradetime_index
 
+    # 删除异常数据;
+    index = 0
+    while index < len(ori_netdata):
+        cur_oridatetime = [int(ori_netdata[index][0]), int(ori_netdata[index][1])]
+        if cur_oridatetime not in tradetime_array:
+            ori_netdata.pop(index)
+            index -= 1
+            # print(cur_oridatetime)
+        index += 1
+
+    # 补充停牌的数据;
     while tradetime_index < len(tradetime_array):
         if oridata_index == len(ori_netdata) or \
             is_trade_time_late(tradetime_array[tradetime_index], ori_netdata[oridata_index]):
@@ -73,11 +84,6 @@ def com_delist_data(tradetime_array, ori_netdata, isLeftInterval=False, latest_d
             if oridata_index == 0:
                 if len(latest_data) != 0:
                     susdata = latest_data
-                    # secode = latest_data[2]
-                    # open_price = latest_data[3]
-                    # close_price = latest_data[4]
-                    # high_price = latest_data[5]
-                    # low_price = latest_data[6]
                 else:
                     break                 
             else:

@@ -34,6 +34,7 @@ class MarketTinySoft(TinySoft):
         if len(params) > 2:
             code_type = params[2]
 
+        stockidArray = []
         stockidArray = get_a_market_secodelist()
         # file_name = 'D:/excel/2018成长分红.xlsx'
         # stockidArray = get_execl_code(file_name)   
@@ -83,7 +84,7 @@ class MarketTinySoft(TinySoft):
         #                 "SH600011", "SH600019", "SH600028", "SH600104", \
         #                 "SH600276", "SH600519", "SH600588"]
 
-        # sourceArray = ['SH600588']
+        sourceArray = sourceArray[0:30]
 
         source = {
             'secode': sourceArray,

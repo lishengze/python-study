@@ -412,15 +412,20 @@ class DowloadHistData(object):
     def store_transed_data(self, data_type, ori_time, restore_info_dict):
         starttime = datetime.datetime.now()
         info_str = '周频 月频 开始更新时间: %s ' % \
-                    (starttime.strftime("%Y-%m-%d %H:%M:%S"))        
+                    (starttime.strftime("%Y-%m-%d %H:%M:%S"))   
+        self.log_info(info_str)     
         self.reset_write_success_count()
 
         database_obj_list = self.get_database_obj_list(data_type)
         database_obj = get_database_obj(data_type, host=self.dbhost)
 
+        if 'True' == self.clear_database or True == self.clear_database:            
+            for curr_data_type in self.day_trans_dict:
+                self.log_info("** 清空 %s 数据库 **" % (self.day_trans_dict[curr_data_type]))
+                database_obj.clearDatabase(database_name=self.day_trans_dict[curr_data_type])
+
         table_list = database_obj.getDatabaseTableInfo()
-        # table_list = ["SH000300"]
-        # table_list = table_list[0:100]
+        print(table_list)
         for data_type in self.day_trans_dict:            
             database_obj.completeDatabaseTable(table_list, self.day_trans_dict[data_type])
 
@@ -431,20 +436,32 @@ class DowloadHistData(object):
         while index < len(table_list):
             table_name = table_list[index]
             comp_time = self.get_com_trans_time(table_name, database_obj, ori_time, restore_info_dict)
-            ori_database_data = database_obj.get_histdata_by_date(comp_time[0],comp_time[1], table_name)
-            trans_data = self.get_trans_day_data(ori_database_data)
+            if len(comp_time) < 2:
+                # print(table_name, ori_time)
+                error_info = '%s, %s 无法正确转换' % (table_name, str(ori_time))
+                self.log_info(error_info, False)
+            else:
+                try:
+                    ori_database_data = database_obj.get_histdata_by_date(comp_time[0],comp_time[1], table_name)
+                except Exception as e:
+                     exception_info = str(traceback.format_exc())
+                     if "Invalid column" in exception_info:
+                         excep_info = 'invalid column %s, %s, %s' % (str(comp_time[0]), str(comp_time[1]), table_name)
+                         self.log_info(excep_info, False)
 
-            write_data_list.append(trans_data)
-            curr_table_list.append(table_name)
-            write_data_numb += len(trans_data)
+                # ori_database_data = database_obj.get_histdata_by_date(comp_time[0],comp_time[1], table_name)
+                trans_data = self.get_trans_day_data(ori_database_data)
 
-            if write_data_numb == self.thread_count or index == len(table_list)-1 or \
-                write_data_numb + len(self.day_trans_dict) > self.thread_count:
-                self.init_write_trans_data_thread(write_data_list, curr_table_list, database_obj_list)
-                write_data_numb = 0
-                write_data_list = []
-                curr_table_list = []
+                write_data_list.append(trans_data)
+                curr_table_list.append(table_name)
+                write_data_numb += len(trans_data)
 
+                if write_data_numb == self.thread_count or index == len(table_list)-1 or \
+                    write_data_numb + len(self.day_trans_dict) > self.thread_count:
+                    self.init_write_trans_data_thread(write_data_list, curr_table_list, database_obj_list)
+                    write_data_numb = 0
+                    write_data_list = []
+                    curr_table_list = []
             index+=1
             
         endtime = datetime.datetime.now()
@@ -466,16 +483,17 @@ class DowloadHistData(object):
         for trans_type in self.day_trans_dict:
             database_name = self.day_trans_dict[trans_type]
             transed_conditions = database_obj.get_transed_conditions(table_name, ori_time, database_name)
-            # print("transed_conditions: ", transed_conditions)
+            print('table_name: ', table_name, 'ori_time: ', ori_time, 'transed_conditions: ', transed_conditions)
             if len(transed_conditions) == 2:
                 transed_time = [transed_conditions[0][1], transed_conditions[1][2]]
             elif len(transed_conditions) == 1:
                 transed_time = [transed_conditions[0][1], transed_conditions[0][2]]
             else:
                 break
-            # print("transed_time: ", transed_time)
+            print("transed_time: ", transed_time)
             if table_name in restore_info_dict and len(restore_info_dict[table_name]) != 0:
-                transed_time[0] = database_obj.get_first_date(table_name, database_name)
+                transed_time[0] = database_obj.get_first_date(table_name, database_name)[0][0]
+                print('dbNanme: ', self.data_type, 'table_name: ', table_name, 'transed_time: ', transed_time)
             comp_time = self.get_trans_time(comp_time, transed_time)
         return comp_time
 
@@ -542,16 +560,16 @@ def download_Marketdata():
     # data_type_list = ['IndustryData']  
     # data_type_list = ['MarketData_15m', 'MarketData_30m', \
     #                   'MarketData_60m', 'MarketData_120m']
-    data_type_list = ['MarketData_120m']                      
-    dbhost = "192.168.211.162"
-    # dbhost = "192.168.211.165"
+    data_type_list = ['MarketData_day']                      
+    # dbhost = "192.168.211.162"
+    dbhost = "192.168.211.165"
 
-    start_datetime = 20050101
-    end_datetime = getDateNow()
+    start_datetime = 20150101
+    end_datetime = 20161220
+    # end_datetime = getDateNow()
     clear_database = True
-    # clear_database = False
-    # ori_enddate = 20171220
-    source_conditions = [start_datetime, end_datetime, 'stock_index']
+    
+    source_conditions = [start_datetime, end_datetime, 'stock']
 
     for data_type in data_type_list:
         download_obj = DowloadHistData(data_type=data_type, dbhost=dbhost, clear_database=clear_database, \
@@ -672,6 +690,10 @@ def update_index_data(dbhost='localhost', source_conditions=[], clear_database='
                       'MarketData_day', 'MarketData_week', \
                       'MarketData_month']   
 
+    # data_type_list = ['MarketData_60m', 'MarketData_120m', \
+    #                   'MarketData_day', 'MarketData_week', \
+    #                   'MarketData_month']                         
+
     # data_type_list = ['MarketData_day'] 
 
     for data_type in data_type_list:
@@ -687,13 +709,28 @@ def download_index_data():
     source_conditions = [start_datetime, end_datetime, 'index']
     update_index_data(dbhost, source_conditions, clear_database)
 
+def trans_marketd_data():
+    data_type = 'MarketData_day'                     
+    # dbhost = "192.168.211.162"
+    dbhost = "192.168.211.165"
+
+    start_datetime = 20170825
+    end_datetime = getDateNow()
+    clear_database = False
+    source_conditions = [start_datetime, end_datetime]
+
+    download_obj = DowloadHistData(data_type=data_type, dbhost=dbhost, clear_database=clear_database, \
+                                    table_view=None, error_tableview=None)  
+    download_obj.store_transed_data(data_type, source_conditions, {})   
+
 if __name__ == "__main__":
     # download_Marketdata()
     # download_index_secodeList(dbhost = "192.168.211.162")
     # download_market_secodeList(dbhost = "192.168.211.162")
     # update_future_contract(dbhost='192.168.211.162')
     # update_future_contract()
-    # download_Marketdata()
-    download_index_data()
+    download_Marketdata()
+    # trans_marketd_data()
+    # download_index_data()
     # download_info_data()
  
