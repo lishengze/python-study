@@ -42,17 +42,19 @@ class Database:
     def dropTableByName(self, table_name, database_name=""):
         if database_name == "":
             database_name = self.db
-
-        complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
+        # print("\n cleared database: %s" % (database_name))
+        complete_tablename = u'[' + database_name + '].[dbo].['+ table_name +']'
         sql_str = "drop table " + complete_tablename 
         self.changeDatabase(sql_str)
 
     def clearDatabase(self, table_list=[], database_name=""):
         if database_name == "":
             database_name = self.db        
-        all_table_list = self.getDatabaseTableInfo()
+        # print("\n cleared database: %s" % (database_name))
+        all_table_list = self.getDatabaseTableInfo(database_name=database_name)
         if table_list == []:
             table_list = all_table_list
+
         for table_name in table_list: 
             if table_name in all_table_list:
                 self.dropTableByName(table_name, database_name)        
@@ -76,7 +78,6 @@ class Database:
         if database_name == "":
             database_name = self.db
         create_str = self.get_create_str(table_name, database_name)
-        # print(create_str)
         self.changeDatabase(create_str)
 
     def completeDatabaseTable (self, table_name_list, database_name=""):

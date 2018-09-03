@@ -425,7 +425,7 @@ class DowloadHistData(object):
                 database_obj.clearDatabase(database_name=self.day_trans_dict[curr_data_type])
 
         table_list = database_obj.getDatabaseTableInfo()
-        print(table_list)
+        # print(table_list)
         for data_type in self.day_trans_dict:            
             database_obj.completeDatabaseTable(table_list, self.day_trans_dict[data_type])
 
@@ -483,17 +483,17 @@ class DowloadHistData(object):
         for trans_type in self.day_trans_dict:
             database_name = self.day_trans_dict[trans_type]
             transed_conditions = database_obj.get_transed_conditions(table_name, ori_time, database_name)
-            print('table_name: ', table_name, 'ori_time: ', ori_time, 'transed_conditions: ', transed_conditions)
+            # print('table_name: ', table_name, 'ori_time: ', ori_time, 'transed_conditions: ', transed_conditions)
             if len(transed_conditions) == 2:
                 transed_time = [transed_conditions[0][1], transed_conditions[1][2]]
             elif len(transed_conditions) == 1:
                 transed_time = [transed_conditions[0][1], transed_conditions[0][2]]
             else:
                 break
-            print("transed_time: ", transed_time)
+            # print("transed_time: ", transed_time)
             if table_name in restore_info_dict and len(restore_info_dict[table_name]) != 0:
-                transed_time[0] = database_obj.get_first_date(table_name, database_name)[0][0]
-                print('dbNanme: ', self.data_type, 'table_name: ', table_name, 'transed_time: ', transed_time)
+                transed_time[0] = database_obj.get_first_date(table_name)[0][0]
+                # print('dbNanme: ', self.data_type, 'table_name: ', table_name, 'transed_time: ', transed_time)
             comp_time = self.get_trans_time(comp_time, transed_time)
         return comp_time
 
@@ -565,7 +565,7 @@ def download_Marketdata():
     dbhost = "192.168.211.165"
 
     start_datetime = 20150101
-    end_datetime = 20161220
+    end_datetime = 20171220
     # end_datetime = getDateNow()
     clear_database = True
     
@@ -702,7 +702,7 @@ def update_index_data(dbhost='localhost', source_conditions=[], clear_database='
         download_obj.store_net_data(data_type, new_source_conditions)    
 
 def download_index_data():
-    start_datetime = 20050101
+    start_datetime = 20150101
     end_datetime = getDateNow()
     dbhost = "192.168.211.162"
     clear_database = 'False'
@@ -729,8 +729,8 @@ if __name__ == "__main__":
     # download_market_secodeList(dbhost = "192.168.211.162")
     # update_future_contract(dbhost='192.168.211.162')
     # update_future_contract()
-    download_Marketdata()
+    # download_Marketdata()
     # trans_marketd_data()
-    # download_index_data()
+    download_index_data()
     # download_info_data()
  

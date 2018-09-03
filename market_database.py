@@ -328,9 +328,11 @@ class MarketDatabase(Database):
     def get_first_date(self, table_name, database_name=""):
         if database_name=="":
             database_name = self.db
-        complete_tablename = u'[' + database_name + '].[dbo].['+ table_name +']'
+        complete_tablename = '[' + database_name + '].[dbo].['+ table_name +']'
         sql_str = "select min(TDATE) from " + complete_tablename
         result = self.get_database_data(sql_str)
+        # print("sql_str: ", sql_str)
+        # print("result: ", result)
         return result
 
     def getALLFirstData(self, tablename_array):
