@@ -31,7 +31,7 @@ def testGetTurnoverData():
 def transSecodeList(oriSecodeList, style="tinysoft"):
     result = []
     for i in range(len(oriSecodeList)):
-        result.append(getCompleteSecode(oriSecodeList[i], style="tinysoft"))
+        result.append(get_complete_stock_code(oriSecodeList[i], style="tinysoft"))
     return result
 
 def get_turnover_list(oridata):
@@ -104,7 +104,7 @@ def get_cleared_secode_list(oriSecodeList, databaseObj):
     table_list = databaseObj.getDatabaseTableInfo()
     cleared_secode_list = []
     for secode in oriSecodeList:
-        if getCompleteSecode(secode, "tinysoft") not in table_list:
+        if get_complete_stock_code(secode, "tinysoft") not in table_list:
             # oriSecodeList.remove(secode)
             cleared_secode_list.append(secode)
     return cleared_secode_list
@@ -168,7 +168,7 @@ def main():
                         curr_kevalue_list.append(-1)
                 else:
                     ori_result = databaseObj.get_histdata_bytime(start_date, end_date, \
-                                                                table_name=getCompleteSecode(secode, "tinysoft"),\
+                                                                table_name=get_complete_stock_code(secode, "tinysoft"),\
                                                                 value_list=key_list)
                     comp_result, delete_data, missed_time, delist_data = completeResult(ori_result, index_time_list)
                     curr_kevalue_list = get_keyvalue_list(comp_result)
@@ -221,7 +221,7 @@ def main():
                     curr_turnover_list.append(-1)
                     curr_close_list.append(-1)
             else:
-                ori_result = databaseObj.get_data_bykey(key_list=key_list, table_name=getCompleteSecode(secode, "tinysoft"))
+                ori_result = databaseObj.get_data_bykey(key_list=key_list, table_name=get_complete_stock_code(secode, "tinysoft"))
                 comp_result, delete_data, missed_time, delist_data = completeResult(ori_result, index_time_list)
                 curr_turnover_list = get_turnover_list(comp_result)
                 curr_close_list = get_close_list(comp_result)

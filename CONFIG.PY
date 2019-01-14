@@ -1,5 +1,5 @@
 EXCELFILE_DIR = "E:\DataBase\original-data-20160910-20170910-1m"
-DATABASE_NAME = "TestData"
+DATABASE_NAME = "master"
 DATABASE_USER = "sa"
 DATABASE_PWD = "sasa"
 DATABASE_HOST = "localhost"
@@ -9,5 +9,6 @@ QT_PWD = "UXLAS4YF"
 STARTDATE = 20130901
 ENDDATE = 20171024
 TIANRUAN_DATASOURCE = "dsn=t1"
-STRATEGY_FILE_DIR = u"D:\strategy\Real"
+STRATEGY_FILE_DIR = "D:\strategy\Real"
+EXCEL_CONFIG_FILE_NAME = "config.xlsx"
 # STRATEGY_FILE_DIR = "\\\\192.168.211.182\it程序设计\strategy"

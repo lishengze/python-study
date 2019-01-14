@@ -48,50 +48,39 @@ def trans_tinycode_to_wind(oricode):
         result = result[2:len(result)]
         result += '.SZ'
 
-    # print ("result: ", result)
     return result
 
-def get_indexcode(style="ori"):
-    indexCodeArray = []
-    if style == "wind":
-        indexCodeArray = ["000300.SH", "000016.SH", "000852.SH", \
-                          "000904.SH", "000905.SH", "000906.SH", "399903.SZ"]
-                          
-    if style == "tinysoft":
-        indexCodeArray = ["SH000300", "SH000016", "SH000852", \
-                          "SH000904", "SH000905", "SH000906", "SZ399903"]
-                        
-    if style == "ori":
-        indexCodeArray = ["000300", "000016", "000852", \
-                          "000904", "000905", "000906", "399903"]
-    return indexCodeArray
-
-def get_all_indexcode(style="ori"):
-    indexCodeArray = []
-    if style == "wind":
-        indexCodeArray = ["000300.SH", "000016.SH", "000852.SH", \
-                          "000904.SH", "000905.SH", "000906.SH", "399903.SZ", \
-                          '000908.SH', '000909.SH', '000910.SH', '000911.SH', \
-                          '000912.SH', '000913.SH', '000914.SH', '000915.SH', '000917.SH',\
-                          '000951.SH', '000849.SH', '000952.SH']
-                          
-    if style == "tinysoft":
-        indexCodeArray = ["SH000001", "SH000002", "SH000003", "SH000010", "SH000009",\
-                          "SZ399001", "SZ399006", "SZ399005", "SZ399008", "SZ399102", "SZ399673", \
-                          "SZ399101", "SZ399102", "SZ399106",  "SZ399107", "SZ399108", \
-                          "SH000300", "SH000016", "SH000852", \
-                          "SH000904", "SH000905", "SH000906", "SZ399903", \
-                          'SH000908', 'SH000909', 'SH000910', 'SH000911', \
-                          'SH000912', 'SH000913', 'SH000951', 'SH000849', \
-                          'SH000952', 'SH000915', 'SH000917']
-                        
-    if style == "ori":
-        indexCodeArray = ["000300", "000016", "000852", \
-                          "000904", "000905", "000906", "399903", \
-                          '000908', '000909', '000910', '000911', \
-                          '000912', '000913', '000951', '000849', \
-                          '000952', '000915', '000917']
-    return indexCodeArray
+def get_index_code_list(style="ori", source_file_name=""):
+    index_code_list = []
+    if (source_file_name == ""):
+        if style == "wind":
+            index_code_list = ["000300.SH", "000016.SH", "000852.SH", \
+                            "000904.SH", "000905.SH", "000906.SH", "399903.SZ", \
+                            '000908.SH', '000909.SH', '000910.SH', '000911.SH', \
+                            '000912.SH', '000913.SH', '000914.SH', '000915.SH', '000917.SH',\
+                            '000951.SH', '000849.SH', '000952.SH']
+                            
+        if style == "tinysoft":
+            index_code_list = ["SH000001", "SH000002", "SH000003", "SH000010", "SH000009",\
+                            "SZ399001", "SZ399006", "SZ399005", "SZ399008",  "SZ399673", \
+                            "SZ399101", "SZ399102", "SZ399106",  "SZ399107", "SZ399108", \
+                            "SH000300", "SH000016", "SH000852", \
+                            "SH000903", "SH000904", "SH000905", "SH000906", "SZ399903"\
+                            'SH000908', 'SH000909', 'SH000910', 'SH000911', \
+                            'SH000912', 'SH000913', 'SH000914','SH000951', 'SH000849', \
+                            'SH000952', 'SH000915', 'SH000917']
+                            
+        if style == "ori":
+            index_code_list = ["000300", "000016", "000852", \
+                                "000904", "000905", "000906", "399903", \
+                                '000908', '000909', '000910', '000911', \
+                                '000912', '000913', '000951', '000849', \
+                                '000952', '000915', '000917']
+    else:
+        excel_obj = EXCEL()
+        sheet_name = 'index_list'
+        index_code_list = excel_obj.get_onecolumn_data_by_sheet(source_file_name, sheet_name)
+    return index_code_list
 
 def get_secode_list_from_excel(fileName, style='ori'):    
     execlObj = EXCEL()
@@ -99,29 +88,44 @@ def get_secode_list_from_excel(fileName, style='ori'):
     secode_list = []
     index = 1
     while index < len(ori_data):
-        secode_list.append(getCompleteSecode(ori_data[index][0], style=style))
+        secode_list.append(get_complete_stock_code(ori_data[index][0], style=style))
         index += 1
     return secode_list
 
-def getCompleteSecode(oricode, style="ori"):
+def get_complete_stock_code(oricode, style="ori"):
     complete_code = str(oricode)
-    if len(complete_code) > 6:
-        return complete_code
 
     while len(complete_code) < 6:
         complete_code = '0' + complete_code
 
     if style == "tinysoft":
-        if complete_code.startswith("6"):
-            complete_code = "SH" + complete_code
-        else:
-            complete_code = "SZ" + complete_code
+        if len(complete_code) == 6:
+            if complete_code.startswith("6"):
+                complete_code = "SH" + complete_code
+            else:
+                complete_code = "SZ" + complete_code
+
+        if len(complete_code) == 9:
+            postfix = complete_code[6:]
+            complete_code = postfix + complete_code[0:6]
     
     if style == "wind":
-        if complete_code.startswith("6"):
-            complete_code = complete_code + ".SH"
-        else:
-            complete_code = complete_code + ".SZ"
+        if len(complete_code) == 6:
+            if complete_code.startswith("6"):
+                complete_code = complete_code + ".SH"
+            else:
+                complete_code = complete_code + ".SZ"
+
+        if len(complete_code) == 8:
+            prefix = complete_code[0:2]
+            complete_code = complete_code[2:] + '.' + prefix        
+
+    if style == "ori":
+        if len(complete_code) == 9:
+            complete_code = complete_code[0:6]
+
+        if len(complete_code) == 8:
+            complete_code = complete_code[2:]
 
     return complete_code
   

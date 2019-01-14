@@ -424,15 +424,17 @@ def get_netconn_obj(database_type):
 def testGetLatestData():
     timeType = "10m"
     # host = "localhost"
-    host = "192.168.211.165"
+    host = "192.168.211.162"
     data_type = "MarketData" + "_" + timeType
     database_obj = get_database_obj(data_type, host=host)
     # secode = "SH000016"
     secode = "SH600000"
-    latest_data = database_obj.getLatestData(secode)
-    print("latest_data: ", latest_data)
 
-    first_data = database_obj.getFirstData(secode)
+    # latest_data = database_obj.getLatestData(secode)
+    # print("latest_data: ", latest_data)
+
+    # first_data = database_obj.getFirstData(secode)
+    first_data = database_obj.get_first_day_data(secode)
     print("first_data: ", first_data)
 
     # latest_data_array = database_obj.getAllLatestData([secode])
@@ -474,13 +476,13 @@ if __name__ == "__main__":
         # test_insert_data()
         # cleanMarketDatabase()
         # testMarketDatabase()
-        # testGetLatestData()
+        testGetLatestData()
         # testTimeData()
         # test_get_database()
         # test_insert_multieData();
         # test_get_data_by_enddatetime()
         # test_delete_data_by_enddatetime()
-        test_get_index_seocde_list()
+        # test_get_index_seocde_list()
     except Exception as e:
         exceptionInfo = "\n" + str(traceback.format_exc()) + '\n'
         log_str = "__Main__ Failed \n" \

@@ -17,6 +17,9 @@ import traceback
 import threading
 from download_announce import download_announcement_main
 from download_marketdata import download_histdata_main
+from CONFIG import *
+
+from excel import EXCEL
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -70,7 +73,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         initModel.setHorizontalHeaderItem(1, QStandardItem('消息'))
         table_view.setModel(initModel)
         table_view.setColumnWidth(0, 150)
-        table_view.setColumnWidth(1, 600)
+        table_view.setColumnWidth(1, 800)
         table_view.setShowGrid(False)
     
     def init_datetime_edit(self):
@@ -103,26 +106,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         start_datetime = int(self.marketdata_starttime_edit.date().toString("yyyyMMdd"))
         end_datetime = getDateNow()
         source_contions = [start_datetime, end_datetime, 'stock']
-        data_type_list = ['MarketData_day', 'MarketData_10m', 'MarketData_15m', \
-                            'MarketData_30m', 'MarketData_60m', 'MarketData_120m']
-        # data_type_list = ['MarketData_15m']
-        # data_type_list = ['MarketData_week', 'MarketData_month']
-        # data_type_list = ['MarketData_week']
-        # data_type_list = ['MarketData_10m']
-        # data_type_list = ['MarketData_month', 'MarketData_week', \
-        #                     'MarketData_day', 'MarketData_10m']        
 
-        # data_type_list = ['MarketData_5m', 'MarketData_10m', \
-        #                   'MarketData_15m', 'MarketData_30m', 'MarketData_60m']   
+        excel_obj = EXCEL()
+        time_type_list = excel_obj.get_onecolumn_data_by_sheet(EXCEL_CONFIG_FILE_NAME, 'time_list')
+        data_type_list = []
+        for time_type in time_type_list:
+            data_type_list.append('MarketData_%s' % (time_type))
+
+        print(data_type_list)
+        # data_type_list = ['MarketData_day', 'MarketData_10m', 'MarketData_15m', \
+        #                     'MarketData_30m', 'MarketData_60m', 'MarketData_120m']
+        # data_type_list = ['MarketData_day']   
 
         msg = '开始更新历史行情, 数据库为: %s' % (dbhost)
         update_tableinfo(self.marketData_tableView, msg)
 
         histMarket_work_thread = threading.Thread(target=download_histdata_main, \
-                                                args=(dbhost, data_type_list, 
-                                                source_contions, clear_database, \
-                                                self.marketData_tableView, \
-                                                self.errorInfo_tableView,))
+                                                  args=(dbhost, data_type_list, 
+                                                  source_contions, clear_database, \
+                                                  self.marketData_tableView, \
+                                                  self.errorInfo_tableView,))
                                                 
         self.thread_list.append(histMarket_work_thread)
         histMarket_work_thread.setDaemon(True)

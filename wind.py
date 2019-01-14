@@ -137,8 +137,10 @@ class Wind(object):
             raise(Exception("get_restore_historydata Failed , ErroCode is: " + str(tmp.ErrorCode)))
 
     def get_histdata(self, secode, keyvalue_list, startdate, enddate, time_type = "day"):
-        # tmp = self.wind.wsd(secode, ','.join(keyvalue_list), startdate, enddate, "PriceAdj=F")
+        secode = trans_tinycode_to_wind(secode)
         if time_type == "day":
+            # print('secode: %s, start_date: %s, end_date: %s' % \
+            #      (secode, str(startdate), str(enddate)))
             tmp = self.wind.wsd(secode, keyvalue_list, str(startdate), str(enddate), "PriceAdj=F")
         else:
             # print("time_type: %s" % (time_type))
@@ -146,24 +148,25 @@ class Wind(object):
             end_datetime = str(enddate) + " 15:30:00"
             minute_type = time_type[0:len(time_type)-1]
             time_str = "BarSize=%s" %(minute_type)
-            print("startdate: %s, enddate: %s" % (startdate, enddate))
-            print("start_datetime: %s, end_datetime: %s" % (start_datetime, end_datetime))
-            print("time_str: %s " % (time_str) )
+            # print("startdate: %s, enddate: %s" % (startdate, enddate))
+            # print("start_datetime: %s, end_datetime: %s" % (start_datetime, end_datetime))
+            # print("time_str: %s " % (time_str) )
             tmp = self.wind.wsi(secode, keyvalue_list, str(start_datetime), str(end_datetime), time_str)
         if tmp.ErrorCode == 0:
             result = []
             for i in range(len(tmp.Times)):
                 result.append([])
 
-            # print(tmp.Data)
             for i in range(len(tmp.Times)):
-                result[i].append(str(tmp.Times[i]))
+                date_time = str(tmp.Times[i])
+                date_time = date_time.replace('-','')
+                result[i].append(date_time)
+                # print(date_time)
                 for j in range(len(keyvalue_list)):
-                    result[i].append(float("%.2f " % tmp.Data[j][i]))
+                    result[i].append(float("%.4f " % tmp.Data[j][i]))
 
             return result    
         else:
-            # print tmp.ErrorCode
             raise(Exception("get_restore_historydata Failed , ErroCode is: %s" %(str(tmp.ErrorCode))))
 
     def get_secode_compname(self, secode_list):
@@ -193,3 +196,27 @@ class Wind(object):
             return result    
         else:
             raise(Exception("get_secodelist Failed , ErroCode is: " + str(tmp.ErrorCode)))
+
+    def get_day_data(self):
+        pass
+
+    def get_minute_data(self):        
+        pass
+
+class TestWind(object):
+    def __init__(self):
+        self.__name__ = '__TestWind__'
+        self.test_get_histdata()
+
+    def test_get_histdata(self):
+        code = "SZ000001"
+        start_date = '20070108'
+        end_date = '20070118'
+        keyvalue_list = ['close']
+        wind_obj = Wind()
+        result = wind_obj.get_histdata(code, keyvalue_list, start_date, end_date)
+        # print(result)
+
+
+if __name__ == "__main__":
+    test_obj = TestWind()

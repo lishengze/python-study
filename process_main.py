@@ -246,7 +246,7 @@ def MultiThreadWriteData(data_type, source_conditions, database_host=DATABASE_HO
         aveTime = costTime / len(tablename_array)
 
     print_data("sus_secode: ", sus_secode)
-    indexcode_list = get_indexcode(style = "tinysoft")
+    indexcode_list = get_index_code_list(style = "tinysoft")
     for secode in restore_dict_data:
         if len(restore_dict_data[secode]) != 0 and secode not in indexcode_list:
             restore_data.append(restore_dict_data[secode])

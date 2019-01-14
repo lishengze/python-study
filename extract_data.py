@@ -1,7 +1,7 @@
 import xlsxwriter
 
 from market_database import MarketDatabase
-from func_tool import get_secode_list_from_excel, getCompleteSecode
+from func_tool import get_secode_list_from_excel, get_complete_stock_code
 from operator import itemgetter, attrgetter
 import time
 import datetime
@@ -115,7 +115,7 @@ class ExtractMarketData(object):
 
     def read_data(self, secode, database_obj, keyvalue_list):
         ori_histdata = database_obj.get_histdata_bytime(self.start_date, self.end_date, \
-                                                        table_name=getCompleteSecode(secode, "tinysoft"), \
+                                                        table_name=get_complete_stock_code(secode, "tinysoft"), \
                                                         value_list=keyvalue_list)
         comp_result = self.complete_data(ori_histdata, self.index_time_list)
         self.lock.acquire()
@@ -190,7 +190,7 @@ class ExtractMarketData(object):
             while secode_index < len(self.ori_secode_list):                
                 secode = self.ori_secode_list[secode_index]
                 ori_histdata = self.database.get_histdata_bytime(self.start_date, self.end_date, \
-                                                                table_name=getCompleteSecode(secode, "tinysoft"), \
+                                                                table_name=get_complete_stock_code(secode, "tinysoft"), \
                                                                 value_list=curr_keyvalue_list)
                 comp_result = self.complete_data(ori_histdata, self.index_time_list)       
                 self.write_one_column(comp_result, self.column_index)                  

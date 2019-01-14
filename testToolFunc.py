@@ -54,7 +54,7 @@ g_logFile = open(g_logFileName, 'w')
 #     global secodelist, dirname, timeInterval
 #     timeInterval = 2
 #     dirname =  "D:/strategy"
-#     secodelist = get_indexcode(style="wind")
+#     secodelist = get_index_code_list(style="wind")
 
 #     timer = threading.Timer(timeInterval, scan_excelfile, )
 #     timer.start();

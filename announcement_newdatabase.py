@@ -11,12 +11,14 @@ class AnnouncementNewDatabase(Database):
     def __del__(self):
         Database.__del__(self)
 
-    def get_create_str(self, table_name):
+    def get_create_str(self, table_name, database_name):
         value_str = "(Secode varchar(10) not null, Date int not null, \
                      Announcement varchar(500) not null Primary Key(Date, Announcement), Href varchar(100))"
+        if database_name =="":
+            database_name = self.db
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         create_str = "create table " + complete_tablename + value_str
-        # print create_str
+        print(create_str)
         return create_str
 
     def get_insert_str(self, secode, date, annnouncement):

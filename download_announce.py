@@ -19,6 +19,7 @@ from func_secode import *
 from scrapy.http import HtmlResponse
 from scrapy import Selector
 
+import datetime
 
 def output_msg(msg, table_view):
     print(msg)
@@ -148,11 +149,11 @@ class DownloadAnnouncement(object):
 
     def get_sz_announcement_detail(self, sz_secode_list):
         driver = self.driver
-        url = "http://disclosure.szse.cn/m/drgg.htm"
+        url = "http://www.szse.cn/disclosure/listed/notice/index.html"
         sz_announcement = {}
         driver.set_page_load_timeout(30)
 
-        http_prex = "http://disclosure.szse.cn/m/"
+        http_prex = "http://www.szse.cn"
 
         secode_index = 0
         while secode_index < len(sz_secode_list):
@@ -161,7 +162,7 @@ class DownloadAnnouncement(object):
                 driver.get(url)
                 time.sleep(3)
 
-                driver.find_element_by_id('stockCode').send_keys(secode)
+                driver.find_element_by_id('input_code').send_keys(secode)
                 time.sleep(1)
                 
                 inputStartTime = driver.find_element_by_id('startTime')
@@ -226,6 +227,8 @@ class DownloadAnnouncement(object):
     def get_secode_list(self):    
         secode_list = get_excel_secode(self.dirname)
 
+        # secode_list = ["601198", "000695"]
+
         sz_secode_list = []
         sh_secode_list = []
         for secode in secode_list:
@@ -233,6 +236,7 @@ class DownloadAnnouncement(object):
                 sz_secode_list.append(secode)
             if secode.startswith('6'):
                 sh_secode_list.append(secode)
+        sz_secode_list = []
         # sh_secode_list = sh_secode_list[0:1]
         # sz_secode_list = sz_secode_list[0:1]
         # sh_secode_list = ['600068']
@@ -242,7 +246,8 @@ class DownloadAnnouncement(object):
 
     def get_announcement(self, sz_secode_list, sh_secode_list):
         sh_announcement = self.get_sh_announcement_detail(sh_secode_list)  
-        sz_announcement = self.get_sz_announcement_detail(sz_secode_list)                  
+        sz_announcement = self.get_sz_announcement_detail(sz_secode_list)      
+         
         return sz_announcement, sh_announcement
 
     def store_annnouncement(self):        

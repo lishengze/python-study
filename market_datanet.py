@@ -14,6 +14,7 @@ from func_wind import *
 from tinysoft import TinySoft
 
 from market_database import MarketDatabase
+from market_info_database import *
 
 # from wind import Wind
 
@@ -28,82 +29,55 @@ class MarketTinySoft(TinySoft):
         TinySoft.__del__(self)
 
     def get_sourceinfo(self, params=[]):
-        print (params)
-        time_array = params[0:2]
+        time_list = params[0:2]
         code_type = 'stock'
-        if len(params) > 2:
+        if len(params) > 3:
             code_type = params[2]
 
-        stockidArray = []
-        # stockidArray = get_a_market_secodelist()
-        stockidArray = self.get_allA_secode()
-        # file_name = 'D:/excel/2018成长分红.xlsx'
-        # stockidArray = get_execl_code(file_name)   
+        stock_code_list = []
+        if code_type == 'stock':
+            stock_code_list = get_wind_markert_secode_list(market_name= "A_Market", style="tinysoft")
 
-        indexidArray = self.get_Index_secode()
-        sourceArray = []
+        index_code_list = get_index_code_list("tinysoft", EXCEL_CONFIG_FILE_NAME)
+        source_list = []
 
         bTest = False
-        # bTest = True
-        if bTest:
-            # # print "self.datatype: ", self.datatype
-            # database_obj = MarketDatabase(host="localhost", db=self.datatype)
-            # table_name = database_obj.getDatabaseTableInfo()
-            # # print "table_name: ", table_name
-
-            # if len(table_name) == 0:                    
-            #     test_numb = 12
-            #     # sourceArray = random.sample(stockidArray, test_numb)
-            #     sourceArray = stockidArray[0:test_numb]
-            # else:
-            #     sourceArray = table_name           
+        if bTest:         
             file_name = 'D:/excel/2018成长分红.xlsx'
-            sourceArray = get_execl_code(file_name)    
-        else:       
-            print ("code_type: %s" % (code_type))     
+            source_list = get_execl_code(file_name)    
+        else:        
             if 'index' in code_type:
-                for indexCode in indexidArray:
-                    sourceArray.append(indexCode)
-
+                for indexCode in index_code_list:
+                    source_list.append(indexCode)
             if 'stock' in code_type:
-                for secode in stockidArray:
-                    sourceArray.append(getCompleteSecode(secode,"tinysoft"))   
+                for secode in stock_code_list:
+                    source_list.append(get_complete_stock_code(secode,"tinysoft"))   
 
-        # sourceArray = ["SH601330"]
-        # sourceArray = sourceArray[15:23]
-        # sourceArray = ["SH600000"]
-        # sourceArray = ["SH600051"]
-        # sourceArray = ["SH600145"]
-        # sourceArray = ["SZ000415"]
-        # sourceArray = ["SH000300"]
-        # sourceArray = sourceArray[0:100]
-        
-        # sourceArray = ["SH000300",'SH000908', 'SH000909', 'SH000910', \
+        # source_list = ["SH603022"]
+        # source_list = source_list[0:100]
+        # source_list = ["SH000300",'SH000908', 'SH000909', 'SH000910', \
         #                 'SH000911', 'SH000912', 'SH000913','SH000914', 
         #                 'SH000915', 'SH000917', \
         #                 "SZ000001", "SZ000002", "SZ000063", "SH600009", \
         #                 "SH600011", "SH600019", "SH600028", "SH600104", \
         #                 "SH600276", "SH600519", "SH600588"]
 
-        # sourceArray = sourceArray[0:30]
-
         source = {
-            'secode': sourceArray,
-            'time': time_array
+            'secode': source_list,
+            'time': time_list
         }
         return source
 
     def get_index_source_info(self, params=[]):
-        time_array = params
-        stockidArray = self.get_allA_secode()
-        indexidArray = self.get_Index_secode()
-        sourceArray = []
-        for indexCode in indexidArray:
-            sourceArray.append(indexCode)
+        time_list = params
+        index_code_list = get_index_code_list("tinysoft", EXCEL_CONFIG_FILE_NAME)
+        source_list = []
+        for indexCode in index_code_list:
+            source_list.append(indexCode)
 
         source = {
-            'secode': sourceArray,
-            'time': time_array
+            'secode': source_list,
+            'time': time_list
         }
         return source        
 
@@ -308,7 +282,21 @@ class MarketTinySoft(TinySoft):
                 # print (trans_result)
                 complete_result.append(trans_result)
 
+        self.fix_minute_error(complete_result)
+
         return complete_result      
+
+    def fix_minute_error(self, ori_netdata):
+        index = len(ori_netdata)-1
+        while index > 0:
+            if ori_netdata[index][10] != ori_netdata[index-1][4] \
+            and int(ori_netdata[index-1][1]) != 150000:
+                print(ori_netdata[index])
+                ori_netdata[index][10] = ori_netdata[index-1][4]
+                if (ori_netdata[index][10] != 0):
+                    ori_netdata[index][9] = (float(ori_netdata[index][4]) - float(ori_netdata[index][10])) \
+                                          / (float(ori_netdata[index][10]))
+            index -= 1
 
     def get_dailydata_str(self, secode, start_date, end_date):
         timeTypeStr = self.get_timetypeTslstr()

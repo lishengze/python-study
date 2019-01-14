@@ -4,7 +4,6 @@ from CONFIG import *
 from func_tool import *
 import time
 
-
 class Database:
     def __init__(self, id=0, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):
         self.__name__ = "Database"
@@ -14,35 +13,73 @@ class Database:
         self.db = db
         self.id = id
         self.insertDataNumbOnce = 1000
+
         self.startConnect()
 
     def __del__(self):
         self.closeConnect()
 
     def startConnect(self):
-        self.conn = pymssql.connect(host=self.host, user=self.user, password=self.pwd, database=self.db, \
-                                    timeout=5, login_timeout=2, charset="utf8")
-        self.cur = self.conn.cursor()
-        if not self.cur:
-            raise(NameError, "Connect Data Base Failed! ")
+        try:
+            self.conn = pymssql.connect(host=self.host, user=self.user, password=self.pwd, database=self.db, \
+                                        charset="utf8", timeout=300, login_timeout=300)
+            self.cur = self.conn.cursor()
+            if not self.cur:
+                raise(NameError, "Connect Data Base Failed! ")
+            else:
+                print("Connect %s Success" % (self.host))
+        except Exception as e:
+            exception_info = str(traceback.format_exc())
+            db_connect_error = '20002'
+            if db_connect_error not in exception_info:
+                raise(e)
+            else:
+                restart_time = 10
+                print("[X] 链接数据库出错, %d s 后重新执行" % (restart_time))                   
+                time.sleep(restart_time)
+                self.startConnect()
 
     def closeConnect(self):
         self.conn.close()  
 
-    def get_database_data(self,sql):  
-        self.cur.execute(sql)  
-        result = self.cur.fetchall()  
-        return result  
-  
+    def get_database_data(self,sql):          
+        try:
+            self.cur.execute(sql)  
+            result = self.cur.fetchall() 
+            return result
+        except Exception as e:
+            exception_info = str(traceback.format_exc())
+            no_result_error = 'Statement not executed or executed statement has no resultset'
+            db_connect_error = '20003'
+            if db_connect_error in exception_info:
+                return self.get_create_str(sql)
+            elif no_result_error in exception_info:
+                return []
+            else:
+                raise(e)
+
     def changeDatabase(self,sql):  
-        result = self.cur.execute(sql)  
-        result2 = self.conn.commit()  
-        return result
+        # result1 = self.cur.execute(sql)  
+        # result2 = self.conn.commit() 
+        # return result1        
+        try:
+            result1 = self.cur.execute(sql)  
+            result2 = self.conn.commit()  
+            return result1
+        except Exception as e:
+            exception_info = str(traceback.format_exc())
+            db_connect_error = '20003'
+            if db_connect_error not in exception_info:
+                raise(e)
+            else:
+                restart_time = 10
+                print("[X] 执行数据库出错, %d s 后重新执行" % (restart_time))                
+                time.sleep(10)
+                return self.changeDatabase(sql)
 
     def dropTableByName(self, table_name, database_name=""):
         if database_name == "":
             database_name = self.db
-        # print("\n cleared database: %s" % (database_name))
         complete_tablename = u'[' + database_name + '].[dbo].['+ table_name +']'
         sql_str = "drop table " + complete_tablename 
         self.changeDatabase(sql_str)
@@ -50,7 +87,6 @@ class Database:
     def clearDatabase(self, table_list=[], database_name=""):
         if database_name == "":
             database_name = self.db        
-        # print("\n cleared database: %s" % (database_name))
         all_table_list = self.getDatabaseTableInfo(database_name=database_name)
         if table_list == []:
             table_list = all_table_list
@@ -97,52 +133,28 @@ class Database:
             self.createTableByName(table_name)    
 
     def insert_data(self, oridata, table_name, database_name = ""):
-        try:
-            insert_str = self.get_insert_str(oridata, table_name, database_name)
-            # print(insert_str)
-            result = self.changeDatabase(insert_str)
+        insert_str = self.get_insert_str(oridata, table_name, database_name)
+        result = self.changeDatabase(insert_str)
 
-            if result != None:
-                connFailedWaitTime = 5
-                print ('insert result: ', result)
-                print ('\n[X] insert %s error, restart! \n' %(table_name))
-                time.sleep(connFailedWaitTime)
-                self.insert_data(oridata, table_name)
-            return result
-        except Exception as e:
-            connect_error = "20003"
-            exception_info = str(traceback.format_exc())
-            if connect_error in exception_info:
-                connFailedWaitTime = 5
-                print ('\n[E] 20003 connection timed out, insert %s restart! \n' % (table_name))
-                time.sleep(connFailedWaitTime)
-                self.insert_data(oridata, table_name)        
-            else:
-                raise(e)
+        if result != None:
+            connFailedWaitTime = 5
+            print ('insert result: ', result)
+            print ('\n[X] insert %s error, restart! \n' %(table_name))
+            time.sleep(connFailedWaitTime)
+            self.insert_data(oridata, table_name)
+        return result
 
     def update_data(self, oridata, table_name, database_name = ""):
-        try:
-            update_str = self.get_update_str(oridata, table_name, database_name)
-            # print(update_str)
-            result = self.changeDatabase(update_str)
+        update_str = self.get_update_str(oridata, table_name, database_name)
+        result = self.changeDatabase(update_str)
 
-            if result != None:
-                connFailedWaitTime = 5
-                print ('insert result: ', result)
-                print ('\n[X] update %s error, restart! \n' %(table_name))
-                time.sleep(connFailedWaitTime)
-                self.insert_data(oridata, table_name)
-            return result
-        except Exception as e:
-            connect_error = "20003"
-            exception_info = str(traceback.format_exc())
-            if connect_error in exception_info:
-                connFailedWaitTime = 5
-                print ('\n[E] 20003 connection timed out, insert %s restart! \n' % (table_name))
-                time.sleep(connFailedWaitTime)
-                self.insert_data(oridata, table_name)        
-            else:
-                raise(e)
+        if result != None:
+            connFailedWaitTime = 5
+            print ('insert result: ', result)
+            print ('\n[X] update %s error, restart! \n' %(table_name))
+            time.sleep(connFailedWaitTime)
+            self.insert_data(oridata, table_name)
+        return result
 
     def insert_multi_data(self, oridataArray, table_name, database_name = ""):
         start_index = 0
@@ -179,9 +191,19 @@ class Database:
             transRst.append(str(result[i][0]))
         return transRst    
 
+    def get_db_table_list(self, database_name = ""):
+        if database_name == "":
+            database_name = self.db
+        queryString = "select name from "+ database_name +"..sysobjects where xtype= 'U'"
+        result = self.get_database_data(queryString)
+        transRst = []
+        for i in range(len(result)):
+            transRst.append(str(result[i][0]))
+        return transRst    
+
     def get_amarket_secode_list(self):
         ori_secode_list = self.getDatabaseTableInfo()
-        index_secode_list = get_indexcode('tinysoft')
+        index_secode_list = get_index_code_list('tinysoft')
         for code in index_secode_list:
             if code in ori_secode_list:
                 ori_secode_list.remove(code)
@@ -219,3 +241,24 @@ class Database:
                 timeArray.append([addOneDay(tableDataEndTime), oriEndTime])
         return timeArray
 
+class TestDatabase(object):
+    def __init__(self):
+        self.__name__ = "TestDatabase"
+        self.test_check_database_table_list()
+
+    def test_check_database_table_list(self):
+        database_obj = Database(host="192.168.211.162")
+        table_list_day = database_obj.get_db_table_list("MarketData_day")
+        table_list_10m = database_obj.get_db_table_list("MarketData_15m")
+        print("table_list_day.size: %d, table_list_10m.size: %d" % (len(table_list_day), len(table_list_10m)))
+        for table in table_list_day:
+            if table not in table_list_10m:
+                print(table)
+
+if __name__ == "__main__":
+    test_database_obj = TestDatabase()
+
+
+
+    
+    

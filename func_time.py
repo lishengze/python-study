@@ -1,25 +1,25 @@
 import math
-
 import os
 import traceback
-import threading
 import pyodbc
-import datetime
-import math
-from operator import itemgetter, attrgetter
-from CONFIG import *
-
-from func_qt import update_tableinfo
 
 import time
 import threading
+
+from operator import itemgetter, attrgetter
+from CONFIG   import *
+from func_io  import *
+from func_qt  import update_tableinfo
+from excel    import EXCEL
+
+import datetime
 
 def getTime(intTime):
     hour, minute, second = getHourMinuSec(intTime)
     return  datetime.time(hour, minute, second)
 
 def getDate(intDate):
-    year, month, day = getDateList(intDate)
+    year, month, day = getDateList(int(intDate))
     return datetime.datetime(int(year), int(month), int(day), 0,0,0)
 
 def getDateList(intDate):
@@ -270,7 +270,7 @@ def get_tradetime_byindex(netconn_obj, database_obj, source_conditions):
     return tradetime_array
 
 def get_index_tradetime(netconn_obj, starttime, endtime):
-    # tablename_array = get_indexcode(style="tinysoft")
+    # tablename_array = get_index_code_list(style="tinysoft")
     # tablename_array = ["SH000300", "SH000016"]
     tablename_array = ["SH000001"]
     tradetime_array = []
@@ -416,18 +416,32 @@ def get_next_trading_day(ori_date):
     return next_date
 
 def isTradingDay(datetime):
-    specialNoTradingDay = [20181230, 20181231, 20180101, \
-                           20180215, 20180216, 20180217, 20180218, 20180219, 20180220, 20180221, \
-                           20180405, 20180406, 20180407, \
-                           20180420, 20180430, 20180501, \
-                           20180616, 20180617, 20180618, \
-                           20180922, 20180923, 20180924, \
-                           20181001, 20181002, 20181003, 20181004, 20181005, 20181006, 20181007]
-    intDate = int(datetime.strftime('%Y%m%d'))
-    dayOfWeek = datetime.date().isoweekday()
-    if dayOfWeek > 5 or intDate in specialNoTradingDay:
+    #specialNoTradingDay = [20181230, 20181231, 20180101, \
+    #                       20180215, 20180216, 20180217, 20180218, 20180219, 20180220, 20180221, \
+    #                       20180405, 20180406, 20180407, \
+    #                       20180420, 20180430, 20180501, \
+    #                       20180616, 20180617, 20180618, \
+    #                       20180922, 20180923, 20180924, \
+    #                       20181001, 20181002, 20181003, 20181004, 20181005, 20181006, 20181007]
+    excel_obj = EXCEL()
+    sheet_name = 'specialNoTradingDays'
+    # tmp_data_list = excel_obj.get_onecolumn_data_by_sheet(EXCEL_CONFIG_FILE_NAME, sheet_name)
+    data_matrix = excel_obj.get_alldata_bysheet(EXCEL_CONFIG_FILE_NAME, sheet_name)
+
+    no_trading_days_list = []
+    for item_list in data_matrix:
+        for data in item_list:
+            no_trading_days_list.append(str(data)[0:8])
+
+    # print_list('no_trading_days_list: ', no_trading_days_list)
+
+    date_str = datetime.strftime('%Y%m%d')
+    day_of_week = datetime.date().isoweekday()
+    if day_of_week > 5 or date_str in no_trading_days_list:
+        print(False)
         return False
     else:
+        print(True)
         return True
 
 def wait_today_histdata_time(table_view = None, datatype="MarketData"):
@@ -546,4 +560,36 @@ def get_trade_start_minute(curr_time):
 
     return delta_minute
         
-    
+def get_time_type(ori_data):
+    data_list = ori_data.split('_')
+    result = data_list[1]
+    if result != "day":
+        result = result[0:len(result)-1]    
+    # print(result)
+    return result
+
+def add_days(oridate, delta_days):
+    trans_date = getDate(int(oridate))
+    delta = datetime.timedelta(days=delta_days)
+    new_date = trans_date + delta
+    result = new_date.strftime('%Y%m%d')
+    return result
+
+class TestTime(object):
+    def __init__(self):
+        self.__name__ = 'TestTime'
+        # self.test_add_days()
+        self.test_trading_days()
+
+    def test_add_days(self):
+        ori_date = '20180101'
+        delta_days = -365
+        new_date = add_days(ori_date, delta_days)
+        print('ori_date: %s, new_date: %s' % (ori_date, new_date))
+
+    def test_trading_days(self):
+        date = datetime.datetime.now()
+        isTradingDay(date)
+
+if __name__ == "__main__":
+    test_obj = TestTime() 

@@ -17,6 +17,7 @@ from func_time import *
 from func_connect import *
 from func_data import *
 from func_qt import update_tableinfo, update_tableinfo_with_rowdelta
+from func_wind import *
 
 from future_net import FutureNet
 from future_database import FutureDatabase
@@ -24,6 +25,9 @@ from func_market import get_latest_contract_month
 from tinysoft import TinySoft
 from func_io import *
 from func_frequency_data import *
+from func_compute import *
+from energy_compute import *
+import math
 
 from wind import Wind
 
@@ -35,21 +39,15 @@ class DowloadHistData(object):
         self.thread_count = thread_count
         self.table_view = table_view
         self.error_tableview = error_tableview
-        self.write_sucess_count = 0
+        self.write_com_count = 0
         self.write_sucess_count_lock = threading.Lock()
         self.data_type = data_type
         self.process_datanumb_once = 200000
+        self.wind_obj = Wind()
         self.day_trans_dict ={
             "week": "MarketData_week",
             "month": "MarketData_month"
-        }
-        # self.day_trans_dict ={
-        #     "week": "MarketData_week"
-        # } 
-
-        # self.day_trans_dict ={
-        #     "month": "MarketData_month"
-        # }                    
+        }                  
         self.init_log()
 
     def init_log(self):
@@ -66,7 +64,7 @@ class DowloadHistData(object):
             
         self.log_file_name = dir_name + datetime.datetime.now().strftime("%Y_%m_%d %H_%M_%S") \
                            + '_' +self.data_type +'.txt'
-        self.log_file = open(self.log_file_name, 'w')
+        self.log_file = open(self.log_file_name, 'w+', encoding='utf-8')
 
     def log_info(self, info_str, exception_flag = False):
         self.log_write_lock.acquire()
@@ -79,7 +77,7 @@ class DowloadHistData(object):
         self.log_write_lock.release()
 
     def log_restore_info_dict(self, restore_info_dict):
-        info_str = '\n前复权信息\n'
+        info_str = '\n前复权信息 \n'
         restore_info_dict = pure_dict_data(restore_info_dict)
         if len(restore_info_dict) > 0:
             self.log_info(info_str)
@@ -99,13 +97,13 @@ class DowloadHistData(object):
 
     def get_write_success_count(self):
         self.write_sucess_count_lock.acquire()
-        self.write_sucess_count += 1
+        self.write_com_count += 1
         self.write_sucess_count_lock.release()
-        return self.write_sucess_count
+        return self.write_com_count
 
     def reset_write_success_count(self):
         self.write_sucess_count_lock.acquire()
-        self.write_sucess_count = 0
+        self.write_com_count = 0
         self.write_sucess_count_lock.release()        
 
     def get_start_end_date(self, oridata):
@@ -149,8 +147,9 @@ class DowloadHistData(object):
                         exception_info = "\n" + str(traceback.format_exc()) + '\n'
                         duplicate_insert_error = "Violation of PRIMARY KEY constraint"
                         if duplicate_insert_error in exception_info:
-                            duplicate_insert_numb += 1          
-                            database_obj.update_data(item, table_name, database_name)
+                            if "WeightData" not in database_name:
+                                duplicate_insert_numb += 1          
+                                database_obj.update_data(item, table_name, database_name)
                         else:
                             break
                             exception_info  = "插入当前数据失败，停止当前线程工作，具体异常信息为: " + exception_info
@@ -160,7 +159,7 @@ class DowloadHistData(object):
             curr_write_sucess_count = self.get_write_success_count()
             if "MarketData" in database_name and len(result_array) > 0:
                 start_date,end_date = self.get_start_end_date(result_array)
-                info_str = '[I] %d, %s, %s, [%d, %d],: 写入数据: %d, DP数据: %d \n' % \
+                info_str = '[I] %d, %s, %s, [%d, %d]: 写入数据: %d, DP数据: %d \n' % \
                             (curr_write_sucess_count, database_name, source, start_date, end_date, \
                             len(result_array) - duplicate_insert_numb, duplicate_insert_numb)
             else:           
@@ -181,11 +180,11 @@ class DowloadHistData(object):
             time.sleep(sleeptime)
             self.write_data_to_database(result_array, source, database_obj, True, database_name)
 
-    def init_write_net_data_thread(self, netdata_array, source_array, database_obj_array):
+    def init_write_net_data_thread(self, netdata_array, source_array, database_obj_list):
         threads = []
         for i in range(len(netdata_array)):
             tmp_thread = threading.Thread(target=self.write_data_to_database, 
-                                          args=(netdata_array[i], str(source_array[i]), database_obj_array[i],))
+                                          args=(netdata_array[i], str(source_array[i]), database_obj_list[i],))
             threads.append(tmp_thread)
 
         for thread in threads:
@@ -228,13 +227,162 @@ class DowloadHistData(object):
             result = False
         return result        
 
-    def get_database_obj_list(self, database_name):
+    def get_database_obj_list(self, database_name, max_thread_count=100):
         database_obj_list = []
+        if self.thread_count > max_thread_count:
+            self.thread_count = max_thread_count
+
         for i in range(self.thread_count):
             tmp_database_obj = get_database_obj(database_name, host=self.dbhost, id=i+1)
-            database_obj_list.append(tmp_database_obj)  
-        # print_list("AA database_obj_list: ", database_obj_list) 
+            database_obj_list.append(tmp_database_obj)   
         return database_obj_list     
+
+    def store_market_data(self, database_name, source_conditions):
+        try:
+            source_conditions.append(self.clear_database)
+            starttime            = datetime.datetime.now()
+            pro_start_time_str   = starttime.strftime("%Y-%m-%d %H:%M:%S")
+            code_type            = source_conditions[2]
+            info_str             = ('%s, %s, 开始时间: %s \n' % (database_name, code_type, pro_start_time_str))
+            database_obj         = get_database_obj(database_name, host=self.dbhost)
+            netconn_obj          = get_netconn_obj(database_name)
+            source               = netconn_obj.get_sourceinfo(source_conditions)
+            table_name_list      = netconn_obj.get_tablename(source_conditions)            
+            database_obj_list    = self.get_database_obj_list(database_name, len(table_name_list))
+            ori_start_time       = source_conditions[0]
+            ori_end_time         = source_conditions[1]
+
+            self.write_com_count = 0            
+            curr_datanumb        = 0
+            tmp_netdata_array    = []
+            tmp_tablename_array  = []       
+            delist_info_dict     = get_empty_dict(table_name_list, [])
+            restore_info_dict    = get_empty_dict(table_name_list, [])
+
+            if code_type == "stock":
+                com_tradetime_list = get_index_tradetime(netconn_obj, ori_start_time, ori_end_time)
+
+            if 'True' == self.clear_database or True == self.clear_database:
+                info_str += ("** 清空 %s 数据库 ** \n" % (database_name))
+                database_obj.clearDatabase(table_name_list)
+            database_obj.completeDatabaseTable(table_name_list)  
+
+            info_str += ("数据源数量 : %d \n" % len(table_name_list))
+            self.log_info(info_str)
+
+            for table_index in range(len(table_name_list)):        
+                cur_tablename        = table_name_list[table_index]
+                cur_source           = netconn_obj.get_cursource(cur_tablename, source) 
+                cur_first_data       = database_obj.getFirstData(cur_tablename)                        
+                cur_latest_data      = database_obj.getLatestData(cur_tablename)   
+                dbtransed_conds_list = database_obj.get_transed_conditions(cur_tablename, cur_source)                                    
+                cur_netdata          = []
+
+                if len(dbtransed_conds_list) == 0:
+                    info_str = '[D] %d, %s, 已有数据\n' % (table_index+1, str(cur_source))
+                    self.log_info(info_str)
+                    continue
+
+                condition_index = len(dbtransed_conds_list) - 1        
+                while condition_index >= 0:
+                    cur_condition  = dbtransed_conds_list[condition_index]
+                    ori_netdata    = netconn_obj.get_netdata(cur_condition)
+                    isLeftInterval = False  
+                    start_datetime = cur_condition[1]
+                    end_datetime   = cur_condition[2]
+
+                    if ori_netdata is None:
+                        info_str = '[C] %s: %s 无数据' % (cur_tablename, str(cur_condition))
+                        self.log_info(info_str) 
+                        ori_netdata = []
+                    else:          
+                        info_str = '[B] %d, %s, %s, 原始数据: %d, '% (table_index+1, database_name, \
+                                                                str(cur_condition), len(ori_netdata))
+
+                        if code_type == 'stock':    
+                            # Complete delist Data
+                            isLeftInterval   = self.is_left_intervel(cur_condition)
+                            old_oridata_numb = len(ori_netdata)
+                            tradetime_array  = get_sub_index_tradetime(com_tradetime_list, start_datetime, end_datetime)
+                            ori_netdata      = com_delist_data(tradetime_array, ori_netdata, isLeftInterval, cur_latest_data)
+                            delist_datanumb  = len(ori_netdata) - old_oridata_numb
+
+                            # Restore Data
+                            ori_netdata, restore_info = get_restore_data(database_obj, cur_tablename, ori_netdata, \
+                                                                         isLeftInterval, cur_first_data)
+
+                            if isLeftInterval == False and restore_info != []:                       
+                                cur_first_data = ori_netdata[0]                                                                    
+                            if isLeftInterval == True and restore_info_dict[cur_tablename] != [] and restore_info != []:
+                                restore_info_dict[cur_tablename][2] += restore_info[2]
+                            elif restore_info_dict[cur_tablename] == []:
+                                restore_info_dict[cur_tablename] = restore_info
+                            delist_info_dict[cur_tablename] = delist_datanumb
+
+                            info_str += "停牌数据: %d, 前复权:%s  \n" % ((delist_datanumb), str(restore_info))
+                        else:
+                            info_str += "\n"
+                            
+                        self.log_info(info_str)
+                    condition_index -= 1
+                    ori_netdata.extend(cur_netdata)
+                    cur_netdata = deep_copy_list(ori_netdata)
+                    ori_netdata = []
+
+                curr_datanumb += len(cur_netdata)
+                tmp_netdata_array.append(cur_netdata)
+                tmp_tablename_array.append(cur_tablename)            
+
+                if len(tmp_netdata_array) % self.thread_count == 0 \
+                or table_index == len(table_name_list) - 1 \
+                or curr_datanumb >= self.process_datanumb_once:
+                    self.init_write_net_data_thread(tmp_netdata_array, tmp_tablename_array, database_obj_list)
+                    tmp_netdata_array   = []
+                    tmp_tablename_array = []      
+                    curr_datanumb       = 0   
+                        
+            self.log_restore_info_dict(restore_info_dict)
+            
+            endtime = datetime.datetime.now()
+            costTime = (endtime - starttime).seconds
+            info_str = "%s 结束时间: %s, 耗费: %.2fm\n" % \
+                        (database_name, endtime.strftime("%Y-%m-%d %H:%M:%S"), costTime/60)
+            self.log_info(info_str)
+
+            if database_name == "MarketData_60m" and "stock" in source_conditions[2]:
+                compute_energy_data(dbhost=self.dbhost, database_name=database_name)
+
+            # if database_name == "MarketData_day" and "stock" in source_conditions[2]:
+            #     ori_time = [source_conditions[0], source_conditions[1]]
+            #     self.store_transed_data(database_name, ori_time, restore_info_dict)
+        except Exception as e:
+            exception_info = "\n" + str(traceback.format_exc()) + '\n'
+            info_str = "__Main__ Failed" + "[E] Exception : \n" + exception_info
+            self.log_info(info_str, True)
+
+            connFailedError = "Communication link failure---InternalConnect"
+            driver_error = "The driver did not supply an error"
+            tiny_error = "self.curs.execute(tsl_str)"
+            sql_error = "self.cur.execute(sql)"
+            connFailedWaitTime = 30
+            if connFailedError in info_str \
+            or driver_error in info_str \
+            or tiny_error in info_str \
+            or sql_error in info_str:
+                info_str = "[RS] self.store_net_data restart after %d S " % (connFailedWaitTime)
+                self.log_info(info_str, True)
+                time.sleep(connFailedWaitTime)
+                info_str = "\n[RS] self.store_net_data  Restart : \n"
+                self.log_info(info_str, True)
+            else:
+                info_str = "插入历史数据出现无解错误请退出, 详细信息为: %s" % (exception_info)
+                self.log_info(info_str, True)
+    
+    def store_weight_data(self, data_type, source_conditions):
+        pass
+
+    def store_industry_data(self, data_type, source_conditions):
+        pass
 
     def store_net_data(self, data_type, source_conditions):
         try:
@@ -247,61 +395,62 @@ class DowloadHistData(object):
                             (data_type, starttime.strftime("%Y-%m-%d %H:%M:%S"))  
 
             self.log_info(info_str)
-            self.write_sucess_count = 0
+            self.write_com_count = 0
+            source_conditions.append(self.clear_database)
 
             database_name = data_type
             database_obj = get_database_obj(database_name, host=self.dbhost)
 
             netconn_obj = get_netconn_obj(data_type)
             source = netconn_obj.get_sourceinfo(source_conditions)
-            tablename_array = netconn_obj.get_tablename(source_conditions)
+            table_name_list = netconn_obj.get_tablename(source_conditions)
 
             if 'True' == self.clear_database or True == self.clear_database:
                 self.log_info("** 清空 %s 数据库 **" % (data_type))
-                database_obj.clearDatabase(tablename_array)
+                database_obj.clearDatabase(table_name_list)
 
             source = database_obj.filter_source(source)
-            tablename_array = database_obj.filter_tableArray(tablename_array)
-            info_str = "数据源数量 : " + str(len(tablename_array)) + '\n'
+            table_name_list = database_obj.filter_tableArray(table_name_list)
+            info_str = "数据源数量 : " + str(len(table_name_list)) + '\n'
             self.log_info(info_str)
 
-            database_obj.completeDatabaseTable(tablename_array)
+            database_obj.completeDatabaseTable(table_name_list)
             
-            database_obj_array = self.get_database_obj_list(database_name)
+            database_obj_list = self.get_database_obj_list(database_name)
 
             tmp_netdata_array = []
             tmp_tablename_array = []
-            indexcode_list = get_all_indexcode('tinysoft')
+            indexcode_list = get_index_code_list('tinysoft')
 
             delist_info_dict = {}
             restore_info_dict = {}
             curr_datanumb = 0
             
             if "MarketData" in data_type:
-                com_tradetime_array = get_index_tradetime(netconn_obj, source_conditions[0], source_conditions[1])
-                for table_name in tablename_array:
+                com_tradetime_list = get_index_tradetime(netconn_obj, source_conditions[0], source_conditions[1])
+                for table_name in table_name_list:
                     restore_info_dict[table_name] = []
                     delist_info_dict[table_name] = []
 
             table_index = 0
-            while table_index < len(tablename_array):        
-                cur_tablename = tablename_array[table_index]
+            while table_index < len(table_name_list):        
+                cur_tablename = table_name_list[table_index]
                 cur_source = netconn_obj.get_cursource(cur_tablename, source)                        
                 cur_netdata = []
                 if "MarketData" in data_type:
-                    cur_first_data = database_obj.getFirstData(cur_tablename)
+                    cur_first_data = database_obj.getFirstData(cur_tablename)                        
                     cur_latest_data = database_obj.getLatestData(cur_tablename)
 
-                database_transed_conditions = database_obj.get_transed_conditions(cur_tablename, cur_source)
-                if len(database_transed_conditions) == 0:
+                dbtransed_conds_list = database_obj.get_transed_conditions(cur_tablename, cur_source)
+                if len(dbtransed_conds_list) == 0:
                     info_str = '[D] %d, %s, 已有数据\n' % (table_index+1, str(cur_source))
                     self.log_info(info_str)
                     table_index += 1
                     continue
 
-                condition_index = len(database_transed_conditions) - 1        
+                condition_index = len(dbtransed_conds_list) - 1        
                 while condition_index >= 0:
-                    cur_condition = database_transed_conditions[condition_index]
+                    cur_condition = dbtransed_conds_list[condition_index]
                     ori_netdata = netconn_obj.get_netdata(cur_condition)
                     isLeftInterval = False
 
@@ -330,7 +479,7 @@ class DowloadHistData(object):
                             isLeftInterval = self.is_left_intervel(cur_condition)
                             old_oridata_numb = len(ori_netdata)
                             try:
-                                tradetime_array = get_sub_index_tradetime(com_tradetime_array, start_datetime, end_datetime)
+                                tradetime_array = get_sub_index_tradetime(com_tradetime_list, start_datetime, end_datetime)
                                 ori_netdata = com_delist_data(tradetime_array, ori_netdata, isLeftInterval, cur_latest_data)
                             except Exception as e:
                                 print ('cur_tablename: %s, isLeftInterval: %s' % (cur_tablename, isLeftInterval))
@@ -366,9 +515,9 @@ class DowloadHistData(object):
                 tmp_netdata_array.append(cur_netdata)
                 tmp_tablename_array.append(cur_tablename)            
 
-                if len(tmp_netdata_array) % self.thread_count == 0 or table_index == len(tablename_array) - 1 \
+                if len(tmp_netdata_array) % self.thread_count == 0 or table_index == len(table_name_list) - 1 \
                     or curr_datanumb >= self.process_datanumb_once:
-                    self.init_write_net_data_thread(tmp_netdata_array, tmp_tablename_array, database_obj_array)
+                    self.init_write_net_data_thread(tmp_netdata_array, tmp_tablename_array, database_obj_list)
                     tmp_netdata_array = []
                     tmp_tablename_array = []      
                     curr_datanumb = 0           
@@ -382,9 +531,9 @@ class DowloadHistData(object):
                         (data_type, endtime.strftime("%Y-%m-%d %H:%M:%S"), costTime/60)
             self.log_info(info_str)
 
-            if data_type == "MarketData_day" and "stock" in source_conditions[2]:
-                ori_time = [source_conditions[0], source_conditions[1]]
-                self.store_transed_data(data_type, ori_time, restore_info_dict)
+            # if data_type == "MarketData_day" and "stock" in source_conditions[2]:
+            #     ori_time = [source_conditions[0], source_conditions[1]]
+            #     self.store_transed_data(data_type, ori_time, restore_info_dict)
 
         except Exception as e:
             exception_info = "\n" + str(traceback.format_exc()) + '\n'
@@ -408,7 +557,7 @@ class DowloadHistData(object):
             else:
                 info_str = "插入历史数据出现无解错误请退出, 详细信息为: %s" % (exception_info)
                 self.log_info(info_str, True)
-
+      
     def store_transed_data(self, data_type, ori_time, restore_info_dict):
         starttime = datetime.datetime.now()
         info_str = '周频 月频 开始更新时间: %s ' % \
@@ -424,7 +573,7 @@ class DowloadHistData(object):
                 self.log_info("** 清空 %s 数据库 **" % (self.day_trans_dict[curr_data_type]))
                 database_obj.clearDatabase(database_name=self.day_trans_dict[curr_data_type])
 
-        table_list = database_obj.getDatabaseTableInfo()
+        table_list = database_obj.get_db_table_list()
         # print(table_list)
         for data_type in self.day_trans_dict:            
             database_obj.completeDatabaseTable(table_list, self.day_trans_dict[data_type])
@@ -508,45 +657,70 @@ class DowloadHistData(object):
             result.append(start_time)
             result.append(end_time)
         return result
-                    
-def download_histdata_main(dbhost, data_type_list, source_conditions, clear_database, \
-                           table_view=None, error_tableview = None):  
 
-    print(dbhost, data_type_list, source_conditions, clear_database)
-
+def download_histdata(dbhost, data_type_list, source_conditions, clear_database, \
+                           table_view=None, error_tableview = None):
     if 'WeightData' in data_type_list:
         download_index_secodeList(dbhost, table_view)
         download_market_secodeList(dbhost, table_view)
         update_future_contract(dbhost, table_view)
 
     if "MarketData" in data_type_list[0]:
-        update_index_data(dbhost, source_conditions, clear_database, table_view, error_tableview)
+        update_index_data(dbhost=dbhost, source_conditions=source_conditions,data_type_list=data_type_list, \
+                          clear_database=clear_database, table_view=table_view, error_tableview=error_tableview)
 
     for data_type in data_type_list:
+        print(dbhost, data_type, source_conditions, clear_database)
         download_obj = DowloadHistData(data_type=data_type, dbhost=dbhost, clear_database=clear_database, \
                                        table_view=table_view, error_tableview = error_tableview)  
-        download_obj.store_net_data(data_type, source_conditions)
+        
+        if "MarketData" in data_type:
+            download_obj.store_market_data(data_type, source_conditions)
+        else:
+            download_obj.store_net_data(data_type, source_conditions)      
+
+def download_histdata_main(dbhost, data_type_list, source_conditions, clear_database, \
+                           table_view=None, error_tableview = None):  
+
+    print(dbhost, data_type_list, source_conditions, clear_database)
+
+    download_histdata(dbhost, data_type_list, source_conditions, 
+                      clear_database, table_view, error_tableview)
 
     if wait_today_histdata_time(table_view, data_type_list[0]):
         source_conditions[1] = getDateNow()
+        download_histdata(dbhost, data_type_list, source_conditions, 
+                      clear_database, table_view, error_tableview)
 
-        if "MarketData" in data_type_list[0]:
-            update_index_data(dbhost, source_conditions, clear_database, table_view, error_tableview)
-            
-        for data_type in data_type_list:
-            download_obj = DowloadHistData(data_type=data_type, dbhost=dbhost, clear_database=clear_database, \
-                                           table_view=table_view, error_tableview=error_tableview)  
-            download_obj.store_net_data(data_type, source_conditions)
-    
     wait_nexttradingday_histdata_time(table_view, data_type_list[0])
     source_conditions[1] = getDateNow()
     download_histdata_main(dbhost, data_type_list, source_conditions, \
                             clear_database, table_view, error_tableview)
             
+def update_future_contract(dbhost='localhost', table_view = None):
+    starttime = datetime.datetime.now()
+    info_str = '%s  开始更新沪深300合约表 ' %  (starttime.strftime("%Y-%m-%d %H:%M:%S"))
+    update_tableinfo(table_view, info_str)
+    print(info_str)
+
+    index_code = '000300'
+    future_net_obj = FutureNet()
+    IF_contract_list = future_net_obj.get_contract_list(index_code)
+    print_list('IF_contract_list: ', IF_contract_list)
+
+    future_database_obj = FutureDatabase(host=dbhost)    
+    future_database_obj.refreshDatabase([index_code])
+    future_database_obj.insert_multi_data(IF_contract_list, index_code)
+
+    endtime = datetime.datetime.now()
+    info_str = '%s  更新沪深300合约表结束 ' %  (endtime.strftime("%Y-%m-%d %H:%M:%S"))
+    update_tableinfo(table_view, info_str)
+    print(info_str)    
+
 def download_info_data():
-    data_type_list = ["IndustryData"]
+    # data_type_list = ["IndustryData"]
     # data_type_list = [ "WeightData"]
-    # data_type_list = ["IndustryData", "WeightData"]
+    data_type_list = ["IndustryData", "WeightData"]
     # host = "localhost"
     dbhost = "192.168.211.162"  # win10
     start_datetime = 20180101
@@ -555,29 +729,9 @@ def download_info_data():
     download_histdata_main(dbhost = dbhost, data_type_list = data_type_list, \
                            source_conditions = [start_datetime, end_datetime],\
                            clear_database = False)
-
-def download_Marketdata():
-    # data_type_list = ['IndustryData']  
-    # data_type_list = ['MarketData_15m', 'MarketData_30m', \
-    #                   'MarketData_60m', 'MarketData_120m']
-    data_type_list = ['MarketData_day']                      
-    # dbhost = "192.168.211.162"
-    dbhost = "192.168.211.165"
-
-    start_datetime = 20150101
-    end_datetime = 20171220
-    # end_datetime = getDateNow()
-    clear_database = True
-    
-    source_conditions = [start_datetime, end_datetime, 'stock']
-
-    for data_type in data_type_list:
-        download_obj = DowloadHistData(data_type=data_type, dbhost=dbhost, clear_database=clear_database, \
-                                       table_view=None, error_tableview=None)  
-        download_obj.store_net_data(data_type, source_conditions)    
-            
+        
 def download_index_secodeList(dbhost, table_view = None):
-    indexcode_list = get_indexcode('tinysoft')
+    indexcode_list = get_index_code_list('tinysoft')
 
     starttime = datetime.datetime.now()
     info_str = '%s  开始更新指数成分数据表 ' %  (starttime.strftime("%Y-%m-%d %H:%M:%S"))
@@ -593,10 +747,14 @@ def download_index_secodeList(dbhost, table_view = None):
         connect_obj = WeightTinySoft("")
         result = connect_obj.get_secode_list_info(indexcode, date)
 
-        database_obj.refreshSecodeListTable(tableName)
-        database_obj.insertSecodeList(result, tableName)
+        info_str = ""
+        if result != None:
+            info_str += '%s secode numb: %d' % (indexcode, len(result))
+            database_obj.refreshSecodeListTable(tableName)
+            database_obj.insertSecodeList(result, tableName)
+        else:
+            info_str += '%s has no secode' % (indexcode)
 
-        info_str = '%s secode numb: %d' % (indexcode, len(result))
         update_tableinfo(table_view, info_str)
         print(info_str)
 
@@ -650,7 +808,6 @@ def download_market_secodeList(dbhost, table_view = None):
             market_secodelist = wind_connect_obj.get_market_secodelist(market_name)
             database_obj.insertSecodeList(market_secodelist, marketinfo_dict[market_name][0])
             info_str = '%s secode numb: %d' % (marketinfo_dict[market_name][1], len(market_secodelist))
-            # print_list("market_secodelist ", market_secodelist)
             update_tableinfo(table_view, info_str)
             print(info_str)
 
@@ -658,56 +815,6 @@ def download_market_secodeList(dbhost, table_view = None):
     info_str = '%s  更新板块成分数据表结束 ' %  (endtime.strftime("%Y-%m-%d %H:%M:%S"))
     update_tableinfo(table_view, info_str)
     print(info_str)      
-
-def update_future_contract(dbhost='localhost', table_view = None):
-    starttime = datetime.datetime.now()
-    info_str = '%s  开始更新沪深300合约表 ' %  (starttime.strftime("%Y-%m-%d %H:%M:%S"))
-    update_tableinfo(table_view, info_str)
-    print(info_str)
-
-    index_code = '000300'
-    future_net_obj = FutureNet()
-    IF_contract_list = future_net_obj.get_contract_list(index_code)
-    print_list('IF_contract_list: ', IF_contract_list)
-
-    future_database_obj = FutureDatabase(host=dbhost)    
-    future_database_obj.refreshDatabase([index_code])
-    future_database_obj.insert_multi_data(IF_contract_list, index_code)
-
-    endtime = datetime.datetime.now()
-    info_str = '%s  更新沪深300合约表结束 ' %  (endtime.strftime("%Y-%m-%d %H:%M:%S"))
-    update_tableinfo(table_view, info_str)
-    print(info_str)    
-
-def update_index_data(dbhost='localhost', source_conditions=[], clear_database='False', \
-                        table_view=None, error_tableview=None):    
-    new_source_conditions = copy_array(source_conditions)
-    new_source_conditions[2] = 'index'
-
-    data_type_list = ['MarketData_5m', 'MarketData_10m', \
-                      'MarketData_15m', 'MarketData_30m', \
-                      'MarketData_60m', 'MarketData_120m', \
-                      'MarketData_day', 'MarketData_week', \
-                      'MarketData_month']   
-
-    # data_type_list = ['MarketData_60m', 'MarketData_120m', \
-    #                   'MarketData_day', 'MarketData_week', \
-    #                   'MarketData_month']                         
-
-    # data_type_list = ['MarketData_day'] 
-
-    for data_type in data_type_list:
-        download_obj = DowloadHistData(data_type=data_type, dbhost=dbhost, clear_database=clear_database, \
-                                       table_view=table_view, error_tableview=error_tableview)  
-        download_obj.store_net_data(data_type, new_source_conditions)    
-
-def download_index_data():
-    start_datetime = 20150101
-    end_datetime = getDateNow()
-    dbhost = "192.168.211.162"
-    clear_database = 'False'
-    source_conditions = [start_datetime, end_datetime, 'index']
-    update_index_data(dbhost, source_conditions, clear_database)
 
 def trans_marketd_data():
     data_type = 'MarketData_day'                     
@@ -723,14 +830,79 @@ def trans_marketd_data():
                                     table_view=None, error_tableview=None)  
     download_obj.store_transed_data(data_type, source_conditions, {})   
 
+def download_Marketdata():
+    # data_type_list = ['IndustryData']  
+    # data_type_list = ['MarketData_15m', 'MarketData_30m', \
+    #                   'MarketData_60m', 'MarketData_120m']
+    data_type_list = ['MarketData_day']                   
+    # dbhost = "192.168.211.162"
+    dbhost = "192.168.211.165"
+
+    start_datetime = 20180101
+    # end_datetime = 20180101
+    end_datetime = getDateNow()
+    clear_database = False
+    
+    source_conditions = [start_datetime, end_datetime, 'stock']
+    for data_type in data_type_list:
+        download_obj = DowloadHistData(data_type=data_type, dbhost=dbhost, clear_database=clear_database, \
+                                       table_view=None, error_tableview=None)     
+        download_obj.store_market_data(data_type, source_conditions)    
+
+def update_index_data(dbhost='localhost', source_conditions=[], data_type_list = [], clear_database='False', \
+                        table_view=None, error_tableview=None):    
+    new_source_conditions = copy_array(source_conditions)
+    new_source_conditions[2] = 'index'
+
+    # data_type_list = ['MarketData_5m', 'MarketData_10m', \
+    #                   'MarketData_15m', 'MarketData_30m', \
+    #                   'MarketData_60m', 'MarketData_120m', \
+    #                   'MarketData_day', 'MarketData_week', \
+    #                   'MarketData_month']   
+
+    if data_type_list == []:
+        data_type_list = ['MarketData_10m', 'MarketData_15m', \
+                        'MarketData_30m', 'MarketData_60m', \
+                        'MarketData_120m', 'MarketData_day']   
+
+    # data_type_list = ['MarketData_day'] 
+
+    for data_type in data_type_list:
+        download_obj = DowloadHistData(data_type=data_type, dbhost=dbhost, clear_database=clear_database, \
+                                       table_view=table_view, error_tableview=error_tableview)  
+        # download_obj.store_net_data(data_type, new_source_conditions)   
+        download_obj.store_market_data(data_type, new_source_conditions)    
+        
+def download_index_data():
+    start_datetime = 20050101
+    end_datetime = getDateNow()
+    dbhost = "192.168.211.165"
+    clear_database = False
+    source_conditions = [start_datetime, end_datetime, 'index']
+    update_index_data(dbhost, source_conditions, clear_database)
+
+def store_database_tablename(host, database_name):
+    database_obj = get_database_obj(database_name, host)
+    table_name_list = database_obj.get_db_table_list()
+    marketinfo_database_obj = MarketInfoDatabase(host=host)  
+    marketinfo_database_obj.insert_dbinfo(database_name, table_name_list)
+
+def update_database_tablename_list():
+    dbhost = "192.168.211.162"
+    database_name_list = ["MarketData_day", "MarketData_10m", "MarketData_15m", \
+                          "MarketData_30m", "MarketData_60m", "MarketData_120m", \
+                          "MarketData_week", "MarketData_month"]
+    for database_name in database_name_list:
+        store_database_tablename(dbhost, database_name)
+
 if __name__ == "__main__":
+    # download_index_data()
     # download_Marketdata()
-    # download_index_secodeList(dbhost = "192.168.211.162")
+    # update_database_tablename_list();
+    download_index_secodeList(dbhost = "192.168.211.162")
     # download_market_secodeList(dbhost = "192.168.211.162")
     # update_future_contract(dbhost='192.168.211.162')
     # update_future_contract()
     # download_Marketdata()
     # trans_marketd_data()
-    download_index_data()
     # download_info_data()
- 

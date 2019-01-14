@@ -8,6 +8,8 @@ from CONFIG import *
 from func_tool import *
 from wind import Wind
 from WindPy import *
+from func_wind import *
+
 from market_realtime_database import MarketRealTimeDatabase
 from market_preclose_database import MarketPreCloseDatabase
 
@@ -179,6 +181,13 @@ def test_get_index_histdata():
     result = windObj.get_histdata(secode, keyvalue_list, startdate, enddate, "15m")
     print (result)
 
+def test_get_restore_data():
+    wind_connect_obj = Wind()
+    db_data = ['20070104', '150000', '600406.SH, 600000.SH', '0', '1.95022110']
+    time_type = 'day'
+    result = get_wind_restore_data(wind_connect_obj, db_data, time_type)
+    # print(result)
+
 if __name__ == "__main__":
     # test_connect()
     # test_getSecodeInfo()
@@ -190,5 +199,6 @@ if __name__ == "__main__":
     # test_checkdata()
     # test_get_preclose_data()
     # test_getSecodelist()
-    test_get_index_histdata()
+    # test_get_index_histdata()
+    test_get_restore_data()
 

@@ -190,7 +190,7 @@ def set_secodelist(database_obj_array):
     global secodelist, dirname, update_time
     # dirname =  "D:/strategy"
     dirname = u"//192.168.211.182/1分钟数据 20160910-20170910/strategy"
-    secodelist = get_indexcode(style="wind")
+    secodelist = get_index_code_list(style="wind")
 
     timer = threading.Timer(update_time, scan_excelfile, args=(database_obj_array,))
     timer.start();

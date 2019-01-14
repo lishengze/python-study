@@ -1,48 +1,53 @@
 from func_tool import *
 
 def get_market_susdata_bg(added_datetime, secode, close_price):
-    appenddata = []
-    appenddata.append(added_datetime[0])
-    appenddata.append(added_datetime[1])
-    appenddata.append(secode)
-    appenddata.append(close_price)
-    appenddata.append(close_price)
-    appenddata.append(close_price)
-    appenddata.append(close_price)
-    appenddata.append(0)
-    appenddata.append(0)
-    appenddata.append(0)
-    appenddata.append(close_price)
-    appenddata.append(0)
-    appenddata.append(1)
-    appenddata.append(1)
-    appenddata.append(1)
-    return appenddata
+    delist_data = []
+    delist_data.append(added_datetime[0])
+    delist_data.append(added_datetime[1])
+    delist_data.append(secode)
+    delist_data.append(close_price)
+    delist_data.append(close_price)
+    delist_data.append(close_price)
+    delist_data.append(close_price)
+    delist_data.append(0)
+    delist_data.append(0)
+    delist_data.append(0)
+    delist_data.append(close_price)
+    delist_data.append(0)
+    delist_data.append(1)
+    delist_data.append(1)
+    delist_data.append(1)
+    return delist_data
 
-def get_market_susdata(added_datetime, susdata):
-    appenddata = []
-    appenddata.append(added_datetime[0])
-    appenddata.append(added_datetime[1])
-    appenddata.append(susdata[2])
-    appenddata.append(susdata[3])
-    appenddata.append(susdata[4])
-    appenddata.append(susdata[5])
-    appenddata.append(susdata[6])
-    appenddata.append(0)
-    appenddata.append(0)
-    appenddata.append(0)
-    appenddata.append(susdata[4])
-    appenddata.append(0)
-    appenddata.append(susdata[12])
-    appenddata.append(susdata[13])
-    appenddata.append(susdata[14])
-    return appenddata
+def get_market_delist_data(added_datetime, ori_delist_data):
+    delist_data = []
+    delist_data.append(added_datetime[0])
+    delist_data.append(added_datetime[1])
+    delist_data.append(ori_delist_data[2])
+    delist_data.append(ori_delist_data[3])
+    delist_data.append(ori_delist_data[4])
+    delist_data.append(ori_delist_data[5])
+    delist_data.append(ori_delist_data[6])
+    delist_data.append(0)
+    delist_data.append(0)
+    delist_data.append(0)
+    delist_data.append(ori_delist_data[4])
+    delist_data.append(0)
+    delist_data.append(ori_delist_data[12])
+    delist_data.append(ori_delist_data[13])
+    delist_data.append(ori_delist_data[14])
+    return delist_data
 
-def get_tradetime_startindex(tradetime_array, ori_netdata, isLeftInterval):
+def get_tradetime_start_pos(tradetime_array, ori_netdata, isLeftInterval, latest_data=[]):
     tradetime_index = 0
     if isLeftInterval :
         if len(ori_netdata) == 0 or (len(ori_netdata) == 1 and is_minute_data(ori_netdata[0][1])):
-            return -1
+            if (latest_data == []):
+                tradetime_index = -1
+            else:
+                if (len(ori_netdata) == 1):
+                    ori_netdata.pop(0)
+                tradetime_index = 0
         else:
             i = 0
             while i < len(tradetime_array):
@@ -60,10 +65,15 @@ def is_trade_time_late(tradetime, netdatatime):
 
 def com_delist_data(tradetime_array, ori_netdata, isLeftInterval=False, latest_data=[]):
     complete_data = []
-    tradetime_index = get_tradetime_startindex(tradetime_array, ori_netdata, isLeftInterval)
+    tradetime_index = get_tradetime_start_pos(tradetime_array, ori_netdata, isLeftInterval)
     oridata_index = 0
     add_count = 0
-    tmp_tradetime_index = tradetime_index
+    tradetime_start_index = tradetime_index
+
+    if tradetime_index == -1:
+        print('tradetime_index is -1')
+        print('ori_netdata: ', ori_netdata)
+        return []
 
     # 删除异常数据;
     index = 0
@@ -72,7 +82,6 @@ def com_delist_data(tradetime_array, ori_netdata, isLeftInterval=False, latest_d
         if cur_oridatetime not in tradetime_array:
             ori_netdata.pop(index)
             index -= 1
-            # print(cur_oridatetime)
         index += 1
 
     # 补充停牌的数据;
@@ -83,51 +92,30 @@ def com_delist_data(tradetime_array, ori_netdata, isLeftInterval=False, latest_d
             added_datetime = tradetime_array[tradetime_index]
             if oridata_index == 0:
                 if len(latest_data) != 0:
-                    susdata = latest_data
+                    ori_delist_data = latest_data
                 else:
                     break                 
             else:
-                susdata = ori_netdata[oridata_index-1]
-                # secode = ori_netdata[oridata_index-1][2]
-                # close_price = ori_netdata[oridata_index-1][4]
-            appenddata = get_market_susdata(added_datetime, susdata)
-            ori_netdata.insert(oridata_index, appenddata)
+                ori_delist_data = ori_netdata[oridata_index-1]
+            delist_data = get_market_delist_data(added_datetime, ori_delist_data)
+            ori_netdata.insert(oridata_index, delist_data)
             add_count += 1
 
         oridata_index = oridata_index + 1
         tradetime_index = tradetime_index + 1
-    
-    # print ('tradetime_index: %d, tradetime_array.size: %d, ori_netdata.size: %d, add_count: %d' %\
-    #         (tmp_tradetime_index, len(tradetime_array), len(ori_netdata), add_count) )
 
-    # print ("end tradetime_index %d, end oridata_index %d" % 
-    #         (tradetime_index, oridata_index))
-
-    # print "End: tradetime_index: ", tradetime_index, ", oridata_index: ", oridata_index
-    # while tradetime_index < len(tradetime_array):
-    #     added_datetime = tradetime_array[tradetime_index]
-    #     secode = ""
-    #     close_price = 0
-    #     if oridata_index == 0:
-    #         secode = latest_data[2]
-    #         close_price = latest_data[4]
-    #     else:
-    #         secode = ori_netdata[oridata_index-1][2]
-    #         close_price = ori_netdata[oridata_index-1][4]
-    #     appenddata = get_market_susdata(added_datetime, secode, close_price)
-    #     ori_netdata.insert(oridata_index, appenddata)
-
-    #     tradetime_index += 1
-    #     oridata_index += 1
-    #     add_count += 1
-
-    # print "add_count: ", add_count    
+    if (len(tradetime_array) - len(ori_netdata) != tradetime_start_index):
+        info = '[DX] tradetime_array.size: %d, ori_netdata.size: %d, tradetime_start_index: %d \n' % \
+                (len(tradetime_array), len(ori_netdata), tradetime_start_index)
+        print(info)
+        raise(Exception("Complete Delist Data Failed! \n[Info]: %s"))
+   
     complete_data = ori_netdata
     return complete_data
     
 def com_delist_data_bg(tradetime_array, ori_netdata, isLeftInterval=False):
     complete_data = []
-    tradetime_index = get_tradetime_startindex(tradetime_array, ori_netdata, isLeftInterval)
+    tradetime_index = get_tradetime_start_pos(tradetime_array, ori_netdata, isLeftInterval)
     oridata_index = 0
     add_count = 0
 
@@ -142,8 +130,8 @@ def com_delist_data_bg(tradetime_array, ori_netdata, isLeftInterval=False):
             secode = ori_netdata[oridata_index-1][2]
             close_price = ori_netdata[oridata_index-1][4]
             
-            appenddata = get_market_susdata(added_datetime, secode, close_price)
-            ori_netdata.insert(oridata_index, appenddata)
+            delist_data = get_market_delist_data(added_datetime, secode, close_price)
+            ori_netdata.insert(oridata_index, delist_data)
             add_count += 1
 
         oridata_index = oridata_index + 1
@@ -151,7 +139,7 @@ def com_delist_data_bg(tradetime_array, ori_netdata, isLeftInterval=False):
     complete_data = ori_netdata
     return complete_data
 
-def append_database_data(ori_netdata, isLeftInterval, first_data=[]):
+def append_first_data(ori_netdata, isLeftInterval, first_data=[]):
     is_append_first_data = False
     if isLeftInterval == True and first_data != []:
         index = len(ori_netdata) - 1
@@ -164,17 +152,19 @@ def append_database_data(ori_netdata, isLeftInterval, first_data=[]):
     return ori_netdata, is_append_first_data
 
 def restore_ori_netdata(ori_netdata):
-    restore_info = []
+    restore_info  = []
     restore_index = -1
-    index = len(ori_netdata) - 1
+    index         = len(ori_netdata) - 1
     while index > 0:
-        if ori_netdata[index][10] != ori_netdata[index-1][4]:
+        if ori_netdata[index][10] != ori_netdata[index-1][4] \
+        and int(ori_netdata[index-1][1]) == 150000 :
             restore_index = index
             break
         index -= 1
+
     if restore_index != -1:
         restore_info = [ori_netdata[restore_index][0], ori_netdata[restore_index][1], restore_index]
-
+    # print("before restore_index: %d \n" % (restore_index))
     while restore_index > 0:
         try:
             ori_netdata[restore_index-1][4]  = float(ori_netdata[restore_index][4]) / (1 + float(ori_netdata[restore_index][9]))
@@ -184,10 +174,13 @@ def restore_ori_netdata(ori_netdata):
             ori_netdata[restore_index-1][5]  = float(ori_netdata[restore_index-1][4]) * float(ori_netdata[restore_index-1][13])
             ori_netdata[restore_index-1][6]  = float(ori_netdata[restore_index-1][4]) * float(ori_netdata[restore_index-1][14])
             restore_index -= 1
+            # print(ori_netdata[restore_index][0], ori_netdata[restore_index][4], ori_netdata[restore_index][9], ori_netdata[restore_index-1][4])
         except IndexError as e:
+            print(e)
             print (ori_netdata[restore_index-1])
             restore_index -= 1
 
+    # print("after restore_index: %d \n" % (restore_index))
     return restore_info, restore_index, ori_netdata
 
 def restore_databased_data(trans_database_data, ori_netdata):
@@ -197,7 +190,7 @@ def restore_databased_data(trans_database_data, ori_netdata):
         curr_close = trans_database_data[index][4]
         curr_pctchg = trans_database_data[index][9]
         yes_close = trans_database_data[index-1][4]
-        if curr_yclose != yes_close:
+        if curr_yclose != yes_close and int(trans_database_data[index-1][1]) == 150000 :
             trans_database_data[index-1][4]  = float(curr_close) / (1 + float(curr_pctchg))
             trans_database_data[index][10]   = trans_database_data[index-1][4]     
             trans_database_data[index-1][10] = float(trans_database_data[index-1][4]) / (1 + float(trans_database_data[index-1][9]))
@@ -224,7 +217,7 @@ def get_restore_data(databaseobj, secode, ori_netdata, isLeftInterval, first_dat
     2. 获取到复权时间后，获取并删除数据库里复权时间之前的数据。
     3. 将新的网络原始数据与数据库中获取的数据结合，并进行前复权的计算，得到最终的复权数据。
     '''
-    transed_netdata, is_append_first_data = append_database_data(ori_netdata, isLeftInterval, first_data)
+    transed_netdata, is_append_first_data = append_first_data(ori_netdata, isLeftInterval, first_data)
     restore_info, restore_index, complete_data = restore_ori_netdata(transed_netdata)
     if is_append_first_data == True:
         complete_data.pop()

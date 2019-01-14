@@ -44,7 +44,7 @@ class TinySoft(object):
         self.curs.execute(tsl_str)
         return self.curs.fetchall()
         
-    def get_allA_secode(self):
+    def get_tinysoft_a_market_secode_list(self):
         tsl_str = u"StockID:=getbk(\"A股\"); \n \
                    return StockID;"
         self.curs.execute(tsl_str)                
@@ -66,18 +66,18 @@ class TinySoft(object):
         return transResult            
 
     def get_Index_secode(self):
-        indexCodeArray = ["SH000001", "SH000002", "SH000003", "SH000010", "SH000009",\
-                          "SZ399001", "SZ399006", "SZ399005", "SZ399008", "SZ399102", "SZ399673", \
-                          "SZ399101", "SZ399102", "SZ399106",  "SZ399107", "SZ399108", \
-                          "SH000300", "SH000016", "SH000852", \
-                          "SH000904", "SH000905", "SH000906", "SZ399903", \
-                          'SH000908', 'SH000909', 'SH000910', 'SH000911', \
-                          'SH000912', 'SH000913', 'SH000951', 'SH000849', \
-                          'SH000952', 'SH000915', 'SH000917']
+        # indexCodeArray = ["SH000001", "SH000002", "SH000003", "SH000010", "SH000009",\
+        #                   "SZ399001", "SZ399006", "SZ399005", "SZ399008", "SZ399102", "SZ399673", \
+        #                   "SZ399101", "SZ399102", "SZ399106",  "SZ399107", "SZ399108", \
+        #                   "SH000300", "SH000016", "SH000852", \
+        #                   "SH000903", "SH000904", "SH000905", "SH000906", "SZ399903", \
+        #                   'SH000908', 'SH000909', 'SH000910', 'SH000911', \
+        #                   'SH000912', 'SH000913', 'SH000914','SH000951', 'SH000849', \
+        #                   'SH000952', 'SH000915', 'SH000917']
 
         # indexCodeArray = ['SH000951', 'SH000849','SH000952']
 
-        # indexCodeArray = ['SH000951']
+        indexCodeArray = ['SH000903']
 
         return indexCodeArray
 

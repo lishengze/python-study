@@ -48,7 +48,6 @@ class WeightTinySoft(TinySoft):
                    return result \
                else    \
                    return emptyResult " 
-
         return tsl
 
     def get_netdata(self, conditions=[]):
@@ -84,9 +83,8 @@ class WeightTinySoft(TinySoft):
             self.curs.execute(tsl_str)
         except Exception as e:
             error_str = "General error---Execute:"
-            if error_str in e[1]:
-                print ('\n' + tsl_str + '\n')
-            raise(e)       
+            print(e)
+            return None     
                     
         tmp_result = self.curs.fetchall()
         if len(tmp_result) != 1 and tmp_result[0][0] != -1:

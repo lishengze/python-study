@@ -1,8 +1,10 @@
 from CONFIG import *
 from func_tool import *
 from func_time import *
+from func_io import *
 
 from database import Database
+import datetime
 
 class MarketDatabase(Database):
     def __init__(self, id=0, host=DATABASE_HOST, user=DATABASE_USER, pwd=DATABASE_PWD, db=DATABASE_NAME):
@@ -218,10 +220,29 @@ class MarketDatabase(Database):
         value_str = ','.join(value_list)
         sql_str = 'select %s from %s where TDATE >= %s and TDATE <= %s order by TDATE, TIME' % \
                     (value_str, complete_tablename,  str(startdate), str(enddate))
+        # print(sql_str)
         data = self.get_database_data(sql_str)
         for i in range(len(data)):
             data[i] = list(data[i])                    
         return data
+
+    def get_delist_histdata(self, table_name, data_numb=40, value_list=['*'], database_name=""):
+        if database_name == "":
+            database_name = self.db 
+        complete_tablename = '[%s].[dbo].[%s]' % (database_name, table_name)
+        value_str = ','.join(value_list)
+        sql_str = 'select top %d  %s from %s where VATRUNOVER != 0 order by TDATE desc' % \
+                    (data_numb, value_str, complete_tablename)
+        data = self.get_database_data(sql_str)
+        for i in range(len(data)):
+            data[i] = list(data[i])    
+
+        result = []
+        i = len(data) - 1
+        while i >= 0:
+            result.append(data[i])
+            i -= 1
+        return result
 
     def delete_data_by_date(self, startdate, enddate, table_name, database_name=""):
         if database_name == "":
@@ -309,6 +330,16 @@ class MarketDatabase(Database):
         else:
             return list(data)
 
+    def get_latest_date(self, table_name, database_name=''):
+        if database_name == '':
+            database_name = self.db
+
+        complete_tablename = '[%s].[dbo].[%s]' % (database_name, table_name)
+        sql_str = 'select max(TDATE) from %s' % (complete_tablename)
+        data = self.get_database_data(sql_str)
+        data = data[0][0]
+        return data  
+
     def getFirstData(self, table_name):
         complete_tablename = u'[' + self.db + '].[dbo].['+ table_name +']'
         sql_str = "select * from" + complete_tablename + \
@@ -324,6 +355,19 @@ class MarketDatabase(Database):
             return list(result)
         else:
             return list(data)
+
+    def get_first_day_data(self, table_name, database_name=""):
+        if database_name == "":
+            database_name = self.db
+        complete_tablename = '[%s].[dbo].[%s]' % (database_name, table_name)
+        sql_str = "select * from %s where TDATE = (select min(TDATE) from %s) and TIME = (select max(TIME) from %s)" % \
+                    (complete_tablename, complete_tablename, complete_tablename)
+
+        data = self.get_database_data(sql_str)
+        result = []
+        if len(data) > 0:
+            result = list(data[0])
+        return result         
 
     def get_first_date(self, table_name, database_name=""):
         if database_name=="":
@@ -448,4 +492,55 @@ class MarketDatabase(Database):
             transed_time_array[i].insert(0, secode)       
         return transed_time_array
 
+    def write_upate_info(self, market_dbname, database_name="Market_Info"):
+        table_name = 'update_info'
+        complete_tablename = '[%s].[dbo].[%s]' % (database_name, table_name)
+        search_sql = "select database_name from %s where database_name = '%s'  " \
+                        % (complete_tablename, market_dbname)
+        db_result = self.get_database_data(search_sql)
+        today_str = datetime.datetime.now().strftime("%Y%m%d")
+        print(db_result)
+        if len(db_result) > 1:
+            update_str = "update %s set update_date='%s' where database_name = '%s'" % \
+                        (complete_tablename, today_str, market_dbname)
+            print(update_str)
+            self.changeDatabase(update_str)
+        else:
+            insert_str = "insert into %s (database_name, update_date) values ('%s', '%s')" % \
+                        (complete_tablename, market_dbname, today_str)
+            print(insert_str)
+            self.changeDatabase(insert_str)
+
+class TestMarketDatabase(object):
+    def __init__(self):
+        self.__name__ = "TestMarketDatabase"
+        # self.test_get_latest_date()
+        # self.test_get_delist_histdata()
+        self.test_write_update_info()
+
+    def test_get_latest_date(self):
+        database_name = "MarketData_day"
+        host = "192.168.211.162"
+        code = "SH600000"
+        db_obj = MarketDatabase(host= host, db=database_name)
+        result = db_obj.get_latest_date(code)
+        print(result)
+
+    def test_get_delist_histdata(self):
+        database_name = "MarketData_day"
+        host = "192.168.211.162"
+        code = "SH600000"
+        db_obj = MarketDatabase(host= host, db=database_name)
+        value_list = ['TCLOSE','TOPEN', 'TDATE']
+        result = db_obj.get_delist_histdata(code, value_list=value_list)
+        print_list('result', result)  
+
+    def test_write_update_info(self):
+        database_name = "MarketData_day"
+        host = "192.168.211.162"
+        code = "SH600000"
+        db_obj = MarketDatabase(host= host)
+        db_obj.write_upate_info(database_name)
     
+if __name__ == "__main__":
+    test_obj = TestMarketDatabase()
