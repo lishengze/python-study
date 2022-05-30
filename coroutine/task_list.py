@@ -7,7 +7,7 @@ async def task1():
     
         await asyncio.sleep(3)
         
-        await asyncio.sleep(2)
+        # await asyncio.sleep(2)
         
         # time.sleep(3)
 
@@ -19,7 +19,7 @@ async def task2():
     # while(True):
         start_time =time.strftime('%H:%M:%S')
     
-        # await asyncio.sleep(3)
+        await asyncio.sleep(3)
         
         # time.sleep(3)
 
@@ -28,14 +28,16 @@ async def task2():
         print("[2] start_time: {0}, end_time: {1}".format(start_time, end_time))    
     
 async def task3():
-    while(True):
-        start_time =time.strftime('%H:%M:%S')
-    
-        await asyncio.sleep(3)
+    start_time =time.strftime('%H:%M:%S')
 
-        end_time = time.strftime('%H:%M:%S')
-        
-        print("[3] start_time: {0}, end_time: {1}".format(start_time, end_time))       
+    await asyncio.sleep(3)
+
+    end_time = time.strftime('%H:%M:%S')
+    
+    print("[3] start_time: {0}, end_time: {1}".format(start_time, end_time))    
+            
+    # while(True):
+   
         
 async def task4():
         start_time =time.strftime('%H:%M:%S')
@@ -46,13 +48,13 @@ async def task4():
 
         end_time = time.strftime('%H:%M:%S')
         
-        print("[3] start_time: {0}, end_time: {1}".format(start_time, end_time))         
+        print("[4] start_time: {0}, end_time: {1}".format(start_time, end_time))         
     
 def test_task():
     task_loop = asyncio.get_event_loop()
-    # task_list = [task4()]
+    # task_list = [task4(), ]
     
-    task_list = [task1()]
+    task_list = [task3(), task4()]
     
     start_time = time.time()
     
