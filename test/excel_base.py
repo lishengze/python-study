@@ -260,7 +260,7 @@ class ExcelDataRead():
             mcpc = {}
                                     
             future_info = ''                        
-            for value in cell_dict['证券代码']:
+            for value in cell_dict['证券类别']:
                 if '股票' in value:
                     if cell_dict['委托方向'][row] == '买入':
                         stock_buy_count += 1
@@ -276,26 +276,28 @@ class ExcelDataRead():
                         
                     future_done_amount += cell_dict['成交金额'][row]
                     
+                    stock_name = cell_dict['证券代码'][row]
+                    
                     if '卖出开仓' in cell_dict['委托方向'][row]:
-                        if value not in mckc:
-                            mckc[value] = cell_dict['成交数量'][row]
+                        if stock_name not in mckc:
+                            mckc[stock_name] = cell_dict['成交数量'][row]
                         else:
-                            mckc[value] += cell_dict['成交数量'][row]
+                            mckc[stock_name] += cell_dict['成交数量'][row]
                     elif '买入开仓' in cell_dict['委托方向'][row]:  
-                        if value not in mrkc:
-                            mrkc[value] = cell_dict['成交数量'][row]
+                        if stock_name not in mrkc:
+                            mrkc[stock_name] = cell_dict['成交数量'][row]
                         else:
-                            mrkc[value] += cell_dict['成交数量'][row]
+                            mrkc[stock_name] += cell_dict['成交数量'][row]
                     elif '卖出平仓' in cell_dict['委托方向'][row]:
-                        if value not in mcpc:
-                            mcpc[value] = cell_dict['成交数量'][row]
+                        if stock_name not in mcpc:
+                            mcpc[stock_name] = cell_dict['成交数量'][row]
                         else:
-                            mcpc[value] += cell_dict['成交数量'][row]
+                            mcpc[stock_name] += cell_dict['成交数量'][row]
                     elif '买入平仓' in cell_dict['委托方向'][row]:  
-                        if value not in mrpc:
-                            mrpc[value] = cell_dict['成交数量'][row]
+                        if stock_name not in mrpc:
+                            mrpc[stock_name] = cell_dict['成交数量'][row]
                         else:
-                            mrpc[value] += cell_dict['成交数量'][row]
+                            mrpc[stock_name] += cell_dict['成交数量'][row]
                                         
                 row += 1
                 
@@ -308,32 +310,37 @@ class ExcelDataRead():
             stock_info = f"买入股票: {stock_buy_count} 只, 卖出股票: {stock_sell_count} 只, 股票合计成交金额: {stock_done_amount} 万元"            
             future_info = f"今日交易: {future_count} 只股指期货合约, {option_count} 只股指期权合约， 成交金额 {future_done_amount} 万元"
             
-            future_info += '\n卖出开仓: '
-            for key, value in mckc.items():
-                future_info += f"{key}({value} 手)  "
-            future_info += '\n买入平仓: '
-            for key, value in mrpc.items():
-                future_info += f"{key}({value} 手)  "
-            future_info += '\n买入开仓: '
-            for key, value in mrkc.items():
-                future_info += f"{key}({value} 手)  "
-            future_info += '\n卖出平仓: '
-            for key, value in mcpc.items():
-                future_info += f"{key}({value} 手)  "                                
+            if len(mckc) > 0:
+                future_info += '\n卖出开仓: '
+                for key, value in mckc.items():
+                    future_info += f"{key}({value} 手),"
+            if len(mrpc) > 0:
+                future_info += '\n买入平仓: '
+                for key, value in mrpc.items():
+                    future_info += f"{key}({value} 手), "
+            if len(mrkc) > 0:
+                future_info += '\n买入开仓: '
+                for key, value in mrkc.items():
+                    future_info += f"{key}({value} 手), "
+            if len(mcpc) > 0:
+                future_info += '\n卖出平仓: '
+                for key, value in mcpc.items():
+                    future_info += f"{key}({value} 手), "                                
                         
             result_dict = {}
             result_dict['stock_info'] = stock_info
             result_dict['future_info'] = future_info
 
-            print(result_dict)        
+            # print(result_dict)        
             # print(cell_dict)        
-            return cell_dict
+            return result_dict
 
         except Exception as e:
             logging.error(f"读取文件 期货保证金 时发生错误: {e}")  
             sys.exit(1)
         return None     
-                                               
+
+
 
 class ExcelBase:
     def __init__(self): 
@@ -404,8 +411,7 @@ class ExcelBase:
         self.gene_fourth_sheet()
         
         self.target_workbook_.save(self.target_file_name_)
-        
-    
+            
     def gene_first_sheet(self):
         sheet = self.target_workbook_.create_sheet(title='量化一-收盘数据')
         sheet.cell(row = 1, column = 1, value = "统计日期")
@@ -433,6 +439,7 @@ class ExcelBase:
         sheet.cell(row = 20, column = 1, value = "持仓品种及数量")   
         cell_count = 1             
         cell_col_index = {}
+        zhzcjz = 0
         if self.src_excel_file_dict_['量化一']['单元资产'] is not None:
             cell_index = 1
             for key, value in self.src_excel_file_dict_['量化一']['单元资产'].items():
@@ -446,6 +453,7 @@ class ExcelBase:
                     cell_col_index[key] = cell_index                    
                 else :
                     set_value(sheet, 7,2,'单元资产净值(净价)', value, '量化一-单元资产')
+                    zhzcjz = float(value['单元资产净值(净价)'])
             # print(cell_col_index)
             cell_count = cell_index
             sheet.merge_cells(start_row=2, start_column=1, end_row=2, end_column=cell_count)
@@ -475,7 +483,7 @@ class ExcelBase:
                 value2 = round(value2, 4)
                 sheet.cell(row = 10, column = 2, value = str(value2)+"%")
                 
-                profits2 = profits + jyshg_profit
+                profits2 = zhzcjz - 30000000
                 profits2 = round(profits2, 2)
                 sheet.cell(row = 11, column = 2, value = str(profits2))
                 value3 = profits2 / 3000 / 10000 * 100
@@ -502,11 +510,16 @@ class ExcelBase:
                     logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
         else:
             logging.warning("量化一-期货保证金分析文件不存在。")
+            
+        if self.src_excel_file_dict_['量化一']['成交回报'] is not None:
+            set_value(sheet, 18,2,'future_info', self.src_excel_file_dict_['量化一']['成交回报'], '量化一-成交回报')
+            set_value(sheet, 18,3,'stock_info', self.src_excel_file_dict_['量化一']['成交回报'], '量化一-成交回报')
+        else:
+            logging.warning("量化一-成交回报文件不存在。")
                     
         # set_sheet_width_height(sheet)
         set_sheet_middle(sheet)
 
-    
     def gene_second_sheet(self):
         sheet = self.target_workbook_.create_sheet(title='量化一-结算数据')
         sheet.cell(row = 1, column = 1, value = "统计日期")
