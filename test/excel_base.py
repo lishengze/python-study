@@ -575,6 +575,14 @@ class ExcelBase:
         self.gene_third_sheet()
         self.gene_fourth_sheet()
         
+        sheet_name_to_delete = 'Sheet'
+        if sheet_name_to_delete in self.target_workbook_.sheetnames:
+            sheet = self.target_workbook_[sheet_name_to_delete]
+            self.target_workbook_.remove(sheet)
+            logging.info(f"{sheet_name_to_delete} 已成功删除。")
+        else:
+            logging.warning(f"{sheet_name_to_delete} 不存在。")
+                
         self.target_workbook_.save(self.target_file_name_)
             
     def gene_first_sheet(self):
@@ -844,7 +852,6 @@ class ExcelBase:
 
     def gene_third_sheet(self):
         sheet = self.target_workbook_.create_sheet(title='量化二-收盘数据')
-        sheet.cell(row = 1, column = 3, value = "（金额单位：元）")
         sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况")
         sheet.cell(row = 3, column = 1, value = "账户名称")
         sheet.cell(row = 4, column = 1, value = "账户编号")
@@ -944,7 +951,6 @@ class ExcelBase:
     def gene_fourth_sheet(self):
         sheet = self.target_workbook_.create_sheet(title='量化二-结算数据')
         sheet.cell(row = 1, column = 1, value = "统计日期")
-        sheet.cell(row = 1, column = 3, value = "（金额单位：元）")
         sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况")
         sheet.cell(row = 3, column = 1, value = "账户名称")
         sheet.cell(row = 4, column = 1, value = "账户编号")
