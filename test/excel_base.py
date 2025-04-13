@@ -4,11 +4,14 @@ from openpyxl import load_workbook
 from datetime import datetime
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side, colors
+from openpyxl.styles import numbers
+from openpyxl.chart import BarChart, Reference, Series
 import xlrd
 import sys
 import json
 import os
 import logging
+import math
 
 logging.basicConfig(level = logging.INFO,  format='%(asctime)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s', 
                     filename='运行日志.log',
@@ -68,7 +71,7 @@ def set_sheet_width_height(sheet):
 
 def set_value(sheet, row, col, key, value, file_name):
     if key in value:
-        sheet.cell(row = row, column = col, value = value[key])
+        sheet.cell(row = row, column = col, value = value[key]).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
     else:
         logging.warning(f"字段 {key} 不存在于文件{file_name}中。")
 class ExcelDataRead():
@@ -118,6 +121,25 @@ class ExcelDataRead():
                                             
                     if '资产单元名称' in cell_value:
                         is_cell_name = True            
+                        
+            # 将投机单元放置在权益单元前面;
+            tmp_tj_cell_list = []
+            tmp_qy_cell_list = []
+            
+            for key, value in cell_dict.items():
+                if '投机' in key:
+                    tmp_tj_cell_list.append(key)
+                elif '权益' in key:
+                    tmp_qy_cell_list.append(key)
+            
+            tmp_cell_dict = {}
+            for cell in tmp_tj_cell_list:
+                tmp_cell_dict[cell] = cell_dict[cell]
+            
+            for cell in tmp_qy_cell_list:
+                tmp_cell_dict[cell] = cell_dict[cell]
+                
+            cell_dict = tmp_cell_dict
             
             for col in range(xlrd_sheet.ncols):
                 cell_value = str(xlrd_sheet.cell_value(0, col))
@@ -163,7 +185,7 @@ class ExcelDataRead():
             profit_col = -1
             for col in range(xlrd_sheet.ncols):
                 cell_value = str(xlrd_sheet.cell_value(0, col))
-                if '利润' in cell_value:
+                if '利润' == cell_value:
                     profit_col = col
                     
             if profit_col == -1:
@@ -263,9 +285,14 @@ class ExcelDataRead():
             mrpc = {}
             mrkc = {}
             mcpc = {}
+            
+            future_list = []
+            option_list = []
                                     
             future_info = ''                        
             for value in cell_dict['证券类别']:
+                stock_name = cell_dict['证券代码'][row]
+                
                 if '股票' in value:
                     if cell_dict['委托方向'][row] == '买入':
                         stock_buy_count += 1
@@ -275,14 +302,14 @@ class ExcelDataRead():
                     stock_done_amount += cell_dict['成交金额'][row]
                 elif '期货' in value or '期权' in value:
                     if '期货' in value:
-                        future_count += 1
+                        if stock_name not in future_list:
+                            future_list.append(stock_name)
                     elif '期权' in value:
-                        option_count += 1
-                        
+                        if stock_name not in option_list:
+                            option_list.append(stock_name)
+                                                
                     future_done_amount += cell_dict['成交金额'][row]
-                    
-                    stock_name = cell_dict['证券代码'][row]
-                    
+                                        
                     if '卖出开仓' in cell_dict['委托方向'][row]:
                         if stock_name not in mckc:
                             mckc[stock_name] = cell_dict['成交数量'][row]
@@ -312,30 +339,54 @@ class ExcelDataRead():
             stock_done_amount = round(stock_done_amount, 2)
             future_done_amount = round(future_done_amount, 2)
 
-            stock_info = f"买入股票: {stock_buy_count} 只, 卖出股票: {stock_sell_count} 只, 股票合计成交金额: {stock_done_amount} 万元"            
-            future_info = f"今日交易: {future_count} 只股指期货合约, {option_count} 只股指期权合约， 成交金额 {future_done_amount} 万元"
+            stock_info = f"买入股票: {stock_buy_count} 只, 卖出股票: {stock_sell_count} 只, 股票合计成交金额: {round(stock_done_amount,2)} 万元"            
+            future_info = f"今日交易: {len(future_list)} 只股指期货合约, {len(option_list)} 只股指期权合约， 成交金额 {round(future_done_amount,2)} 万元"
             
+            future_info_2 = '今日交易'
+            
+            if len(future_list) > 0:
+                future_info_2 += f" {len(future_list)} 只期货合约"
+            if len(option_list) > 0:
+                future_info_2 += f" {len(option_list)} 只期权合约"
+            future_info_2 += f" 成交金额 {round(future_done_amount,2)} 万元"
+            
+            stock_info_2 = ''
+            if stock_buy_count > 0:
+                stock_info_2 += f"买入股票: {stock_buy_count} 只"
+            if stock_sell_count > 0:
+                stock_info_2 += f"卖出股票: {stock_sell_count} 只"
+            if stock_done_amount > 0:
+                stock_info_2 += f"股票合计成交金额: {round(stock_done_amount,2)} 万元"
+                
+            
+                    
             if len(mckc) > 0:
                 future_info += '\n卖出开仓: '
+                future_info_2 += f"\n卖出开仓: {len(mckc)} 只"
                 for key, value in mckc.items():
-                    future_info += f"{key}({value} 手),"
+                    future_info += f"{key}({math.floor(value)} 手), "
             if len(mrpc) > 0:
                 future_info += '\n买入平仓: '
+                future_info_2 += f"\n买入平仓: {len(mrpc)} 只"
                 for key, value in mrpc.items():
-                    future_info += f"{key}({value} 手), "
+                    future_info += f"{key}({math.floor(value)} 手),  "
             if len(mrkc) > 0:
                 future_info += '\n买入开仓: '
+                future_info_2 += f"\n买入开仓: {len(mrkc)} 只"
                 for key, value in mrkc.items():
-                    future_info += f"{key}({value} 手), "
+                    future_info += f"{key}({math.floor(value)} 手),  "
             if len(mcpc) > 0:
                 future_info += '\n卖出平仓: '
+                future_info_2 += f"\n卖出平仓: {len(mcpc)} 只"
                 for key, value in mcpc.items():
-                    future_info += f"{key}({value} 手), "                                
+                    future_info += f"{key}({math.floor(value)} 手),  "                                
                         
             result_dict = {}
             result_dict['stock_info'] = stock_info
             result_dict['future_info'] = future_info
-
+            result_dict['stock_info_2'] = stock_info_2
+            result_dict['future_info_2'] = future_info_2
+            
             # print(result_dict)        
             # print(cell_dict)        
             return result_dict
@@ -370,6 +421,9 @@ class ExcelDataRead():
             
             future_count = 0
             option_count = 0
+                                    
+            future_info = ''     
+            done_detail_dict = {}
             
             mckc = {} #权利仓
             mckc_count = 0
@@ -378,9 +432,8 @@ class ExcelDataRead():
             mrkc = {} #多仓
             mrkc_count = 0
             mcpc = {} #空仓
-            mcpc_count = 0
-                                    
-            future_info = ''                        
+            mcpc_count = 0            
+                               
             for value in cell_dict['证券类别']:
                 if '股票' in value:                    
                     if cell_dict['持仓数量'][row] > 0:
@@ -391,8 +444,18 @@ class ExcelDataRead():
                     elif '期权' in value and cell_dict['持仓数量'][row] > 0:
                         option_count += 1                        
                     
-                    stock_name = cell_dict['证券代码'][row]
+                    stock_name = cell_dict['证券代码'][row]                    
+                    trade_type = cell_dict['持仓多空标志'][row]
                     
+                    if stock_name not in done_detail_dict:
+                        done_detail_dict[stock_name] = {}
+                        done_detail_dict[stock_name][trade_type] = float(cell_dict['持仓数量'][row])
+                    else:
+                        if trade_type not in done_detail_dict[stock_name]:
+                            done_detail_dict[stock_name][trade_type] = float(cell_dict['持仓数量'][row])
+                        else:
+                            done_detail_dict[stock_name][trade_type] += float(cell_dict['持仓数量'][row])
+                            
                     if '权利仓' in cell_dict['持仓多空标志'][row]:
                         if stock_name not in mckc:
                             mckc[stock_name] = cell_dict['持仓数量'][row]
@@ -418,8 +481,11 @@ class ExcelDataRead():
                         else:
                             mrpc[stock_name] += cell_dict['持仓数量'][row]
                         mrpc_count += cell_dict['持仓数量'][row]
-                                        
+                                                                    
+                    
+                    
                 row += 1
+            # print(done_detail_dict)
                 
             stock_info = f"股票: {stock_count} 只"            
             future_info = f"当前持有: {future_count} 只股指期货合约, {option_count} 只股指期权合约"
@@ -446,13 +512,35 @@ class ExcelDataRead():
                 future_info += '\n空仓: '
                 for key, value in mrpc.items():
                     if value > 0:
-                        future_info += f"{key}({value} 手), "                                                 
-                        
+                        future_info += f"{key}({value} 手), "             
+            
+            trade_detail_dict = {}
+            trade_sum_dict = {}
+            
+            for stock_name, trade_dict in done_detail_dict.items():
+                for trade_type, trade_count in trade_dict.items():
+                    if trade_count > 0:                        
+                        if trade_type not in trade_detail_dict:
+                            trade_detail_dict[trade_type] = trade_count
+                        else:
+                            trade_detail_dict[trade_type] += trade_count
+                            
+                        if stock_name not in trade_sum_dict:
+                            trade_sum_dict[stock_name] = trade_count
+                                                                  
             result_dict = {}
+
+            
+            future_info_2 = f"共持仓 {len(trade_sum_dict)}只期货，其中"
+            
+            for key, value in trade_detail_dict.items():
+                future_info_2 += f"{key}: {value} 只, "
+
             result_dict['stock_info'] = stock_info
             result_dict['future_info'] = future_info
-
-            # print(result_dict)       
+            result_dict['future_info_2'] = future_info_2
+            
+            print(result_dict)       
             return result_dict
 
         except Exception as e:
@@ -488,7 +576,8 @@ class ExcelDataRead():
         return None     
         
 class ExcelBase:
-    def __init__(self): 
+    def __init__(self):
+        self.date = ''
         self.config_ = get_config()
         self.data_read_obj_ = ExcelDataRead
         if self.config_ is None:
@@ -498,8 +587,13 @@ class ExcelBase:
             logging.critical("配置文件中未找到 '量化一二所在目录' 字段，请检查。")
             sys.exit(1)
             
-        self.file_path_ = self.config_['量化一二所在目录']
+        tmp_dir = self.config_['量化一二所在目录']         
+        self.file_path_ = tmp_dir.replace('\\', '/')
         
+        if os.path.exists(self.file_path_) == False:
+            logging.critical(f"目录不存在，请检查。{self.file_path_}")
+            sys.exit(1)
+                    
         if '量化一-投机单元-单元资产净值' not in self.config_:
             logging.critical("配置文件中未找到 '量化一-投机单元-单元资产净值' 字段，请检查。")
             sys.exit(1)
@@ -516,15 +610,20 @@ class ExcelBase:
         self.unit_net_value_2_ = float(str(self.config_['量化二-账户资产净值'])) #手动输入的单元资产净值;
         if self.unit_net_value_2_ is None:
             logging.critical("配置文件中 '量化二-账户资产净值' 字段值为空，请检查。")
-            sys.exit(1)            
+            sys.exit(1)     
+            
+        if '量化二-占用' not in self.config_:
+            logging.critical("配置文件中未找到 '量化二-占用' 字段，请检查。")
+            sys.exit(1)
+            
+        self.unit_net_value_3_ = float(str(self.config_['量化二-占用'])) #手动输入的单元资产净值;
+        if self.unit_net_value_3_ is None:
+            logging.critical("配置文件中 '量化二-占用' 字段值为空，请检查。")
+            sys.exit(1)                        
     
         
-        if os.path.exists(self.file_path_) == False:
-            logging.critical(f"目录不存在，请检查。{self.file_path_}")
-            sys.exit(1)
-        
-        self.target_file_name_ = get_file_name(self.file_path_)
-        logging.info(f"目标文件名: {self.target_file_name_}")
+        # self.target_file_name_ = get_file_name(self.file_path_)
+        # logging.info(f"目标文件名: {self.target_file_name_}")
         
         self.target_workbook_ = Workbook()
         
@@ -582,8 +681,10 @@ class ExcelBase:
             logging.info(f"{sheet_name_to_delete} 已成功删除。")
         else:
             logging.warning(f"{sheet_name_to_delete} 不存在。")
-                
-        self.target_workbook_.save(self.target_file_name_)
+            
+        file_name = self.file_path_ + '/量化业务日报-' + self.date + '.xlsx'    
+        logging.info(f"目标文件名: {file_name}")            
+        self.target_workbook_.save(file_name)
             
     def gene_first_sheet(self):
         sheet = self.target_workbook_.create_sheet(title='量化一-收盘数据')
@@ -618,18 +719,23 @@ class ExcelBase:
             for key, value in self.src_excel_file_dict_['量化一']['单元资产'].items():
                 if key != '合计':
                     set_value(sheet, 1,2,'统计日期', value, '量化一-单元资产')
+                    self.date = value['统计日期']
                     set_value(sheet, 3,2,'账户名称', value, '量化一-单元资产')
                     tmpzhbh = value['账户编号']
                     sheet.cell(row = 4, column = 2, value=round(float(tmpzhbh),0))
                     set_value(sheet, 5,1+cell_index,'资产单元名称', value, '量化一-单元资产')
                     set_value(sheet, 6,1+cell_index,'单元资产净值(净价)', value, '量化一-单元资产')
                     cell_index += 1
-                    cell_col_index[key] = cell_index                    
+                    cell_col_index[key] = cell_index    
+                    
+                    zhzcjz += float(value['单元资产净值(净价)'])                
                 else :
                     set_value(sheet, 7,2,'单元资产净值(净价)', value, '量化一-单元资产')
                     zhzcjz = float(value['单元资产净值(净价)'])
             # print(cell_col_index)
             cell_count = cell_index
+            
+            sheet.cell(row = 7, column = 2, value = zhzcjz).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             
             sheet.merge_cells(start_row=3, start_column=2, end_row=3, end_column=cell_count)
             sheet.merge_cells(start_row=4, start_column=2, end_row=4, end_column=cell_count)
@@ -682,8 +788,8 @@ class ExcelBase:
             for key, value in self.src_excel_file_dict_['量化一']['期货保证金分析'].items():
                 if key in cell_col_index:
                     set_value(sheet, 14,cell_col_index[key],'占用保证金(静态)', value, '量化一-期货保证金分析')
-                    set_value(sheet, 15,cell_col_index[key],'账户权益', value, '量化一-期货保证金分析')
-                    set_value(sheet, 16,cell_col_index[key],'风险比例1(%)', value, '量化一-期货保证金分析')
+                    set_value(sheet, 15,cell_col_index[key],'账户权益', value, '量化一-期货保证金分析')                    
+                    sheet.cell(row = 16, column = cell_col_index[key], value = str(round(float(value['风险比例1(%)']),3))+"%")
                 else:
                     logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
         else:
@@ -773,12 +879,12 @@ class ExcelBase:
                     if '量化一-投机单元' in key:
                         sheet.cell(row = 6, column = 1+cell_index, value=self.unit_net_value_) # 单元资产净值 = 手动输入
                         sheet.cell(row = 9, column = 1+cell_index, value=self.unit_net_value_-6000000) # 盈利/亏损（不含逆回购） = 单元资产净值-600万元
-                        sheet.cell(row = 12, column = 1+cell_index, value=self.unit_net_value_-6000000) # 盈利/亏损（含逆回购） = 盈利/亏损（不含逆回购
+                        sheet.cell(row = 12, column = 1+cell_index, value=round(self.unit_net_value_-6000000,2)) # 盈利/亏损（含逆回购） = 盈利/亏损（不含逆回购
                         zhzcjz += self.unit_net_value_
                     else:
                         set_value(sheet, 6,1+cell_index,'单元资产净值(净价)', value, '量化一-单元资产') # 单元资产净值 = 《单元资产》“单元资产净值(净价)”权益类一单元
                         tmp_dyzcjz = float(value['单元资产净值(净价)'])                        
-                        sheet.cell(row = 12, column = 1+cell_index, value=tmp_dyzcjz-2400*10000) #盈利/亏损（含逆回购）= 单元资产净值-2400万
+                        sheet.cell(row = 12, column = 1+cell_index, value=round(tmp_dyzcjz-2400*10000,2)) #盈利/亏损（含逆回购）= 单元资产净值-2400万
                         sheet.cell(row = 9, column = 1+cell_index, value=hzzq_hegp_ztyk) # 盈利/亏损（不含逆回购） =《汇总证券（合计-股票）》“总体盈亏（含费用）”最后一行数值
                         zhzcjz += tmp_dyzcjz
                         
@@ -790,9 +896,9 @@ class ExcelBase:
             
             zyk_bnhj = self.unit_net_value_-6000000 + hzzq_hegp_ztyk  # '=盈利/亏损（不含逆回购）这一行数据的和, '=单元资产净值-600万元 + 《汇总证券（合计-股票）》“总体盈亏（含费用）”最后一行数值
             sheet.cell(row = 10, column = 2, value=zyk_bnhj)
-            sheet.cell(row = 11, column = 2, value=str(round(zyk_bnhj/3000/10000, 4))+"%")
+            sheet.cell(row = 11, column = 2, value=str(round(zyk_bnhj/3000/10000*100, 4))+"%")
             
-            value3 = zhzcjz / 3000 / 10000 * 100 # 收益率（含逆回购）= 总盈利/亏损（含逆回购）÷3000万元×100%【保留4位小数】
+            value3 = zyk_bnhj / 3000 / 10000 * 100 # 收益率（含逆回购）= 总盈利/亏损（含逆回购）÷3000万元×100%【保留4位小数】
             sheet.cell(row = 14, column = 2, value = str(round(value3,4))+"%")
             cell_count = cell_index
             
@@ -800,7 +906,7 @@ class ExcelBase:
             sheet.merge_cells(start_row=4, start_column=2, end_row=4, end_column=cell_count)
                         
             sheet.merge_cells(start_row=2, start_column=1, end_row=2, end_column=cell_count)
-            sheet.merge_cells(start_row=7, start_column=1, end_row=7, end_column=cell_count)
+            sheet.merge_cells(start_row=7, start_column=2, end_row=7, end_column=cell_count)
             sheet.merge_cells(start_row=10, start_column=2, end_row=10, end_column=cell_count)
             sheet.merge_cells(start_row=11, start_column=2, end_row=11, end_column=cell_count)
             sheet.merge_cells(start_row=13, start_column=2, end_row=13, end_column=cell_count)
@@ -827,7 +933,7 @@ class ExcelBase:
                     set_value(sheet, 16,cell_col_index[key],'占用保证金(静态)', value, '量化一-期货保证金分析')
                     sheet.cell(row = 17, column = cell_col_index[key], value=self.unit_net_value_) # 账户权益 = 单元资产净值
                     risk_value = float(value['占用保证金(静态)']) / self.unit_net_value_ * 100 # 风险度 = 占用÷账户权益×100%【保留4位小数】
-                    sheet.cell(row = 18, column = cell_col_index[key], value=round(risk_value,4)) # 风险度 = 占用÷账户权益×100%【保留4位小数】
+                    sheet.cell(row = 18, column = cell_col_index[key], value=str(round(risk_value,4))+"%") # 风险度 = 占用÷账户权益×100%【保留4位小数】
                 else:
                     logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
         else:
@@ -916,12 +1022,12 @@ class ExcelBase:
             logging.warning("量化二-期货保证金分析文件不存在。")
             
         if self.src_excel_file_dict_['量化二']['成交回报'] is not None:
-            set_value(sheet, 14,2,'future_info', self.src_excel_file_dict_['量化二']['成交回报'], '量化二-成交回报')
+            set_value(sheet, 14,2,'future_info_2', self.src_excel_file_dict_['量化二']['成交回报'], '量化二-成交回报')
         else:
             logging.warning("量化二-成交回报文件不存在。")
             
         if self.src_excel_file_dict_['量化二']['汇总证券-当日持仓'] is not None:
-            set_value(sheet, 16,2,'future_info', self.src_excel_file_dict_['量化二']['汇总证券-当日持仓'], '量化二-汇总证券-当日持仓')
+            set_value(sheet, 16,2,'future_info_2', self.src_excel_file_dict_['量化二']['汇总证券-当日持仓'], '量化二-汇总证券-当日持仓')
         else:
             logging.warning("量化二-汇总证券-当日持仓文件不存在。")             
         
@@ -1003,25 +1109,24 @@ class ExcelBase:
         
         if self.src_excel_file_dict_['量化二']['期货保证金分析'] is not None:
             for key, value in self.src_excel_file_dict_['量化二']['期货保证金分析'].items():
-                if key in cell_col_index:
-                    set_value(sheet, 10,cell_col_index[key],'占用保证金(静态)', value, '量化二-期货保证金分析')                    
+                if key in cell_col_index:   
+                    sheet.cell(row = 10, column = cell_col_index[key], value=self.unit_net_value_3_) # 占用 = 手动输入
                     sheet.cell(row = 11, column = cell_col_index[key], value=self.unit_net_value_2_) # 账户权益 = 账户资产净值 
                     
-                    value3 = float(value['占用保证金(静态)'])
-                    value4 = self.unit_net_value_2_/value3# 风险度 = 占用÷账户权益×100%【保留4位小数】
-                    sheet.cell(row = 12, column = cell_col_index[key], value= round(value4*100, 4)) # 账户权益 = 账户资产净值 
+                    value4 = round(self.unit_net_value_3_/self.unit_net_value_2_*100, 4) # 风险度 = 占用÷账户权益×100%【保留4位小数】
+                    sheet.cell(row = 12, column = cell_col_index[key], value= str(value4)+"%") 
                 else:
                     logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
         else:
             logging.warning("量化二-期货保证金分析文件不存在。")
             
         if self.src_excel_file_dict_['量化二']['成交回报'] is not None:
-            set_value(sheet, 14,2,'future_info', self.src_excel_file_dict_['量化二']['成交回报'], '量化二-成交回报')
+            set_value(sheet, 14,2,'future_info_2', self.src_excel_file_dict_['量化二']['成交回报'], '量化二-成交回报')
         else:
             logging.warning("量化二-成交回报文件不存在。")
             
         if self.src_excel_file_dict_['量化二']['汇总证券-当日持仓'] is not None:
-            set_value(sheet, 16,2,'future_info', self.src_excel_file_dict_['量化二']['汇总证券-当日持仓'], '量化二-汇总证券-当日持仓')
+            set_value(sheet, 16,2,'future_info_2', self.src_excel_file_dict_['量化二']['汇总证券-当日持仓'], '量化二-汇总证券-当日持仓')
         else:
             logging.warning("量化二-汇总证券-当日持仓文件不存在。")             
         
