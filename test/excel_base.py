@@ -752,7 +752,7 @@ class ExcelBase:
         if self.src_excel_file_dict_['量化一']['交易所回购'] is not None:
             if 'profit' in self.src_excel_file_dict_['量化一']['交易所回购']:   
                 jyshg_profit = self.src_excel_file_dict_['量化一']['交易所回购']['profit']
-                sheet.cell(row = 8, column = cell_col_index['权益类一单元'], value = str(jyshg_profit))
+                sheet.cell(row = 8, column = cell_col_index['权益类一单元'], value = str(jyshg_profit)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             else:
                 logging.warning("量化一-交易所回购文件不存在。")
         else:
@@ -762,17 +762,17 @@ class ExcelBase:
         if self.src_excel_file_dict_['量化一']['汇总证券-合计'] is not None:
             if 'profit' in self.src_excel_file_dict_['量化一']['汇总证券-合计']:
                 profits1 = self.src_excel_file_dict_['量化一']['汇总证券-合计']['profit']
-                sheet.cell(row = 9, column = 2, value = str(profits1))
+                sheet.cell(row = 9, column = 2, value = str(profits1)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                 value2 = profits1 / 3000 / 10000 * 100
                 value2 = round(value2, 4)
-                sheet.cell(row = 10, column = 2, value = str(value2)+"%")
+                sheet.cell(row = 10, column = 2, value = str(value2)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                 
                 profits2 = zhzcjz - 30000000 #总盈利/亏损（含逆回购）
                 profits2 = round(profits2, 2)
-                sheet.cell(row = 11, column = 2, value = str(profits2))
+                sheet.cell(row = 11, column = 2, value = str(profits2)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                 value3 = profits2 / 3000 / 10000 * 100 # 收益率（含逆回购）
                 value3 = round(value3, 4)
-                sheet.cell(row = 12, column = 2, value = str(value3)+"%")
+                sheet.cell(row = 12, column = 2, value = str(value3)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                 
                 sheet.merge_cells(start_row=9, start_column=2, end_row=9, end_column=cell_count)
                 sheet.merge_cells(start_row=10, start_column=2, end_row=10, end_column=cell_count)
@@ -789,7 +789,7 @@ class ExcelBase:
                 if key in cell_col_index:
                     set_value(sheet, 14,cell_col_index[key],'占用保证金(静态)', value, '量化一-期货保证金分析')
                     set_value(sheet, 15,cell_col_index[key],'账户权益', value, '量化一-期货保证金分析')                    
-                    sheet.cell(row = 16, column = cell_col_index[key], value = str(round(float(value['风险比例1(%)']),3))+"%")
+                    sheet.cell(row = 16, column = cell_col_index[key], value = str(round(float(value['风险比例1(%)']),3))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                 else:
                     logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
         else:
@@ -870,36 +870,36 @@ class ExcelBase:
                     set_value(sheet, 1,2,'统计日期', value, '量化一-单元资产')
                     set_value(sheet, 3,2,'账户名称', value, '量化一-单元资产')
                     tmpzhbh = value['账户编号']
-                    sheet.cell(row = 4, column = 2, value=round(float(tmpzhbh),0))
+                    sheet.cell(row = 4, column = 2, value=round(float(tmpzhbh),0)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     if '量化一-投机单元' in key:
-                        sheet.cell(row = 6, column = 1+cell_index, value=self.unit_net_value_) # 单元资产净值 = 手动输入
-                        sheet.cell(row = 9, column = 1+cell_index, value=self.unit_net_value_-6000000) # 盈利/亏损（不含逆回购） = 单元资产净值-600万元
+                        sheet.cell(row = 6, column = 1+cell_index, value=self.unit_net_value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 单元资产净值 = 手动输入
+                        sheet.cell(row = 9, column = 1+cell_index, value=self.unit_net_value_-6000000).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 盈利/亏损（不含逆回购） = 单元资产净值-600万元
                     set_value(sheet, 4,2,'账户编号', value, '量化一-单元资产')
                     set_value(sheet, 5,1+cell_index,'资产单元名称', value, '量化一-单元资产')
                     if '量化一-投机单元' in key:
-                        sheet.cell(row = 6, column = 1+cell_index, value=self.unit_net_value_) # 单元资产净值 = 手动输入
-                        sheet.cell(row = 9, column = 1+cell_index, value=self.unit_net_value_-6000000) # 盈利/亏损（不含逆回购） = 单元资产净值-600万元
-                        sheet.cell(row = 12, column = 1+cell_index, value=round(self.unit_net_value_-6000000,2)) # 盈利/亏损（含逆回购） = 盈利/亏损（不含逆回购
+                        sheet.cell(row = 6, column = 1+cell_index, value=self.unit_net_value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 单元资产净值 = 手动输入
+                        sheet.cell(row = 9, column = 1+cell_index, value=self.unit_net_value_-6000000).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 盈利/亏损（不含逆回购） = 单元资产净值-600万元
+                        sheet.cell(row = 12, column = 1+cell_index, value=round(self.unit_net_value_-6000000,2)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 盈利/亏损（含逆回购） = 盈利/亏损（不含逆回购
                         zhzcjz += self.unit_net_value_
                     else:
                         set_value(sheet, 6,1+cell_index,'单元资产净值(净价)', value, '量化一-单元资产') # 单元资产净值 = 《单元资产》“单元资产净值(净价)”权益类一单元
                         tmp_dyzcjz = float(value['单元资产净值(净价)'])                        
-                        sheet.cell(row = 12, column = 1+cell_index, value=round(tmp_dyzcjz-2400*10000,2)) #盈利/亏损（含逆回购）= 单元资产净值-2400万
-                        sheet.cell(row = 9, column = 1+cell_index, value=hzzq_hegp_ztyk) # 盈利/亏损（不含逆回购） =《汇总证券（合计-股票）》“总体盈亏（含费用）”最后一行数值
+                        sheet.cell(row = 12, column = 1+cell_index, value=round(tmp_dyzcjz-2400*10000,2)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 #盈利/亏损（含逆回购）= 单元资产净值-2400万
+                        sheet.cell(row = 9, column = 1+cell_index, value=hzzq_hegp_ztyk).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 盈利/亏损（不含逆回购） =《汇总证券（合计-股票）》“总体盈亏（含费用）”最后一行数值
                         zhzcjz += tmp_dyzcjz
                         
                     cell_index += 1
                     cell_col_index[key] = cell_index   
                                 
-            sheet.cell(row = 7, column = 2, value=zhzcjz)
-            sheet.cell(row = 13, column = 2, value=zhzcjz-3000*10000)
+            sheet.cell(row = 7, column = 2, value=zhzcjz).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+            sheet.cell(row = 13, column = 2, value=zhzcjz-3000*10000).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             
             zyk_bnhj = self.unit_net_value_-6000000 + hzzq_hegp_ztyk  # '=盈利/亏损（不含逆回购）这一行数据的和, '=单元资产净值-600万元 + 《汇总证券（合计-股票）》“总体盈亏（含费用）”最后一行数值
-            sheet.cell(row = 10, column = 2, value=zyk_bnhj)
-            sheet.cell(row = 11, column = 2, value=str(round(zyk_bnhj/3000/10000*100, 4))+"%")
+            sheet.cell(row = 10, column = 2, value=zyk_bnhj).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+            sheet.cell(row = 11, column = 2, value=str(round(zyk_bnhj/3000/10000*100, 4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             
             value3 = zyk_bnhj / 3000 / 10000 * 100 # 收益率（含逆回购）= 总盈利/亏损（含逆回购）÷3000万元×100%【保留4位小数】
-            sheet.cell(row = 14, column = 2, value = str(round(value3,4))+"%")
+            sheet.cell(row = 14, column = 2, value = str(round(value3,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             cell_count = cell_index
             
             sheet.merge_cells(start_row=3, start_column=2, end_row=3, end_column=cell_count)
@@ -921,7 +921,7 @@ class ExcelBase:
         if self.src_excel_file_dict_['量化一']['交易所回购'] is not None:
             if 'profit' in self.src_excel_file_dict_['量化一']['交易所回购']:   
                 jyshg_profit = self.src_excel_file_dict_['量化一']['交易所回购']['profit']
-                sheet.cell(row = 8, column = cell_col_index['权益类一单元'], value = str(jyshg_profit))
+                sheet.cell(row = 8, column = cell_col_index['权益类一单元'], value = str(jyshg_profit)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             else:
                 logging.warning("量化一-交易所回购文件不存在。")
         else:
@@ -931,9 +931,9 @@ class ExcelBase:
             for key, value in self.src_excel_file_dict_['量化一']['期货保证金分析'].items():
                 if key in cell_col_index:
                     set_value(sheet, 16,cell_col_index[key],'占用保证金(静态)', value, '量化一-期货保证金分析')
-                    sheet.cell(row = 17, column = cell_col_index[key], value=self.unit_net_value_) # 账户权益 = 单元资产净值
+                    sheet.cell(row = 17, column = cell_col_index[key], value=self.unit_net_value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 账户权益 = 单元资产净值
                     risk_value = float(value['占用保证金(静态)']) / self.unit_net_value_ * 100 # 风险度 = 占用÷账户权益×100%【保留4位小数】
-                    sheet.cell(row = 18, column = cell_col_index[key], value=str(round(risk_value,4))+"%") # 风险度 = 占用÷账户权益×100%【保留4位小数】
+                    sheet.cell(row = 18, column = cell_col_index[key], value=str(round(risk_value,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 风险度 = 占用÷账户权益×100%【保留4位小数】
                 else:
                     logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
         else:
@@ -982,10 +982,10 @@ class ExcelBase:
             cell_index = 1
             for key, value in self.src_excel_file_dict_['量化二']['单元资产'].items():
                 if key != '合计':
-                    sheet.cell(row = 1, column = 2, value=str(value['统计日期']) + ", （金额单位：元）")
+                    sheet.cell(row = 1, column = 2, value=str(value['统计日期']) + ", （金额单位：元）").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     set_value(sheet, 3,2,'账户名称', value, '量化二-单元资产')
                     tmpzhbh = value['账户编号']
-                    sheet.cell(row = 4, column = 2, value=round(float(tmpzhbh),0))
+                    sheet.cell(row = 4, column = 2, value=round(float(tmpzhbh),0)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     set_value(sheet, 5,1+cell_index,'资产单元名称', value, '量化二-单元资产')
                     set_value(sheet, 6,1+cell_index,'单元资产净值(净价)', value, '量化二-单元资产')
                     cell_index += 1
@@ -1000,10 +1000,10 @@ class ExcelBase:
         if self.src_excel_file_dict_['量化二']['汇总证券-合计'] is not None:
             if 'profit' in self.src_excel_file_dict_['量化二']['汇总证券-合计']:
                 profits1 = self.src_excel_file_dict_['量化二']['汇总证券-合计']['profit']
-                sheet.cell(row = 7, column = 2, value = str(profits1))
+                sheet.cell(row = 7, column = 2, value = str(profits1)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                 value2 = profits1 / 1000 / 10000 * 100
                 value2 = round(value2, 4)
-                sheet.cell(row = 8, column = 2, value = str(value2)+"%")
+                sheet.cell(row = 8, column = 2, value = str(value2)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             else:
                 logging.warning("量化二-汇总证券-合计文件不存在。")
         else:
@@ -1084,19 +1084,19 @@ class ExcelBase:
                     sheet.cell(row = 1, column = 2, value=str(value['统计日期']) + ", （金额单位：元）")
                     set_value(sheet, 3,2,'账户名称', value, '量化二-单元资产')
                     tmpzhbh = value['账户编号']
-                    sheet.cell(row = 4, column = 2, value=round(float(tmpzhbh),0))
+                    sheet.cell(row = 4, column = 2, value=round(float(tmpzhbh),0)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     set_value(sheet, 5,1+cell_index,'资产单元名称', value, '量化二-单元资产')
                     if '投机单元' not in key:
                         set_value(sheet, 6,1+cell_index,'单元资产净值(净价)', value, '量化二-单元资产')
                         zhzcjz = float(value['单元资产净值(净价)'])
                     else:
-                        sheet.cell(row = 6, column = 2, value=self.unit_net_value_2_) # 账户资产净值 = 【手动输入】
+                        sheet.cell(row = 6, column = 2, value=self.unit_net_value_2_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 账户资产净值 = 【手动输入】
                         zhzcjz = self.unit_net_value_2_
                     
-                    sheet.cell(row = 7, column = 2, value=zhzcjz - 1000*10000) # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
+                    sheet.cell(row = 7, column = 2, value=zhzcjz - 1000*10000).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
                     value2 = (zhzcjz - 1000*10000) / 1000 / 10000 * 100 # 收益率 = （账户资产净值 - 1000万元）÷1000万元×100%【保留4位小数】
                     value2 = round(value2, 4)
-                    sheet.cell(row = 8, column = 2, value = str(value2)+"%")
+                    sheet.cell(row = 8, column = 2, value = str(value2)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     
                     cell_index += 1
                     cell_col_index[key] = cell_index    
@@ -1110,11 +1110,11 @@ class ExcelBase:
         if self.src_excel_file_dict_['量化二']['期货保证金分析'] is not None:
             for key, value in self.src_excel_file_dict_['量化二']['期货保证金分析'].items():
                 if key in cell_col_index:   
-                    sheet.cell(row = 10, column = cell_col_index[key], value=self.unit_net_value_3_) # 占用 = 手动输入
-                    sheet.cell(row = 11, column = cell_col_index[key], value=self.unit_net_value_2_) # 账户权益 = 账户资产净值 
+                    sheet.cell(row = 10, column = cell_col_index[key], value=self.unit_net_value_3_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 占用 = 手动输入
+                    sheet.cell(row = 11, column = cell_col_index[key], value=self.unit_net_value_2_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 账户权益 = 账户资产净值 
                     
                     value4 = round(self.unit_net_value_3_/self.unit_net_value_2_*100, 4) # 风险度 = 占用÷账户权益×100%【保留4位小数】
-                    sheet.cell(row = 12, column = cell_col_index[key], value= str(value4)+"%") 
+                    sheet.cell(row = 12, column = cell_col_index[key], value= str(value4)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 
                 else:
                     logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
         else:
