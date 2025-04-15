@@ -698,69 +698,110 @@ class ExcelBase:
         self.target_workbook_.save(file_name)
             
     def gene_first_sheet(self):
-        
         sheet = self.target_workbook_.create_sheet(title='量化一-收盘数据')
-        sheet.cell(row = 1, column = 1, value = "统计日期")
-        sheet.cell(row = 1, column = 3, value = "（金额单位：元）")
-        sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况").font = self.font_
-        sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况").fill = self.fill_
-        sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况").border = self.border_
-        sheet.cell(row = 3, column = 1, value = "账户名称").border = self.border_
-        sheet.cell(row = 3, column = 1, value = "账户名称").font = self.font_
+        self.sheet_1_row_dict_ = {
+            '统计日期':1,
+            '一、账户资产及收益情况':2,
+            '账户名称':3,
+            '账户编号':4,
+            '资产单元名称':5,
+            '单元资产净值':6,
+            '账户资产净值':7,
+            '交易所回购':8,
+            '总盈利/亏损（不含逆回购）':9,
+            '收益率（不含逆回购）':10,
+            '总盈利/亏损（含逆回购）':11,
+            '收益率（含逆回购）':12,
+            '二、净值列示':13,
+            '实收资本':14,
+            '资产净值':15,
+            '总份额':16,
+            '期初单位净值':17,
+            '昨日单位净值':18,
+            '单位净值':19,
+            '日净值增长率':20,
+            '三、保证金使用情况':21,
+            '占用':22,
+            '账户权益':23,
+            '风险度':24,
+            '四、交易情况':25,
+            '交易方向及数量':26,
+            '五、持仓情况':27,
+            '持仓品种及数量':28,
+            '注释':29
+        }
         
-        sheet.cell(row = 4, column = 1, value = "账户编号").border = self.border_
-        sheet.cell(row = 4, column = 1, value = "账户编号").font = self.font_
+        for key, value in self.src_excel_file_dict_['量化一'].items():
+            if value is not None:
+                if key != '统计日期':
+                    sheet.cell(row = value, column = 1, value = key).border = self.border_
+                    sheet.cell(row = value, column = 1, value = key).font = self.font_
+                else:
+                    sheet.cell(row = value, column = 1, value = key)
         
-        sheet.cell(row = 5, column = 1, value = "资产单元名称").border = self.border_
-        sheet.cell(row = 5, column = 1, value = "资产单元名称").font = self.font_
+        sheet.cell(row = self.sheet_1_row_dict_['统计日期'], column = 3, value = "（金额单位：元）")
         
-        sheet.cell(row = 6, column = 1, value = "单元资产净值").border = self.border_
-        sheet.cell(row = 6, column = 1, value = "单元资产净值").font = self.font_
+        # sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况").font = self.font_
+        sheet.cell(row = self.sheet_1_row_dict_['一、账户资产及收益情况'], column = 1).fill = self.fill_
+        # sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况").border = self.border_
+        # sheet.cell(row = 3, column = 1, value = "账户名称").border = self.border_
+        # sheet.cell(row = 3, column = 1, value = "账户名称").font = self.font_
         
-        sheet.cell(row = 7, column = 1, value = "账户资产净值").border = self.border_
-        sheet.cell(row = 7, column = 1, value = "账户资产净值").font = self.font_
+        # sheet.cell(row = 4, column = 1, value = "账户编号").border = self.border_
+        # sheet.cell(row = 4, column = 1, value = "账户编号").font = self.font_
         
-        sheet.cell(row = 8, column = 1, value = "交易所回购").border = self.border_
-        sheet.cell(row = 8, column = 1, value = "交易所回购").font = self.font_
+        # sheet.cell(row = 5, column = 1, value = "资产单元名称").border = self.border_
+        # sheet.cell(row = 5, column = 1, value = "资产单元名称").font = self.font_
         
-        sheet.cell(row = 9, column = 1, value = "总盈利/亏损（不含逆回购）").border = self.border_
-        sheet.cell(row = 9, column = 1, value = "总盈利/亏损（不含逆回购）").font = self.font_
+        # sheet.cell(row = 6, column = 1, value = "单元资产净值").border = self.border_
+        # sheet.cell(row = 6, column = 1, value = "单元资产净值").font = self.font_
         
-        sheet.cell(row = 10, column = 1, value = "收益率（不含逆回购）").border = self.border_
-        sheet.cell(row = 10, column = 1, value = "收益率（不含逆回购）").font = self.font_
+        # sheet.cell(row = 7, column = 1, value = "账户资产净值").border = self.border_
+        # sheet.cell(row = 7, column = 1, value = "账户资产净值").font = self.font_
         
-        sheet.cell(row = 11, column = 1, value = "总盈利/亏损（含逆回购）").border = self.border_
-        sheet.cell(row = 11, column = 1, value = "总盈利/亏损（含逆回购）").font = self.font_
+        # sheet.cell(row = 8, column = 1, value = "交易所回购").border = self.border_
+        # sheet.cell(row = 8, column = 1, value = "交易所回购").font = self.font_
         
-        sheet.cell(row = 12, column = 1, value = "收益率（含逆回购）").border = self.border_
-        sheet.cell(row = 12, column = 1, value = "收益率（含逆回购）").font = self.font_
+        # sheet.cell(row = 9, column = 1, value = "总盈利/亏损（不含逆回购）").border = self.border_
+        # sheet.cell(row = 9, column = 1, value = "总盈利/亏损（不含逆回购）").font = self.font_
         
-        sheet.cell(row = 13, column = 1, value = "二、保证金使用情况").border = self.border_
-        sheet.cell(row = 13, column = 1, value = "二、保证金使用情况").font = self.font_
-        sheet.cell(row = 13, column = 1, value = "二、保证金使用情况").fill = self.fill_
+        # sheet.cell(row = 10, column = 1, value = "收益率（不含逆回购）").border = self.border_
+        # sheet.cell(row = 10, column = 1, value = "收益率（不含逆回购）").font = self.font_
         
-        sheet.cell(row = 14, column = 1, value = "占用").border = self.border_
-        sheet.cell(row = 14, column = 1, value = "占用").font = self.font_
+        # sheet.cell(row = 11, column = 1, value = "总盈利/亏损（含逆回购）").border = self.border_
+        # sheet.cell(row = 11, column = 1, value = "总盈利/亏损（含逆回购）").font = self.font_
         
-        sheet.cell(row = 15, column = 1, value = "账户权益").border = self.border_  
-        sheet.cell(row = 15, column = 1, value = "账户权益").font = self.font_
+        # sheet.cell(row = 12, column = 1, value = "收益率（含逆回购）").border = self.border_
+        # sheet.cell(row = 12, column = 1, value = "收益率（含逆回购）").font = self.font_
         
-        sheet.cell(row = 16, column = 1, value = "风险度").border = self.border_       
-        sheet.cell(row = 16, column = 1, value = "风险度").font = self.font_
+        # sheet.cell(row = 13, column = 1, value = "二、保证金使用情况").border = self.border_
+        # sheet.cell(row = 13, column = 1, value = "二、保证金使用情况").font = self.font_
+        sheet.cell(row = self.sheet_1_row_dict_['三、保证金使用情况'], column = 1).fill = self.fill_
         
-        sheet.cell(row = 17, column = 1, value = "三、交易情况").border = self.border_  
-        sheet.cell(row = 17, column = 1, value = "三、交易情况").font = self.font_
-        sheet.cell(row = 17, column = 1, value = "三、交易情况").fill = self.fill_
+        # sheet.cell(row = 14, column = 1, value = "占用").border = self.border_
+        # sheet.cell(row = 14, column = 1, value = "占用").font = self.font_
         
-        sheet.cell(row = 18, column = 1, value = "交易方向及数量").border = self.border_  
-        sheet.cell(row = 18, column = 1, value = "交易方向及数量").font = self.font_
+        # sheet.cell(row = 15, column = 1, value = "账户权益").border = self.border_  
+        # sheet.cell(row = 15, column = 1, value = "账户权益").font = self.font_
+        
+        # sheet.cell(row = 16, column = 1, value = "风险度").border = self.border_       
+        # sheet.cell(row = 16, column = 1, value = "风险度").font = self.font_
+        
+        # sheet.cell(row = 17, column = 1, value = "三、交易情况").border = self.border_  
+        # sheet.cell(row = 17, column = 1, value = "三、交易情况").font = self.font_
+        
+        sheet.cell(row = self.sheet_1_row_dict_['四、交易情况'], column = 1).fill = self.fill_
+        
+        # sheet.cell(row = 18, column = 1, value = "交易方向及数量").border = self.border_  
+        # sheet.cell(row = 18, column = 1, value = "交易方向及数量").font = self.font_
                 
-        sheet.cell(row = 19, column = 1, value = "四、持仓情况").border = self.border_
-        sheet.cell(row = 19, column = 1, value = "四、持仓情况").font = self.font_
-        sheet.cell(row = 19, column = 1, value = "四、持仓情况").fill = self.fill_
+        # sheet.cell(row = 19, column = 1, value = "四、持仓情况").border = self.border_
+        # sheet.cell(row = 19, column = 1, value = "四、持仓情况").font = self.font_
         
-        sheet.cell(row = 20, column = 1, value = "持仓品种及数量").border = self.border_   
-        sheet.cell(row = 20, column = 1, value = "持仓品种及数量").font = self.font_
+        sheet.cell(row = self.sheet_1_row_dict_['五、交易情况'], column = 1).fill = self.fill_
+        
+        # sheet.cell(row = 20, column = 1, value = "持仓品种及数量").border = self.border_   
+        # sheet.cell(row = 20, column = 1, value = "持仓品种及数量").font = self.font_
         
         cell_count = 1             
         cell_col_index = {}
@@ -921,6 +962,48 @@ class ExcelBase:
         
     def gene_second_sheet(self):
         sheet = self.target_workbook_.create_sheet(title='量化一-结算数据')
+        self.sheet_2_row_dict_ = {
+            '统计日期':1,
+            '一、账户资产及收益情况':2,
+            '账户名称':3,
+            '账户编号':4,
+            '资产单元名称':5,
+            '单元资产净值':6,
+            '账户资产净值':7,
+            '交易所回购':8,
+            '盈利/亏损（不含逆回购':9,
+            '总盈利/亏损（不含逆回购）':10,
+            '收益率（不含逆回购）':11,
+            '盈利/亏损（含逆回购）':12,
+            '总盈利/亏损（含逆回购）':13,
+            '收益率（含逆回购）':14,
+            '二、净值列示':15,
+            '实收资本':16,
+            '资产净值':17,
+            '总份额':18,
+            '期初单位净值':19,
+            '昨日单位净值':20,
+            '单位净值':21,
+            '日净值增长率':22,
+            '三、保证金使用情况':23,
+            '占用':24,
+            '账户权益':25,
+            '风险度':26,
+            '四、交易情况':27,
+            '交易方向及数量':28,
+            '五、持仓情况':29,
+            '持仓品种及数量':30,
+            '注释':31
+        }
+        for key, value in self.src_excel_file_dict_['量化一'].items():
+            if value is not None:
+                if key != '统计日期':
+                    sheet.cell(row = value, column = 1, value = key).border = self.border_
+                    sheet.cell(row = value, column = 1, value = key).font = self.font_
+                else:
+                    sheet.cell(row = value, column = 1, value = key)
+                                    
+        
         sheet.cell(row = 1, column = 1, value = "统计日期")
         
         sheet.cell(row = 1, column = 3, value = "（金额单位：元）")
@@ -1040,7 +1123,7 @@ class ExcelBase:
             sheet.cell(row = 11, column = 2, value=str(round(zyk_bnhj/3000/10000*100, 4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             sheet.cell(row = 11, column = 2).border = self.border_
             
-            value3 = zhzcjz / 3000 / 10000 * 100 # 收益率（含逆回购）= 总盈利/亏损（含逆回购）÷3000万元×100%【保留4位小数】
+            value3 = (zhzcjz - 3000*10000) / 3000 / 10000 * 100 # 收益率（含逆回购）= 总盈利/亏损（含逆回购）÷3000万元×100%【保留4位小数】
             sheet.cell(row = 14, column = 2, value = str(round(value3,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             sheet.cell(row = 14, column = 2).border = self.border_
             cell_count = cell_index
@@ -1140,9 +1223,45 @@ class ExcelBase:
         sheet.cell(row = 22, column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)
         sheet.cell(row = 22, column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)           
                 
-
     def gene_third_sheet(self):
+        self.sheet_1_row_dict_ = {
+            '统计日期':1,
+            '一、账户资产及收益情况':2,
+            '账户名称':3,
+            '账户编号':4,
+            '资产单元名称':5,
+            '账户资产净值':6,
+            '交易所回购':7,
+            '总盈利/亏损':8,
+            '二、净值列示':9,
+            '实收资本':10,
+            '资产净值':11,
+            '总份额':12,
+            '期初单位净值':13,
+            '昨日单位净值':14,
+            '单位净值':15,
+            '日净值增长率':16,
+            '三、保证金使用情况':17,
+            '占用':18,
+            '账户权益':19,
+            '风险度':20,
+            '四、交易情况':21,
+            '交易方向及数量':22,
+            '五、持仓情况':23,
+            '持仓品种及数量':24,
+            '注释':25
+        }
+                
         sheet = self.target_workbook_.create_sheet(title='量化二-收盘数据')
+        
+        for key, value in self.src_excel_file_dict_['量化一'].items():
+            if value is not None:
+                if key != '统计日期':
+                    sheet.cell(row = value, column = 1, value = key).border = self.border_
+                    sheet.cell(row = value, column = 1, value = key).font = self.font_
+                else:
+                    sheet.cell(row = value, column = 1, value = key)
+                            
         sheet.cell(row = 1, column = 1, value = "统计日期")
         sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况").border = self.border_
         sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况").font = self.font_
@@ -1294,7 +1413,44 @@ class ExcelBase:
         sheet.cell(row = 17, column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)
     
     def gene_fourth_sheet(self):
+        self.sheet_1_row_dict_ = {
+            '统计日期':1,
+            '一、账户资产及收益情况':2,
+            '账户名称':3,
+            '账户编号':4,
+            '资产单元名称':5,
+            '账户资产净值':6,
+            '交易所回购':7,
+            '总盈利/亏损':8,
+            '二、净值列示':9,
+            '实收资本':10,
+            '资产净值':11,
+            '总份额':12,
+            '期初单位净值':13,
+            '昨日单位净值':14,
+            '单位净值':15,
+            '日净值增长率':16,
+            '三、保证金使用情况':17,
+            '占用':18,
+            '账户权益':19,
+            '风险度':20,
+            '四、交易情况':21,
+            '交易方向及数量':22,
+            '五、持仓情况':23,
+            '持仓品种及数量':24,
+            '注释':25
+        }
+                
         sheet = self.target_workbook_.create_sheet(title='量化二-结算数据')
+        
+        for key, value in self.src_excel_file_dict_['量化一'].items():
+            if value is not None:
+                if key != '统计日期':
+                    sheet.cell(row = value, column = 1, value = key).border = self.border_
+                    sheet.cell(row = value, column = 1, value = key).font = self.font_
+                else:
+                    sheet.cell(row = value, column = 1, value = key)
+                            
         sheet.cell(row = 1, column = 1, value = "统计日期")
         sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况").border = self.border_
         sheet.cell(row = 2, column = 1, value = "一、账户资产及收益情况").font = self.font_
