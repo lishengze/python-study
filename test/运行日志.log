@@ -1,22 +1,22 @@
-2025-04-14 16:57:33,153 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/成交回报.xls
-2025-04-14 16:57:33,159 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/单元资产.xls
-2025-04-14 16:57:33,159 - INFO - excel_base.py - 110 - 读取文件 单元资产 开始 4 118 
-2025-04-14 16:57:33,165 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/汇总证券-当日持仓.xls
-2025-04-14 16:57:33,334 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/汇总证券-合计.xls
-2025-04-14 16:57:33,334 - INFO - excel_base.py - 169 - 读取文件 汇总证券-合计 开始 2136 14 
-2025-04-14 16:57:33,490 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/汇总证券-合计-股票.xls
-2025-04-14 16:57:33,491 - INFO - excel_base.py - 567 - 读取文件 汇总证券-合计-股票 开始 2109 14 
-2025-04-14 16:57:33,536 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/交易所回购.xls
-2025-04-14 16:57:33,536 - INFO - excel_base.py - 199 - 读取文件 交易所回购 开始 34 31 
-2025-04-14 16:57:33,542 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/期货保证金分析.xls
-2025-04-14 16:57:33,542 - INFO - excel_base.py - 217 - 读取文件 单元资产 开始 3 47 
-2025-04-14 16:57:33,555 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/成交回报.xls
-2025-04-14 16:57:33,563 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/单元资产.xls
-2025-04-14 16:57:33,563 - INFO - excel_base.py - 110 - 读取文件 单元资产 开始 3 118 
-2025-04-14 16:57:33,570 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/汇总证券-当日持仓.xls
-2025-04-14 16:57:33,579 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/汇总证券-合计.xls
-2025-04-14 16:57:33,579 - INFO - excel_base.py - 169 - 读取文件 汇总证券-合计 开始 77 14 
-2025-04-14 16:57:33,583 - INFO - excel_base.py - 670 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/期货保证金分析.xls
-2025-04-14 16:57:33,584 - INFO - excel_base.py - 217 - 读取文件 单元资产 开始 3 47 
-2025-04-14 16:57:33,635 - INFO - excel_base.py - 689 - Sheet 已成功删除。
-2025-04-14 16:57:33,636 - INFO - excel_base.py - 694 - 目标文件名: D:/code/study/python-study/test/4.10/量化业务日报-2025-04-10.xlsx
+2025-04-15 16:18:54,494 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/成交回报.xls
+2025-04-15 16:18:54,500 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/单元资产.xls
+2025-04-15 16:18:54,500 - INFO - excel_base.py - 113 - 读取文件 单元资产 开始 4 118 
+2025-04-15 16:18:54,506 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/汇总证券-当日持仓.xls
+2025-04-15 16:18:54,617 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/汇总证券-合计.xls
+2025-04-15 16:18:54,618 - INFO - excel_base.py - 172 - 读取文件 汇总证券-合计 开始 2136 14 
+2025-04-15 16:18:54,764 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/汇总证券-合计-股票.xls
+2025-04-15 16:18:54,764 - INFO - excel_base.py - 570 - 读取文件 汇总证券-合计-股票 开始 2109 14 
+2025-04-15 16:18:54,804 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/交易所回购.xls
+2025-04-15 16:18:54,804 - INFO - excel_base.py - 202 - 读取文件 交易所回购 开始 34 31 
+2025-04-15 16:18:54,810 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化一/期货保证金分析.xls
+2025-04-15 16:18:54,811 - INFO - excel_base.py - 220 - 读取文件 单元资产 开始 3 47 
+2025-04-15 16:18:54,826 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/成交回报.xls
+2025-04-15 16:18:54,833 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/单元资产.xls
+2025-04-15 16:18:54,833 - INFO - excel_base.py - 113 - 读取文件 单元资产 开始 3 118 
+2025-04-15 16:18:54,843 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/汇总证券-当日持仓.xls
+2025-04-15 16:18:54,852 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/汇总证券-合计.xls
+2025-04-15 16:18:54,852 - INFO - excel_base.py - 172 - 读取文件 汇总证券-合计 开始 77 14 
+2025-04-15 16:18:54,857 - INFO - excel_base.py - 673 - 成功读取文件 D:/code/study/python-study/test/4.10/量化二/期货保证金分析.xls
+2025-04-15 16:18:54,857 - INFO - excel_base.py - 220 - 读取文件 单元资产 开始 3 47 
+2025-04-15 16:18:54,974 - INFO - excel_base.py - 692 - Sheet 已成功删除。
+2025-04-15 16:18:54,974 - INFO - excel_base.py - 697 - 目标文件名: D:/code/study/python-study/test/4.10/量化业务日报-2025-04-10.xlsx
