@@ -15,10 +15,14 @@ import logging
 import math
 
 import matplotlib.pyplot as plt
+import matplotlib
+import re
 
 logging.basicConfig(level = logging.INFO,  format='%(asctime)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s', 
                     filename='运行日志.log',
                     filemode='w')
+plt.rcParams['font.family'] = 'sans-serif' 
+plt.rcParams['font.sans-serif'] = ['SimHei'] 
 
 def get_file_name(file_path='./'):
     # 获取当前日期和时间
@@ -771,7 +775,7 @@ class ExcelBase:
             # print('self.all_jz_1_1_:', self.all_jz_1_1_)
             # print('self.last_jz1_1_:', self.last_jz1_1_)
             
-        else:
+        else:   
             logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
             sys.exit(1)
             
@@ -807,20 +811,47 @@ class ExcelBase:
             logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")
             sys.exit(1)
                         
+    def reset_date(self, date_list):
+        new_date = []
+        for tmp_date in date_list:
+            if ':' in tmp_date:
+                dt = datetime.strptime(tmp_date, '%Y-%m-%d %H:%M:%S')
+                # 格式化为 '04-03' 的形式
+                result = dt.strftime('%m-%d') 
+                new_date.append(result)        
+            elif '-' in tmp_date:
+                dt = datetime.strptime(tmp_date, '%Y-%m-%d')
+                # 格式化为 '04-03' 的形式
+                result = dt.strftime('%m-%d') 
+                new_date.append(result)                 
+            elif '/' in tmp_date:
+                dt = datetime.strptime(tmp_date, '%Y/%m/%d')
+                # 格式化为 '04-03' 的形式
+                result = dt.strftime('%m-%d') 
+                new_date.append(result)                 
+            else:
+                new_date.append(tmp_date)
+                
+        return new_date
     def draw_save_pic(self, data, sheet, pic_name):
         try:
             # 绘制折线图
-            plt.plot(data['date'], data['unit_net_value'], color='blue', marker='o', label=pic_name)
-            plt.title(pic_name)
+            new_date = self.reset_date(data['date'])
+            # print(new_date)
+            plt.figure(figsize=(9, 6)) 
+            plt.plot(new_date, data['unit_net_value'], color='blue', marker='o')
+            plt.title(pic_name + '净值曲线')
             plt.xlabel('日期')
             plt.ylabel('净值')
             # 添加图例
-            plt.legend()
+            # plt.legend()
             
             file_name = self.file_path_ + '/' + pic_name + '.png'
-
+            plt.xticks(rotation = 90)
             # 保存图片
-            plt.savefig(file_name)   
+            plt.savefig(file_name)  
+            
+            plt.close() 
             
             if self.draw_net_value_curve_ > 0:            
                 img = Image(file_name)
@@ -833,10 +864,13 @@ class ExcelBase:
                          
                                                  
     def set_new_jz_info(self):
+        dt = datetime.strptime(self.date, '%Y-%m-%d')
+        tmp_date = dt.strftime('%Y/%m/%d')
+                            
         if '量化一-收盘数据' in self.jz_workbook_.sheetnames:
             sheet = self.jz_workbook_['量化一-收盘数据']
             last_row = get_last_row(sheet, '量化一-收盘数据')
-            sheet.cell(row = last_row+1, column = 1, value = self.date)
+            sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
             sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_1_)
         else:
             logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
@@ -844,7 +878,7 @@ class ExcelBase:
         if '量化一-结算数据' in self.jz_workbook_.sheetnames:
             sheet = self.jz_workbook_['量化一-结算数据']
             last_row = get_last_row(sheet, '量化一-结算数据')
-            sheet.cell(row = last_row+1, column = 1, value = self.date)
+            sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
             sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_2_)
         else:
             logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
@@ -852,7 +886,7 @@ class ExcelBase:
         if '量化二-收盘数据' in self.jz_workbook_.sheetnames:
             sheet = self.jz_workbook_['量化二-收盘数据']
             last_row = get_last_row(sheet, '量化二-收盘数据')
-            sheet.cell(row = last_row+1, column = 1, value = self.date)
+            sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
             sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_1_)
         else:
             logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")
@@ -860,7 +894,7 @@ class ExcelBase:
         if '量化二-结算数据' in self.jz_workbook_.sheetnames:
             sheet = self.jz_workbook_['量化二-结算数据']
             last_row = get_last_row(sheet, '量化二-结算数据')
-            sheet.cell(row = last_row+1, column = 1, value = self.date)
+            sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
             sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_2_)     
         else:
             logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")                            
@@ -946,8 +980,14 @@ class ExcelBase:
             cell_index = 1
             for key, value in self.src_excel_file_dict_['量化一']['单元资产'].items():
                 if key != '合计':
+                    
+                    dt = datetime.strptime(value['统计日期'], '%Y-%m-%d')
+                    self.date = dt.strftime('%Y-%m-%d')
+                                        
                     set_value(sheet, 1,2,'统计日期', value, '量化一-单元资产',False, self.border_)
-                    self.date = value['统计日期']
+                    
+                    
+                    
                     set_value(sheet, self.sheet_1_row_dict_['账户名称'], 2,'账户名称', value, '量化一-单元资产',False, self.border_)
                     tmpzhbh = value['账户编号']
                     sheet.cell(row = self.sheet_1_row_dict_['账户编号'], column = 2, value=math.floor(float(tmpzhbh))).border = self.border_
@@ -955,6 +995,8 @@ class ExcelBase:
                     set_value(sheet, self.sheet_1_row_dict_['单元资产净值'],1+cell_index,'单元资产净值(净价)', value, '量化一-单元资产', True,self.border_)
                     cell_index += 1
                     cell_col_index[key] = cell_index    
+                    
+
                     
                     
                     zhzcjz += float(value['单元资产净值(净价)'])                
@@ -1172,14 +1214,14 @@ class ExcelBase:
                 if key != '合计':
                     set_value(sheet, self.sheet_2_row_dict_['统计日期'],2,'统计日期', value, '量化一-单元资产', False,self.border_)
                     set_value(sheet, self.sheet_2_row_dict_['账户名称'],2,'账户名称', value, '量化一-单元资产', False,self.border_)
-                    tmpzhbh = value['账户编号']
-                    sheet.cell(row = self.sheet_2_row_dict_['账户编号'], column = 2, value=math.floor(float(tmpzhbh))).border = self.border_
+                    tmpzhbh =  re.sub(r'\.0$', '', value['账户编号'])
+                    sheet.cell(row = self.sheet_2_row_dict_['账户编号'], column = 2, value=tmpzhbh).border = self.border_
                     if '量化一-投机单元' in key:
                         sheet.cell(row = self.sheet_2_row_dict_['单元资产净值'], column = 1+cell_index, value=self.unit_net_value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 单元资产净值 = 手动输入
                         sheet.cell(row = self.sheet_2_row_dict_['单元资产净值'], column = 1+cell_index).border = self.border_
                         sheet.cell(row = self.sheet_2_row_dict_['盈利/亏损（不含逆回购）'], column = 1+cell_index, value=self.unit_net_value_-6000000).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 盈利/亏损（不含逆回购） = 单元资产净值-600万元
                         sheet.cell(row = self.sheet_2_row_dict_['盈利/亏损（不含逆回购）'], column = 1+cell_index).border = self.border_
-                    set_value(sheet, self.sheet_2_row_dict_['账户编号'],2,'账户编号', value, '量化一-单元资产', False, self.border_)
+                    # set_value(sheet, self.sheet_2_row_dict_['账户编号'],2,'账户编号', value, '量化一-单元资产', False, self.border_)
                     set_value(sheet, self.sheet_2_row_dict_['资产单元名称'],1+cell_index,'资产单元名称', value, '量化一-单元资产', False, self.border_)
                     if '量化一-投机单元' in key:
                         sheet.cell(row = self.sheet_2_row_dict_['单元资产净值'], column = 1+cell_index, value=self.unit_net_value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 单元资产净值 = 手动输入
