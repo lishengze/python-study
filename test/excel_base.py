@@ -27,6 +27,8 @@ plt.rcParams['font.family'] = 'sans-serif'
 plt.rcParams['font.sans-serif'] = ['SimHei'] 
 plt.rcParams['axes.unicode_minus'] = False
 
+x_label_count = 6
+
 g_test_pic = False
 
 def get_test_data():
@@ -177,7 +179,7 @@ def calc_max_drawdown(unit_net_value):
             result.append(tmp_value)
         return result
 
-def get_resize_index(date_list, target_count = 6):
+def get_resize_index(date_list, target_count):
     '''
     计算缩放索引
     '''
@@ -887,21 +889,24 @@ class ExcelBase:
                         
     def reset_date(self, date_list):
         new_date = []
+        time_format = '%Y-%m-%d'
+        if len(date_list) > x_label_count and len(date_list) <= 2*x_label_count:
+            time_format = '%m-%d'
         for tmp_date in date_list:
             if ':' in tmp_date:
                 dt = datetime.strptime(tmp_date, '%Y-%m-%d %H:%M:%S')
                 # 格式化为 '04-03' 的形式
-                result = dt.strftime('%Y-%m-%d') 
+                result = dt.strftime(time_format) 
                 new_date.append(result)        
             elif '-' in tmp_date:
                 dt = datetime.strptime(tmp_date, '%Y-%m-%d')
                 # 格式化为 '04-03' 的形式
-                result = dt.strftime('%Y-%m-%d') 
+                result = dt.strftime(time_format) 
                 new_date.append(result)                 
             elif '/' in tmp_date:
                 dt = datetime.strptime(tmp_date, '%Y/%m/%d')
                 # 格式化为 '04-03' 的形式
-                result = dt.strftime('%Y-%m-%d') 
+                result = dt.strftime(time_format) 
                 new_date.append(result)                 
             else:
                 new_date.append(tmp_date)
@@ -913,7 +918,7 @@ class ExcelBase:
             # 绘制折线图
             new_date = self.reset_date(data['date'])
             net_value_list = data['unit_net_value']
-            hc_list = calc_max_drawdown(net_value_list) # 计算最大回撤
+            hc_list = data['hc_list'] # 计算最大回撤
             
             if g_test_pic:
                 test_len = len(new_date) - 1
@@ -939,7 +944,7 @@ class ExcelBase:
                 'drawdown': hc_list
             })
             
-            index_list, date_list = get_resize_index(new_date)
+            index_list, date_list = get_resize_index(new_date, 6)
 
             # 绘图设置
             fig, ax1 = plt.subplots(figsize=(10, 6))
@@ -1082,6 +1087,9 @@ class ExcelBase:
             last_row = get_last_row(sheet, '量化一-收盘数据')
             sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
             sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_1_)
+            
+            for i in range(0, last_row):
+                sheet.cell(row = i+2, column = 3, value = self.all_jz_1_1_['hc_list'][i])
         else:
             logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
             
@@ -1090,6 +1098,9 @@ class ExcelBase:
             last_row = get_last_row(sheet, '量化一-结算数据')
             sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
             sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_2_)
+            
+            for i in range(0, last_row):
+                sheet.cell(row = i+2, column = 3, value = self.all_jz_1_2_['hc_list'][int(i)])            
         else:
             logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
             
@@ -1098,6 +1109,9 @@ class ExcelBase:
             last_row = get_last_row(sheet, '量化二-收盘数据')
             sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
             sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_1_)
+            
+            for i in range(0, last_row):
+                sheet.cell(row = i+2, column = 3, value = self.all_jz_2_1_['hc_list'][i])              
         else:
             logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")
             
@@ -1106,6 +1120,9 @@ class ExcelBase:
             last_row = get_last_row(sheet, '量化二-结算数据')
             sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
             sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_2_)     
+            
+            for i in range(0, last_row):
+                sheet.cell(row = i+2, column = 3, value = self.all_jz_2_2_['hc_list'][i])             
         else:
             logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")                            
         
@@ -1344,6 +1361,7 @@ class ExcelBase:
                 
         self.all_jz_1_1_['date'].append(self.date)
         self.all_jz_1_1_['unit_net_value'].append(self.new_jz_1_1_)       
+        self.all_jz_1_1_['hc_list'] = calc_max_drawdown(self.all_jz_1_1_['unit_net_value']) 
         
         self.draw_save_pic(self.all_jz_1_1_, sheet, '量化一-收盘数据')         
                 
@@ -1572,7 +1590,8 @@ class ExcelBase:
                                              
                 
         self.all_jz_1_2_['date'].append(self.date)
-        self.all_jz_1_2_['unit_net_value'].append(self.new_jz_1_2_)       
+        self.all_jz_1_2_['unit_net_value'].append(self.new_jz_1_2_)      
+        self.all_jz_1_2_['hc_list'] = calc_max_drawdown(self.all_jz_1_2_['unit_net_value'])  
         self.draw_save_pic(self.all_jz_1_2_, sheet, '量化一-结算数据')   
                
     def gene_third_sheet(self):
@@ -1734,7 +1753,8 @@ class ExcelBase:
             
         self.all_jz_2_1_['date'].append(self.date)
         self.all_jz_2_1_['unit_net_value'].append(self.new_jz_2_1_)
-        self.draw_save_pic(self.all_jz_1_1_, sheet, '量化二-收盘数据') 
+        self.all_jz_2_1_['hc_list'] = calc_max_drawdown(self.all_jz_2_1_['unit_net_value']) 
+        self.draw_save_pic(self.all_jz_2_1_, sheet, '量化二-收盘数据') 
                 
     def gene_fourth_sheet(self):
         self.sheet_4_row_dict_ = {
@@ -1898,6 +1918,7 @@ class ExcelBase:
 
         self.all_jz_2_2_['date'].append(self.date)
         self.all_jz_2_2_['unit_net_value'].append(self.new_jz_2_2_)
+        self.all_jz_2_2_['hc_list'] = calc_max_drawdown(self.all_jz_2_2_['unit_net_value']) 
         self.draw_save_pic(self.all_jz_2_2_, sheet, '量化二-结算数据') 
     
 if __name__ == "__main__":
