@@ -7,6 +7,7 @@ from openpyxl.styles import Alignment, Font, PatternFill, Border, Side, colors
 from openpyxl.styles import numbers
 from openpyxl.chart import BarChart, Reference, Series
 from openpyxl.drawing.image import Image
+from matplotlib.ticker import FixedLocator, FixedFormatter
 import xlrd
 import sys
 import json
@@ -17,12 +18,28 @@ import math
 import matplotlib.pyplot as plt
 import matplotlib
 import re
+import numpy as np
 
 logging.basicConfig(level = logging.INFO,  format='%(asctime)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s', 
                     filename='运行日志.log',
                     filemode='w')
 plt.rcParams['font.family'] = 'sans-serif' 
 plt.rcParams['font.sans-serif'] = ['SimHei'] 
+plt.rcParams['axes.unicode_minus'] = False
+
+g_test_pic = False
+
+def get_test_data():
+    np.random.seed(0)
+    date_rng = pd.date_range(start='2025-03-15', end='2025-04-01', freq='D')
+    strategy_net_value = np.cumprod(1 + 0.001 * np.random.randn(len(date_rng)))  # 模拟策略净值
+    # strategy_net_value[0] = 1.2
+    resut ={
+        'date': date_rng.strftime('%Y-%m-%d').tolist(),
+        'unit_net_value': strategy_net_value.tolist()
+    }
+    return resut, strategy_net_value[len(strategy_net_value)-1]
+    # drawdown = -0.01 * np.random.randn(len(date_rng))  # 模拟回撤    
 
 def get_file_name(file_path='./'):
     # 获取当前日期和时间
@@ -88,7 +105,95 @@ def set_value(sheet, row, col, key, value, file_name, is_number = False, border 
     else:
         logging.warning(f"字段 {key} 不存在于文件{file_name}中。")
         
+def get_last_row(sheet, sheet_name):
+    try:
+        valid_row = -2
+        for i in range(sheet.max_row):
+            if sheet.cell(row=i+1, column=1).value is not None:
+                valid_row = i
+        if valid_row == -2:
+            logging.critical(f"文件 {sheet_name} 中未找到有效行，请检查。")
+            sys.exit(1)
+    except Exception as e:
+        logging.error(f"读取sheet {sheet_name} 最后一行净值 时发生错误: {e}")  
+        sys.exit(1)    
+    return valid_row + 1                
+    
+def get_last_jz(sheet, sheet_name):
+    try:
+        valid_row = get_last_row(sheet, sheet_name)
+            
+        last_jz = float(sheet.cell(row=valid_row, column=2).value)
+    except Exception as e:
+        logging.error(f"读取sheet {sheet_name} 最后一行净值 时发生错误: {e}")  
+        sys.exit(1)    
+    return last_jz
 
+def get_all_jz_info(sheet, sheet_name):
+    try:
+        jz_dict = {
+            "date":[],
+            "unit_net_value":[]
+        }
+        valid_row = get_last_row(sheet, sheet_name)
+        
+        for i in range(2, valid_row+1):
+            date = str(sheet.cell(row=i, column=1).value)
+            unit_net_value = float(sheet.cell(row=i, column=2).value)
+            jz_dict["date"].append(date)
+            jz_dict["unit_net_value"].append(unit_net_value)
+            
+    except Exception as e:
+        logging.error(f"读取sheet {sheet_name} 最后一行净值 时发生错误: {e}")  
+        sys.exit(1)    
+    return jz_dict                
+    
+def calc_hc_rate(unit_net_value):
+    '''
+    计算回撤数据
+    '''
+    if len(unit_net_value) < 2:
+        return [0]
+    else:
+        result = []
+        for i in range(1, len(unit_net_value)):
+            result.append((unit_net_value[i] - unit_net_value[i-1]) / unit_net_value[i-1])
+        return result
+
+def calc_max_drawdown(unit_net_value):
+    '''
+    计算最大回撤
+    '''
+    if len(unit_net_value) < 2:
+        return [0]
+    else:
+        result = []
+        max_value = unit_net_value[0]
+        for i in range(0, len(unit_net_value)):
+            if unit_net_value[i] > max_value:
+                max_value = unit_net_value[i]
+            
+            tmp_value = min(0,(unit_net_value[i] - max_value) / max_value)
+            result.append(tmp_value)
+        return result
+
+def get_resize_index(date_list, target_count = 6):
+    '''
+    计算缩放索引
+    '''
+    index_list = []
+
+    if len(date_list) < target_count:   
+        for i in range(len(date_list)):
+            index_list.append(i)        
+        return index_list, date_list
+    else:
+        step = int(len(date_list) / target_count)
+        result = []
+        for i in range(0, len(date_list), step):
+            result.append(date_list[i])
+            index_list.append(i)
+        return index_list, result
 class ExcelDataRead():
     def __init__(self):
         pass
@@ -598,49 +703,7 @@ class ExcelDataRead():
             sys.exit(1)
         return None 
     
-def get_last_row(sheet, sheet_name):
-    try:
-        valid_row = -2
-        for i in range(sheet.max_row):
-            if sheet.cell(row=i+1, column=1).value is not None:
-                valid_row = i
-        if valid_row == -2:
-            logging.critical(f"文件 {sheet_name} 中未找到有效行，请检查。")
-            sys.exit(1)
-    except Exception as e:
-        logging.error(f"读取sheet {sheet_name} 最后一行净值 时发生错误: {e}")  
-        sys.exit(1)    
-    return valid_row + 1                
-    
-def get_last_jz(sheet, sheet_name):
-    try:
-        valid_row = get_last_row(sheet, sheet_name)
-            
-        last_jz = float(sheet.cell(row=valid_row, column=2).value)
-    except Exception as e:
-        logging.error(f"读取sheet {sheet_name} 最后一行净值 时发生错误: {e}")  
-        sys.exit(1)    
-    return last_jz
-
-def get_all_jz_info(sheet, sheet_name):
-    try:
-        jz_dict = {
-            "date":[],
-            "unit_net_value":[]
-        }
-        valid_row = get_last_row(sheet, sheet_name)
-        
-        for i in range(2, valid_row+1):
-            date = str(sheet.cell(row=i, column=1).value)
-            unit_net_value = float(sheet.cell(row=i, column=2).value)
-            jz_dict["date"].append(date)
-            jz_dict["unit_net_value"].append(unit_net_value)
-            
-    except Exception as e:
-        logging.error(f"读取sheet {sheet_name} 最后一行净值 时发生错误: {e}")  
-        sys.exit(1)    
-    return jz_dict                
-        
+     
 class ExcelBase:
     def __init__(self):
         try:
@@ -772,6 +835,8 @@ class ExcelBase:
             sheet = self.jz_workbook_['量化一-收盘数据']
             self.last_jz1_1_ = get_last_jz(sheet, '量化一-收盘数据')
             self.all_jz_1_1_ = get_all_jz_info(sheet, '量化一-收盘数据')
+            if g_test_pic:
+                self.all_jz_1_1_, self.last_jz1_1_ = get_test_data()
             # print('self.all_jz_1_1_:', self.all_jz_1_1_)
             # print('self.last_jz1_1_:', self.last_jz1_1_)
             
@@ -785,6 +850,9 @@ class ExcelBase:
             row_dict = {}
             self.last_jz1_2_ = get_last_jz(sheet, '量化一-结算数据')
             self.all_jz_1_2_ = get_all_jz_info(sheet, '量化一-结算数据')
+            if g_test_pic:
+                self.all_jz_1_2_, self.last_jz1_2_ = get_test_data()
+                            
             # print('self.all_jz_1_2_:', self.all_jz_1_2_)
         else:
             logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
@@ -796,6 +864,8 @@ class ExcelBase:
             row_dict = {}
             self.jz2_1_ = get_last_jz(sheet, '量化二-收盘数据')
             self.all_jz_2_1_ = get_all_jz_info(sheet, '量化二-收盘数据')
+            if g_test_pic:
+                self.all_jz_2_1_, self.jz2_1_ = get_test_data()            
             # print('self.all_jz_1_2_:', self.all_jz_2_1_)
         else:
             logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")
@@ -806,6 +876,10 @@ class ExcelBase:
             row_dict = {}
             self.jz2_2_ = get_last_jz(sheet, '量化二-结算数据')
             self.all_jz_2_2_ = get_all_jz_info(sheet, '量化二-结算数据')
+            
+            if g_test_pic:
+                self.all_jz_2_2_, self.jz2_2_ = get_test_data()  
+                            
             # print('self.all_jz_1_2_:', self.all_jz_2_2_)
         else:
             logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")
@@ -817,37 +891,173 @@ class ExcelBase:
             if ':' in tmp_date:
                 dt = datetime.strptime(tmp_date, '%Y-%m-%d %H:%M:%S')
                 # 格式化为 '04-03' 的形式
-                result = dt.strftime('%m-%d') 
+                result = dt.strftime('%Y-%m-%d') 
                 new_date.append(result)        
             elif '-' in tmp_date:
                 dt = datetime.strptime(tmp_date, '%Y-%m-%d')
                 # 格式化为 '04-03' 的形式
-                result = dt.strftime('%m-%d') 
+                result = dt.strftime('%Y-%m-%d') 
                 new_date.append(result)                 
             elif '/' in tmp_date:
                 dt = datetime.strptime(tmp_date, '%Y/%m/%d')
                 # 格式化为 '04-03' 的形式
-                result = dt.strftime('%m-%d') 
+                result = dt.strftime('%Y-%m-%d') 
                 new_date.append(result)                 
             else:
                 new_date.append(tmp_date)
                 
         return new_date
+       
     def draw_save_pic(self, data, sheet, pic_name):
+        try:
+            # 绘制折线图
+            new_date = self.reset_date(data['date'])
+            net_value_list = data['unit_net_value']
+            hc_list = calc_max_drawdown(net_value_list) # 计算最大回撤
+            
+            if g_test_pic:
+                test_len = len(new_date) - 1
+                new_date = new_date[0:test_len]
+                net_value_list = net_value_list[0:test_len]
+                hc_list = hc_list[0:test_len]
+                
+            max_hc = max(hc_list)
+            min_hc = min(hc_list)
+            
+            max_net_value = max(net_value_list)
+            min_net_value = min(net_value_list)
+            
+            delta = max_net_value - min_net_value
+                        
+            # print(new_date)
+            plt.figure(figsize=(10, 6)) 
+            
+                    
+            df = pd.DataFrame({
+                'date': new_date,
+                'net_value': net_value_list,
+                'drawdown': hc_list
+            })
+            
+            index_list, date_list = get_resize_index(new_date)
+
+            # 绘图设置
+            fig, ax1 = plt.subplots(figsize=(10, 6))
+
+            # 绘制策略净值曲线
+            color = 'tab:blue'
+            ax1.set_xlabel('日期')
+            ax1.set_ylabel('净值', color=color)
+            ax1.plot(df['date'], df['net_value'], label='策略净值', color=color)
+            ax1.tick_params(axis='y', labelcolor=color)
+            ax1.set_ylim(ymin=min_net_value-delta*0.1, ymax=max_net_value+delta*0.1)
+                        
+            # 创建第二个y轴用于绘制回撤
+            ax2 = ax1.twinx()
+            color = 'tab:red'
+            ax2.set_ylabel('回撤', color=color)
+            
+            # alpha = 0.1, 
+            
+            if len(hc_list) < 50:
+                ax2.bar(df['date'], df['drawdown'], width=0.1, color='red', alpha = 0.5, edgecolor='red', label='回撤')
+                ax2.set_ylim(ymin=min_hc*2, ymax=0)
+                ax2.tick_params(axis='y', labelcolor=color)
+            else:
+                ax2.fill_between(df['date'], 0.2, df['drawdown'], label='回撤', alpha = 0.5, edgecolor='red', color=color)
+                ax2.tick_params(axis='y', labelcolor=color)
+                ax2.set_ylim(ymin=min_hc*2, ymax=0)
+                
+            # 设置刻度位置
+            ax1.xaxis.set_major_locator(FixedLocator(index_list))
+            # 设置刻度标签
+            ax1.xaxis.set_major_formatter(FixedFormatter(date_list))     
+            
+            # ax1.set_xticklabels(ax1.get_xticklabels(), rotation=90)      
+            
+            ax2.xaxis.set_major_locator(FixedLocator(index_list))
+            # 设置刻度标签
+            ax2.xaxis.set_major_formatter(FixedFormatter(date_list))      
+            
+            # ax2.set_xticklabels(ax2.get_xticklabels(), rotation=90)               
+
+            # 设置x轴日期格式
+            # if len(hc_list) < 20:
+            #     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+
+            # 添加标题和图例
+            plt.title('策略净值与回撤')
+            ax1.legend(loc='upper left')
+            ax2.legend(loc='upper left', bbox_to_anchor=(0, 0.93))
+
+            # 调整布局
+            plt.tight_layout()
+            # plt.show()
+            file_name = self.file_path_ + '/' + pic_name + '.png'
+            
+            # plt.xticks(rotation = 90)
+            # plt.xticks(index_list, date_list)
+            # 保存图片
+            plt.savefig(file_name)  
+            
+            plt.close() 
+            
+            if self.draw_net_value_curve_ > 0:            
+                img = Image(file_name)
+                img.anchor = 'E2'
+                sheet.add_image(img)
+                
+        except Exception as e:
+            logging.error(f"绘制 {pic_name} 图时发生错误: {e}")  
+            sys.exit(1)   
+                    
+    def draw_save_pic2(self, data, sheet, pic_name):
         try:
             # 绘制折线图
             new_date = self.reset_date(data['date'])
             # print(new_date)
             plt.figure(figsize=(9, 6)) 
-            plt.plot(new_date, data['unit_net_value'], color='blue', marker='o')
-            plt.title(pic_name + '净值曲线')
+            
+            hc_list = calc_max_drawdown(data['unit_net_value']) # 计算最大回撤
+            
+            # print(pic_name)
+            # print('hc_list:', hc_list)
+            # print(data['unit_net_value'])
+            # print('\n')
+            
+            fig, ax1 = plt.subplots()
+
+            # 绘制折线图
+            ax1.plot(new_date, data['unit_net_value'], marker='o', color='blue')
+            ax1.set_ylabel('净值', color='blue')
+            
+            ax2 = ax1.twinx()
+
+            # 绘制柱状图
+            ax2.bar(new_date, hc_list, width=0.1, color='red',alpha = 0.1, edgecolor='red')
+            ax2.invert_yaxis()
+            ax2.yaxis.tick_right()
+            ax2.set_ylabel('回撤', color='red')            
+
+            plt.title('策略净值与回撤')
             plt.xlabel('日期')
-            plt.ylabel('净值')
+
+            lines, labels = ax1.get_legend_handles_labels()
+            lines2, labels2 = ax2.get_legend_handles_labels()
+            ax2.legend(lines + lines2, labels + labels2, loc='best')
+                
+                
+            # plt.plot(new_date, data['unit_net_value'], color='blue', marker='o')
+            # plt.title(pic_name + '净值曲线')
+            # plt.xlabel('日期')
+            # plt.ylabel('净值')
             # 添加图例
-            # plt.legend()
+            
+            plt.legend()
             
             file_name = self.file_path_ + '/' + pic_name + '.png'
-            plt.xticks(rotation = 90)
+            
+            # plt.xticks(rotation = 90)
             # 保存图片
             plt.savefig(file_name)  
             
