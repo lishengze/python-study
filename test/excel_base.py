@@ -217,10 +217,10 @@ class ExcelDataRead():
             elif data_type == '汇总证券-合计-股票':
                 return self.read_hzzz_hj_gp(self=self, xlrd_sheet=xlrd_sheet)                                          
             else:
-                return None
+                return True
         except Exception as e:
             logging.error(f"读取文件 {data_type} 时发生错误: {e}")  
-        return None   
+        return False   
     
     def read_dyzc_data(self, xlrd_sheet):
         try:
@@ -795,14 +795,33 @@ class ExcelBase:
                     '汇总证券-合计':None,
                     '汇总证券-合计-股票':None,
                     '交易所回购':None,
-                    '期货保证金分析':None
+                    '期货保证金分析':None,
+                    '其余信息': {
+                        '收盘数据': {
+                            
+                        },
+                        "结算数据": {
+                            
+                        },
+                        'isOpen':True                        
+                    }
+
                 },
                 '量化二':{
                     '成交回报':None,
                     '单元资产':None,
                     '汇总证券-当日持仓':None,
                     '汇总证券-合计':None,
-                    '期货保证金分析':None
+                    '期货保证金分析':None,
+                    '其余信息': {
+                        '收盘数据': {
+                            
+                        },
+                        "结算数据": {
+                            
+                        },
+                        'isOpen':True                        
+                    }
                 }
             }
             
@@ -819,17 +838,23 @@ class ExcelBase:
     def init_excel_file(self, execl_file_path, file_dict):
         for key, value in file_dict.items():
             for key1, value1 in value.items():
-                complete_file_path = execl_file_path + '/' + key + '/' + key1 + '.xls'        
-                try:    
-                    tmp_workbook = xlrd.open_workbook(complete_file_path)
-                    tmp_sheet = tmp_workbook.sheet_by_index(0)
-                    logging.info(f"成功读取文件 {complete_file_path}")
-                    file_dict[key][key1] = self.data_read_obj_.read_excel_sheet(self=self.data_read_obj_, xlrd_sheet=tmp_sheet, data_type=key1)
-                except FileNotFoundError:   
-                    logging.error(f"文件 {complete_file_path} 未找到。")
-                except Exception as e:
-                    logging.error(f"读取文件 {complete_file_path} 时发生错误: {e}")                
-        
+                if key1 != '其余信息':
+                    complete_file_path = execl_file_path + '/' + key + '/' + key1 + '.xls'        
+                    try:    
+                        tmp_workbook = xlrd.open_workbook(complete_file_path)
+                        tmp_sheet = tmp_workbook.sheet_by_index(0)
+                        logging.info(f"成功读取文件 {complete_file_path}")
+                        bresult = file_dict[key][key1] = self.data_read_obj_.read_excel_sheet(self=self.data_read_obj_, xlrd_sheet=tmp_sheet, data_type=key1)
+                        if bresult == False:
+                            file_dict[key]['isOpen'] = False
+                            # print(f"{key} {key1} 数据读取失败。isOpen: {file_dict[key]['isOpen']}")
+                    except FileNotFoundError:   
+                        file_dict[key]['其余信息']['isOpen'] = False
+                        logging.warning(f"文件 {complete_file_path} 未找到。")
+                    except Exception as e:
+                        file_dict[key]['其余信息']['isOpen'] = False
+                        logging.warning(f"读取文件 {complete_file_path} 时发生错误: {e}")                
+                
         return file_dict            
         
     def read_jz_info(self):
@@ -1076,64 +1101,69 @@ class ExcelBase:
         except Exception as e:
             logging.error(f"绘制 {pic_name} 图时发生错误: {e}")  
             sys.exit(1)   
-                         
-                                                 
+                                                                          
     def set_new_jz_info(self):
         dt = datetime.strptime(self.date, '%Y-%m-%d')
         tmp_date = dt.strftime('%Y/%m/%d')
                             
-        if '量化一-收盘数据' in self.jz_workbook_.sheetnames:
-            sheet = self.jz_workbook_['量化一-收盘数据']
-            last_row = get_last_row(sheet, '量化一-收盘数据')
-            sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-            sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_1_)
+        if self.src_excel_file_dict_['量化一']['其余信息']['isOpen'] is True:
+            if '量化一-收盘数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化一-收盘数据']
+                last_row = get_last_row(sheet, '量化一-收盘数据')
+                sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
+                sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_1_)
+                
+                for i in range(0, last_row):
+                    sheet.cell(row = i+2, column = 3, value = self.all_jz_1_1_['hc_list'][i])
+            else:
+                logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
+                
+            if '量化一-结算数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化一-结算数据']
+                last_row = get_last_row(sheet, '量化一-结算数据')
+                sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
+                sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_2_)
+                
+                for i in range(0, last_row):
+                    sheet.cell(row = i+2, column = 3, value = self.all_jz_1_2_['hc_list'][int(i)])            
+            else:
+                logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
             
-            for i in range(0, last_row):
-                sheet.cell(row = i+2, column = 3, value = self.all_jz_1_1_['hc_list'][i])
-        else:
-            logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
-            
-        if '量化一-结算数据' in self.jz_workbook_.sheetnames:
-            sheet = self.jz_workbook_['量化一-结算数据']
-            last_row = get_last_row(sheet, '量化一-结算数据')
-            sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-            sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_2_)
-            
-            for i in range(0, last_row):
-                sheet.cell(row = i+2, column = 3, value = self.all_jz_1_2_['hc_list'][int(i)])            
-        else:
-            logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
-            
-        if '量化二-收盘数据' in self.jz_workbook_.sheetnames:
-            sheet = self.jz_workbook_['量化二-收盘数据']
-            last_row = get_last_row(sheet, '量化二-收盘数据')
-            sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-            sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_1_)
-            
-            for i in range(0, last_row):
-                sheet.cell(row = i+2, column = 3, value = self.all_jz_2_1_['hc_list'][i])              
-        else:
-            logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")
-            
-        if '量化二-结算数据' in self.jz_workbook_.sheetnames:
-            sheet = self.jz_workbook_['量化二-结算数据']
-            last_row = get_last_row(sheet, '量化二-结算数据')
-            sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-            sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_2_)     
-            
-            for i in range(0, last_row):
-                sheet.cell(row = i+2, column = 3, value = self.all_jz_2_2_['hc_list'][i])             
-        else:
-            logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")                            
+        if self.src_excel_file_dict_['量化二']['其余信息']['isOpen'] is True:
+            if '量化二-收盘数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化二-收盘数据']
+                last_row = get_last_row(sheet, '量化二-收盘数据')
+                sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
+                sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_1_)
+                
+                for i in range(0, last_row):
+                    sheet.cell(row = i+2, column = 3, value = self.all_jz_2_1_['hc_list'][i])              
+            else:
+                logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")
+                
+            if '量化二-结算数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化二-结算数据']
+                last_row = get_last_row(sheet, '量化二-结算数据')
+                sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
+                sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_2_)     
+                
+                for i in range(0, last_row):
+                    sheet.cell(row = i+2, column = 3, value = self.all_jz_2_2_['hc_list'][i])             
+            else:
+                logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")                            
         
         self.jz_workbook_.save(self.file_path_ + '/净值.xlsx')
                         
     def Work(self):
-        self.gene_first_sheet()
-        self.gene_second_sheet()
-        self.gene_third_sheet()
-        self.gene_fourth_sheet()
-        
+        # print(self.src_excel_file_dict_)
+        if self.src_excel_file_dict_['量化一']['其余信息']['isOpen'] is True:
+            self.gene_first_sheet()
+            self.gene_second_sheet()
+           
+        if self.src_excel_file_dict_['量化二']['其余信息']['isOpen'] is True:
+            self.gene_third_sheet()
+            self.gene_fourth_sheet()     
+                    
         sheet_name_to_delete = 'Sheet'
         if sheet_name_to_delete in self.target_workbook_.sheetnames:
             sheet = self.target_workbook_[sheet_name_to_delete]
@@ -1143,7 +1173,8 @@ class ExcelBase:
             logging.warning(f"{sheet_name_to_delete} 不存在。")
             
         file_name = self.file_path_ + '/量化业务日报-' + self.date + '.xlsx'    
-        logging.info(f"目标文件名: {file_name}")            
+        logging.info(f"目标文件名: {file_name}")   
+                 
         self.target_workbook_.save(file_name)
         
         self.set_new_jz_info()
