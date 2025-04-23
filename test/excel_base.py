@@ -837,23 +837,27 @@ class ExcelBase:
 
     def init_excel_file(self, execl_file_path, file_dict):
         for key, value in file_dict.items():
-            for key1, value1 in value.items():
-                if key1 != '其余信息':
-                    complete_file_path = execl_file_path + '/' + key + '/' + key1 + '.xls'        
-                    try:    
-                        tmp_workbook = xlrd.open_workbook(complete_file_path)
-                        tmp_sheet = tmp_workbook.sheet_by_index(0)
-                        logging.info(f"成功读取文件 {complete_file_path}")
-                        bresult = file_dict[key][key1] = self.data_read_obj_.read_excel_sheet(self=self.data_read_obj_, xlrd_sheet=tmp_sheet, data_type=key1)
-                        if bresult == False:
-                            file_dict[key]['isOpen'] = False
-                            # print(f"{key} {key1} 数据读取失败。isOpen: {file_dict[key]['isOpen']}")
-                    except FileNotFoundError:   
-                        file_dict[key]['其余信息']['isOpen'] = False
-                        logging.warning(f"文件 {complete_file_path} 未找到。")
-                    except Exception as e:
-                        file_dict[key]['其余信息']['isOpen'] = False
-                        logging.warning(f"读取文件 {complete_file_path} 时发生错误: {e}")                
+            tmp_dir = execl_file_path + '/' + key
+            if os.path.exists(tmp_dir) == True:                                 
+                for file_name, value1 in value.items():                    
+                        if file_name != '其余信息':
+                            complete_file_path = execl_file_path + '/' + key + '/' + file_name + '.xls'  
+                            if os.path.exists(complete_file_path) == True:
+                                try:    
+                                    tmp_workbook = xlrd.open_workbook(complete_file_path)
+                                    tmp_sheet = tmp_workbook.sheet_by_index(0)
+                                    logging.info(f"成功读取文件 {complete_file_path}")
+                                    file_dict[key][file_name] = self.data_read_obj_.read_excel_sheet(self=self.data_read_obj_, xlrd_sheet=tmp_sheet, data_type=file_name)
+
+                                except FileNotFoundError:   
+                                    logging.warning(f"文件 {complete_file_path} 未找到。")
+                                except Exception as e:
+                                    logging.warning(f"读取文件 {complete_file_path} 时发生错误: {e}")       
+                            else:
+                                logging.warning(f"文件 {complete_file_path} 未找到。")
+            else:
+                file_dict[key]['其余信息']['isOpen'] = False
+                logging.warning(f"目录 {tmp_dir} 未找到。")
                 
         return file_dict            
         
@@ -1107,50 +1111,50 @@ class ExcelBase:
         tmp_date = dt.strftime('%Y/%m/%d')
                             
         if self.src_excel_file_dict_['量化一']['其余信息']['isOpen'] is True:
-            if '量化一-收盘数据' in self.jz_workbook_.sheetnames:
-                sheet = self.jz_workbook_['量化一-收盘数据']
-                last_row = get_last_row(sheet, '量化一-收盘数据')
+            if '量化一-结算数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化一-结算数据']
+                last_row = get_last_row(sheet, '量化一-结算数据')
                 sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                 sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_1_)
                 
                 for i in range(0, last_row):
                     sheet.cell(row = i+2, column = 3, value = self.all_jz_1_1_['hc_list'][i])
             else:
-                logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
+                logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
                 
-            if '量化一-结算数据' in self.jz_workbook_.sheetnames:
-                sheet = self.jz_workbook_['量化一-结算数据']
-                last_row = get_last_row(sheet, '量化一-结算数据')
+            if '量化一-收盘数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化一-收盘数据']
+                last_row = get_last_row(sheet, '量化一-收盘数据')
                 sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                 sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_2_)
                 
                 for i in range(0, last_row):
                     sheet.cell(row = i+2, column = 3, value = self.all_jz_1_2_['hc_list'][int(i)])            
             else:
-                logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
+                logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
             
         if self.src_excel_file_dict_['量化二']['其余信息']['isOpen'] is True:
-            if '量化二-收盘数据' in self.jz_workbook_.sheetnames:
-                sheet = self.jz_workbook_['量化二-收盘数据']
-                last_row = get_last_row(sheet, '量化二-收盘数据')
+            if '量化二-结算数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化二-结算数据']
+                last_row = get_last_row(sheet, '量化二-结算数据')
                 sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                 sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_1_)
                 
                 for i in range(0, last_row):
                     sheet.cell(row = i+2, column = 3, value = self.all_jz_2_1_['hc_list'][i])              
             else:
-                logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")
+                logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")
                 
-            if '量化二-结算数据' in self.jz_workbook_.sheetnames:
-                sheet = self.jz_workbook_['量化二-结算数据']
-                last_row = get_last_row(sheet, '量化二-结算数据')
+            if '量化二-收盘数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化二-收盘数据']
+                last_row = get_last_row(sheet, '量化二-收盘数据')
                 sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                 sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_2_)     
                 
                 for i in range(0, last_row):
                     sheet.cell(row = i+2, column = 3, value = self.all_jz_2_2_['hc_list'][i])             
             else:
-                logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")                            
+                logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")                            
         
         self.jz_workbook_.save(self.file_path_ + '/净值.xlsx')
                         
@@ -1180,7 +1184,7 @@ class ExcelBase:
         self.set_new_jz_info()
             
     def gene_first_sheet(self):
-        sheet = self.target_workbook_.create_sheet(title='量化一-收盘数据')
+        sheet = self.target_workbook_.create_sheet(title='量化一-结算数据')
         self.sheet_1_row_dict_ = {
             '统计日期':1,
             '一、账户资产及收益情况':2,
@@ -1243,20 +1247,15 @@ class ExcelBase:
                     self.date = dt.strftime('%Y-%m-%d')
                                         
                     set_value(sheet, 1,2,'统计日期', value, '量化一-单元资产',False, self.border_)
-                    
-                    
-                    
+                                                            
                     set_value(sheet, self.sheet_1_row_dict_['账户名称'], 2,'账户名称', value, '量化一-单元资产',False, self.border_)
                     tmpzhbh = value['账户编号']
                     sheet.cell(row = self.sheet_1_row_dict_['账户编号'], column = 2, value=math.floor(float(tmpzhbh))).border = self.border_
                     set_value(sheet, self.sheet_1_row_dict_['资产单元名称'],1+cell_index,'资产单元名称', value, '量化一-单元资产',False, self.border_)
                     set_value(sheet, self.sheet_1_row_dict_['单元资产净值'],1+cell_index,'单元资产净值(净价)', value, '量化一-单元资产', True,self.border_)
                     cell_index += 1
-                    cell_col_index[key] = cell_index    
-                    
-
-                    
-                    
+                    cell_col_index[key] = cell_index                        
+                                        
                     zhzcjz += float(value['单元资产净值(净价)'])                
                 else :
                     set_value(sheet, self.sheet_1_row_dict_['账户资产净值'],2,'单元资产净值(净价)', value, '量化一-单元资产',False, self.border_)
@@ -1315,10 +1314,10 @@ class ExcelBase:
         sheet.cell(row = self.sheet_1_row_dict_['实收资本'], column = 2, value = sszb).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
         sheet.cell(row = self.sheet_1_row_dict_['资产净值'], column = 2, value = zhzcjz).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
         sheet.cell(row = self.sheet_1_row_dict_['总份额'], column = 2, value = self.total_amount1_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-        sheet.cell(row = self.sheet_1_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-        sheet.cell(row = self.sheet_1_row_dict_['昨日单位净值'], column = 2, value = round(self.last_jz1_1_, 4))
-        sheet.cell(row = self.sheet_1_row_dict_['单位净值'], column = 2, value = round(dwjz, 4))
-        sheet.cell(row = self.sheet_1_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.last_jz1_1_)/self.last_jz1_1_*100, 4)) + '%')  
+        sheet.cell(row = self.sheet_1_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 5)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+        sheet.cell(row = self.sheet_1_row_dict_['昨日单位净值'], column = 2, value = round(self.last_jz1_1_, 5))
+        sheet.cell(row = self.sheet_1_row_dict_['单位净值'], column = 2, value = round(dwjz, 5))
+        sheet.cell(row = self.sheet_1_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.last_jz1_1_)/self.last_jz1_1_*100, 5)) + '%')  
         
         sheet.cell(row = self.sheet_1_row_dict_['实收资本'], column = 2).border = self.border_
         sheet.cell(row = self.sheet_1_row_dict_['资产净值'], column = 2).border = self.border_
@@ -1327,7 +1326,7 @@ class ExcelBase:
         sheet.cell(row = self.sheet_1_row_dict_['昨日单位净值'], column = 2).border = self.border_
         sheet.cell(row = self.sheet_1_row_dict_['单位净值'], column = 2).border = self.border_
         sheet.cell(row = self.sheet_1_row_dict_['日净值增长率'], column = 2).border = self.border_
-        self.new_jz_1_1_ = round(dwjz, 4)
+        self.new_jz_1_1_ = round(dwjz, 5)
                 
         if self.src_excel_file_dict_['量化一']['期货保证金分析'] is not None:
             for key, value in self.src_excel_file_dict_['量化一']['期货保证金分析'].items():
@@ -1397,7 +1396,7 @@ class ExcelBase:
         self.draw_save_pic(self.all_jz_1_1_, sheet, '量化一-收盘数据')         
                 
     def gene_second_sheet(self):
-        sheet = self.target_workbook_.create_sheet(title='量化一-结算数据')
+        sheet = self.target_workbook_.create_sheet(title='量化一-收盘数据')
         self.sheet_2_row_dict_ = {
             '统计日期':1,
             '一、账户资产及收益情况':2,
@@ -1558,12 +1557,12 @@ class ExcelBase:
         sheet.cell(row = self.sheet_2_row_dict_['实收资本'], column = 2, value = sszb).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
         sheet.cell(row = self.sheet_2_row_dict_['资产净值'], column = 2, value = zhzcjz).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
         sheet.cell(row = self.sheet_2_row_dict_['总份额'], column = 2, value = self.total_amount1_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-        sheet.cell(row = self.sheet_2_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-        sheet.cell(row = self.sheet_2_row_dict_['昨日单位净值'], column = 2, value = round(self.last_jz1_2_, 4))
-        sheet.cell(row = self.sheet_2_row_dict_['单位净值'], column = 2, value = round(dwjz, 4))
-        sheet.cell(row = self.sheet_2_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.last_jz1_2_)/self.last_jz1_2_*100, 4)) + '%')          
+        sheet.cell(row = self.sheet_2_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 5)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+        sheet.cell(row = self.sheet_2_row_dict_['昨日单位净值'], column = 2, value = round(self.last_jz1_2_, 5))
+        sheet.cell(row = self.sheet_2_row_dict_['单位净值'], column = 2, value = round(dwjz, 5))
+        sheet.cell(row = self.sheet_2_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.last_jz1_2_)/self.last_jz1_2_*100, 5)) + '%')          
         
-        self.new_jz_1_2_ = round(dwjz, 4)
+        self.new_jz_1_2_ = round(dwjz, 5)
         
         sheet.cell(row = self.sheet_2_row_dict_['实收资本'], column = 2).border = self.border_
         sheet.cell(row = self.sheet_2_row_dict_['资产净值'], column = 2).border = self.border_
@@ -1654,7 +1653,7 @@ class ExcelBase:
             '注释':25
         }
                 
-        sheet = self.target_workbook_.create_sheet(title='量化二-收盘数据')
+        sheet = self.target_workbook_.create_sheet(title='量化二-结算数据')
         
         for key, value in self.sheet_3_row_dict_.items():
             if value is not None:
@@ -1730,12 +1729,12 @@ class ExcelBase:
         sheet.cell(row = self.sheet_3_row_dict_['实收资本'], column = 2, value = sszb).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
         sheet.cell(row = self.sheet_3_row_dict_['资产净值'], column = 2, value = zhzcjz).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
         sheet.cell(row = self.sheet_3_row_dict_['总份额'], column = 2, value = self.total_amount2_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-        sheet.cell(row = self.sheet_3_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-        sheet.cell(row = self.sheet_3_row_dict_['昨日单位净值'], column = 2, value = round(self.jz2_1_, 4))
-        sheet.cell(row = self.sheet_3_row_dict_['单位净值'], column = 2, value = round(dwjz, 4))
-        sheet.cell(row = self.sheet_3_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.jz2_1_)/self.jz2_1_*100, 4)) + '%')  
+        sheet.cell(row = self.sheet_3_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 5)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+        sheet.cell(row = self.sheet_3_row_dict_['昨日单位净值'], column = 2, value = round(self.jz2_1_, 5))
+        sheet.cell(row = self.sheet_3_row_dict_['单位净值'], column = 2, value = round(dwjz, 5))
+        sheet.cell(row = self.sheet_3_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.jz2_1_)/self.jz2_1_*100, 5)) + '%')  
         
-        self.new_jz_2_1_ = round(dwjz, 4)              
+        self.new_jz_2_1_ = round(dwjz, 5)              
         
         sheet.cell(row = self.sheet_3_row_dict_['实收资本'], column = 2).border = self.border_
         sheet.cell(row = self.sheet_3_row_dict_['资产净值'], column = 2).border = self.border_
@@ -1816,7 +1815,7 @@ class ExcelBase:
             '注释':25
         }
                 
-        sheet = self.target_workbook_.create_sheet(title='量化二-结算数据')
+        sheet = self.target_workbook_.create_sheet(title='量化二-收盘数据')
         
         for key, value in self.sheet_4_row_dict_.items():
             if value is not None:
@@ -1894,10 +1893,10 @@ class ExcelBase:
         sheet.cell(row = self.sheet_4_row_dict_['实收资本'], column = 2, value = sszb).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
         sheet.cell(row = self.sheet_4_row_dict_['资产净值'], column = 2, value = zhzcjz).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
         sheet.cell(row = self.sheet_4_row_dict_['总份额'], column = 2, value = self.total_amount2_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-        sheet.cell(row = self.sheet_4_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-        sheet.cell(row = self.sheet_4_row_dict_['昨日单位净值'], column = 2, value = round(self.jz2_2_, 4))
-        sheet.cell(row = self.sheet_4_row_dict_['单位净值'], column = 2, value = round(dwjz, 4))
-        sheet.cell(row = self.sheet_4_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.jz2_2_)/self.jz2_2_*100, 4)) + '%')  
+        sheet.cell(row = self.sheet_4_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 5)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+        sheet.cell(row = self.sheet_4_row_dict_['昨日单位净值'], column = 2, value = round(self.jz2_2_, 5))
+        sheet.cell(row = self.sheet_4_row_dict_['单位净值'], column = 2, value = round(dwjz, 5))
+        sheet.cell(row = self.sheet_4_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.jz2_2_)/self.jz2_2_*100, 5)) + '%')  
         
         sheet.cell(row = self.sheet_4_row_dict_['实收资本'], column = 2).border = self.border_
         sheet.cell(row = self.sheet_4_row_dict_['资产净值'], column = 2).border = self.border_
@@ -1907,7 +1906,7 @@ class ExcelBase:
         sheet.cell(row = self.sheet_4_row_dict_['单位净值'], column = 2).border = self.border_
         sheet.cell(row = self.sheet_4_row_dict_['日净值增长率'], column = 2).border = self.border_               
         
-        self.new_jz_2_2_ = round(dwjz, 4)           
+        self.new_jz_2_2_ = round(dwjz, 5)           
             
         if self.src_excel_file_dict_['量化二']['成交回报'] is not None:
             set_value(sheet, self.sheet_4_row_dict_['交易方向及数量'],2,'future_info_2', self.src_excel_file_dict_['量化二']['成交回报'], '量化二-成交回报',False,self.border_)

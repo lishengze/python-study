@@ -1,25 +1,23 @@
-2025-04-22 15:28:48,154 - INFO - excel_base.py - 846 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/成交回报.xls
-2025-04-22 15:28:48,156 - INFO - excel_base.py - 846 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/单元资产.xls
-2025-04-22 15:28:48,156 - INFO - excel_base.py - 229 - 读取文件 单元资产 开始 4 118 
-2025-04-22 15:28:48,160 - INFO - excel_base.py - 846 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/汇总证券-当日持仓.xls
-2025-04-22 15:28:48,219 - INFO - excel_base.py - 846 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/汇总证券-合计.xls
-2025-04-22 15:28:48,219 - INFO - excel_base.py - 288 - 读取文件 汇总证券-合计 开始 2136 14 
-2025-04-22 15:28:48,305 - INFO - excel_base.py - 846 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/汇总证券-合计-股票.xls
-2025-04-22 15:28:48,306 - INFO - excel_base.py - 694 - 读取文件 汇总证券-合计-股票 开始 2109 14 
-2025-04-22 15:28:48,330 - INFO - excel_base.py - 846 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/交易所回购.xls
-2025-04-22 15:28:48,330 - INFO - excel_base.py - 318 - 读取文件 交易所回购 开始 34 31 
-2025-04-22 15:28:48,336 - INFO - excel_base.py - 846 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/期货保证金分析.xls
-2025-04-22 15:28:48,336 - INFO - excel_base.py - 336 - 读取文件 单元资产 开始 3 47 
-2025-04-22 15:28:48,337 - ERROR - excel_base.py - 853 - 文件 E:/code/study/lulu_work/python-study/test/4.10/量化二/成交回报.xls 未找到。
-2025-04-22 15:28:48,337 - ERROR - excel_base.py - 853 - 文件 E:/code/study/lulu_work/python-study/test/4.10/量化二/单元资产.xls 未找到。
-2025-04-22 15:28:48,337 - ERROR - excel_base.py - 853 - 文件 E:/code/study/lulu_work/python-study/test/4.10/量化二/汇总证券-当日持仓.xls 未找到。
-2025-04-22 15:28:48,337 - ERROR - excel_base.py - 853 - 文件 E:/code/study/lulu_work/python-study/test/4.10/量化二/汇总证券-合计.xls 未找到。
-2025-04-22 15:28:48,337 - ERROR - excel_base.py - 853 - 文件 E:/code/study/lulu_work/python-study/test/4.10/量化二/期货保证金分析.xls 未找到。
-2025-04-22 15:28:48,555 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-04-22 15:28:48,557 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-04-22 15:28:48,570 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-04-22 15:28:48,947 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-04-22 15:28:48,948 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-04-22 15:28:48,958 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-04-22 15:28:49,187 - INFO - excel_base.py - 1171 - Sheet 已成功删除。
-2025-04-22 15:28:49,188 - INFO - excel_base.py - 1176 - 目标文件名: E:/code/study/lulu_work/python-study/test/4.10/量化业务日报-2025-04-10.xlsx
+2025-04-23 10:33:07,897 - WARNING - excel_base.py - 857 - 文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/成交回报.xls 未找到。
+2025-04-23 10:33:07,903 - INFO - excel_base.py - 849 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/单元资产.xls
+2025-04-23 10:33:07,903 - INFO - excel_base.py - 229 - 读取文件 单元资产 开始 4 118 
+2025-04-23 10:33:07,908 - INFO - excel_base.py - 849 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/汇总证券-当日持仓.xls
+2025-04-23 10:33:07,998 - INFO - excel_base.py - 849 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/汇总证券-合计.xls
+2025-04-23 10:33:07,999 - INFO - excel_base.py - 288 - 读取文件 汇总证券-合计 开始 2136 14 
+2025-04-23 10:33:08,107 - INFO - excel_base.py - 849 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/汇总证券-合计-股票.xls
+2025-04-23 10:33:08,107 - INFO - excel_base.py - 694 - 读取文件 汇总证券-合计-股票 开始 2109 14 
+2025-04-23 10:33:08,135 - INFO - excel_base.py - 849 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/交易所回购.xls
+2025-04-23 10:33:08,135 - INFO - excel_base.py - 318 - 读取文件 交易所回购 开始 34 31 
+2025-04-23 10:33:08,140 - INFO - excel_base.py - 849 - 成功读取文件 E:/code/study/lulu_work/python-study/test/4.10/量化一/期货保证金分析.xls
+2025-04-23 10:33:08,140 - INFO - excel_base.py - 336 - 读取文件 单元资产 开始 3 47 
+2025-04-23 10:33:08,141 - WARNING - excel_base.py - 860 - 目录 E:/code/study/lulu_work/python-study/test/4.10/量化二 未找到。
+2025-04-23 10:33:08,146 - WARNING - excel_base.py - 1351 - 量化一-成交回报文件不存在。
+2025-04-23 10:33:08,405 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-23 10:33:08,407 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-23 10:33:08,422 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-23 10:33:08,727 - WARNING - excel_base.py - 1579 - 量化一-成交回报文件不存在。
+2025-04-23 10:33:08,806 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-23 10:33:08,807 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-23 10:33:08,822 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-23 10:33:09,137 - INFO - excel_base.py - 1175 - Sheet 已成功删除。
+2025-04-23 10:33:09,137 - INFO - excel_base.py - 1180 - 目标文件名: E:/code/study/lulu_work/python-study/test/4.10/量化业务日报-2025-04-10.xlsx
