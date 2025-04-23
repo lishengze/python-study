@@ -8,6 +8,7 @@ from openpyxl.styles import numbers
 from openpyxl.chart import BarChart, Reference, Series
 from openpyxl.drawing.image import Image
 from matplotlib.ticker import FixedLocator, FixedFormatter
+from matplotlib.ticker import PercentFormatter
 import xlrd
 import sys
 import json
@@ -777,6 +778,11 @@ class ExcelBase:
                 self.draw_net_value_curve_ = self.config_['是否绘制净值曲线']
             else:
                 self.draw_net_value_curve_ = 0
+                
+            if '绘制折线图天数' in self.config_:
+                self.draw_line_days_ = int(self.config_['绘制折线图天数'])
+            else:
+                self.draw_line_days_ = 15
                                                     
             self.target_workbook_ = Workbook()        
             
@@ -944,6 +950,9 @@ class ExcelBase:
        
     def draw_save_pic(self, data, sheet, pic_name):
         try:
+            
+            if self.draw_net_value_curve_ == 0:
+                return
             # 绘制折线图
             new_date = self.reset_date(data['date'])
             net_value_list = data['unit_net_value']
@@ -993,7 +1002,7 @@ class ExcelBase:
             
             # alpha = 0.1, 
             
-            if len(hc_list) < 50:
+            if len(hc_list) < self.draw_line_days_:
                 ax2.bar(df['date'], df['drawdown'], width=0.1, color='red', alpha = 0.5, edgecolor='red', label='回撤')
                 ax2.set_ylim(ymin=min_hc*2, ymax=0)
                 ax2.tick_params(axis='y', labelcolor=color)
@@ -1012,6 +1021,8 @@ class ExcelBase:
             ax2.xaxis.set_major_locator(FixedLocator(index_list))
             # 设置刻度标签
             ax2.xaxis.set_major_formatter(FixedFormatter(date_list))      
+            
+            ax2.yaxis.set_major_formatter(PercentFormatter(4))
             
             # ax2.set_xticklabels(ax2.get_xticklabels(), rotation=90)               
 
@@ -1115,10 +1126,10 @@ class ExcelBase:
                 sheet = self.jz_workbook_['量化一-结算数据']
                 last_row = get_last_row(sheet, '量化一-结算数据')
                 sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-                sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_1_)
+                sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_1_1_, 5))
                 
                 for i in range(0, last_row):
-                    sheet.cell(row = i+2, column = 3, value = self.all_jz_1_1_['hc_list'][i])
+                    sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_1_1_['hc_list'][i]*100, 4)) + '%')
             else:
                 logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
                 
@@ -1126,10 +1137,11 @@ class ExcelBase:
                 sheet = self.jz_workbook_['量化一-收盘数据']
                 last_row = get_last_row(sheet, '量化一-收盘数据')
                 sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-                sheet.cell(row = last_row+1, column = 2, value = self.new_jz_1_2_)
+                sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_1_2_, 5))
                 
                 for i in range(0, last_row):
-                    sheet.cell(row = i+2, column = 3, value = self.all_jz_1_2_['hc_list'][int(i)])            
+                    # sheet.cell(row = i+2, column = 3, value = self.all_jz_1_2_['hc_list'][int(i)])            
+                    sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_1_2_['hc_list'][i]*100, 4)) + '%')
             else:
                 logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
             
@@ -1138,10 +1150,11 @@ class ExcelBase:
                 sheet = self.jz_workbook_['量化二-结算数据']
                 last_row = get_last_row(sheet, '量化二-结算数据')
                 sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-                sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_1_)
+                sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_2_1_, 5))
                 
                 for i in range(0, last_row):
-                    sheet.cell(row = i+2, column = 3, value = self.all_jz_2_1_['hc_list'][i])              
+                    # sheet.cell(row = i+2, column = 3, value = self.all_jz_2_1_['hc_list'][i])     
+                    sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_2_1_['hc_list'][i]*100, 4)) + '%')
             else:
                 logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")
                 
@@ -1149,10 +1162,11 @@ class ExcelBase:
                 sheet = self.jz_workbook_['量化二-收盘数据']
                 last_row = get_last_row(sheet, '量化二-收盘数据')
                 sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-                sheet.cell(row = last_row+1, column = 2, value = self.new_jz_2_2_)     
+                sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_2_2_,5))
                 
                 for i in range(0, last_row):
-                    sheet.cell(row = i+2, column = 3, value = self.all_jz_2_2_['hc_list'][i])             
+                    # sheet.cell(row = i+2, column = 3, value = self.all_jz_2_2_['hc_list'][i])      
+                    sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_2_2_['hc_list'][i]*100, 4)) + '%')   
             else:
                 logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")                            
         
@@ -1222,9 +1236,9 @@ class ExcelBase:
         
         for key, value in self.sheet_1_row_dict_.items():
             if value is not None:
-                if key != '统计日期':
-                    sheet.cell(row = value, column = 1, value = key).border = self.border_
+                if key != '统计日期' and key != '注释':
                     sheet.cell(row = value, column = 1, value = key).font = self.font_
+                    sheet.cell(row = value, column = 1, value = key).border = self.border_
                 else:
                     sheet.cell(row = value, column = 1, value = key)
         
@@ -1246,7 +1260,7 @@ class ExcelBase:
                     dt = datetime.strptime(value['统计日期'], '%Y-%m-%d')
                     self.date = dt.strftime('%Y-%m-%d')
                                         
-                    set_value(sheet, 1,2,'统计日期', value, '量化一-单元资产',False, self.border_)
+                    set_value(sheet, 1,2,'统计日期', value, '量化一-单元资产',False)
                                                             
                     set_value(sheet, self.sheet_1_row_dict_['账户名称'], 2,'账户名称', value, '量化一-单元资产',False, self.border_)
                     tmpzhbh = value['账户编号']
@@ -1358,7 +1372,7 @@ class ExcelBase:
         
         extra_info = f"注:\n1、总盈利/亏损(不含逆回购): 根据032盈亏数据计算,未扣除中金所申报费。\n"
         extra_info += f"2、总盈利/亏损（含逆回购）：已扣除中金所申报费；按照O32盈亏数据计算的未扣除申报费的金额为：{round(jyshg_profit + profits1,4)} 元。\n"
-        sheet.cell(row = self.sheet_1_row_dict_['注释'], column = 1, value = extra_info).border = self.border_
+        sheet.cell(row = self.sheet_1_row_dict_['注释'], column = 1, value = extra_info)
 
         
         set_sheet_middle(sheet)
@@ -1437,9 +1451,9 @@ class ExcelBase:
                 
         for key, value in self.sheet_2_row_dict_.items():
             if value is not None:
-                if key != '统计日期':
-                    sheet.cell(row = value, column = 1, value = key).border = self.border_
+                if key != '统计日期' and key != '注释':
                     sheet.cell(row = value, column = 1, value = key).font = self.font_
+                    sheet.cell(row = value, column = 1, value = key).border = self.border_
                 else:
                     sheet.cell(row = value, column = 1, value = key)
 
@@ -1470,7 +1484,7 @@ class ExcelBase:
             cell_index = 1
             for key, value in self.src_excel_file_dict_['量化一']['单元资产'].items():
                 if key != '合计':
-                    set_value(sheet, self.sheet_2_row_dict_['统计日期'],2,'统计日期', value, '量化一-单元资产', False,self.border_)
+                    set_value(sheet, self.sheet_2_row_dict_['统计日期'],2,'统计日期', value, '量化一-单元资产', False)
                     set_value(sheet, self.sheet_2_row_dict_['账户名称'],2,'账户名称', value, '量化一-单元资产', False,self.border_)
                     tmpzhbh =  re.sub(r'\.0$', '', value['账户编号'])
                     sheet.cell(row = self.sheet_2_row_dict_['账户编号'], column = 2, value=tmpzhbh).border = self.border_
@@ -1585,7 +1599,7 @@ class ExcelBase:
             logging.warning("量化一-汇总证券-当日持仓文件不存在。")  
             
         extra_info = f"注:\n1、盈利/亏损（不含逆回购）数据暂未包含中金所申报费，盈利/亏损（含逆回购）数据已包含中金所申报费。"
-        sheet.cell(row = self.sheet_2_row_dict_['注释'], column = 1, value = extra_info).border = self.border_                                    
+        sheet.cell(row = self.sheet_2_row_dict_['注释'], column = 1, value = extra_info)                                 
         
         '''
         设置样式
@@ -1657,9 +1671,9 @@ class ExcelBase:
         
         for key, value in self.sheet_3_row_dict_.items():
             if value is not None:
-                if key != '统计日期':
-                    sheet.cell(row = value, column = 1, value = key).border = self.border_
+                if key != '统计日期' and key != '注释':
                     sheet.cell(row = value, column = 1, value = key).font = self.font_
+                    sheet.cell(row = value, column = 1, value = key).border = self.border_
                 else:
                     sheet.cell(row = value, column = 1, value = key)
                                 
@@ -1678,7 +1692,7 @@ class ExcelBase:
             for key, value in self.src_excel_file_dict_['量化二']['单元资产'].items():
                 if key != '合计':
                     sheet.cell(row = self.sheet_3_row_dict_['统计日期'], column = 2, value=str(value['统计日期']) + ", （金额单位：元）").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                    sheet.cell(row = self.sheet_3_row_dict_['统计日期'], column = 2).border = self.border_
+                    # sheet.cell(row = self.sheet_3_row_dict_['统计日期'], column = 2).border = self.border_
                     set_value(sheet, self.sheet_3_row_dict_['账户名称'],2,'账户名称', value, '量化二-单元资产', False,self.border_)
                     tmpzhbh = value['账户编号']
                     sheet.cell(row = self.sheet_3_row_dict_['账户编号'], column = 2, value=math.floor(float(tmpzhbh)))
@@ -1819,9 +1833,9 @@ class ExcelBase:
         
         for key, value in self.sheet_4_row_dict_.items():
             if value is not None:
-                if key != '统计日期':
-                    sheet.cell(row = value, column = 1, value = key).border = self.border_
+                if key != '统计日期' and key != '注释':
                     sheet.cell(row = value, column = 1, value = key).font = self.font_
+                    sheet.cell(row = value, column = 1, value = key).border = self.border_
                 else:
                     sheet.cell(row = value, column = 1, value = key)
              
@@ -1838,7 +1852,7 @@ class ExcelBase:
             cell_index = 1
             for key, value in self.src_excel_file_dict_['量化二']['单元资产'].items():
                 if key != '合计':
-                    sheet.cell(row = self.sheet_4_row_dict_['统计日期'], column = 2, value=str(value['统计日期']) + ", （金额单位：元）").border = self.border_
+                    sheet.cell(row = self.sheet_4_row_dict_['统计日期'], column = 2, value=str(value['统计日期']) + ", （金额单位：元）")
                     set_value(sheet, self.sheet_4_row_dict_['账户名称'],2,'账户名称', value, '量化二-单元资产', False, self.border_)
                     tmpzhbh = value['账户编号']
                     sheet.cell(row = self.sheet_4_row_dict_['账户编号'], column = 2, value=math.floor(float(tmpzhbh)))
