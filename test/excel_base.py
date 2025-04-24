@@ -1712,7 +1712,7 @@ class ExcelBase:
         if self.src_excel_file_dict_['量化二']['汇总证券-合计'] is not None:
             if 'profit' in self.src_excel_file_dict_['量化二']['汇总证券-合计']:
                 profits1 = self.src_excel_file_dict_['量化二']['汇总证券-合计']['profit']
-                sheet.cell(row = self.sheet_3_row_dict_['总盈利/亏损'], column = 2, value = str(profits1)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                sheet.cell(row = self.sheet_3_row_dict_['总盈利/亏损'], column = 2, value = round(zhzcjz - 1000*10000,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                 sheet.cell(row = self.sheet_3_row_dict_['总盈利/亏损'], column = 2).border = self.border_
                 value2 = profits1 / 1000 / 10000 * 100
                 value2 = round(value2, 4)
