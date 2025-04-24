@@ -868,58 +868,58 @@ class ExcelBase:
         return file_dict            
         
     def read_jz_info(self):
-        if '量化一-收盘数据' in self.jz_workbook_.sheetnames:
-            sheet = self.jz_workbook_['量化一-收盘数据']
-            self.last_jz1_1_ = get_last_jz(sheet, '量化一-收盘数据')
-            self.all_jz_1_1_ = get_all_jz_info(sheet, '量化一-收盘数据')
+        if '量化一-结算数据' in self.jz_workbook_.sheetnames:
+            sheet = self.jz_workbook_['量化一-结算数据']
+            self.last_jz1_1_ = get_last_jz(sheet, '量化一-结算数据')
+            self.all_jz_1_1_ = get_all_jz_info(sheet, '量化一-结算数据')
             if g_test_pic:
                 self.all_jz_1_1_, self.last_jz1_1_ = get_test_data()
             # print('self.all_jz_1_1_:', self.all_jz_1_1_)
             # print('self.last_jz1_1_:', self.last_jz1_1_)
             
         else:   
-            logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
+            logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
             sys.exit(1)
             
             
-        if '量化一-结算数据' in self.jz_workbook_.sheetnames:
-            sheet = self.jz_workbook_['量化一-结算数据']
+        if '量化一-收盘数据' in self.jz_workbook_.sheetnames:
+            sheet = self.jz_workbook_['量化一-收盘数据']
             row_dict = {}
-            self.last_jz1_2_ = get_last_jz(sheet, '量化一-结算数据')
-            self.all_jz_1_2_ = get_all_jz_info(sheet, '量化一-结算数据')
+            self.last_jz1_2_ = get_last_jz(sheet, '量化一-收盘数据')
+            self.all_jz_1_2_ = get_all_jz_info(sheet, '量化一-收盘数据')
             if g_test_pic:
                 self.all_jz_1_2_, self.last_jz1_2_ = get_test_data()
                             
             # print('self.all_jz_1_2_:', self.all_jz_1_2_)
         else:
-            logging.critical("文件中未找到 量化一-结算数据 表格，请检查。")
+            logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
             sys.exit(1)
             
                         
-        if '量化二-收盘数据' in self.jz_workbook_.sheetnames:
-            sheet = self.jz_workbook_['量化二-收盘数据']
+        if '量化二-结算数据' in self.jz_workbook_.sheetnames:
+            sheet = self.jz_workbook_['量化二-结算数据']
             row_dict = {}
-            self.jz2_1_ = get_last_jz(sheet, '量化二-收盘数据')
-            self.all_jz_2_1_ = get_all_jz_info(sheet, '量化二-收盘数据')
+            self.jz2_1_ = get_last_jz(sheet, '量化二-结算数据')
+            self.all_jz_2_1_ = get_all_jz_info(sheet, '量化二-结算数据')
             if g_test_pic:
                 self.all_jz_2_1_, self.jz2_1_ = get_test_data()            
             # print('self.all_jz_1_2_:', self.all_jz_2_1_)
         else:
-            logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")
+            logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")
             sys.exit(1)
             
-        if '量化二-结算数据' in self.jz_workbook_.sheetnames:
-            sheet = self.jz_workbook_['量化二-结算数据']
+        if '量化二-收盘数据' in self.jz_workbook_.sheetnames:
+            sheet = self.jz_workbook_['量化二-收盘数据']
             row_dict = {}
-            self.jz2_2_ = get_last_jz(sheet, '量化二-结算数据')
-            self.all_jz_2_2_ = get_all_jz_info(sheet, '量化二-结算数据')
+            self.jz2_2_ = get_last_jz(sheet, '量化二-收盘数据')
+            self.all_jz_2_2_ = get_all_jz_info(sheet, '量化二-收盘数据')
             
             if g_test_pic:
                 self.all_jz_2_2_, self.jz2_2_ = get_test_data()  
                             
             # print('self.all_jz_1_2_:', self.all_jz_2_2_)
         else:
-            logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")
+            logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")
             sys.exit(1)
                         
     def reset_date(self, date_list):
