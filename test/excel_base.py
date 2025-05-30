@@ -274,19 +274,22 @@ class ExcelDataRead():
         try:
             cell_dict = {}
             logging.info(f"读取文件 汇总证券-合计 开始 {xlrd_sheet.nrows} {xlrd_sheet.ncols} ")
-            for row in range(xlrd_sheet.nrows):
-                for col in range(xlrd_sheet.ncols):
-                    cell_value = str(xlrd_sheet.cell_value(row, col))
-                    if row == xlrd_sheet.nrows - 1 and col == xlrd_sheet.ncols - 1:
-                        # print(cell_value)
-                        profit = float(cell_value)
-                        profit = round(profit, 4)
+            target_col = xlrd_sheet.ncols - 1            
+            for col in range(xlrd_sheet.ncols):
+                cell_value = str(xlrd_sheet.cell_value(0, col))
+                if '总体盈亏(含费用)' in cell_value:
+                    target_col = col
+                        
+            print('target_col', target_col)
+            cell_value = str(xlrd_sheet.cell_value(xlrd_sheet.nrows - 1, target_col))
+            profit = float(cell_value)
+            profit = round(profit, 4)
             cell_dict['profit'] = profit
             
             # print(cell_dict)
             return cell_dict
         except Exception as e:
-            logging.error(f"读取文件 单元资产 时发生错误: {e}")  
+            logging.error(f"读取文件 汇总证券-合计 时发生错误: {e}")  
             
         return None                          
 
