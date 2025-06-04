@@ -199,41 +199,57 @@ class FutureStaticStruct:
         self.count_ = 0
 
     def get_trade_info(self, type_name, index):
-        info = f'{index},{type_name}:\n'
-        if len(self.mckc_) > 0:
-            info += f'卖出开仓: {len(self.mckc_)}只,'
-            for key, value in self.mckc_.items():
-                info += f'({key},'
-            info += ')\n'
-        if len(self.mrpc_) > 0:
-            info += f'买入平仓: {len(self.mrpc_)}只,'
-            for key, value in self.mrpc_.items():
-                info += f'({key},'
-            info += ')\n'
-        if len(self.mrkc_) > 0:
-            info += f'买入开仓: {len(self.mrkc_)}只,'
-            for key, value in self.mrkc_.items():
-                info += f'({key},'
-            info += ')\n'
-        if len(self.mcpc_) > 0:
-            info += f'卖出平常: {len(self.mcpc_)}只,'
-            for key, value in self.mcpc_.items():
-                info += f'({key},'
-            info += ')\n'        
+        try:
+            info = f'{index},{type_name}:\n'
+            if len(self.mckc_) > 0:
+                info += f'卖出开仓: {len(self.mckc_)}只 ('
+                for key, value in self.mckc_.items():
+                    info += f'{key},'          
+                info = info[:len(info)-1]
+                info += ')\n'    
+            if len(self.mrpc_) > 0:
+                info += f'买入平仓: {len(self.mrpc_)}只 ('
+                for key, value in self.mrpc_.items():
+                    info += f'{key},'
+                info = info[:len(info)-1]
+                info += ')\n'                    
+            if len(self.mrkc_) > 0:
+                info += f'买入开仓: {len(self.mrkc_)}只 ('
+                for key, value in self.mrkc_.items():
+                    info += f'{key},'
+                info = info[:len(info)-1]
+                info += ')\n'
+            if len(self.mcpc_) > 0:
+                info += f'卖出平仓: {len(self.mcpc_)}只 ('
+                for key, value in self.mcpc_.items():
+                    info += f'{key},'
+                info = info[:len(info)-1]
+                info += ')\n'
+                                                         
+            return info
+        except Exception as e:
+            logging.error(f"读取{type_name} 单元格 {index} 值时发生错误: {e}")  
+        return ''
+   
             
     def get_hold_info(self, type_name):
-        info = f'{type_name} {self.count_}只 ('
-        if len(self.kc_) > 0:
-            info += f'空仓: {len(self.kc_)}只,'
-        if len(self.dc_) > 0:
-            info += f'多仓: {len(self.kc_)}只,'
-        if len(self.qlc_) > 0:
-            info += f'权利仓: {len(self.kc_)}只,'
-        if len(self.ywc_) > 0:
-            info += f'义务仓: {len(self.kc_)}只,'                                    
-        info = info[:len(info)-1]
-        info += ')\n'
-        return info
+        try:
+            info = f'{type_name} {len(self.kc_) + len(self.dc_) + len(self.qlc_) + len(self.ywc_)}只 ('
+            if len(self.kc_) > 0:
+                info += f'空仓: {len(self.kc_)}只,'
+            if len(self.dc_) > 0:
+                info += f'多仓: {len(self.dc_)}只,'
+            if len(self.qlc_) > 0:
+                info += f'权利仓: {len(self.qlc_)}只,'
+            if len(self.ywc_) > 0:
+                info += f'义务仓: {len(self.ywc_)}只,'                                    
+            info = info[:len(info)-1]
+            info += ')\n'
+            return info        
+        except Exception as e:
+            logging.error(f"读取{type_name} 单元格 值时发生错误: {e}")
+        return ''    
+
                                    
 def get_future_type_name(code):
     """根据期货代码判断品种类型"""
@@ -264,9 +280,9 @@ class ExcelDataRead():
             elif data_type == '成交回报':
                 return self.read_cjhb(self=self, xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)    
             elif data_type == '汇总证券-当日持仓':
-                return self.read_hzzq_drcc(self=self, xlrd_sheet=xlrd_sheet) 
+                return self.read_hzzq_drcc(self=self, xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)  
             elif data_type == '汇总证券-合计-股票':
-                return self.read_hzzz_hj_gp(self=self, xlrd_sheet=xlrd_sheet)                                          
+                return self.read_hzzz_hj_gp(self=self, xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)                                          
             else:
                 return True
         except Exception as e:
@@ -432,6 +448,8 @@ class ExcelDataRead():
         try:
             cell_dict = {}            
             header_col_dict = {}
+            result_dict = {}
+            
             for col in range(xlrd_sheet.ncols):
                 cell_value = str(xlrd_sheet.cell_value(0, col))
                 valid_item = ['成交数量', '成交金额', '证券代码', '委托方向', '证券类别']                
@@ -441,9 +459,10 @@ class ExcelDataRead():
                            
             for key, col in header_col_dict.items():
                 for nrow in range(xlrd_sheet.nrows):
-                    if nrow == 0:
+                    if nrow == 0 or nrow == xlrd_sheet.nrows - 1:
                         continue
-                    cell_value = str(xlrd_sheet.cell_value(nrow, col))                    
+                    cell_value = str(xlrd_sheet.cell_value(nrow, col))    
+                    # print(cell_value)                
                     if key == '成交数量' or key == '成交金额':
                         cell_value = round(float(cell_value), 4)                                                               
                     cell_dict[key].append(cell_value)
@@ -520,13 +539,13 @@ class ExcelDataRead():
                 future_info += future_struct.get_trade_info(future_type, index)
                 index += 1
                 
-            result_dict = {}
+            
             result_dict['future_info'] = future_info
                    
             return result_dict
 
         except Exception as e:
-            logging.error(f"读取文件 期货保证金 时发生错误: {e}")  
+            logging.error(f"读取文件 量化三 成交回报 时发生错误: {e}")  
             
         return None    
     
@@ -738,18 +757,18 @@ class ExcelDataRead():
                             future_dict[future_type].ywc_[stock_name] += cell_dict['持仓数量'][row]
                     elif '多仓' in cell_dict['持仓多空标志'][row]:
                         if stock_name not in future_dict[future_type].dc_:
-                            future_dict[future_type].ywc_[stock_name] = cell_dict['持仓数量'][row]
+                            future_dict[future_type].dc_[stock_name] = cell_dict['持仓数量'][row]
                         else:
-                            future_dict[future_type].ywc_[stock_name] += cell_dict['持仓数量'][row]
+                            future_dict[future_type].dc_[stock_name] += cell_dict['持仓数量'][row]
                     elif '空仓' in cell_dict['持仓多空标志'][row]:  
                         if stock_name not in future_dict[future_type].kc_:
-                            future_dict[future_type].ywc_[stock_name] = cell_dict['持仓数量'][row]
+                            future_dict[future_type].kc_[stock_name] = cell_dict['持仓数量'][row]
                         else:
-                            future_dict[future_type].ywc_[stock_name] += cell_dict['持仓数量'][row]
+                            future_dict[future_type].kc_[stock_name] += cell_dict['持仓数量'][row]
                             
                 row += 1
                                                                                                                             
-            future_info = f"共持仓: {future_count} 只期货, 其中: "
+            future_info = f"共持仓: {future_count} 只期货, 其中: \n"
             
             for future_type, future_struct in future_dict.items():
                 future_info += future_struct.get_hold_info(future_type)          
@@ -761,12 +780,14 @@ class ExcelDataRead():
             return result_dict
 
         except Exception as e:
-            logging.error(f"读取文件 汇总证券-当日持仓 时发生错误: {e}")  
+            logging.error(f"读取文件 量化三 汇总证券-当日持仓 时发生错误: {e}")  
             
         return None             
 
     def read_hzzq_drcc(self, xlrd_sheet, sheet_type="量化一"):
         try:
+            if sheet_type == "量化三":
+                return self.read_hzzq_drcc_lhs(self, xlrd_sheet)
             cell_dict = {}            
             header_col_dict = {}
             for col in range(xlrd_sheet.ncols):
