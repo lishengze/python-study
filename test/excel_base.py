@@ -235,8 +235,6 @@ class FutureStaticStruct:
         info += ')\n'
         return info
                                    
-
-
 def get_future_type_name(code):
     """根据期货代码判断品种类型"""
     code = code.upper()  # 统一转换为大写
@@ -256,13 +254,13 @@ class ExcelDataRead():
     def read_excel_sheet(self, xlrd_sheet, data_type, sheet_type='量化一'): 
         try:
             if data_type == '单元资产':
-                return self.read_dyzc_data(self=self , xlrd_sheet=xlrd_sheet)
+                return self.read_dyzc_data(self=self , xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)
             elif data_type == '汇总证券-合计':
-                return self.read_hzzq_hj(self=self , xlrd_sheet=xlrd_sheet)   
+                return self.read_hzzq_hj(self=self , xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)   
             elif data_type == '交易所回购':
-                return self.read_jyshg(self=self, xlrd_sheet=xlrd_sheet)   
+                return self.read_jyshg(self=self, xlrd_sheet=xlrd_sheet,sheet_type=sheet_type)   
             elif data_type == '期货保证金分析':
-                return self.read_qhbzjfx(self=self, xlrd_sheet=xlrd_sheet) 
+                return self.read_qhbzjfx(self=self, xlrd_sheet=xlrd_sheet,sheet_type=sheet_type) 
             elif data_type == '成交回报':
                 return self.read_cjhb(self=self, xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)    
             elif data_type == '汇总证券-当日持仓':
@@ -275,7 +273,7 @@ class ExcelDataRead():
             logging.error(f"读取文件 {data_type} 时发生错误: {e}")  
         return False   
     
-    def read_dyzc_data(self, xlrd_sheet):
+    def read_dyzc_data(self, xlrd_sheet, sheet_type="量化一"):
         try:
             cell_dict = {}
             header = []
@@ -335,7 +333,7 @@ class ExcelDataRead():
             
         return None   
         
-    def read_hzzq_hj(self, xlrd_sheet):
+    def read_hzzq_hj(self, xlrd_sheet, sheet_type="量化一"):
         try:
             cell_dict = {}
             logging.info(f"读取文件 汇总证券-合计 开始 {xlrd_sheet.nrows} {xlrd_sheet.ncols} ")
@@ -358,7 +356,7 @@ class ExcelDataRead():
             
         return None                          
 
-    def read_jyshg(self, xlrd_sheet):
+    def read_jyshg(self, xlrd_sheet, sheet_type="量化一"):
         try:
             profit_col = -1
             for col in range(xlrd_sheet.ncols):
@@ -385,7 +383,7 @@ class ExcelDataRead():
             
         return None     
             
-    def read_qhbzjfx(self, xlrd_sheet):
+    def read_qhbzjfx(self, xlrd_sheet, sheet_type="量化一"):
         try:
             cell_dict = {}
             header = []
@@ -451,21 +449,13 @@ class ExcelDataRead():
                     cell_dict[key].append(cell_value)
                     
             row = 0
-            stock_buy_count = 0
-            stock_sell_count = 0
             stock_done_amount = 0
             
             future_count = 0
-            option_count = 0
             future_done_amount = 0
             
-            mckc = {}
-            mrpc = {}
-            mrkc = {}
-            mcpc = {}
             
             future_list = []
-            option_list = []
 
             future_dict = {
                 '国债期货': FutureStaticStruct(),
@@ -518,18 +508,21 @@ class ExcelDataRead():
             future_done_amount = round(future_done_amount, 2)
         
             
-            future_info_3 = '《成交回报》统计\n今日交易'
+            future_info = '《成交回报》统计\n今日交易'
             
             if future_count > 0:
                 future_info += f" {future_count} 只期货,"
             future_info += f" 成交金额 {round(future_done_amount,2)} 万元,其中\n"
             
+            
+            index = 1
+            for future_type, future_struct in future_dict.items():
+                future_info += future_struct.get_trade_info(future_type, index)
+                index += 1
                 
             result_dict = {}
-            result_dict['future_info'] = future_info[0:len(future_info)-1]
-            
-            # print(result_dict)        
-            # print(cell_dict)        
+            result_dict['future_info'] = future_info
+                   
             return result_dict
 
         except Exception as e:
@@ -710,124 +703,59 @@ class ExcelDataRead():
                         cell_value = round(float(cell_value), 4)                                                               
                     cell_dict[key].append(cell_value)
                     
-            row = 0            
-            stock_count = 0
-            
-            future_count = 0
-            option_count = 0
-                                    
-            future_info = ''     
-            done_detail_dict = {}
-            
-            mckc = {} #权利仓
-            mckc_count = 0
-            mrpc = {} #义务仓
-            mrpc_count = 0
-            mrkc = {} #多仓
-            mrkc_count = 0
-            mcpc = {} #空仓
-            mcpc_count = 0            
-                               
+            future_dict = {
+                '国债期货': FutureStaticStruct(),
+               '黄金期货': FutureStaticStruct(),
+               '铜期货': FutureStaticStruct(),
+               '其他品种': FutureStaticStruct(),                                                
+            }
+                                
+            row = 0                       
+            future_count = 0   
+                                                       
             for value in cell_dict['证券类别']:
-                if '期货' in value or '期权' in value:
-                    if '期货' in value and cell_dict['持仓数量'][row] > 0:
-                        future_count += 1                      
+                
+                if '期货' in value and cell_dict['持仓数量'][row] > 0:
+                    future_count += 1                      
                     
                     stock_name = cell_dict['证券代码'][row]                    
                     trade_type = cell_dict['持仓多空标志'][row]
                     
-                    if stock_name not in done_detail_dict:
-                        done_detail_dict[stock_name] = {}
-                        done_detail_dict[stock_name][trade_type] = float(cell_dict['持仓数量'][row])
-                    else:
-                        if trade_type not in done_detail_dict[stock_name]:
-                            done_detail_dict[stock_name][trade_type] = float(cell_dict['持仓数量'][row])
-                        else:
-                            done_detail_dict[stock_name][trade_type] += float(cell_dict['持仓数量'][row])
+                    future_type = get_future_type_name(stock_name)
+
+                    if future_type not in future_dict:
+                        future_type = '其他品种'                    
                             
                     if '权利仓' in cell_dict['持仓多空标志'][row]:
-                        if stock_name not in mckc:
-                            mckc[stock_name] = cell_dict['持仓数量'][row]
+                        if stock_name not in future_dict[future_type].qlc_:
+                            future_dict[future_type].qlc_[stock_name] = cell_dict['持仓数量'][row]
                         else:
-                            mckc[stock_name] += cell_dict['持仓数量'][row]
-                        mckc_count += cell_dict['持仓数量'][row]
+                            future_dict[future_type].qlc_[stock_name] += cell_dict['持仓数量'][row]
                     elif '义务仓' in cell_dict['持仓多空标志'][row]:  
-                        if stock_name not in mrkc:
-                            mrkc[stock_name] = cell_dict['持仓数量'][row]
+                        if stock_name not in future_dict[future_type].ywc_:
+                            future_dict[future_type].ywc_[stock_name] = cell_dict['持仓数量'][row]
                         else:
-                            mrkc[stock_name] += cell_dict['持仓数量'][row]
-                        mrkc_count += cell_dict['持仓数量'][row]
+                            future_dict[future_type].ywc_[stock_name] += cell_dict['持仓数量'][row]
                     elif '多仓' in cell_dict['持仓多空标志'][row]:
-                        if stock_name not in mcpc:
-                            mcpc[stock_name] = cell_dict['持仓数量'][row]
+                        if stock_name not in future_dict[future_type].dc_:
+                            future_dict[future_type].ywc_[stock_name] = cell_dict['持仓数量'][row]
                         else:
-                            mcpc[stock_name] += cell_dict['持仓数量'][row]
-                        mcpc_count += cell_dict['持仓数量'][row]
+                            future_dict[future_type].ywc_[stock_name] += cell_dict['持仓数量'][row]
                     elif '空仓' in cell_dict['持仓多空标志'][row]:  
-                        if stock_name not in mrpc:
-                            mrpc[stock_name] = cell_dict['持仓数量'][row]
+                        if stock_name not in future_dict[future_type].kc_:
+                            future_dict[future_type].ywc_[stock_name] = cell_dict['持仓数量'][row]
                         else:
-                            mrpc[stock_name] += cell_dict['持仓数量'][row]
-                        mrpc_count += cell_dict['持仓数量'][row]
-                                                                    
-                    
-                    
+                            future_dict[future_type].ywc_[stock_name] += cell_dict['持仓数量'][row]
+                            
                 row += 1
-            # print(done_detail_dict)
-                        
+                                                                                                                            
             future_info = f"共持仓: {future_count} 只期货, 其中: "
             
-            if len(mckc) > 0 and mckc_count > 0:
-                future_info += '\n权利仓: '
-                for key, value in mckc.items():
-                    if value > 0:
-                        future_info += f"{key}({math.floor(float(value))} 手),"
-                                                
-            if len(mrkc) > 0 and mrkc_count > 0:
-                future_info += '\n义务仓: '
-                for key, value in mrkc.items():
-                    if value > 0:
-                        future_info += f"{key}({math.floor(float(value))} 手),"
-                        
-            if len(mcpc) > 0 and mcpc_count > 0:
-                future_info += '\n多仓: '
-                for key, value in mcpc.items():
-                    if value > 0:
-                        future_info += f"{key}({math.floor(float(value))} 手),"       
-                        
-            if len(mrpc) > 0 and mrpc_count > 0:
-                future_info += '\n空仓: '
-                for key, value in mrpc.items():
-                    if value > 0:
-                        future_info += f"{key}({math.floor(float(value))} 手),"             
-            
-            trade_detail_dict = {}
-            trade_sum_dict = {}
-            future_count = 0
-            
-            for stock_name, trade_dict in done_detail_dict.items():
-                for trade_type, trade_count in trade_dict.items():
-                    if trade_count > 0:                        
-                        if trade_type not in trade_detail_dict:
-                            trade_detail_dict[trade_type] = 1
-                            future_count += 1
-                        else:
-                            trade_detail_dict[trade_type] += 1
-                            future_count += 1
-                            
-                        if stock_name not in trade_sum_dict:
-                            trade_sum_dict[stock_name] = trade_count
-                                                                  
+            for future_type, future_struct in future_dict.items():
+                future_info += future_struct.get_hold_info(future_type)          
+                       
             result_dict = {}
-
-            
-            future_info_2 = f"共持仓 {math.floor(float(future_count))}只期货，其中"
-            
-            for key, value in trade_detail_dict.items():
-                future_info_2 += f"{key}: {math.floor(float(value))} 只,"
-
-            result_dict['future_info'] = future_info[0:len(future_info)-1]
-            result_dict['future_info_2'] = future_info_2[0:len(future_info_2)-1]
+            result_dict['future_info'] = future_info
             
             # print(result_dict)       
             return result_dict
@@ -837,8 +765,7 @@ class ExcelDataRead():
             
         return None             
 
-
-    def read_hzzq_drcc(self, xlrd_sheet):
+    def read_hzzq_drcc(self, xlrd_sheet, sheet_type="量化一"):
         try:
             cell_dict = {}            
             header_col_dict = {}
@@ -993,7 +920,7 @@ class ExcelDataRead():
             
         return None             
 
-    def read_hzzz_hj_gp(self, xlrd_sheet):
+    def read_hzzz_hj_gp(self, xlrd_sheet, sheet_type="量化一"):
         try:
             profit_col = -1
             for col in range(xlrd_sheet.ncols):
@@ -2413,12 +2340,12 @@ class ExcelBase:
             sheet.cell(row = self.sheet_5_row_dict_['日净值增长率'], column = 2).border = self.border_              
                 
             if self.src_excel_file_dict_['量化三']['成交回报'] is not None:
-                set_value(sheet, self.sheet_5_row_dict_['交易方向及数量'],2,'future_info_2', self.src_excel_file_dict_['量化三']['成交回报'], '量化三-成交回报', False, self.border_)  # 不同的地方
+                set_value(sheet, self.sheet_5_row_dict_['交易方向及数量'],2,'future_info', self.src_excel_file_dict_['量化三']['成交回报'], '量化三-成交回报', False, self.border_)  # 不同的地方
             else:
                 logging.warning("量化三-成交回报文件不存在。")
                 
             if self.src_excel_file_dict_['量化三']['汇总证券-当日持仓'] is not None:
-                set_value(sheet, self.sheet_5_row_dict_['持仓品种及数量'],2,'future_info_2', self.src_excel_file_dict_['量化三']['汇总证券-当日持仓'], '量化三-汇总证券-当日持仓', False, self.border_) # 不同的地方
+                set_value(sheet, self.sheet_5_row_dict_['持仓品种及数量'],2,'future_info', self.src_excel_file_dict_['量化三']['汇总证券-当日持仓'], '量化三-汇总证券-当日持仓', False, self.border_) # 不同的地方
             else:
                 logging.warning("量化三-汇总证券-当日持仓文件不存在。")             
                                     
@@ -2591,12 +2518,12 @@ class ExcelBase:
             self.new_jz_2_2_ = round(dwjz, 5)           
                 
             if self.src_excel_file_dict_['量化三']['成交回报'] is not None:
-                set_value(sheet, self.sheet_6_row_dict_['交易方向及数量'],2,'future_info_2', self.src_excel_file_dict_['量化三']['成交回报'], '量化三-成交回报',False,self.border_)
+                set_value(sheet, self.sheet_6_row_dict_['交易方向及数量'],2,'future_info', self.src_excel_file_dict_['量化三']['成交回报'], '量化三-成交回报',False,self.border_)
             else:
                 logging.warning("量化三-成交回报文件不存在。")
                 
             if self.src_excel_file_dict_['量化三']['汇总证券-当日持仓'] is not None:
-                set_value(sheet, self.sheet_6_row_dict_['持仓品种及数量'],2,'future_info_2', self.src_excel_file_dict_['量化三']['汇总证券-当日持仓'], '量化三-汇总证券-当日持仓', False, self.border_)
+                set_value(sheet, self.sheet_6_row_dict_['持仓品种及数量'],2,'future_info', self.src_excel_file_dict_['量化三']['汇总证券-当日持仓'], '量化三-汇总证券-当日持仓', False, self.border_)
             else:
                 logging.warning("量化三-汇总证券-当日持仓文件不存在。")             
             sheet.cell(row = self.sheet_6_row_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
