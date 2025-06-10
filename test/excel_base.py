@@ -540,8 +540,8 @@ class ExcelDataRead():
             future_info = '今日交易'
             
             if future_count > 0:
-                future_info += f" {future_count} 只期货,"
-            future_info += f" 成交金额 {round(future_done_amount,2)} 万元,其中\n"
+                future_info += f" {len(future_list)} 只期货,"
+            future_info += f" 成交合约价值 {round(future_done_amount,2)} 万元,其中\n"
             
             
             index = 1
@@ -656,15 +656,15 @@ class ExcelDataRead():
             future_done_amount = round(future_done_amount, 2)
 
             stock_info = f"买入股票: {stock_buy_count} 只, 卖出股票: {stock_sell_count} 只, 股票合计成交金额: {round(stock_done_amount,2)} 万元"            
-            future_info = f"今日交易: {len(future_list)} 只股指期货合约, {len(option_list)} 只股指期权合约， 成交金额 {round(future_done_amount,2)} 万元"
+            future_info = f"今日交易: {len(future_list)} 只股指期货合约, {len(option_list)} 只股指期权合约， 成交合约价值 {round(future_done_amount,2)} 万元"
             
             future_info_2 = '今日交易'
             
             if future_count > 0:
-                future_info_2 += f" {future_count} 只期货合约"
+                future_info_2 += f" {len(future_list)} 只期货合约"
             if option_count > 0:
-                future_info_2 += f" {option_count} 只期权合约"
-            future_info_2 += f" 成交金额 {round(future_done_amount,2)} 万元"
+                future_info_2 += f" {len(option_list)} 只期权合约"
+            future_info_2 += f" 成交合约价值 {round(future_done_amount,2)} 万元"
             
             stock_info_2 = ''
             if stock_buy_count > 0:
@@ -1140,7 +1140,6 @@ class ExcelBase:
         except Exception as e:
             logging.error(f"读取基本信息出错: {e}")  
                      
-
     def init_excel_file(self, execl_file_path, file_dict):
         try:
             for key, value in file_dict.items():
@@ -1170,8 +1169,7 @@ class ExcelBase:
         except Exception as e:
             logging.error(f"初始化 Excel 文件出错: {e}")  
             return None
-     
-        
+             
     def read_jz_info(self):
         try:
             if '量化一-结算数据' in self.jz_workbook_.sheetnames:
@@ -1950,8 +1948,7 @@ class ExcelBase:
                 '四、交易情况':21,
                 '交易方向及数量':22,
                 '五、持仓情况':23,
-                '持仓品种及数量':24,
-                '注释':25
+                '持仓品种及数量':24
             }
                 
             sheet = self.target_workbook_.create_sheet(title='量化二-结算数据')
@@ -2055,7 +2052,7 @@ class ExcelBase:
             else:
                 logging.warning("量化二-汇总证券-当日持仓文件不存在。")             
                                     
-            sheet.cell(row = self.sheet_3_row_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
+            # sheet.cell(row = self.sheet_3_row_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
                             
             set_sheet_middle(sheet)
 
@@ -2074,7 +2071,7 @@ class ExcelBase:
             sheet.cell(row = self.sheet_3_row_dict_['交易方向及数量'], column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)                 
             sheet.cell(row = self.sheet_3_row_dict_['持仓品种及数量'], column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)
             sheet.cell(row = self.sheet_3_row_dict_['持仓品种及数量'], column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
-            sheet.cell(row = self.sheet_3_row_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
+            # sheet.cell(row = self.sheet_3_row_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
             
             for key, value in self.sheet_3_row_dict_.items():
                 if '注释' in key or '、' in key:
@@ -2115,8 +2112,7 @@ class ExcelBase:
                 '四、交易情况':21,
                 '交易方向及数量':22,
                 '五、持仓情况':23,
-                '持仓品种及数量':24,
-                '注释':25
+                '持仓品种及数量':24
             }
                     
             sheet = self.target_workbook_.create_sheet(title='量化二-收盘数据')
@@ -2224,7 +2220,7 @@ class ExcelBase:
                 set_value(sheet, self.sheet_4_row_dict_['持仓品种及数量'],2,'future_info_2', self.src_excel_file_dict_['量化二']['汇总证券-当日持仓'], '量化二-汇总证券-当日持仓', False, self.border_)
             else:
                 logging.warning("量化二-汇总证券-当日持仓文件不存在。")             
-            sheet.cell(row = self.sheet_4_row_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
+            # sheet.cell(row = self.sheet_4_row_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
             
     
             set_sheet_middle(sheet)
@@ -2245,7 +2241,7 @@ class ExcelBase:
             sheet.cell(row = self.sheet_4_row_dict_['交易方向及数量'], column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)                 
             sheet.cell(row = self.sheet_4_row_dict_['持仓品种及数量'], column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)
             sheet.cell(row = self.sheet_4_row_dict_['持仓品种及数量'], column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
-            sheet.cell(row = self.sheet_4_row_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
+            # sheet.cell(row = self.sheet_4_row_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
                 
             for key, value in self.sheet_4_row_dict_.items():
                 if '注释' in key or '、' in key:
@@ -2286,8 +2282,7 @@ class ExcelBase:
                 '四、交易情况':21,
                 '交易方向及数量':22,
                 '五、持仓情况':23,
-                '持仓品种及数量':24,
-                '注释':25
+                '持仓品种及数量':24
             }
                 
             sheet = self.target_workbook_.create_sheet(title='量化三-结算数据')
@@ -2391,7 +2386,7 @@ class ExcelBase:
             else:
                 logging.warning("量化三-汇总证券-当日持仓文件不存在。")             
                                     
-            sheet.cell(row = self.sheet_5_row_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
+            # sheet.cell(row = self.sheet_5_row_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
                             
             set_sheet_middle(sheet)
 
@@ -2410,7 +2405,7 @@ class ExcelBase:
             sheet.cell(row = self.sheet_5_row_dict_['交易方向及数量'], column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)                 
             sheet.cell(row = self.sheet_5_row_dict_['持仓品种及数量'], column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)
             sheet.cell(row = self.sheet_5_row_dict_['持仓品种及数量'], column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
-            sheet.cell(row = self.sheet_5_row_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
+            # sheet.cell(row = self.sheet_5_row_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
             
             for key, value in self.sheet_5_row_dict_.items():
                 if '注释' in key or '、' in key:
@@ -2451,8 +2446,7 @@ class ExcelBase:
                 '四、交易情况':21,
                 '交易方向及数量':22,
                 '五、持仓情况':23,
-                '持仓品种及数量':24,
-                '注释':25
+                '持仓品种及数量':24
             }
                     
             sheet = self.target_workbook_.create_sheet(title='量化三-收盘数据')
@@ -2521,7 +2515,7 @@ class ExcelBase:
                         sheet.cell(row = self.sheet_6_row_dict_['风险度'], column = cell_col_index[key]).border = self.border_
                         
                         fxd = round(zybzj/self.zhzcjz_lh3_*100, 4) # 风险度 = 占用÷账户权益×100%【保留4位小数】
-                        sheet.cell(row = self.sheet_6_row_dict_['风险度'], column = cell_col_index[key], value= fxd).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 
+                        sheet.cell(row = self.sheet_6_row_dict_['风险度'], column = cell_col_index[key], value= str(fxd)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 
                         sheet.cell(row = self.sheet_6_row_dict_['风险度'], column = cell_col_index[key]).border = self.border_                        
 
                     else:
@@ -2562,7 +2556,7 @@ class ExcelBase:
                 set_value(sheet, self.sheet_6_row_dict_['持仓品种及数量'],2,'future_info', self.src_excel_file_dict_['量化三']['汇总证券-当日持仓'], '量化三-汇总证券-当日持仓', False, self.border_)
             else:
                 logging.warning("量化三-汇总证券-当日持仓文件不存在。")             
-            sheet.cell(row = self.sheet_6_row_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
+            # sheet.cell(row = self.sheet_6_row_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
             
     
             set_sheet_middle(sheet)
@@ -2583,7 +2577,7 @@ class ExcelBase:
             sheet.cell(row = self.sheet_6_row_dict_['交易方向及数量'], column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)                 
             sheet.cell(row = self.sheet_6_row_dict_['持仓品种及数量'], column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)
             sheet.cell(row = self.sheet_6_row_dict_['持仓品种及数量'], column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
-            sheet.cell(row = self.sheet_6_row_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
+            # sheet.cell(row = self.sheet_6_row_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
                 
             for key, value in self.sheet_6_row_dict_.items():
                 if '注释' in key or '、' in key:
