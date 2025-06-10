@@ -200,10 +200,11 @@ class FutureStaticStruct:
 
     def get_trade_info(self, type_name, index):
         try:
-            info = f'{index},{type_name}:\n'
+            info = f'{index},{type_name}:'
             has_data = False
             if len(self.mckc_) > 0 or len(self.mrpc_) > 0 or len(self.mrkc_) > 0 or len(self.mcpc_) > 0:
                 has_data = True
+                info += '\n'
             if len(self.mckc_) > 0:
                 info += f'卖出开仓: {len(self.mckc_)}只 ('
                 for key, value in self.mckc_.items():
@@ -252,7 +253,8 @@ class FutureStaticStruct:
                 info += f'义务仓: {len(self.ywc_)}只,'                                    
             info = info[:len(info)-1]
             if has_data == True:
-                info += ')\n'            
+                info += ')'    
+            info += '\n'       
             return info        
         except Exception as e:
             logging.error(f"读取{type_name} 单元格 值时发生错误: {e}")
