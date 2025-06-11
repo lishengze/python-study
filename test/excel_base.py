@@ -230,7 +230,7 @@ class FutureStaticStruct:
                 info = info[:len(info)-1]
                 info += ')\n'
             if has_data == False:
-                info += f'无;\n'
+                info += f'无\n'
             return info
         except Exception as e:
             logging.error(f"读取{type_name} 单元格 {index} 值时发生错误: {e}")  
@@ -1235,9 +1235,32 @@ class ExcelBase:
                 if g_test_pic:
                     self.all_jz_2_2_, self.jz2_2_ = get_test_data()  
                                 
-                # print('self.all_jz_1_2_:', self.all_jz_2_2_)
             else:
                 logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")
+
+            if '量化三-结算数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化三-结算数据']
+                row_dict = {}
+                self.jz3_1_ = get_last_jz(sheet, '量化三-结算数据')
+                self.all_jz_3_1_ = get_all_jz_info(sheet, '量化三-结算数据')
+                logging.info(f"self.all_jz_3_1_:{self.all_jz_3_1_}")
+                if g_test_pic:
+                    self.all_jz_3_1_, self.jz3_1_ = get_test_data()            
+                # print('self.all_jz_1_2_:', self.all_jz_2_1_)
+            else:
+                logging.critical("文件中未找到 量化三-结算数据 表格，请检查。")
+                
+                
+            if '量化三-收盘数据' in self.jz_workbook_.sheetnames:
+                sheet = self.jz_workbook_['量化三-收盘数据']
+                row_dict = {}
+                self.jz3_2_ = get_last_jz(sheet, '量化三-收盘数据')
+                self.all_jz_3_2_ = get_all_jz_info(sheet, '量化三-收盘数据')
+                
+                if g_test_pic:
+                    self.all_jz_3_2_, self.jz3_2_ = get_test_data()                              
+            else:
+                logging.critical("文件中未找到 量化三-收盘数据 表格，请检查。")                
                         
         except Exception as e:
             logging.error(f"读取净值信息出错: {e}")  
@@ -1401,8 +1424,7 @@ class ExcelBase:
                     sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                     sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_1_2_, 5))
                     
-                    for i in range(0, last_row):
-                        # sheet.cell(row = i+2, column = 3, value = self.all_jz_1_2_['hc_list'][int(i)])            
+                    for i in range(0, last_row):       
                         sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_1_2_['hc_list'][i]*100, 4)) + '%')
                 else:
                     logging.critical("文件中未找到 量化一-收盘数据 表格，请检查。")
@@ -1414,8 +1436,7 @@ class ExcelBase:
                     sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                     sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_2_1_, 5))
                     
-                    for i in range(0, last_row):
-                        # sheet.cell(row = i+2, column = 3, value = self.all_jz_2_1_['hc_list'][i])     
+                    for i in range(0, last_row):    
                         sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_2_1_['hc_list'][i]*100, 4)) + '%')
                 else:
                     logging.critical("文件中未找到 量化二-结算数据 表格，请检查。")
@@ -1426,8 +1447,7 @@ class ExcelBase:
                     sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                     sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_2_2_,5))
                     
-                    for i in range(0, last_row):
-                        # sheet.cell(row = i+2, column = 3, value = self.all_jz_2_2_['hc_list'][i])      
+                    for i in range(0, last_row):    
                         sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_2_2_['hc_list'][i]*100, 4)) + '%')   
                 else:
                     logging.critical("文件中未找到 量化二-收盘数据 表格，请检查。")        
@@ -1437,11 +1457,10 @@ class ExcelBase:
                     sheet = self.jz_workbook_['量化三-结算数据']
                     last_row = get_last_row(sheet, '量化三-结算数据')
                     sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-                    sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_2_1_, 5))
+                    sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_3_1_, 5))
                     
-                    for i in range(0, last_row):
-                        # sheet.cell(row = i+2, column = 3, value = self.all_jz_2_1_['hc_list'][i])     
-                        sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_2_1_['hc_list'][i]*100, 4)) + '%')
+                    for i in range(0, last_row):  
+                        sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_3_1_['hc_list'][i]*100, 4)) + '%')
                 else:
                     logging.critical("文件中未找到 量化三-结算数据 表格，请检查。")
                     
@@ -1449,11 +1468,10 @@ class ExcelBase:
                     sheet = self.jz_workbook_['量化三-收盘数据']
                     last_row = get_last_row(sheet, '量化三-收盘数据')
                     sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
-                    sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_2_2_,5))
+                    sheet.cell(row = last_row+1, column = 2, value = round(self.new_jz_3_2_,5))
                     
-                    for i in range(0, last_row):
-                        # sheet.cell(row = i+2, column = 3, value = self.all_jz_2_2_['hc_list'][i])      
-                        sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_2_2_['hc_list'][i]*100, 4)) + '%')   
+                    for i in range(0, last_row):    
+                        sheet.cell(row = i+2, column = 3, value = str(round(self.all_jz_3_2_['hc_list'][i]*100, 4)) + '%')   
                 else:
                     logging.critical("文件中未找到 量化三-收盘数据 表格，请检查。")                                          
             
@@ -2370,7 +2388,7 @@ class ExcelBase:
             else:
                 logging.warning("量化三-期货保证金分析文件不存在。")
             
-            sszb = 1000*10000
+            sszb = 500*10000
             qcdwjz = sszb/self.total_amount3_ #期初单位净值
             dwjz = zhzcjz/self.total_amount3_ #单位净值
                     
@@ -2378,11 +2396,11 @@ class ExcelBase:
             sheet.cell(row = self.sheet_5_row_dict_['资产净值'], column = 2, value = zhzcjz).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             sheet.cell(row = self.sheet_5_row_dict_['总份额'], column = 2, value = self.total_amount3_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             sheet.cell(row = self.sheet_5_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 5)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-            sheet.cell(row = self.sheet_5_row_dict_['昨日单位净值'], column = 2, value = round(self.jz2_1_, 5))
+            sheet.cell(row = self.sheet_5_row_dict_['昨日单位净值'], column = 2, value = round(self.jz3_1_, 5))
             sheet.cell(row = self.sheet_5_row_dict_['单位净值'], column = 2, value = round(dwjz, 5))
-            sheet.cell(row = self.sheet_5_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.jz2_1_)/self.jz2_1_*100, 5)) + '%')  
+            sheet.cell(row = self.sheet_5_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.jz3_1_)/self.jz3_1_*100, 5)) + '%')  
             
-            self.new_jz_2_1_ = round(dwjz, 5)              
+            self.new_jz_3_1_ = round(dwjz, 5)              
         
             sheet.cell(row = self.sheet_5_row_dict_['实收资本'], column = 2).border = self.border_
             sheet.cell(row = self.sheet_5_row_dict_['资产净值'], column = 2).border = self.border_
@@ -2429,10 +2447,13 @@ class ExcelBase:
                 else:
                     sheet.merge_cells(start_row=value, start_column=2, end_row=value, end_column=cell_count)    
                 
-            self.all_jz_2_1_['date'].append(self.date)
-            self.all_jz_2_1_['unit_net_value'].append(self.new_jz_2_1_)
-            self.all_jz_2_1_['hc_list'] = calc_max_drawdown(self.all_jz_2_1_['unit_net_value']) 
-            self.draw_save_pic(self.all_jz_2_1_, sheet, '量化三-结算数据') 
+            self.all_jz_3_1_['date'].append(self.date)
+            self.all_jz_3_1_['unit_net_value'].append(self.new_jz_3_1_)
+            self.all_jz_3_1_['hc_list'] = calc_max_drawdown(self.all_jz_3_1_['unit_net_value']) 
+            self.draw_save_pic(self.all_jz_3_1_, sheet, '量化三-结算数据') 
+
+            logging.info(self.all_jz_3_1_['unit_net_value'])
+
         except Exception as e:
             logging.error(f"生成 量化三-结算数据 表格时发生错误: {e}")
                 
@@ -2549,9 +2570,9 @@ class ExcelBase:
             sheet.cell(row = self.sheet_6_row_dict_['资产净值'], column = 2, value = zhzcjz).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             sheet.cell(row = self.sheet_6_row_dict_['总份额'], column = 2, value = self.total_amount3_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
             sheet.cell(row = self.sheet_6_row_dict_['期初单位净值'], column = 2, value = round(qcdwjz, 5)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-            sheet.cell(row = self.sheet_6_row_dict_['昨日单位净值'], column = 2, value = round(self.jz2_2_, 5))
+            sheet.cell(row = self.sheet_6_row_dict_['昨日单位净值'], column = 2, value = round(self.jz3_2_, 5))
             sheet.cell(row = self.sheet_6_row_dict_['单位净值'], column = 2, value = round(dwjz, 5))
-            sheet.cell(row = self.sheet_6_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.jz2_2_)/self.jz2_2_*100, 5)) + '%')  
+            sheet.cell(row = self.sheet_6_row_dict_['日净值增长率'], column = 2, value = str(round((dwjz - self.jz3_2_)/self.jz3_2_*100, 5)) + '%')  
             
             sheet.cell(row = self.sheet_6_row_dict_['实收资本'], column = 2).border = self.border_
             sheet.cell(row = self.sheet_6_row_dict_['资产净值'], column = 2).border = self.border_
@@ -2561,7 +2582,7 @@ class ExcelBase:
             sheet.cell(row = self.sheet_6_row_dict_['单位净值'], column = 2).border = self.border_
             sheet.cell(row = self.sheet_6_row_dict_['日净值增长率'], column = 2).border = self.border_               
             
-            self.new_jz_2_2_ = round(dwjz, 5)           
+            self.new_jz_3_2_ = round(dwjz, 5)           
                 
             if self.src_excel_file_dict_['量化三']['成交回报'] is not None:
                 set_value(sheet, self.sheet_6_row_dict_['交易方向及数量'],2,'future_info', self.src_excel_file_dict_['量化三']['成交回报'], '量化三-成交回报',False,self.border_)
@@ -2601,10 +2622,10 @@ class ExcelBase:
                 else:
                     sheet.merge_cells(start_row=value, start_column=2, end_row=value, end_column=cell_count)        
 
-            self.all_jz_2_2_['date'].append(self.date)
-            self.all_jz_2_2_['unit_net_value'].append(self.new_jz_2_2_)
-            self.all_jz_2_2_['hc_list'] = calc_max_drawdown(self.all_jz_2_2_['unit_net_value']) 
-            self.draw_save_pic(self.all_jz_2_2_, sheet, '量化三-收盘数据') 
+            self.all_jz_3_2_['date'].append(self.date)
+            self.all_jz_3_2_['unit_net_value'].append(self.new_jz_3_2_)
+            self.all_jz_3_2_['hc_list'] = calc_max_drawdown(self.all_jz_3_2_['unit_net_value']) 
+            self.draw_save_pic(self.all_jz_3_2_, sheet, '量化三-收盘数据') 
         except Exception as e:
             logging.error(f"生成 量化三-收盘数据 表格时发生错误: {e}")
                
