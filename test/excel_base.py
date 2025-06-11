@@ -718,7 +718,7 @@ class ExcelDataRead():
             header_col_dict = {}
             for col in range(xlrd_sheet.ncols):
                 cell_value = str(xlrd_sheet.cell_value(0, col))
-                valid_item = ['持仓数量',  '证券代码', '持仓多空标志', '证券类别']                
+                valid_item = ['持仓数量',  '证券代码', '持仓多空标志', '证券类别','本币市值']          
                 if cell_value in valid_item:
                     header_col_dict[cell_value] = col
                     cell_dict[cell_value] = []
@@ -728,7 +728,7 @@ class ExcelDataRead():
                     if nrow == 0:
                         continue
                     cell_value = str(xlrd_sheet.cell_value(nrow, col))                    
-                    if key == '持仓数量':
+                    if key == '持仓数量'or key == '本币市值':
                         cell_value = round(float(cell_value), 4)                                                               
                     cell_dict[key].append(cell_value)
                     
@@ -741,6 +741,8 @@ class ExcelDataRead():
                                 
             row = 0                       
             future_count = 0   
+
+            done_amount = 0 # 本币市值;
                                                        
             for value in cell_dict['证券类别']:
                 
@@ -749,6 +751,8 @@ class ExcelDataRead():
                     
                     stock_name = cell_dict['证券代码'][row]                    
                     trade_type = cell_dict['持仓多空标志'][row]
+
+                    done_amount += cell_dict['本币市值'][row]
                     
                     future_type = get_future_type_name(stock_name)
 
@@ -777,8 +781,10 @@ class ExcelDataRead():
                             future_dict[future_type].kc_[stock_name] += cell_dict['持仓数量'][row]
                             
                 row += 1
-                                                                                                                            
-            future_info = f"共持仓: {future_count} 只期货, 其中: \n"
+
+            done_amount /= 10000    
+            #                                                                 
+            future_info = f"共持仓: {future_count} 只期货, 持仓合约价值 {round(done_amount,2)} 万元, 其中: \n"
             
             for future_type, future_struct in future_dict.items():
                 future_info += future_struct.get_hold_info(future_type)          
@@ -802,7 +808,7 @@ class ExcelDataRead():
             header_col_dict = {}
             for col in range(xlrd_sheet.ncols):
                 cell_value = str(xlrd_sheet.cell_value(0, col))
-                valid_item = ['持仓数量',  '证券代码', '持仓多空标志', '证券类别']                
+                valid_item = ['持仓数量',  '证券代码', '持仓多空标志', '证券类别','本币市值']              
                 if cell_value in valid_item:
                     header_col_dict[cell_value] = col
                     cell_dict[cell_value] = []
@@ -812,7 +818,7 @@ class ExcelDataRead():
                     if nrow == 0:
                         continue
                     cell_value = str(xlrd_sheet.cell_value(nrow, col))                    
-                    if key == '持仓数量':
+                    if key == '持仓数量' or key == '本币市值':
                         cell_value = round(float(cell_value), 4)                                                               
                     cell_dict[key].append(cell_value)
                     
@@ -832,7 +838,9 @@ class ExcelDataRead():
             mrkc = {} #多仓
             mrkc_count = 0
             mcpc = {} #空仓
-            mcpc_count = 0            
+            mcpc_count = 0      
+
+            done_amount = 0 # 本币市值;      
                                
             for value in cell_dict['证券类别']:
                 if '股票' in value:                    
@@ -843,9 +851,13 @@ class ExcelDataRead():
                         future_count += 1
                     elif '期权' in value and cell_dict['持仓数量'][row] > 0:
                         option_count += 1                        
+
+                    done_amount += cell_dict['本币市值'][row]
                     
                     stock_name = cell_dict['证券代码'][row]                    
                     trade_type = cell_dict['持仓多空标志'][row]
+
+                    print(f'{sheet_type}, {stock_name}, {trade_type}, {cell_dict["本币市值"][row]}')
                     
                     if stock_name not in done_detail_dict:
                         done_detail_dict[stock_name] = {}
@@ -885,11 +897,13 @@ class ExcelDataRead():
                     
                     
                 row += 1
+
+            done_amount /= 10000
             # print(done_detail_dict)
                 
             stock_info = f"股票: {stock_count} 只"            
-            future_info = f"当前持有: {future_count} 只股指期货合约, {option_count} 只股指期权合约"
-            
+            future_info = f"当前持有: {future_count} 只股指期货合约, {option_count} 只股指期权合约, 持仓合约价值 { round(done_amount,2) } 万元, 其中: \n"
+            print(future_info)
             if len(mckc) > 0 and mckc_count > 0:
                 future_info += '\n权利仓: '
                 for key, value in mckc.items():
@@ -934,7 +948,9 @@ class ExcelDataRead():
             result_dict = {}
 
             
-            future_info_2 = f"共持仓 {math.floor(float(future_count))}只期货，其中"
+            future_info_2 = f"共持仓 {math.floor(float(future_count))}只期货， 持仓合约价值 { round(done_amount,2) } 万元, 其中"
+
+            print(future_info_2)
             
             for key, value in trade_detail_dict.items():
                 future_info_2 += f"{key}: {math.floor(float(value))} 只,"
