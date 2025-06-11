@@ -9,6 +9,7 @@ from openpyxl.chart import BarChart, Reference, Series
 from openpyxl.drawing.image import Image
 from matplotlib.ticker import FixedLocator, FixedFormatter
 from matplotlib.ticker import PercentFormatter
+from matplotlib.ticker import ScalarFormatter
 import xlrd
 import sys
 import json
@@ -757,7 +758,9 @@ class ExcelDataRead():
                     future_type = get_future_type_name(stock_name)
 
                     if future_type not in future_dict:
-                        future_type = '其他品种'                    
+                        future_type = '其他品种'      
+                    
+                    # logging.info(f'{stock_name}, {future_type},{trade_type}, {cell_dict["本币市值"][row]}')              
                             
                     if '权利仓' in cell_dict['持仓多空标志'][row]:
                         if stock_name not in future_dict[future_type].qlc_:
@@ -903,7 +906,7 @@ class ExcelDataRead():
                 
             stock_info = f"股票: {stock_count} 只"            
             future_info = f"当前持有: {future_count} 只股指期货合约, {option_count} 只股指期权合约, 持仓合约价值 { round(done_amount,2) } 万元, 其中: \n"
-            print(future_info)
+            # print(future_info)
             if len(mckc) > 0 and mckc_count > 0:
                 future_info += '\n权利仓: '
                 for key, value in mckc.items():
@@ -950,7 +953,7 @@ class ExcelDataRead():
             
             future_info_2 = f"共持仓 {math.floor(float(future_count))}只期货， 持仓合约价值 { round(done_amount,2) } 万元, 其中"
 
-            print(future_info_2)
+            # print(future_info_2)
             
             for key, value in trade_detail_dict.items():
                 future_info_2 += f"{key}: {math.floor(float(value))} 只,"
@@ -1243,7 +1246,7 @@ class ExcelBase:
                 row_dict = {}
                 self.jz3_1_ = get_last_jz(sheet, '量化三-结算数据')
                 self.all_jz_3_1_ = get_all_jz_info(sheet, '量化三-结算数据')
-                logging.info(f"self.all_jz_3_1_:{self.all_jz_3_1_}")
+                # logging.info(f"self.all_jz_3_1_:{self.all_jz_3_1_}")
                 if g_test_pic:
                     self.all_jz_3_1_, self.jz3_1_ = get_test_data()            
                 # print('self.all_jz_1_2_:', self.all_jz_2_1_)
@@ -1310,8 +1313,12 @@ class ExcelBase:
                 net_value_list = net_value_list[0:test_len]
                 hc_list = hc_list[0:test_len]
                 
-            max_hc = max(hc_list)
+            max_hc = 0
             min_hc = min(hc_list)
+            
+            if min_hc == 0:
+                min_hc = -0.05
+                max_hc = 0
             
             max_net_value = max(net_value_list)
             min_net_value = min(net_value_list)
@@ -1340,6 +1347,11 @@ class ExcelBase:
             ax1.plot(df['date'], df['net_value'], label='策略净值', color=color)
             ax1.tick_params(axis='y', labelcolor=color)
             ax1.set_ylim(ymin=min_net_value-delta*0.1, ymax=max_net_value+delta*0.1)
+            ax1.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+            
+            # if pic_name == '量化三-收盘数据':
+            #     logging.info(f"净值数据为: {df['net_value']}, min_net_value: {min_net_value}, max_net_value: {max_net_value}, delta: {delta}")            
+            
                         
             # 创建第二个y轴用于绘制回撤
             ax2 = ax1.twinx()
@@ -1350,12 +1362,12 @@ class ExcelBase:
             
             if len(hc_list) < self.draw_line_days_:
                 ax2.bar(df['date'], df['drawdown'], width=0.1, color='red', alpha = 0.5, edgecolor='red', label='回撤')
-                ax2.set_ylim(ymin=min_hc*2, ymax=0)
+                ax2.set_ylim(ymin=min_hc*2, ymax=max_hc)
                 ax2.tick_params(axis='y', labelcolor=color)
             else:
                 ax2.fill_between(df['date'], 0.2, df['drawdown'], label='回撤', alpha = 0.5, edgecolor='red', color=color)
                 ax2.tick_params(axis='y', labelcolor=color)
-                ax2.set_ylim(ymin=min_hc*2, ymax=0)
+                ax2.set_ylim(ymin=min_hc*2, ymax=max_hc)
                 
             # 设置刻度位置
             ax1.xaxis.set_major_locator(FixedLocator(index_list))
@@ -1392,6 +1404,8 @@ class ExcelBase:
             plt.savefig(file_name)  
             
             plt.close() 
+            
+
             
             if self.draw_net_value_curve_ > 0:            
                 img = Image(file_name)
@@ -2452,7 +2466,7 @@ class ExcelBase:
             self.all_jz_3_1_['hc_list'] = calc_max_drawdown(self.all_jz_3_1_['unit_net_value']) 
             self.draw_save_pic(self.all_jz_3_1_, sheet, '量化三-结算数据') 
 
-            logging.info(self.all_jz_3_1_['unit_net_value'])
+            # logging.info(self.all_jz_3_1_['unit_net_value'])
 
         except Exception as e:
             logging.error(f"生成 量化三-结算数据 表格时发生错误: {e}")
