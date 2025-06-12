@@ -82,11 +82,11 @@ def set_value(sheet, row, col, key, value, file_name, is_number = False, border 
     except Exception as e:
         logging.error(f"设置{file_name} 单元格 {key} 值时发生错误: {e}")  
              
-def get_last_row(sheet, sheet_name):
+def get_last_row(sheet, sheet_name, col=1):
     try:
         valid_row = -2
         for i in range(sheet.max_row):
-            if sheet.cell(row=i+1, column=1).value is not None:
+            if sheet.cell(row=i+1, column=col).value is not None:
                 valid_row = i
         if valid_row == -2:
             logging.critical(f"文件 {sheet_name} 中未找到有效行，请检查。")
@@ -105,6 +105,32 @@ def get_last_jz(sheet, sheet_name):
         logging.error(f"读取sheet {sheet_name} 最后一行净值 时发生错误: {e}")  
             
     return last_jz
+
+def get_row(sheet,sheet_name,col, value_type='float'):
+    result = []
+    try:
+
+        valid_row = get_last_row(sheet, sheet_name, col)
+        
+        for i in range(2, valid_row+1):
+
+            if value_type == 'float':
+                tmp = str(sheet.cell(row=i, column=col).value)
+                if tmp.find('%') >= 0:
+                    
+                    new_s = tmp.replace('%', '')
+                    result.append(float(new_s)/100)
+
+                    # logging.info(f"{tmp}, {new_s}, {float(new_s)/100}")
+                else:   
+                    result.append(float(tmp))
+            else:
+                result.append(sheet.cell(row=i, column=col).value)
+            
+    except Exception as e:
+        logging.error(f"读取sheet {sheet_name} 第 {col} 列时发生错误: {e}")  
+            
+    return result      
 
 def get_all_jz_info(sheet, sheet_name):
     jz_dict = {
@@ -126,6 +152,8 @@ def get_all_jz_info(sheet, sheet_name):
             
     return jz_dict                
     
+
+
 def calc_hc_rate(unit_net_value):
     '''
     计算回撤数据
@@ -143,23 +171,19 @@ def calc_hc_rate(unit_net_value):
 
     return []
 
-def calc_max_drawdown(unit_net_value):
+def calc_max_drawdown(unit_net_value, hc_list):
     '''
     计算最大回撤
     '''
     try:
-        if len(unit_net_value) < 2:
-            return [0]
-        else:
-            result = []
-            max_value = unit_net_value[0]
-            for i in range(0, len(unit_net_value)):
-                if unit_net_value[i] > max_value:
-                    max_value = unit_net_value[i]
-                
-                tmp_value = min(0,(unit_net_value[i] - max_value) / max_value)
-                result.append(tmp_value)
-            return result   
+        max_value = unit_net_value[0]
+        for i in range(0, len(unit_net_value)):
+            if unit_net_value[i] > max_value:
+                max_value = unit_net_value[i]
+            
+        tmp_value = min(0,(unit_net_value[len(unit_net_value)-1] - max_value) / max_value)
+        hc_list.append(tmp_value)
+        return hc_list   
     except Exception as e:
         logging.error(f"计算最大回撤 时发生错误: {e}")  
     return []
@@ -860,7 +884,7 @@ class ExcelDataRead():
                     stock_name = cell_dict['证券代码'][row]                    
                     trade_type = cell_dict['持仓多空标志'][row]
 
-                    print(f'{sheet_type}, {stock_name}, {trade_type}, {cell_dict["本币市值"][row]}')
+                    # print(f'{sheet_type}, {stock_name}, {trade_type}, {cell_dict["本币市值"][row]}')
                     
                     if stock_name not in done_detail_dict:
                         done_detail_dict[stock_name] = {}
@@ -1195,6 +1219,7 @@ class ExcelBase:
                 sheet = self.jz_workbook_['量化一-结算数据']
                 self.last_jz1_1_ = get_last_jz(sheet, '量化一-结算数据')
                 self.all_jz_1_1_ = get_all_jz_info(sheet, '量化一-结算数据')
+                self.all_jz_1_1_['hc_list'] = get_row(sheet, '量化一-结算数据', 3)
                 if g_test_pic:
                     self.all_jz_1_1_, self.last_jz1_1_ = get_test_data()
                 
@@ -1208,6 +1233,7 @@ class ExcelBase:
                 row_dict = {}
                 self.last_jz1_2_ = get_last_jz(sheet, '量化一-收盘数据')
                 self.all_jz_1_2_ = get_all_jz_info(sheet, '量化一-收盘数据')
+                self.all_jz_1_2_['hc_list'] = get_row(sheet, '量化一-收盘数据', 3)
                 if g_test_pic:
                     self.all_jz_1_2_, self.last_jz1_2_ = get_test_data()
                                 
@@ -1222,6 +1248,7 @@ class ExcelBase:
                 row_dict = {}
                 self.jz2_1_ = get_last_jz(sheet, '量化二-结算数据')
                 self.all_jz_2_1_ = get_all_jz_info(sheet, '量化二-结算数据')
+                self.all_jz_2_1_['hc_list'] = get_row(sheet, '量化二-结算数据', 3)
                 if g_test_pic:
                     self.all_jz_2_1_, self.jz2_1_ = get_test_data()            
                 # print('self.all_jz_1_2_:', self.all_jz_2_1_)
@@ -1234,7 +1261,7 @@ class ExcelBase:
                 row_dict = {}
                 self.jz2_2_ = get_last_jz(sheet, '量化二-收盘数据')
                 self.all_jz_2_2_ = get_all_jz_info(sheet, '量化二-收盘数据')
-                
+                self.all_jz_2_2_['hc_list'] = get_row(sheet, '量化二-收盘数据', 3)
                 if g_test_pic:
                     self.all_jz_2_2_, self.jz2_2_ = get_test_data()  
                                 
@@ -1246,6 +1273,7 @@ class ExcelBase:
                 row_dict = {}
                 self.jz3_1_ = get_last_jz(sheet, '量化三-结算数据')
                 self.all_jz_3_1_ = get_all_jz_info(sheet, '量化三-结算数据')
+                self.all_jz_3_1_['hc_list'] = get_row(sheet, '量化三-结算数据', 3)
                 # logging.info(f"self.all_jz_3_1_:{self.all_jz_3_1_}")
                 if g_test_pic:
                     self.all_jz_3_1_, self.jz3_1_ = get_test_data()            
@@ -1259,7 +1287,7 @@ class ExcelBase:
                 row_dict = {}
                 self.jz3_2_ = get_last_jz(sheet, '量化三-收盘数据')
                 self.all_jz_3_2_ = get_all_jz_info(sheet, '量化三-收盘数据')
-                
+                self.all_jz_3_2_['hc_list'] = get_row(sheet, '量化三-收盘数据', 3)
                 if g_test_pic:
                     self.all_jz_3_2_, self.jz3_2_ = get_test_data()                              
             else:
@@ -1732,8 +1760,9 @@ class ExcelBase:
                     
             self.all_jz_1_1_['date'].append(self.date)
             self.all_jz_1_1_['unit_net_value'].append(self.new_jz_1_1_)       
-            self.all_jz_1_1_['hc_list'] = calc_max_drawdown(self.all_jz_1_1_['unit_net_value']) 
-            
+            # logging.info(f"{self.all_jz_1_1_['hc_list']}")
+            self.all_jz_1_1_['hc_list'] = calc_max_drawdown(self.all_jz_1_1_['unit_net_value'], self.all_jz_1_1_['hc_list']) 
+            # logging.info(f"{self.all_jz_1_1_['hc_list']}")
             self.draw_save_pic(self.all_jz_1_1_, sheet, '量化一-收盘数据')     
         except Exception as e:
             logging.error(f"生成 量化一-结算数据 表格时发生错误: {e}")             
@@ -1965,7 +1994,7 @@ class ExcelBase:
                     
             self.all_jz_1_2_['date'].append(self.date)
             self.all_jz_1_2_['unit_net_value'].append(self.new_jz_1_2_)      
-            self.all_jz_1_2_['hc_list'] = calc_max_drawdown(self.all_jz_1_2_['unit_net_value'])  
+            self.all_jz_1_2_['hc_list'] = calc_max_drawdown(self.all_jz_1_2_['unit_net_value'],  self.all_jz_1_2_['hc_list'])  
             self.draw_save_pic(self.all_jz_1_2_, sheet, '量化一-结算数据')           
         except Exception as e:
             logging.error(f"生成 量化一-收盘数据 表格时发生错误: {e}")
@@ -2129,7 +2158,7 @@ class ExcelBase:
                 
             self.all_jz_2_1_['date'].append(self.date)
             self.all_jz_2_1_['unit_net_value'].append(self.new_jz_2_1_)
-            self.all_jz_2_1_['hc_list'] = calc_max_drawdown(self.all_jz_2_1_['unit_net_value']) 
+            self.all_jz_2_1_['hc_list'] = calc_max_drawdown(self.all_jz_2_1_['unit_net_value'],self.all_jz_2_1_['hc_list']) 
             self.draw_save_pic(self.all_jz_2_1_, sheet, '量化二-收盘数据') 
         except Exception as e:
             logging.error(f"生成 量化二-结算数据 表格时发生错误: {e}")
@@ -2299,7 +2328,7 @@ class ExcelBase:
 
             self.all_jz_2_2_['date'].append(self.date)
             self.all_jz_2_2_['unit_net_value'].append(self.new_jz_2_2_)
-            self.all_jz_2_2_['hc_list'] = calc_max_drawdown(self.all_jz_2_2_['unit_net_value']) 
+            self.all_jz_2_2_['hc_list'] = calc_max_drawdown(self.all_jz_2_2_['unit_net_value'], self.all_jz_2_2_['hc_list']) 
             self.draw_save_pic(self.all_jz_2_2_, sheet, '量化二-结算数据') 
         except Exception as e:
             logging.error(f"生成 量化二-收盘数据 表格时发生错误: {e}")
@@ -2463,7 +2492,7 @@ class ExcelBase:
                 
             self.all_jz_3_1_['date'].append(self.date)
             self.all_jz_3_1_['unit_net_value'].append(self.new_jz_3_1_)
-            self.all_jz_3_1_['hc_list'] = calc_max_drawdown(self.all_jz_3_1_['unit_net_value']) 
+            self.all_jz_3_1_['hc_list'] = calc_max_drawdown(self.all_jz_3_1_['unit_net_value'],self.all_jz_3_1_['hc_list']) 
             self.draw_save_pic(self.all_jz_3_1_, sheet, '量化三-结算数据') 
 
             # logging.info(self.all_jz_3_1_['unit_net_value'])
@@ -2638,8 +2667,10 @@ class ExcelBase:
 
             self.all_jz_3_2_['date'].append(self.date)
             self.all_jz_3_2_['unit_net_value'].append(self.new_jz_3_2_)
-            self.all_jz_3_2_['hc_list'] = calc_max_drawdown(self.all_jz_3_2_['unit_net_value']) 
+            self.all_jz_3_2_['hc_list'] = calc_max_drawdown(self.all_jz_3_2_['unit_net_value'], self.all_jz_3_2_['hc_list']) 
+            logging.info(f"{self.all_jz_3_2_['hc_list']}")
             self.draw_save_pic(self.all_jz_3_2_, sheet, '量化三-收盘数据') 
+            logging.info(f"{self.all_jz_3_2_['hc_list']}")
         except Exception as e:
             logging.error(f"生成 量化三-收盘数据 表格时发生错误: {e}")
                
