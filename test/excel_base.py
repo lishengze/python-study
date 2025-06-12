@@ -1387,9 +1387,11 @@ class ExcelBase:
             ax2.set_ylabel('回撤', color=color)
             
             # alpha = 0.1, 
+
+            logging.info(f"回撤数据为: {df['drawdown']}, min_hc: {min_hc}, max_hc: {max_hc}")
             
             if len(hc_list) < self.draw_line_days_:
-                ax2.bar(df['date'], df['drawdown'], width=0.1, color='red', alpha = 0.5, edgecolor='red', label='回撤')
+                ax2.bar(df['date'], df['drawdown'], width=0.01, color='red', alpha = 0.5, edgecolor='red', label='回撤')
                 ax2.set_ylim(ymin=min_hc*2, ymax=max_hc)
                 ax2.tick_params(axis='y', labelcolor=color)
             else:
@@ -1408,7 +1410,8 @@ class ExcelBase:
             # 设置刻度标签
             ax2.xaxis.set_major_formatter(FixedFormatter(date_list))      
             
-            ax2.yaxis.set_major_formatter(PercentFormatter(4))
+            ax2.yaxis.set_major_formatter(PercentFormatter(1))
+
             
             # ax2.set_xticklabels(ax2.get_xticklabels(), rotation=90)               
 
