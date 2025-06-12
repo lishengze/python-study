@@ -2076,11 +2076,12 @@ class ExcelBase:
             if self.src_excel_file_dict_['量化二']['汇总证券-合计'] is not None:
                 if 'profit' in self.src_excel_file_dict_['量化二']['汇总证券-合计']:
                     profits1 = self.src_excel_file_dict_['量化二']['汇总证券-合计']['profit']
-                    sheet.cell(row = self.sheet_3_row_dict_['总盈利/亏损'], column = 2, value = round(zhzcjz - 1000*10000,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                    ztyk = zhzcjz - 1000*10000 #总体盈亏
+                    sheet.cell(row = self.sheet_3_row_dict_['总盈利/亏损'], column = 2, value = round(ztyk,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     sheet.cell(row = self.sheet_3_row_dict_['总盈利/亏损'], column = 2).border = self.border_
-                    value2 = profits1 / 1000 / 10000 * 100
-                    value2 = round(value2, 4)
-                    sheet.cell(row = self.sheet_3_row_dict_['收益率'], column = 2, value = str(value2)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                    syl = (ztyk) / 1000 / 10000 * 100 #收益率
+                    syl = round(syl, 4)
+                    sheet.cell(row = self.sheet_3_row_dict_['收益率'], column = 2, value = str(syl)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     sheet.cell(row = self.sheet_3_row_dict_['收益率'], column = 2).border = self.border_
                 else:
                     logging.warning("量化二-汇总证券-合计文件不存在。")
@@ -2232,11 +2233,12 @@ class ExcelBase:
                             sheet.cell(row = self.sheet_4_row_dict_['账户资产净值'], column = 2).border = self.border_
                             zhzcjz = self.zhzcjz_lh2_
                         
-                        sheet.cell(row = self.sheet_4_row_dict_['总盈利/亏损'], column = 2, value=zhzcjz - 1000*10000).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
+                        ztyk = zhzcjz - 1000*10000
+                        sheet.cell(row = self.sheet_4_row_dict_['总盈利/亏损'], column = 2, value=ztyk).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
                         sheet.cell(row = self.sheet_4_row_dict_['总盈利/亏损'], column = 2).border = self.border_
-                        value2 = (zhzcjz - 1000*10000) / 1000 / 10000 * 100 # 收益率 = （账户资产净值 - 1000万元）÷1000万元×100%【保留4位小数】
-                        value2 = round(value2, 4)
-                        sheet.cell(row = self.sheet_4_row_dict_['收益率'], column = 2, value = str(value2)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                        syl = ztyk / 1000 / 10000 * 100 # 收益率 = （账户资产净值 - 1000万元）÷1000万元×100%【保留4位小数】
+                        syl = round(syl, 4)
+                        sheet.cell(row = self.sheet_4_row_dict_['收益率'], column = 2, value = str(syl)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                         sheet.cell(row = self.sheet_4_row_dict_['收益率'], column = 2).border = self.border_
                         
                         cell_index += 1
@@ -2410,11 +2412,12 @@ class ExcelBase:
             if self.src_excel_file_dict_['量化三']['汇总证券-合计'] is not None:
                 if 'profit' in self.src_excel_file_dict_['量化三']['汇总证券-合计']:
                     profits1 = self.src_excel_file_dict_['量化三']['汇总证券-合计']['profit']
-                    sheet.cell(row = self.sheet_5_row_dict_['总盈利/亏损'], column = 2, value = round(zhzcjz - 500*10000,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 与量化二不同的地方;
+                    ztyk = zhzcjz - 500*10000
+                    sheet.cell(row = self.sheet_5_row_dict_['总盈利/亏损'], column = 2, value = round(ztyk,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 与量化二不同的地方;
                     sheet.cell(row = self.sheet_5_row_dict_['总盈利/亏损'], column = 2).border = self.border_
-                    value2 = profits1 / 1000 / 10000 * 100
-                    value2 = round(value2, 4)
-                    sheet.cell(row = self.sheet_5_row_dict_['收益率'], column = 2, value = str(value2)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                    syl = ztyk / 500 / 10000 * 100
+                    syl = round(syl, 4)
+                    sheet.cell(row = self.sheet_5_row_dict_['收益率'], column = 2, value = str(syl)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     sheet.cell(row = self.sheet_5_row_dict_['收益率'], column = 2).border = self.border_
                 else:
                     logging.warning("量化三-汇总证券-合计文件不存在。")
@@ -2569,11 +2572,12 @@ class ExcelBase:
                             sheet.cell(row = self.sheet_6_row_dict_['账户资产净值'], column = 2).border = self.border_
                             zhzcjz = self.zhzcjz_lh3_
                         
-                        sheet.cell(row = self.sheet_6_row_dict_['总盈利/亏损'], column = 2, value=zhzcjz - 1000*10000).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
+                        ztyk = zhzcjz - 500*10000  # 总盈利/亏损 = 账户资产净值 - 500w
+                        sheet.cell(row = self.sheet_6_row_dict_['总盈利/亏损'], column = 2, value=ztyk).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
                         sheet.cell(row = self.sheet_6_row_dict_['总盈利/亏损'], column = 2).border = self.border_
-                        value2 = (zhzcjz - 1000*10000) / 1000 / 10000 * 100 # 收益率 = （账户资产净值 - 1000万元）÷1000万元×100%【保留4位小数】
-                        value2 = round(value2, 4)
-                        sheet.cell(row = self.sheet_6_row_dict_['收益率'], column = 2, value = str(value2)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                        syl = ztyk / 500 / 10000 * 100 # 收益率 = （账户资产净值 - 1000万元）÷1000万元×100%【保留4位小数】
+                        syl = round(syl, 4)
+                        sheet.cell(row = self.sheet_6_row_dict_['收益率'], column = 2, value = str(syl)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                         sheet.cell(row = self.sheet_6_row_dict_['收益率'], column = 2).border = self.border_
                         
                         cell_index += 1
@@ -2606,7 +2610,7 @@ class ExcelBase:
             else:
                 logging.warning("量化三-期货保证金分析文件不存在。")
                 
-            sszb = 1000*10000
+            sszb = 500*10000
             qcdwjz = sszb/self.total_amount3_ #期初单位净值
             dwjz = zhzcjz/self.total_amount3_ #单位净值
             
