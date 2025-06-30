@@ -1,194 +1,50 @@
-2025-06-12 17:05:24,368 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化一/成交回报.xls
-2025-06-12 17:05:24,372 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化一/单元资产.xls
-2025-06-12 17:05:24,372 - INFO - excel_base.py - 331 - 读取文件 单元资产 开始 4 118 
-2025-06-12 17:05:24,375 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化一/汇总证券-当日持仓.xls
-2025-06-12 17:05:24,487 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化一/汇总证券-合计.xls
-2025-06-12 17:05:24,487 - INFO - excel_base.py - 390 - 读取文件 汇总证券-合计 开始 3611 14 
-2025-06-12 17:05:24,618 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化一/汇总证券-合计-股票.xls
-2025-06-12 17:05:24,618 - INFO - excel_base.py - 1010 - 读取文件 汇总证券-合计-股票 开始 3541 14 
-2025-06-12 17:05:24,666 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化一/交易所回购.xls
-2025-06-12 17:05:24,666 - INFO - excel_base.py - 423 - 读取文件 交易所回购 开始 77 31 
-2025-06-12 17:05:24,670 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化一/期货保证金分析.xls
-2025-06-12 17:05:24,670 - INFO - excel_base.py - 441 - 读取文件 单元资产 开始 3 47 
-2025-06-12 17:05:24,682 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化二/成交回报.xls
-2025-06-12 17:05:24,688 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化二/单元资产.xls
-2025-06-12 17:05:24,688 - INFO - excel_base.py - 331 - 读取文件 单元资产 开始 3 118 
-2025-06-12 17:05:24,693 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化二/汇总证券-当日持仓.xls
-2025-06-12 17:05:24,700 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化二/汇总证券-合计.xls
-2025-06-12 17:05:24,700 - INFO - excel_base.py - 390 - 读取文件 汇总证券-合计 开始 164 14 
-2025-06-12 17:05:24,700 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化二/期货保证金分析.xls
-2025-06-12 17:05:24,700 - INFO - excel_base.py - 441 - 读取文件 单元资产 开始 3 47 
-2025-06-12 17:05:24,718 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化三/成交回报.xls
-2025-06-12 17:05:24,718 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化三/单元资产.xls
-2025-06-12 17:05:24,718 - INFO - excel_base.py - 331 - 读取文件 单元资产 开始 6 118 
-2025-06-12 17:05:24,737 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化三/汇总证券-当日持仓.xls
-2025-06-12 17:05:24,746 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化三/汇总证券-合计.xls
-2025-06-12 17:05:24,746 - INFO - excel_base.py - 390 - 读取文件 汇总证券-合计 开始 8 14 
-2025-06-12 17:05:24,752 - INFO - excel_base.py - 1198 - 成功读取文件 D:/code/study/python-study/template/6.12/量化三/期货保证金分析.xls
-2025-06-12 17:05:24,752 - INFO - excel_base.py - 441 - 读取文件 单元资产 开始 3 47 
-2025-06-12 17:05:25,453 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:25,453 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:25,469 - INFO - excel_base.py - 1391 - 回撤数据为: 0     0.00000
-1     0.00000
-2    -0.00002
-3     0.00000
-4     0.00000
-       ...   
-68   -0.00374
-69   -0.00355
-70   -0.00350
-71   -0.00358
-72   -0.00325
-Name: drawdown, Length: 73, dtype: float64, min_hc: -0.005849999999999999, max_hc: 0
-2025-06-12 17:05:25,469 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:26,077 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:26,077 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:26,090 - INFO - excel_base.py - 1391 - 回撤数据为: 0     0.00000
-1     0.00000
-2    -0.00002
-3     0.00000
-4     0.00000
-       ...   
-68   -0.00374
-69   -0.00361
-70   -0.00350
-71   -0.00352
-72   -0.00325
-Name: drawdown, Length: 73, dtype: float64, min_hc: -0.005659999999999999, max_hc: 0
-2025-06-12 17:05:26,090 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:26,544 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:26,560 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:26,560 - INFO - excel_base.py - 1391 - 回撤数据为: 0     0.000000
-1     0.000000
-2     0.000000
-3     0.000000
-4    -0.001130
-5    -0.002070
-6    -0.002710
-7    -0.003090
-8    -0.004570
-9    -0.005250
-10   -0.005020
-11   -0.004630
-12   -0.007810
-13   -0.001050
-14    0.000000
-15    0.000000
-16   -0.000976
-17   -0.000249
-18   -0.000508
-19   -0.002510
-20   -0.004074
-21   -0.004602
-22   -0.003267
-23   -0.003228
-24   -0.002869
-25   -0.004025
-26   -0.001833
-27    0.000000
-28    0.000000
-29    0.000000
-30    0.000000
-31    0.000000
-32   -0.000466
-33   -0.001407
-34   -0.001516
-35    0.000000
-36    0.000000
-37    0.000000
-38   -0.000547
-39   -0.005273
-40   -0.007656
-41   -0.006972
-42   -0.004961
-43   -0.009140
-44   -0.014120
-45   -0.015311
-46   -0.017655
-47   -0.017440
-48   -0.014257
-49   -0.020926
-50   -0.022244
-51   -0.026814
-52   -0.027791
-53   -0.029568
-54   -0.030300
-55   -0.030281
-Name: drawdown, dtype: float64, min_hc: -0.030299999999999997, max_hc: 0
-2025-06-12 17:05:26,560 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:27,046 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:27,053 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:27,053 - INFO - excel_base.py - 1391 - 回撤数据为: 0     0.000000
-1     0.000000
-2     0.000000
-3     0.000000
-4    -0.001130
-5    -0.002070
-6    -0.002710
-7    -0.003090
-8    -0.004570
-9    -0.005250
-10   -0.005020
-11   -0.004630
-12   -0.007810
-13   -0.001050
-14    0.000000
-15    0.000000
-16    0.000000
-17    0.000000
-18   -0.000946
-19   -0.003734
-20   -0.004551
-21   -0.004242
-22   -0.003455
-23   -0.002729
-24   -0.001892
-25   -0.002599
-26   -0.000239
-27    0.000000
-28   -0.000427
-29    0.000000
-30    0.000000
-31    0.000000
-32   -0.001199
-33   -0.002338
-34   -0.001367
-35    0.000000
-36    0.000000
-37    0.000000
-38   -0.005679
-39   -0.011455
-40   -0.011164
-41   -0.012233
-42   -0.008733
-43   -0.013527
-44   -0.020081
-45   -0.018506
-46   -0.020538
-47   -0.021277
-48   -0.015462
-49   -0.024486
-50   -0.027530
-51   -0.030982
-52   -0.031964
-53   -0.032470
-54   -0.032801
-55   -0.034901
-Name: drawdown, dtype: float64, min_hc: -0.0349012476539632, max_hc: 0
-2025-06-12 17:05:27,053 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:27,558 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:27,558 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:27,568 - INFO - excel_base.py - 1391 - 回撤数据为: 0   -0.000124
-1    0.000000
-Name: drawdown, dtype: float64, min_hc: -0.000124, max_hc: 0
-2025-06-12 17:05:27,568 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:27,734 - INFO - excel_base.py - 2678 - [-0.000124, 0]
-2025-06-12 17:05:27,928 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:27,928 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:27,945 - INFO - excel_base.py - 1391 - 回撤数据为: 0   -0.000124
-1    0.000000
-Name: drawdown, dtype: float64, min_hc: -0.000124, max_hc: 0
-2025-06-12 17:05:27,945 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-12 17:05:28,091 - INFO - excel_base.py - 2680 - [-0.000124, 0]
-2025-06-12 17:05:28,091 - INFO - excel_base.py - 1546 - Sheet 已成功删除。
-2025-06-12 17:05:28,091 - INFO - excel_base.py - 1551 - 目标文件名: D:/code/study/python-study/template/6.12/量化业务日报-2025-06-10.xlsx
+2025-06-30 09:08:41,860 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/成交回报.xls
+2025-06-30 09:08:41,871 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/单元资产.xls
+2025-06-30 09:08:41,872 - INFO - excel_base.py - 331 - 读取文件 单元资产 开始 4 118 
+2025-06-30 09:08:41,923 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/汇总证券-当日持仓.xls
+2025-06-30 09:08:42,104 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/汇总证券-合计.xls
+2025-06-30 09:08:42,104 - INFO - excel_base.py - 390 - 读取文件 汇总证券-合计 开始 3586 14 
+2025-06-30 09:08:42,281 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/汇总证券-合计-股票.xls
+2025-06-30 09:08:42,281 - INFO - excel_base.py - 1010 - 读取文件 汇总证券-合计-股票 开始 3520 14 
+2025-06-30 09:08:42,324 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/交易所回购.xls
+2025-06-30 09:08:42,324 - INFO - excel_base.py - 423 - 读取文件 交易所回购 开始 69 31 
+2025-06-30 09:08:42,328 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/期货保证金分析.xls
+2025-06-30 09:08:42,329 - INFO - excel_base.py - 441 - 读取文件 单元资产 开始 3 47 
+2025-06-30 09:08:42,340 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/成交回报.xls
+2025-06-30 09:08:42,350 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/单元资产.xls
+2025-06-30 09:08:42,350 - INFO - excel_base.py - 331 - 读取文件 单元资产 开始 3 118 
+2025-06-30 09:08:42,358 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/汇总证券-当日持仓.xls
+2025-06-30 09:08:42,369 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/汇总证券-合计.xls
+2025-06-30 09:08:42,369 - INFO - excel_base.py - 390 - 读取文件 汇总证券-合计 开始 151 14 
+2025-06-30 09:08:42,373 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/期货保证金分析.xls
+2025-06-30 09:08:42,373 - INFO - excel_base.py - 441 - 读取文件 单元资产 开始 3 47 
+2025-06-30 09:08:42,381 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/成交回报.xls
+2025-06-30 09:08:42,387 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/单元资产.xls
+2025-06-30 09:08:42,387 - INFO - excel_base.py - 331 - 读取文件 单元资产 开始 3 118 
+2025-06-30 09:08:42,393 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/汇总证券-当日持仓.xls
+2025-06-30 09:08:42,404 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/汇总证券-合计.xls
+2025-06-30 09:08:42,404 - INFO - excel_base.py - 390 - 读取文件 汇总证券-合计 开始 151 14 
+2025-06-30 09:08:42,409 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/期货保证金分析.xls
+2025-06-30 09:08:42,409 - INFO - excel_base.py - 441 - 读取文件 单元资产 开始 3 47 
+2025-06-30 09:08:43,104 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:43,109 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:43,124 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:43,690 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:43,693 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:43,704 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:44,081 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:44,083 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:44,090 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:44,656 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:44,659 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:44,724 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:45,051 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:45,053 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:45,059 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:45,400 - INFO - excel_base.py - 2750 - [0.0, 0.0, 0.0, 0.0, -0.00113, -0.00207, -0.00271, -0.00309, -0.00457, -0.00525, -0.00502, -0.0046300000000000004, -0.00781, -0.00105, 0.0, 0.0, 0.0, 0.0, -0.000946, -0.003734, -0.004551, -0.004242, -0.0034549999999999997, -0.0027289999999999997, -0.001892, -0.002599, -0.000239, 0.0, -0.000427, 0.0, 0.0, 0.0, -0.001199, -0.0023380000000000002, -0.001367, 0.0, 0.0, 0.0, -0.005679, -0.011455, -0.011164, -0.012233, -0.008733, -0.013527, -0.020081, -0.018506, -0.020537999999999997, -0.021277, -0.015462, 0]
+2025-06-30 09:08:45,638 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:45,642 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:45,656 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-06-30 09:08:45,946 - INFO - excel_base.py - 2752 - [0.0, 0.0, 0.0, 0.0, -0.00113, -0.00207, -0.00271, -0.00309, -0.00457, -0.00525, -0.00502, -0.0046300000000000004, -0.00781, -0.00105, 0.0, 0.0, 0.0, 0.0, -0.000946, -0.003734, -0.004551, -0.004242, -0.0034549999999999997, -0.0027289999999999997, -0.001892, -0.002599, -0.000239, 0.0, -0.000427, 0.0, 0.0, 0.0, -0.001199, -0.0023380000000000002, -0.001367, 0.0, 0.0, 0.0, -0.005679, -0.011455, -0.011164, -0.012233, -0.008733, -0.013527, -0.020081, -0.018506, -0.020537999999999997, -0.021277, -0.015462, 0]
+2025-06-30 09:08:45,946 - INFO - excel_base.py - 1612 - Sheet 已成功删除。
+2025-06-30 09:08:45,946 - INFO - excel_base.py - 1617 - 目标文件名: D:/code/study/python-study/template/5.29/量化业务日报-2025-05-29.xlsx
