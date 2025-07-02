@@ -1631,7 +1631,7 @@ class ExcelBase:
                 '资产单元名称':5,
                 '单元资产净值':6,
                 '账户资产净值':7,
-                '交易所回购':8,
+                '返息/逆回购':8,
                 '总盈利/亏损（不含逆回购）/返息':9,
                 '收益率（不含逆回购）/返息':10,
                 '总盈利/亏损（含逆回购）/返息':11,
@@ -1707,14 +1707,15 @@ class ExcelBase:
             else:
                 logging.warning("量化一-单元资产文件不存在。")
                 
-            jyshg_profit = 0 # 交易所回购
-            if self.src_excel_file_dict_['量化一']['交易所回购'] is not None:
-                if 'profit' in self.src_excel_file_dict_['量化一']['交易所回购']:   
-                    jyshg_profit = self.src_excel_file_dict_['量化一']['交易所回购']['profit']
-                    sheet.cell(row = self.sheet_1_row_dict_['交易所回购'], column = cell_col_index['权益类一单元'], value =jyshg_profit).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                    sheet.cell(row = self.sheet_1_row_dict_['交易所回购'], column = cell_col_index['权益类一单元']).border = self.border_
+            jyshg_profit = 0 # 返息/逆回购
+            if self.src_excel_file_dict_['量化一']['返息/逆回购'] is not None:
+                if 'profit' in self.src_excel_file_dict_['量化一']['返息/逆回购']:   
+                    jyshg_profit = self.src_excel_file_dict_['量化一']['返息/逆回购']['profit']
+                    sheet.cell(row = self.sheet_1_row_dict_['返息/逆回购'], column = cell_col_index['权益类一单元'], value =jyshg_profit).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                    sheet.cell(row = self.sheet_1_row_dict_['返息/逆回购'], column = cell_col_index['权益类一单元']).border = self.border_
                     
-                    sheet.cell(row = self.sheet_1_row_dict_['交易所回购'], column = cell_col_index['量化一-投机单元'], value ='-')
+                    sheet.cell(row = self.sheet_1_row_dict_['返息/逆回购'], column = cell_col_index['量化一-投机单元'], value =self.src_excel_file_dict_['量化一']['手动输入数据']['返息']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                    sheet.cell(row = self.sheet_1_row_dict_['返息/逆回购'], column = cell_col_index['量化一-投机单元']).border = self.border_
                 else:
                     logging.warning("量化一-交易所回购文件不存在。")
             else:
@@ -1851,7 +1852,7 @@ class ExcelBase:
                 '资产单元名称':5,
                 '单元资产净值':6,
                 '账户资产净值':7,
-                '交易所回购':8,
+                '返息/逆回购':8,
                 '盈利/亏损（不含逆回购）/返息':9,
                 '总盈利/亏损（不含逆回购）/返息':10,
                 '收益率（不含逆回购）/返息':11,
@@ -1966,14 +1967,15 @@ class ExcelBase:
             else:
                 logging.warning("量化一-单元资产文件不存在。")
             
-            jyshg_profit = 0 # 交易所回购
-            if self.src_excel_file_dict_['量化一']['交易所回购'] is not None:
-                if 'profit' in self.src_excel_file_dict_['量化一']['交易所回购']:   
-                    jyshg_profit = self.src_excel_file_dict_['量化一']['交易所回购']['profit']
-                    sheet.cell(row = self.sheet_2_row_dict_['交易所回购'], column = cell_col_index['权益类一单元'], value = jyshg_profit).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                    sheet.cell(row = self.sheet_2_row_dict_['交易所回购'], column = cell_col_index['权益类一单元']).border = self.border_
+            jyshg_profit = 0 # 返息/逆回购
+            if self.src_excel_file_dict_['量化一']['返息/逆回购'] is not None:
+                if 'profit' in self.src_excel_file_dict_['量化一']['返息/逆回购']:   
+                    jyshg_profit = self.src_excel_file_dict_['量化一']['返息/逆回购']['profit']
+                    sheet.cell(row = self.sheet_2_row_dict_['返息/逆回购'], column = cell_col_index['权益类一单元'], value = jyshg_profit).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                    sheet.cell(row = self.sheet_2_row_dict_['返息/逆回购'], column = cell_col_index['权益类一单元']).border = self.border_
                     
-                    sheet.cell(row = self.sheet_2_row_dict_['交易所回购'], column = cell_col_index['量化一-投机单元'], value ='-')
+                    sheet.cell(row = self.sheet_2_row_dict_['返息/逆回购'], column = cell_col_index['量化一-投机单元'], value =self.src_excel_file_dict_['量化一']['手动输入数据']['返息']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1                    
+                    sheet.cell(row = self.sheet_2_row_dict_['返息/逆回购'], column = cell_col_index['量化一-投机单元']).border = self.border_
                 else:
                     logging.warning("量化一-交易所回购文件不存在。")
             else:
