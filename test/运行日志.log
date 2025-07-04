@@ -1,50 +1,48 @@
-2025-06-30 09:08:41,860 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/成交回报.xls
-2025-06-30 09:08:41,871 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/单元资产.xls
-2025-06-30 09:08:41,872 - INFO - excel_base.py - 331 - 读取文件 单元资产 开始 4 118 
-2025-06-30 09:08:41,923 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/汇总证券-当日持仓.xls
-2025-06-30 09:08:42,104 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/汇总证券-合计.xls
-2025-06-30 09:08:42,104 - INFO - excel_base.py - 390 - 读取文件 汇总证券-合计 开始 3586 14 
-2025-06-30 09:08:42,281 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/汇总证券-合计-股票.xls
-2025-06-30 09:08:42,281 - INFO - excel_base.py - 1010 - 读取文件 汇总证券-合计-股票 开始 3520 14 
-2025-06-30 09:08:42,324 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/交易所回购.xls
-2025-06-30 09:08:42,324 - INFO - excel_base.py - 423 - 读取文件 交易所回购 开始 69 31 
-2025-06-30 09:08:42,328 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/期货保证金分析.xls
-2025-06-30 09:08:42,329 - INFO - excel_base.py - 441 - 读取文件 单元资产 开始 3 47 
-2025-06-30 09:08:42,340 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/成交回报.xls
-2025-06-30 09:08:42,350 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/单元资产.xls
-2025-06-30 09:08:42,350 - INFO - excel_base.py - 331 - 读取文件 单元资产 开始 3 118 
-2025-06-30 09:08:42,358 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/汇总证券-当日持仓.xls
-2025-06-30 09:08:42,369 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/汇总证券-合计.xls
-2025-06-30 09:08:42,369 - INFO - excel_base.py - 390 - 读取文件 汇总证券-合计 开始 151 14 
-2025-06-30 09:08:42,373 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/期货保证金分析.xls
-2025-06-30 09:08:42,373 - INFO - excel_base.py - 441 - 读取文件 单元资产 开始 3 47 
-2025-06-30 09:08:42,381 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/成交回报.xls
-2025-06-30 09:08:42,387 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/单元资产.xls
-2025-06-30 09:08:42,387 - INFO - excel_base.py - 331 - 读取文件 单元资产 开始 3 118 
-2025-06-30 09:08:42,393 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/汇总证券-当日持仓.xls
-2025-06-30 09:08:42,404 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/汇总证券-合计.xls
-2025-06-30 09:08:42,404 - INFO - excel_base.py - 390 - 读取文件 汇总证券-合计 开始 151 14 
-2025-06-30 09:08:42,409 - INFO - excel_base.py - 1266 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/期货保证金分析.xls
-2025-06-30 09:08:42,409 - INFO - excel_base.py - 441 - 读取文件 单元资产 开始 3 47 
-2025-06-30 09:08:43,104 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:43,109 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:43,124 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:43,690 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:43,693 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:43,704 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:44,081 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:44,083 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:44,090 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:44,656 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:44,659 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:44,724 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:45,051 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:45,053 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:45,059 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:45,400 - INFO - excel_base.py - 2750 - [0.0, 0.0, 0.0, 0.0, -0.00113, -0.00207, -0.00271, -0.00309, -0.00457, -0.00525, -0.00502, -0.0046300000000000004, -0.00781, -0.00105, 0.0, 0.0, 0.0, 0.0, -0.000946, -0.003734, -0.004551, -0.004242, -0.0034549999999999997, -0.0027289999999999997, -0.001892, -0.002599, -0.000239, 0.0, -0.000427, 0.0, 0.0, 0.0, -0.001199, -0.0023380000000000002, -0.001367, 0.0, 0.0, 0.0, -0.005679, -0.011455, -0.011164, -0.012233, -0.008733, -0.013527, -0.020081, -0.018506, -0.020537999999999997, -0.021277, -0.015462, 0]
-2025-06-30 09:08:45,638 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:45,642 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:45,656 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-06-30 09:08:45,946 - INFO - excel_base.py - 2752 - [0.0, 0.0, 0.0, 0.0, -0.00113, -0.00207, -0.00271, -0.00309, -0.00457, -0.00525, -0.00502, -0.0046300000000000004, -0.00781, -0.00105, 0.0, 0.0, 0.0, 0.0, -0.000946, -0.003734, -0.004551, -0.004242, -0.0034549999999999997, -0.0027289999999999997, -0.001892, -0.002599, -0.000239, 0.0, -0.000427, 0.0, 0.0, 0.0, -0.001199, -0.0023380000000000002, -0.001367, 0.0, 0.0, 0.0, -0.005679, -0.011455, -0.011164, -0.012233, -0.008733, -0.013527, -0.020081, -0.018506, -0.020537999999999997, -0.021277, -0.015462, 0]
-2025-06-30 09:08:45,946 - INFO - excel_base.py - 1612 - Sheet 已成功删除。
-2025-06-30 09:08:45,946 - INFO - excel_base.py - 1617 - 目标文件名: D:/code/study/python-study/template/5.29/量化业务日报-2025-05-29.xlsx
+2025-07-04 15:17:54,238 - INFO - excel_base.py - 63 - 配置文件路径: D:\code\study\python-study\test/配置.json
+2025-07-04 15:17:54,448 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/成交回报.xls
+2025-07-04 15:17:54,462 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/单元资产.xls
+2025-07-04 15:17:54,462 - INFO - excel_base.py - 456 - 读取文件 单元资产 开始 4 118 
+2025-07-04 15:17:54,525 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/汇总证券-当日持仓.xls
+2025-07-04 15:17:54,687 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/汇总证券-合计.xls
+2025-07-04 15:17:54,687 - INFO - excel_base.py - 515 - 读取文件 汇总证券-合计 开始 3586 14 
+2025-07-04 15:17:54,827 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/汇总证券-合计-股票.xls
+2025-07-04 15:17:54,827 - INFO - excel_base.py - 1135 - 读取文件 汇总证券-合计-股票 开始 3520 14 
+2025-07-04 15:17:54,865 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/交易所回购.xls
+2025-07-04 15:17:54,865 - INFO - excel_base.py - 548 - 读取文件 交易所回购 开始 69 31 
+2025-07-04 15:17:54,869 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化一/期货保证金分析.xls
+2025-07-04 15:17:54,869 - INFO - excel_base.py - 566 - 读取文件 单元资产 开始 3 47 
+2025-07-04 15:17:54,884 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/成交回报.xls
+2025-07-04 15:17:54,894 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/单元资产.xls
+2025-07-04 15:17:54,894 - INFO - excel_base.py - 456 - 读取文件 单元资产 开始 3 118 
+2025-07-04 15:17:54,901 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/汇总证券-当日持仓.xls
+2025-07-04 15:17:54,911 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/汇总证券-合计.xls
+2025-07-04 15:17:54,912 - INFO - excel_base.py - 515 - 读取文件 汇总证券-合计 开始 151 14 
+2025-07-04 15:17:54,915 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化二/期货保证金分析.xls
+2025-07-04 15:17:54,915 - INFO - excel_base.py - 566 - 读取文件 单元资产 开始 3 47 
+2025-07-04 15:17:54,919 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/成交回报.xls
+2025-07-04 15:17:54,926 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/单元资产.xls
+2025-07-04 15:17:54,926 - INFO - excel_base.py - 456 - 读取文件 单元资产 开始 3 118 
+2025-07-04 15:17:54,933 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/汇总证券-当日持仓.xls
+2025-07-04 15:17:54,943 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/汇总证券-合计.xls
+2025-07-04 15:17:54,943 - INFO - excel_base.py - 515 - 读取文件 汇总证券-合计 开始 151 14 
+2025-07-04 15:17:54,947 - INFO - excel_base.py - 1494 - 成功读取文件 D:/code/study/python-study/template/5.29/量化三/期货保证金分析.xls
+2025-07-04 15:17:54,947 - INFO - excel_base.py - 566 - 读取文件 单元资产 开始 3 47 
+2025-07-04 15:17:54,948 - INFO - excel_base.py - 1176 - 读取文件 量化一-结算数据 开始 66
+2025-07-04 15:17:54,949 - INFO - excel_base.py - 1176 - 读取文件 量化一-收盘数据 开始 67
+2025-07-04 15:17:54,949 - INFO - excel_base.py - 1176 - 读取文件 量化二-结算数据 开始 50
+2025-07-04 15:17:54,951 - INFO - excel_base.py - 1176 - 读取文件 量化二-收盘数据 开始 50
+2025-07-04 15:17:54,951 - INFO - excel_base.py - 1176 - 读取文件 量化三-结算数据 开始 50
+2025-07-04 15:17:54,952 - INFO - excel_base.py - 1176 - 读取文件 量化三-收盘数据 开始 50
+2025-07-04 15:17:54,957 - INFO - excel_base.py - 2020 - 单位净值（含逆回购/返息）: 0.9966053723333334
+2025-07-04 15:17:54,957 - INFO - excel_base.py - 2021 - 昨日单位净值（含逆回购/返息）: 0.99668
+2025-07-04 15:17:54,957 - INFO - excel_base.py - 2022 - 日净值增长率（含逆回购/返息）: -0.007487625583603574
+2025-07-04 15:17:54,957 - INFO - excel_base.py - 2033 - 日净值增长率（不含逆回购/返息）: -0.3607334350042133
+2025-07-04 15:17:55,644 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-04 15:17:55,644 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-04 15:17:55,654 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-04 15:17:56,078 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-04 15:17:56,078 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-04 15:17:56,088 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-04 15:17:56,264 - INFO - excel_base.py - 1844 - Sheet 已成功删除。
+2025-07-04 15:17:56,264 - INFO - excel_base.py - 1849 - 目标文件名: D:/code/study/python-study/template/5.29/量化业务日报-2025-05-29.xlsx
+2025-07-04 15:17:56,281 - INFO - excel_base.py - 1756 - hc_list_with_profit_.size: 66, hc_list_no_profit_.size: [0.0, 0.0, -2e-05, 0.0, 0.0, -0.00048, -0.00048, -0.00048, -0.00017999999999999998, -0.00046, -0.0002, -0.0002, -0.00064, -0.00066, -0.00099, -0.00233, -0.00229, -0.00228, -0.0022400000000000002, -0.00216, -0.0020599999999999998, -0.00198, -0.0020499999999999997, -0.00194, -0.00191, -0.00179, -0.0017499999999999998, -0.00131, -0.00126, -0.00091, -0.00481, -0.00417, -0.00415, -0.00411, -0.00377, -0.0012900000000000001, -0.00124, -0.00115, -0.00178, -0.0028100000000000004, -0.00262, -0.0025700000000000002, -0.0022, -0.00345, -0.00437, -0.005849999999999999, -0.00573, -0.00527, -0.00417, -0.0032500000000000003, -0.00272, -0.0032600000000000003, -0.003, -0.0028599999999999997, -0.0028699999999999997, -0.0028299999999999996, -0.0027400000000000002, -0.0025700000000000002, -0.0023899999999999998, -0.00243, -0.0027800000000000004, -0.00406, -0.00384, -0.0034999999999999996, -0.00336, -0.0034344902870552074]
