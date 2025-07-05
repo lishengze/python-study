@@ -1,35 +1,197 @@
-2025-07-04 16:36:36,612 - INFO - excel_base.py - 63 - ÅäÖÃÎÄ¼şÂ·¾¶: D:\code\study\python-study\test/ÅäÖÃ.json
-2025-07-04 16:36:37,288 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Ò»/³É½»»Ø±¨.xls
-2025-07-04 16:36:37,314 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Ò»/µ¥Ôª×Ê²ú.xls
-2025-07-04 16:36:37,314 - INFO - excel_base.py - 456 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 4 118 
-2025-07-04 16:36:37,466 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Ò»/»ã×ÜÖ¤È¯-µ±ÈÕ³Ö²Ö.xls
-2025-07-04 16:36:38,137 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Ò»/»ã×ÜÖ¤È¯-ºÏ¼Æ.xls
-2025-07-04 16:36:38,137 - INFO - excel_base.py - 515 - ¶ÁÈ¡ÎÄ¼ş »ã×ÜÖ¤È¯-ºÏ¼Æ ¿ªÊ¼ 3586 14 
-2025-07-04 16:36:38,882 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Ò»/»ã×ÜÖ¤È¯-ºÏ¼Æ-¹ÉÆ±.xls
-2025-07-04 16:36:38,882 - INFO - excel_base.py - 1135 - ¶ÁÈ¡ÎÄ¼ş »ã×ÜÖ¤È¯-ºÏ¼Æ-¹ÉÆ± ¿ªÊ¼ 3520 14 
-2025-07-04 16:36:38,982 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Ò»/½»Ò×Ëù»Ø¹º.xls
-2025-07-04 16:36:38,982 - INFO - excel_base.py - 548 - ¶ÁÈ¡ÎÄ¼ş ½»Ò×Ëù»Ø¹º ¿ªÊ¼ 69 31 
-2025-07-04 16:36:38,991 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Ò»/ÆÚ»õ±£Ö¤½ğ·ÖÎö.xls
-2025-07-04 16:36:38,993 - INFO - excel_base.py - 566 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 3 47 
-2025-07-04 16:36:39,019 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯¶ş/³É½»»Ø±¨.xls
-2025-07-04 16:36:39,029 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯¶ş/µ¥Ôª×Ê²ú.xls
-2025-07-04 16:36:39,029 - INFO - excel_base.py - 456 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 3 118 
-2025-07-04 16:36:39,047 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯¶ş/»ã×ÜÖ¤È¯-µ±ÈÕ³Ö²Ö.xls
-2025-07-04 16:36:39,074 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯¶ş/»ã×ÜÖ¤È¯-ºÏ¼Æ.xls
-2025-07-04 16:36:39,076 - INFO - excel_base.py - 515 - ¶ÁÈ¡ÎÄ¼ş »ã×ÜÖ¤È¯-ºÏ¼Æ ¿ªÊ¼ 151 14 
-2025-07-04 16:36:39,082 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯¶ş/ÆÚ»õ±£Ö¤½ğ·ÖÎö.xls
-2025-07-04 16:36:39,083 - INFO - excel_base.py - 566 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 3 47 
-2025-07-04 16:36:39,095 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Èı/³É½»»Ø±¨.xls
-2025-07-04 16:36:39,105 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Èı/µ¥Ôª×Ê²ú.xls
-2025-07-04 16:36:39,105 - INFO - excel_base.py - 456 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 3 118 
-2025-07-04 16:36:39,116 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Èı/»ã×ÜÖ¤È¯-µ±ÈÕ³Ö²Ö.xls
-2025-07-04 16:36:39,140 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Èı/»ã×ÜÖ¤È¯-ºÏ¼Æ.xls
-2025-07-04 16:36:39,140 - INFO - excel_base.py - 515 - ¶ÁÈ¡ÎÄ¼ş »ã×ÜÖ¤È¯-ºÏ¼Æ ¿ªÊ¼ 151 14 
-2025-07-04 16:36:39,150 - INFO - excel_base.py - 1499 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/5.29/Á¿»¯Èı/ÆÚ»õ±£Ö¤½ğ·ÖÎö.xls
-2025-07-04 16:36:39,150 - INFO - excel_base.py - 566 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 3 47 
-2025-07-04 16:36:39,151 - INFO - excel_base.py - 1176 - ¶ÁÈ¡ÎÄ¼ş Á¿»¯Ò»-½áËãÊı¾İ ¿ªÊ¼ 66
-2025-07-04 16:36:39,154 - INFO - excel_base.py - 1176 - ¶ÁÈ¡ÎÄ¼ş Á¿»¯Ò»-ÊÕÅÌÊı¾İ ¿ªÊ¼ 66
-2025-07-04 16:36:39,155 - INFO - excel_base.py - 1176 - ¶ÁÈ¡ÎÄ¼ş Á¿»¯¶ş-½áËãÊı¾İ ¿ªÊ¼ 49
-2025-07-04 16:36:39,157 - INFO - excel_base.py - 1176 - ¶ÁÈ¡ÎÄ¼ş Á¿»¯¶ş-ÊÕÅÌÊı¾İ ¿ªÊ¼ 49
-2025-07-04 16:36:39,157 - INFO - excel_base.py - 1176 - ¶ÁÈ¡ÎÄ¼ş Á¿»¯Èı-½áËãÊı¾İ ¿ªÊ¼ 49
-2025-07-04 16:36:39,161 - INFO - excel_base.py - 1176 - ¶ÁÈ¡ÎÄ¼ş Á¿»¯Èı-ÊÕÅÌÊı¾İ ¿ªÊ¼ 49
+2025-07-05 19:41:09,721 - INFO - excel_base.py - 63 - é…ç½®æ–‡ä»¶è·¯å¾„: /home/lsz/dev/code/study/python-study/test/é…ç½®.json
+2025-07-05 19:41:09,981 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸€/æˆäº¤å›æŠ¥.xls
+2025-07-05 19:41:09,988 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸€/å•å…ƒèµ„äº§.xls
+2025-07-05 19:41:09,988 - INFO - excel_base.py - 456 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 4 118 
+2025-07-05 19:41:10,046 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸€/æ±‡æ€»è¯åˆ¸-å½“æ—¥æŒä»“.xls
+2025-07-05 19:41:10,266 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸€/æ±‡æ€»è¯åˆ¸-åˆè®¡.xls
+2025-07-05 19:41:10,266 - INFO - excel_base.py - 515 - è¯»å–æ–‡ä»¶ æ±‡æ€»è¯åˆ¸-åˆè®¡ å¼€å§‹ 3586 14 
+2025-07-05 19:41:10,519 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸€/æ±‡æ€»è¯åˆ¸-åˆè®¡-è‚¡ç¥¨.xls
+2025-07-05 19:41:10,520 - INFO - excel_base.py - 1135 - è¯»å–æ–‡ä»¶ æ±‡æ€»è¯åˆ¸-åˆè®¡-è‚¡ç¥¨ å¼€å§‹ 3520 14 
+2025-07-05 19:41:10,555 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸€/äº¤æ˜“æ‰€å›è´­.xls
+2025-07-05 19:41:10,555 - INFO - excel_base.py - 548 - è¯»å–æ–‡ä»¶ äº¤æ˜“æ‰€å›è´­ å¼€å§‹ 69 31 
+2025-07-05 19:41:10,558 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸€/æœŸè´§ä¿è¯é‡‘åˆ†æ.xls
+2025-07-05 19:41:10,559 - INFO - excel_base.py - 566 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 3 47 
+2025-07-05 19:41:10,571 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–äºŒ/æˆäº¤å›æŠ¥.xls
+2025-07-05 19:41:10,575 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–äºŒ/å•å…ƒèµ„äº§.xls
+2025-07-05 19:41:10,575 - INFO - excel_base.py - 456 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 3 118 
+2025-07-05 19:41:10,584 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–äºŒ/æ±‡æ€»è¯åˆ¸-å½“æ—¥æŒä»“.xls
+2025-07-05 19:41:10,597 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–äºŒ/æ±‡æ€»è¯åˆ¸-åˆè®¡.xls
+2025-07-05 19:41:10,597 - INFO - excel_base.py - 515 - è¯»å–æ–‡ä»¶ æ±‡æ€»è¯åˆ¸-åˆè®¡ å¼€å§‹ 151 14 
+2025-07-05 19:41:10,600 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–äºŒ/æœŸè´§ä¿è¯é‡‘åˆ†æ.xls
+2025-07-05 19:41:10,600 - INFO - excel_base.py - 566 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 3 47 
+2025-07-05 19:41:10,607 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸‰/æˆäº¤å›æŠ¥.xls
+2025-07-05 19:41:10,613 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸‰/å•å…ƒèµ„äº§.xls
+2025-07-05 19:41:10,613 - INFO - excel_base.py - 456 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 3 118 
+2025-07-05 19:41:10,618 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸‰/æ±‡æ€»è¯åˆ¸-å½“æ—¥æŒä»“.xls
+2025-07-05 19:41:10,630 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸‰/æ±‡æ€»è¯åˆ¸-åˆè®¡.xls
+2025-07-05 19:41:10,631 - INFO - excel_base.py - 515 - è¯»å–æ–‡ä»¶ æ±‡æ€»è¯åˆ¸-åˆè®¡ å¼€å§‹ 151 14 
+2025-07-05 19:41:10,634 - INFO - excel_base.py - 1518 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/study/python-study/template/5.29/é‡åŒ–ä¸‰/æœŸè´§ä¿è¯é‡‘åˆ†æ.xls
+2025-07-05 19:41:10,634 - INFO - excel_base.py - 566 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 3 47 
+2025-07-05 19:41:10,634 - INFO - excel_base.py - 1176 - è¯»å–æ–‡ä»¶ é‡åŒ–ä¸€-ç»“ç®—æ•°æ® å¼€å§‹ 66
+2025-07-05 19:41:10,635 - INFO - excel_base.py - 1176 - è¯»å–æ–‡ä»¶ é‡åŒ–ä¸€-æ”¶ç›˜æ•°æ® å¼€å§‹ 66
+2025-07-05 19:41:10,636 - INFO - excel_base.py - 1176 - è¯»å–æ–‡ä»¶ é‡åŒ–äºŒ-ç»“ç®—æ•°æ® å¼€å§‹ 49
+2025-07-05 19:41:10,636 - INFO - excel_base.py - 1176 - è¯»å–æ–‡ä»¶ é‡åŒ–äºŒ-æ”¶ç›˜æ•°æ® å¼€å§‹ 49
+2025-07-05 19:41:10,637 - INFO - excel_base.py - 1176 - è¯»å–æ–‡ä»¶ é‡åŒ–ä¸‰-ç»“ç®—æ•°æ® å¼€å§‹ 49
+2025-07-05 19:41:10,637 - INFO - excel_base.py - 1176 - è¯»å–æ–‡ä»¶ é‡åŒ–ä¸‰-æ”¶ç›˜æ•°æ® å¼€å§‹ 49
+2025-07-05 19:42:38,440 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-05 19:42:38,445 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-05 19:42:38,458 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-05 19:42:38,502 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,505 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,506 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,506 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,507 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,507 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,507 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,508 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,510 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,525 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,526 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,526 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,527 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,527 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,527 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,530 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,536 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,555 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,555 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,556 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,556 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,557 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,557 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,557 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,558 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,558 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,562 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,581 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,585 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,592 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,657 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,658 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,659 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,659 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,659 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,688 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,689 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,690 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,690 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,690 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,695 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,696 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,696 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,697 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,698 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,698 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,699 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,701 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,704 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,705 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,705 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,706 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,707 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,707 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,711 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,712 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,713 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,714 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,714 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,715 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,715 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,740 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,741 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,742 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,743 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,744 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,745 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,746 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,747 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,748 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,754 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,755 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,756 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,757 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,757 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,758 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,758 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:38,759 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,085 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-05 19:42:39,089 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-05 19:42:39,102 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-05 19:42:39,143 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,143 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,144 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,144 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,145 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,145 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,145 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,146 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,148 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,159 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,159 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,159 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,160 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,160 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,160 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,162 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,166 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,180 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,181 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,181 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,181 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,182 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,182 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,182 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,183 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,183 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,186 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,197 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,197 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,203 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,248 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,250 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,251 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,251 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,252 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,281 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,282 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,282 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,283 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,283 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,288 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,289 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,289 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,290 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,291 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,291 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,292 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,294 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,297 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,298 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,298 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,299 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,299 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,300 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,303 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,305 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,305 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,306 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,306 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,307 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,307 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,329 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,330 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,331 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,332 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,333 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,333 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,334 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,335 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,336 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,340 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,341 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,342 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,342 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,343 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,344 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,345 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
+2025-07-05 19:42:39,346 - WARNING - font_manager.py - 1425 - findfont: Generic family 'sans-serif' not found because none of the following families were found: SimHei
