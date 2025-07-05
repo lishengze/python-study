@@ -56,10 +56,21 @@ def get_test_data():
     return resut, strategy_net_value[len(strategy_net_value)-1]
     # drawdown = -0.01 * np.random.randn(len(date_rng))  # 模拟回撤    
 
+def check_system():
+    if sys.platform.startswith('win'):
+        return 'Windows'
+    elif sys.platform.startswith('linux'):
+        return 'Linux'
+    else:
+        return '其他系统'
+    
 def get_config():
     try:
         cur_dir = get_current_directory_os()
-        config_file_path = cur_dir + '/配置.json'
+        if check_system() == 'Windows':
+            config_file_path = cur_dir + '\\配置.json'
+        else:   
+            config_file_path = cur_dir + '\配置.json'
         logging.info(f"配置文件路径: {config_file_path}")
         config_file = open(config_file_path, 'r', encoding='utf-8')
         config = json.load(config_file)
