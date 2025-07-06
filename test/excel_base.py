@@ -70,7 +70,7 @@ def get_config():
         if check_system() == 'Windows':
             config_file_path = cur_dir + '\\配置.json'
         else:   
-            config_file_path = cur_dir + '\配置.json'
+            config_file_path = cur_dir + '/配置.json'
         logging.info(f"配置文件路径: {config_file_path}")
         config_file = open(config_file_path, 'r', encoding='utf-8')
         config = json.load(config_file)
@@ -1230,7 +1230,10 @@ class JZData:
             # 绘制折线图
                                       
             pic_file_with_profit_name = file_path + '/' + pic_name + '_有返息.png'
-            if False == draw_and_save_chart(draw_line_days, self.date_list_, self.jz_list_with_profit_, self.hc_list_with_profit_, pic_file_with_profit_name, '策略净值与回撤-有返息'):
+            meta_info = '策略净值与回撤-含返息  ' + self.date_list_[-1]
+            if '量化一' in pic_name:
+                meta_info = '策略净值与回撤-含返息/逆回购 ' + self.date_list_[-1]
+            if False == draw_and_save_chart(draw_line_days, self.date_list_, self.jz_list_with_profit_, self.hc_list_with_profit_, pic_file_with_profit_name, meta_info):
                 return                                            
             img = Image(pic_file_with_profit_name)
             img.anchor = 'E2'
@@ -1238,7 +1241,10 @@ class JZData:
             
 
             pic_file_no_profit_name = file_path + '/' + pic_name + '_无返息.png'
-            if False == draw_and_save_chart(draw_line_days,self.date_list_, self.jz_list_no_profit_, self.hc_list_no_profit_, pic_file_no_profit_name, '策略净值与回撤-无返息'):
+            meta_info = '策略净值与回撤-不含返息  ' + self.date_list_[-1]
+            if '量化一' in pic_name:
+                meta_info = '策略净值与回撤-不含返息/逆回购 ' + self.date_list_[-1]      
+            if False == draw_and_save_chart(draw_line_days,self.date_list_, self.jz_list_no_profit_, self.hc_list_no_profit_, pic_file_no_profit_name, meta_info):
                 return
             img = Image(pic_file_no_profit_name)
             img.anchor = 'E20'
@@ -1750,10 +1756,12 @@ class ExcelBase:
                     if key != '统计日期' and key != '注释':
                         sheet.cell(row = excel_data.row_, column = 1, value = key).font = self.bold_font_
                         sheet.cell(row = excel_data.row_, column = 1, value = key).border = self.border_
+                        sheet.cell(row = excel_data.row_, column = 2, value = key).border = self.border_
                         sheet.cell(row = excel_data.row_, column = 2, value = key).font = self.no_bold_font_
                         
                         if '量化一' in sheet_name:
                             sheet.cell(row = excel_data.row_, column = 3, value = key).font = self.no_bold_font_
+                            sheet.cell(row = excel_data.row_, column = 3, value = key).border = self.border_
                     else:
                         sheet.cell(row = excel_data.row_, column = 1, value = key).font = self.no_bold_font_   
                         sheet.cell(row = excel_data.row_, column = 2, value = key).font = self.no_bold_font_ 
@@ -1855,9 +1863,9 @@ class ExcelBase:
                 jyshg_profit = 0 # 返息/逆回购
                 if self.src_dict_['量化一']['交易所回购'] is not None:
                     if 'profit' in self.src_dict_['量化一']['交易所回购']:   
-                        jyshg_profit = self.src_dict_['量化一']['交易所回购']['profit']
+                        jyshg_profit = self.src_dict_['量化一']['交易所回购']['profit'] + self.src_dict_['量化一']['手动输入数据']['返息']
                         
-                        sheet.cell(row = self.sheet1_dict_['返息/逆回购'].row_, column = cell_col_index['权益类一单元'], value =jyshg_profit).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                        sheet.cell(row = self.sheet1_dict_['返息/逆回购'].row_, column = cell_col_index['权益类一单元'], value =self.src_dict_['量化一']['交易所回购']['profit']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                         sheet.cell(row = self.sheet1_dict_['返息/逆回购'].row_, column = cell_col_index['权益类一单元']).border = self.border_
                         
                         sheet.cell(row = self.sheet1_dict_['返息/逆回购'].row_, column = cell_col_index['量化一-投机单元'], value =self.src_dict_['量化一']['手动输入数据']['返息']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
@@ -1870,16 +1878,6 @@ class ExcelBase:
                 self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].value_ = 0  #总盈利/亏损(不含逆回购/返息)
                 if self.src_dict_['量化一']['汇总证券-合计'] is not None:
                     if 'profit' in self.src_dict_['量化一']['汇总证券-合计']:
-                        self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].value_ = self.src_dict_['量化一']['汇总证券-合计']['profit'] - self.src_dict_['量化一']['手动输入数据']['返息']
-                                    
-                        sheet.cell(row = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].row_, column = 2, value = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                        sheet.cell(row = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].row_, column = 2).border = self.border_
-                        sheet.cell(row = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].row_, column = 2).fill = self.no_profit_color_
-                        
-                        self.sheet1_dict_['收益率(不含逆回购/返息)'].value_ = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].value_ / self.src_dict_['量化一']['手动输入数据']['实收资本'] * 100
-                        sheet.cell(row = self.sheet1_dict_['收益率(不含逆回购/返息)'].row_, column = 2, value = str(round(self.sheet1_dict_['收益率(不含逆回购/返息)'].value_, 4))+"%")
-                        sheet.cell(row = self.sheet1_dict_['收益率(不含逆回购/返息)'].row_, column = 2).border = self.border_
-                        sheet.cell(row = self.sheet1_dict_['收益率(不含逆回购/返息)'].row_, column = 2).fill = self.no_profit_color_
                         
                         self.sheet1_dict_['总盈利/亏损(含逆回购/返息)'].value_ = self.sheet1_dict_['账户资产净值'].value_ - self.src_dict_['量化一']['手动输入数据']['实收资本'] #总盈利/亏损(含逆回购/返息)
                         sheet.cell(row = self.sheet1_dict_['总盈利/亏损(含逆回购/返息)'].row_, column = 2, value = str(round(self.sheet1_dict_['总盈利/亏损(含逆回购/返息)'].value_,2))).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
@@ -1890,6 +1888,16 @@ class ExcelBase:
                         sheet.cell(row = self.sheet1_dict_['收益率(含逆回购/返息)'].row_, column = 2, value = str(round(self.sheet1_dict_['收益率(含逆回购/返息)'].value_, 4))+"%")
                         sheet.cell(row = self.sheet1_dict_['收益率(含逆回购/返息)'].row_, column = 2).border = self.border_
                         sheet.cell(row = self.sheet1_dict_['收益率(含逆回购/返息)'].row_, column = 2).fill = self.with_profit_color_
+
+                        self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].value_ = self.sheet1_dict_['总盈利/亏损(含逆回购/返息)'].value_ - jyshg_profit                                   
+                        sheet.cell(row = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].row_, column = 2, value = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                        sheet.cell(row = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].row_, column = 2).border = self.border_
+                        sheet.cell(row = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].row_, column = 2).fill = self.no_profit_color_
+                        
+                        self.sheet1_dict_['收益率(不含逆回购/返息)'].value_ = self.sheet1_dict_['总盈利/亏损(不含逆回购/返息)'].value_ / self.src_dict_['量化一']['手动输入数据']['实收资本'] * 100
+                        sheet.cell(row = self.sheet1_dict_['收益率(不含逆回购/返息)'].row_, column = 2, value = str(round(self.sheet1_dict_['收益率(不含逆回购/返息)'].value_, 4))+"%")
+                        sheet.cell(row = self.sheet1_dict_['收益率(不含逆回购/返息)'].row_, column = 2).border = self.border_
+                        sheet.cell(row = self.sheet1_dict_['收益率(不含逆回购/返息)'].row_, column = 2).fill = self.no_profit_color_                        
                         
                     else:
                         logging.warning("量化一-汇总证券-合计文件不存在。")
@@ -2165,16 +2173,37 @@ class ExcelBase:
                                 
                             cell_index += 1
                             cell_col_index[key] = cell_index   
+
+                    jyshg_profit = 0 # 返息/逆回购
+                    if self.src_dict_['量化一']['交易所回购'] is not None:
+                        if 'profit' in self.src_dict_['量化一']['交易所回购']:   
+                            self.sheet2_dict_['返息/逆回购'].value_ = self.src_dict_['量化一']['交易所回购']['profit'] + self.src_dict_['量化一']['手动输入数据']['返息']
+                            sheet.cell(row = self.sheet2_dict_['返息/逆回购'].row_, column = cell_col_index['权益类一单元'], value = self.src_dict_['量化一']['交易所回购']['profit']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                            sheet.cell(row = self.sheet2_dict_['返息/逆回购'].row_, column = cell_col_index['权益类一单元']).border = self.border_
+                            
+                            sheet.cell(row = self.sheet2_dict_['返息/逆回购'].row_, column = cell_col_index['量化一-投机单元'], value =self.src_dict_['量化一']['手动输入数据']['返息']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1                    
+                            sheet.cell(row = self.sheet2_dict_['返息/逆回购'].row_, column = cell_col_index['量化一-投机单元']).border = self.border_
+                        else:
+                            logging.warning("量化一-交易所回购文件不存在。")
+                    else:
+                        logging.warning("量化一-交易所回购文件不存在。")                               
                                     
                     sheet.cell(row = self.sheet2_dict_['账户资产净值'].row_, column = 2, value=self.sheet2_dict_['账户资产净值'].value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     sheet.cell(row = self.sheet2_dict_['账户资产净值'].row_, column = 2).border = self.border_
                     
-                    sheet.cell(row = self.sheet2_dict_['总盈利/亏损(含逆回购/返息)'].row_, column = 2, value=self.sheet2_dict_['账户资产净值'].value_-self.src_dict_['量化一']['手动输入数据']['实收资本']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                    self.sheet2_dict_['总盈利/亏损(含逆回购/返息)'].value_ = self.sheet2_dict_['账户资产净值'].value_-self.src_dict_['量化一']['手动输入数据']['实收资本']
+                    sheet.cell(row = self.sheet2_dict_['总盈利/亏损(含逆回购/返息)'].row_, column = 2, value=self.sheet2_dict_['总盈利/亏损(含逆回购/返息)'].value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     sheet.cell(row = self.sheet2_dict_['总盈利/亏损(含逆回购/返息)'].row_, column = 2).border = self.border_
                     sheet.cell(row = self.sheet2_dict_['总盈利/亏损(含逆回购/返息)'].row_, column = 1).fill = self.with_profit_color_
                     sheet.cell(row = self.sheet2_dict_['总盈利/亏损(含逆回购/返息)'].row_, column = 2).fill = self.with_profit_color_
+
+                    self.sheet2_dict_['收益率(含逆回购/返息)'].value_ = (self.sheet2_dict_['账户资产净值'].value_ - self.src_dict_['量化一']['手动输入数据']['实收资本']) / self.src_dict_['量化一']['手动输入数据']['实收资本'] * 100 # 收益率(含逆回购/返息)= 总盈利/亏损(含逆回购)÷3000万元×100%【保留4位小数】
+                    sheet.cell(row = self.sheet2_dict_['收益率(含逆回购/返息)'].row_, column = 2, value = str(round(self.sheet2_dict_['收益率(含逆回购/返息)'].value_,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                    sheet.cell(row = self.sheet2_dict_['收益率(含逆回购/返息)'].row_, column = 2).border = self.border_
+                    sheet.cell(row = self.sheet2_dict_['收益率(含逆回购/返息)'].row_, column = 1).fill = self.with_profit_color_
+                    sheet.cell(row = self.sheet2_dict_['收益率(含逆回购/返息)'].row_, column = 2).fill = self.with_profit_color_                    
                     
-                    self.sheet2_dict_['总盈利/亏损(不含逆回购/返息)'].value_ = self.src_dict_['量化一']['手动输入数据']['单元资产净值']-6000000 + self.sheet2_dict_['盈利/亏损(不含逆回购/返息)'].value_  # '=盈利/亏损(不含逆回购)这一行数据的和, '=单元资产净值-600万元 + 《汇总证券(合计-股票)》“总体盈亏(含费用)”最后一行数值
+                    self.sheet2_dict_['总盈利/亏损(不含逆回购/返息)'].value_ = self.sheet2_dict_['总盈利/亏损(含逆回购/返息)'].value_ - self.sheet2_dict_['返息/逆回购'].value_
                     sheet.cell(row = self.sheet2_dict_['总盈利/亏损(不含逆回购/返息)'].row_, column = 2, value=self.sheet2_dict_['总盈利/亏损(不含逆回购/返息)'].value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                     sheet.cell(row = self.sheet2_dict_['总盈利/亏损(不含逆回购/返息)'].row_, column = 2).border = self.border_
                     sheet.cell(row = self.sheet2_dict_['总盈利/亏损(不含逆回购/返息)'].row_, column = 1).fill = self.no_profit_color_
@@ -2186,31 +2215,12 @@ class ExcelBase:
                     sheet.cell(row = self.sheet2_dict_['收益率(不含逆回购/返息)'].row_, column = 1).fill = self.no_profit_color_
                     sheet.cell(row = self.sheet2_dict_['收益率(不含逆回购/返息)'].row_, column = 2).fill = self.no_profit_color_
                     
-                    self.sheet2_dict_['收益率(含逆回购/返息)'].value_ = (self.sheet2_dict_['账户资产净值'].value_ - self.src_dict_['量化一']['手动输入数据']['实收资本']) / self.src_dict_['量化一']['手动输入数据']['实收资本'] * 100 # 收益率(含逆回购/返息)= 总盈利/亏损(含逆回购)÷3000万元×100%【保留4位小数】
-                    sheet.cell(row = self.sheet2_dict_['收益率(含逆回购/返息)'].row_, column = 2, value = str(round(self.sheet2_dict_['收益率(含逆回购/返息)'].value_,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                    sheet.cell(row = self.sheet2_dict_['收益率(含逆回购/返息)'].row_, column = 2).border = self.border_
-                    sheet.cell(row = self.sheet2_dict_['收益率(含逆回购/返息)'].row_, column = 1).fill = self.with_profit_color_
-                    sheet.cell(row = self.sheet2_dict_['收益率(含逆回购/返息)'].row_, column = 2).fill = self.with_profit_color_
+
                     
                     cell_count = cell_index                
                 else:
                     logging.warning("量化一-单元资产文件不存在。")
-                
-                jyshg_profit = 0 # 返息/逆回购
-                if self.src_dict_['量化一']['交易所回购'] is not None:
-                    if 'profit' in self.src_dict_['量化一']['交易所回购']:   
-                        self.sheet2_dict_['返息/逆回购'].value_ = self.src_dict_['量化一']['交易所回购']['profit']
-                        sheet.cell(row = self.sheet2_dict_['返息/逆回购'].row_, column = cell_col_index['权益类一单元'], value = self.sheet2_dict_['返息/逆回购'].value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                        sheet.cell(row = self.sheet2_dict_['返息/逆回购'].row_, column = cell_col_index['权益类一单元']).border = self.border_
-                        
-                        sheet.cell(row = self.sheet2_dict_['返息/逆回购'].row_, column = cell_col_index['量化一-投机单元'], value =self.src_dict_['量化一']['手动输入数据']['返息']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1                    
-                        sheet.cell(row = self.sheet2_dict_['返息/逆回购'].row_, column = cell_col_index['量化一-投机单元']).border = self.border_
-                    else:
-                        logging.warning("量化一-交易所回购文件不存在。")
-                else:
-                    logging.warning("量化一-交易所回购文件不存在。")     
-                                           
-
+                                                           
             except Exception as e:
                 logging.error(f"生成 量化一收盘数据-一、账户资产及收益情况 单元格时发生错误: {e}") 
                 
