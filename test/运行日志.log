@@ -1,112 +1,112 @@
-2025-07-11 16:23:38,781 - INFO - excel_base.py - 80 - 配置文件路径: /home/lsz/dev/code/work/python-study/test/配置.json
-2025-07-11 16:23:38,815 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/成交回报.xls
-2025-07-11 16:23:38,817 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/单元资产.xls
-2025-07-11 16:23:38,817 - INFO - excel_base.py - 554 - 读取文件 单元资产 开始 4 118 
-2025-07-11 16:23:38,818 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/汇总证券-当日持仓.xls
-2025-07-11 16:23:38,874 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/汇总证券-合计.xls
-2025-07-11 16:23:38,874 - INFO - excel_base.py - 616 - 读取文件 汇总证券-合计 开始 3648 14 
-2025-07-11 16:23:38,927 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/汇总证券-合计-股票.xls
-2025-07-11 16:23:38,927 - INFO - excel_base.py - 1251 - 读取文件 汇总证券-合计-股票 开始 3572 14 
-2025-07-11 16:23:38,942 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/交易所回购.xls
-2025-07-11 16:23:38,942 - INFO - excel_base.py - 649 - 读取文件 交易所回购 开始 100 31 
-2025-07-11 16:23:38,944 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/期货保证金分析.xls
-2025-07-11 16:23:38,944 - INFO - excel_base.py - 667 - 读取文件 单元资产 开始 3 47 
-2025-07-11 16:23:38,947 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/成交回报.xls
-2025-07-11 16:23:38,949 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/单元资产.xls
-2025-07-11 16:23:38,949 - INFO - excel_base.py - 554 - 读取文件 单元资产 开始 3 118 
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/汇总证券-当日持仓.xls
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $锌2508 $有色 $锌
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $豆油2509 $农副 $豆油
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $红枣2601 $农副 $红枣
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $玻璃2509 $能化 $玻璃
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $甲醇N2509 $能化 $甲醇
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $菜籽油2509 $农副 $菜籽油
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $纯碱2509 $能化 $纯碱
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $硅铁2509 $黑色 $硅铁
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $锰硅2509 $黑色 $锰硅
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $焦煤2509 $黑色 $焦煤
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $PTA2509 $能化 $PTA
-2025-07-11 16:23:38,951 - INFO - excel_base.py - 507 - $尿素2509 $能化 $尿素
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $乙二醇2509 $能化 $乙二醇
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $白银2508 $贵金属 $白银
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $玉米淀粉2509 $农副 $玉米淀粉
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $玉米2509 $农副 $玉米
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $豆粕2509 $农副 $豆粕
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $低硫燃料油2509 $能化 $低硫燃料油
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $聚乙烯2509 $能化 $聚乙烯
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $聚氯乙烯2509 $能化 $聚氯乙烯
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $苯乙烯2508 $能化 $苯乙烯
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $天然橡胶2509 $能化 $天然橡胶
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $热轧卷板2510 $黑色 $热轧卷板
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $漂白硫酸盐针叶木浆2509 $其他 $其他
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $聚丙烯2509 $能化 $聚丙烯
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $鲜鸡蛋2508 $农副 $鸡蛋
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $焦炭2509 $黑色 $焦炭
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $豆一号2509 $农副 $豆一号
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $白糖2509 $农副 $白糖
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $铝2508 $有色 $铝
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $生猪2509 $农副 $生猪
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $氧化铝2509 $有色 $氧化铝
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $石油沥青2509 $能化 $石油沥青
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $镍2508 $有色 $镍
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $棕榈油2509 $农副 $棕榈油
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $铅2508 $有色 $铅
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $鲜鸡蛋2508 $农副 $鸡蛋
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $螺纹钢2510 $黑色 $螺纹钢
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $铁矿石2509 $黑色 $铁矿石
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $热轧卷板2510 $黑色 $热轧卷板
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $不锈钢2508 $有色 $不锈钢
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $铜2508 $有色 $铜
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $棉花2509 $农副 $棉花
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $锌2508 $有色 $锌
-2025-07-11 16:23:38,952 - INFO - excel_base.py - 507 - $苹果2510 $农副 $苹果
-2025-07-11 16:23:38,956 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/汇总证券-合计.xls
-2025-07-11 16:23:38,956 - INFO - excel_base.py - 616 - 读取文件 汇总证券-合计 开始 190 14 
-2025-07-11 16:23:38,957 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/期货保证金分析.xls
-2025-07-11 16:23:38,957 - INFO - excel_base.py - 667 - 读取文件 单元资产 开始 3 47 
-2025-07-11 16:23:38,959 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/成交回报.xls
-2025-07-11 16:23:38,960 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/单元资产.xls
-2025-07-11 16:23:38,960 - INFO - excel_base.py - 554 - 读取文件 单元资产 开始 6 118 
-2025-07-11 16:23:38,961 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/汇总证券-当日持仓.xls
-2025-07-11 16:23:38,963 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/汇总证券-合计.xls
-2025-07-11 16:23:38,963 - INFO - excel_base.py - 616 - 读取文件 汇总证券-合计 开始 11 14 
-2025-07-11 16:23:38,964 - INFO - excel_base.py - 1389 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/期货保证金分析.xls
-2025-07-11 16:23:38,964 - INFO - excel_base.py - 667 - 读取文件 单元资产 开始 3 47 
-2025-07-11 16:23:39,183 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:39,186 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:39,194 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:39,511 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:39,513 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:39,520 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:39,854 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:39,857 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:39,865 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:40,227 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:40,230 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:40,238 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:40,571 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:40,573 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:40,579 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:40,878 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:40,880 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:40,886 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:41,197 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:41,199 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:41,206 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:41,491 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:41,493 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:41,500 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:41,870 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:41,872 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:41,877 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:42,356 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:42,358 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:42,535 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:43,146 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:43,149 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:43,160 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:43,718 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:43,720 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:43,733 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 16:23:44,089 - INFO - excel_base.py - 1942 - Sheet 已成功删除。
-2025-07-11 16:23:44,089 - INFO - excel_base.py - 1947 - 目标文件名: /home/lsz/dev/code/work/python-study/template/7.7/量化业务日报-2025-07-07.xlsx
+2025-07-11 17:14:37,141 - INFO - excel_base.py - 80 - 配置文件路径: /home/lsz/dev/code/work/python-study/test/配置.json
+2025-07-11 17:14:37,206 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/成交回报.xls
+2025-07-11 17:14:37,209 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/单元资产.xls
+2025-07-11 17:14:37,209 - INFO - excel_base.py - 553 - 读取文件 单元资产 开始 4 118 
+2025-07-11 17:14:37,211 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/汇总证券-当日持仓.xls
+2025-07-11 17:14:37,331 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/汇总证券-合计.xls
+2025-07-11 17:14:37,331 - INFO - excel_base.py - 615 - 读取文件 汇总证券-合计 开始 3648 14 
+2025-07-11 17:14:37,436 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/汇总证券-合计-股票.xls
+2025-07-11 17:14:37,436 - INFO - excel_base.py - 1250 - 读取文件 汇总证券-合计-股票 开始 3572 14 
+2025-07-11 17:14:37,465 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/交易所回购.xls
+2025-07-11 17:14:37,465 - INFO - excel_base.py - 648 - 读取文件 交易所回购 开始 100 31 
+2025-07-11 17:14:37,469 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化一/期货保证金分析.xls
+2025-07-11 17:14:37,469 - INFO - excel_base.py - 666 - 读取文件 单元资产 开始 3 47 
+2025-07-11 17:14:37,476 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/成交回报.xls
+2025-07-11 17:14:37,480 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/单元资产.xls
+2025-07-11 17:14:37,480 - INFO - excel_base.py - 553 - 读取文件 单元资产 开始 3 118 
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/汇总证券-当日持仓.xls
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 506 - $锌2508 $有色 $锌
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 506 - $豆油2509 $农副 $豆油
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 506 - $红枣2601 $农副 $红枣
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 506 - $玻璃2509 $能化 $玻璃
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 506 - $甲醇N2509 $能化 $甲醇
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 506 - $菜籽油2509 $农副 $菜籽油
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 506 - $纯碱2509 $能化 $纯碱
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 506 - $硅铁2509 $黑色 $硅铁
+2025-07-11 17:14:37,486 - INFO - excel_base.py - 506 - $锰硅2509 $黑色 $锰硅
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $焦煤2509 $黑色 $焦煤
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $PTA2509 $能化 $PTA
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $尿素2509 $能化 $尿素
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $乙二醇2509 $能化 $乙二醇
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $白银2508 $贵金属 $白银
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $玉米淀粉2509 $农副 $玉米淀粉
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $玉米2509 $农副 $玉米
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $豆粕2509 $农副 $豆粕
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $低硫燃料油2509 $能化 $低硫燃料油
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $聚乙烯2509 $能化 $聚乙烯
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $聚氯乙烯2509 $能化 $聚氯乙烯
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $苯乙烯2508 $能化 $苯乙烯
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $天然橡胶2509 $能化 $天然橡胶
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $热轧卷板2510 $黑色 $热轧卷板
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $漂白硫酸盐针叶木浆2509 $其他 $其他
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $聚丙烯2509 $能化 $聚丙烯
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $鲜鸡蛋2508 $农副 $鸡蛋
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $焦炭2509 $黑色 $焦炭
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $豆一号2509 $农副 $豆一号
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $白糖2509 $农副 $白糖
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $铝2508 $有色 $铝
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $生猪2509 $农副 $生猪
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $氧化铝2509 $有色 $氧化铝
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $石油沥青2509 $能化 $石油沥青
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $镍2508 $有色 $镍
+2025-07-11 17:14:37,487 - INFO - excel_base.py - 506 - $棕榈油2509 $农副 $棕榈油
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $铅2508 $有色 $铅
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $鲜鸡蛋2508 $农副 $鸡蛋
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $螺纹钢2510 $黑色 $螺纹钢
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $铁矿石2509 $黑色 $铁矿石
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $热轧卷板2510 $黑色 $热轧卷板
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $不锈钢2508 $有色 $不锈钢
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $铜2508 $有色 $铜
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $棉花2509 $农副 $棉花
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $锌2508 $有色 $锌
+2025-07-11 17:14:37,488 - INFO - excel_base.py - 506 - $苹果2510 $农副 $苹果
+2025-07-11 17:14:37,494 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/汇总证券-合计.xls
+2025-07-11 17:14:37,494 - INFO - excel_base.py - 615 - 读取文件 汇总证券-合计 开始 190 14 
+2025-07-11 17:14:37,495 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化二/期货保证金分析.xls
+2025-07-11 17:14:37,496 - INFO - excel_base.py - 666 - 读取文件 单元资产 开始 3 47 
+2025-07-11 17:14:37,499 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/成交回报.xls
+2025-07-11 17:14:37,502 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/单元资产.xls
+2025-07-11 17:14:37,502 - INFO - excel_base.py - 553 - 读取文件 单元资产 开始 6 118 
+2025-07-11 17:14:37,504 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/汇总证券-当日持仓.xls
+2025-07-11 17:14:37,506 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/汇总证券-合计.xls
+2025-07-11 17:14:37,506 - INFO - excel_base.py - 615 - 读取文件 汇总证券-合计 开始 11 14 
+2025-07-11 17:14:37,510 - INFO - excel_base.py - 1388 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/7.7/量化三/期货保证金分析.xls
+2025-07-11 17:14:37,511 - INFO - excel_base.py - 666 - 读取文件 单元资产 开始 3 47 
+2025-07-11 17:14:37,976 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:37,980 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:37,993 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:38,612 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:38,618 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:38,632 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:39,279 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:39,284 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:39,298 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:39,964 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:39,970 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:39,983 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:40,589 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:40,593 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:40,604 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:41,205 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:41,209 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:41,223 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:41,823 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:41,828 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:41,842 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:42,408 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:42,411 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:42,424 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:43,055 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:43,057 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:43,068 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:43,702 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:43,704 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:43,713 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:44,293 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:44,295 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:44,306 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:44,783 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:44,784 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:44,795 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 17:14:45,107 - INFO - excel_base.py - 1969 - Sheet 已成功删除。
+2025-07-11 17:14:45,107 - INFO - excel_base.py - 1974 - 目标文件名: /home/lsz/dev/code/work/python-study/template/7.7/量化业务日报-2025-07-07.xlsx

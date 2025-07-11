@@ -96,7 +96,6 @@ def set_sheet_middle(sheet):
     except Exception as e:
         logging.error(f"设置单元格居中时发生错误: {e}")  
              
-
 def set_value(sheet, row, col, key, value, file_name, is_number = False, border = None):
     try:
         if key in value:
@@ -1404,7 +1403,35 @@ def init_excel_file(execl_file_path, file_dict, data_read_obj:ExcelDataRead):
     except Exception as e:
         logging.error(f"初始化 Excel 文件出错: {e}")  
         return None
-                     
+
+def copy_sheet(src_sheet, des_sheet):
+    try:
+    # 遍历源sheet的每一行
+        for row in src_sheet.iter_rows():
+            new_row = []
+            # 遍历当前行的每一个单元格
+            for cell in row:
+                # 将单元格的值和样式复制到新的单元格
+                new_cell = des_sheet.cell(row=cell.row, column=cell.column, value=cell.value)
+                if cell.has_style:
+                    new_cell.font = cell.font.copy()
+                    new_cell.border = cell.border.copy()
+                    new_cell.fill = cell.fill.copy()
+                    new_cell.number_format = cell.number_format
+                    # new_cell.protection = cell.protection
+                    new_cell.alignment = cell.alignment.copy()
+
+                    # new_cell.font = cell.font
+                    # new_cell.border = cell.border
+                    # new_cell.fill = cell.fill
+                    # new_cell.number_format = cell.number_format
+                    # # new_cell.protection = cell.protection
+                    # new_cell.alignment = cell.alignment                    
+            # des_sheet.append(new_row)
+    except Exception as e:
+        logging.error(f"拷贝sheet 出错 {e}")  
+        return None  
+
 class ExcelBase:
     def __init__(self):
         try:
@@ -3606,6 +3633,9 @@ class ExcelBase:
                 sheet.cell(row = self.sheet7_dict_['有色'].row_, column = 1, value = '有色').font = self.bold_font_
                 sheet.cell(row = self.sheet7_dict_['有色'].row_, column = 1, value = '有色').border = self.border_
 
+                sheet.cell(row = self.sheet7_dict_['能化'].row_, column = 1, value = '黑色').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['能化'].row_, column = 1, value = '黑色').border = self.border_    
+
                 sheet.cell(row = self.sheet7_dict_['黑色'].row_, column = 1, value = '黑色').font = self.bold_font_
                 sheet.cell(row = self.sheet7_dict_['黑色'].row_, column = 1, value = '黑色').border = self.border_    
 
@@ -3651,12 +3681,16 @@ class ExcelBase:
                 sheet.cell(row = self.sheet7_dict_['行业'].row_, column = 4, value = '净市值').font = self.bold_font_
 
 
-                sheet.cell(row = self.sheet7_dict_['风险度：'].row_, column = 2, value = self.sheet3_dict_['风险度'].value_)
-                sheet.cell(row = self.sheet7_dict_['权益：'].row_, column = 2, value = self.sheet3_dict_['账户资产净值'].value_)
-                sheet.cell(row = self.sheet7_dict_['当日盈亏：'].row_, column = 2, value = self.src_dict_['量化二']['手动输入数据']['当日盈亏'])   
+                sheet.cell(row = self.sheet7_dict_['风险度：'].row_, column = 2, value = str(round(self.sheet3_dict_['风险度'].value_,4))+"%")
+                sheet.cell(row = self.sheet7_dict_['权益：'].row_, column = 2, value = round(self.sheet3_dict_['账户资产净值'].value_/10000, 2))
+                sheet.cell(row = self.sheet7_dict_['当日盈亏：'].row_, column = 2, value = round(self.src_dict_['量化二']['手动输入数据']['当日盈亏']/10000,2))   
                 sheet.cell(row = self.sheet7_dict_['总市值：'].row_, column = 2, value = self.src_dict_['量化二']['其余信息']['结算数据']['总市值'])   
-                sheet.cell(row = self.sheet7_dict_['去锁市值：'].row_, column = 2, value = self.src_dict_['量化二']['其余信息']['结算数据']['去锁市值'])   
-                sheet.cell(row = self.sheet7_dict_['平仓盈亏：'].row_, column = 2, value = self.src_dict_['量化二']['手动输入数据']['平仓盈亏'])             
+                sheet.cell(row = self.sheet7_dict_['去锁市值：'].row_, column = 2, value = round(self.src_dict_['量化二']['其余信息']['结算数据']['去锁市值']/10000,2))   
+                sheet.cell(row = self.sheet7_dict_['平仓盈亏：'].row_, column = 2, value = round(self.src_dict_['量化二']['手动输入数据']['平仓盈亏']/10000,2))           
+
+
+                sheet_detail = self.target_workbook_.create_sheet(title='量化二持仓信息--详细统计')  
+                copy_sheet(sheet, sheet_detail)
                         
             except Exception as e:
                 logging.error(f"生成 量化三-收盘数据-基础信息设置 单元格时发生错误: {e}")    
