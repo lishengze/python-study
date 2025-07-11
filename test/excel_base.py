@@ -1267,6 +1267,8 @@ def trans_hc_str(src_data):
     if tmp_data.find('%') >= 0:                    
         new_s = tmp_data.replace('%', '')
         tmp_data = float(new_s)/100    
+    else:
+        tmp_data = float(tmp_data)
     return tmp_data
 
 class JZData:
@@ -1296,8 +1298,8 @@ class JZData:
                 jz_no_profit = float(sheet.cell(row=i, column=2).value)
                 jz_with_profit = float(sheet.cell(row=i, column=4).value)
                 
-                hc_no_profit = trans_hc_str(str(sheet.cell(row=i, column=3).value))
-                hc_with_profit = trans_hc_str(str(sheet.cell(row=i, column=5).value))
+                hc_with_profit = trans_hc_str(str(sheet.cell(row=i, column=3).value))
+                hc_no_profit = trans_hc_str(str(sheet.cell(row=i, column=5).value))
                 
                 self.date_list_.append(date)
                 self.jz_list_no_profit_.append(jz_no_profit)
@@ -1863,6 +1865,7 @@ class ExcelBase:
                         last_row = get_last_row(sheet, '量化二-收盘数据')
                         sheet.cell(row = last_row+1, column = 2, value = round(self.jz_['量化二']['收盘数据'].jz_list_with_profit_[-1], 5))
                         sheet.cell(row = last_row+1, column = 4, value = round(self.jz_['量化二']['收盘数据'].jz_list_no_profit_[-1], 5))
+                        sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                         
                         for i in range(0, last_row):       
                             sheet.cell(row = i+2, column = 3, value = str(round(self.jz_['量化二']['收盘数据'].hc_list_with_profit_[i]*100, 4)) + '%')
@@ -1880,6 +1883,7 @@ class ExcelBase:
                         last_row = get_last_row(sheet, '量化三-结算数据')
                         sheet.cell(row = last_row+1, column = 2, value = round(self.jz_['量化三']['结算数据'].jz_list_with_profit_[-1], 5))
                         sheet.cell(row = last_row+1, column = 4, value = round(self.jz_['量化三']['结算数据'].jz_list_no_profit_[-1], 5))
+                        sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                         
                         # logging.info(f"hc_list_with_profit_.size: {len(self.jz_['量化三']['结算数据'].hc_list_with_profit_)}, hc_list_no_profit_.size: {self.jz_['量化一']['结算数据'].hc_list_no_profit_}")
                         
@@ -1894,6 +1898,7 @@ class ExcelBase:
                         last_row = get_last_row(sheet, '量化三-收盘数据')
                         sheet.cell(row = last_row+1, column = 2, value = round(self.jz_['量化三']['收盘数据'].jz_list_with_profit_[-1], 5))
                         sheet.cell(row = last_row+1, column = 4, value = round(self.jz_['量化三']['收盘数据'].jz_list_no_profit_[-1], 5))
+                        sheet.cell(row = last_row+1, column = 1, value = tmp_date).number_format = numbers.FORMAT_DATE_YYYYMMDD2
                         
                         for i in range(0, last_row):       
                             sheet.cell(row = i+2, column = 3, value = str(round(self.jz_['量化三']['收盘数据'].hc_list_with_profit_[i]*100, 4)) + '%')
@@ -1908,7 +1913,7 @@ class ExcelBase:
         except Exception as e:
             logging.error(f"设置新净值信息出错: {e}")  
 
-                      
+                   
     def Work(self):
         
         # print(self.src_dict_)
