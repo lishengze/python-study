@@ -1,69 +1,113 @@
-2025-07-07 17:00:55,574 - INFO - excel_base.py - 80 - 配置文件路径: /home/lsz/dev/code/work/python-study/test/配置.json
-2025-07-07 17:00:55,624 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化一/成交回报.xls
-2025-07-07 17:00:55,628 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化一/单元资产.xls
-2025-07-07 17:00:55,628 - INFO - excel_base.py - 473 - 读取文件 单元资产 开始 4 118 
-2025-07-07 17:00:55,630 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化一/汇总证券-当日持仓.xls
-2025-07-07 17:00:55,758 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化一/汇总证券-合计.xls
-2025-07-07 17:00:55,758 - INFO - excel_base.py - 535 - 读取文件 汇总证券-合计 开始 3648 14 
-2025-07-07 17:00:55,882 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化一/汇总证券-合计-股票.xls
-2025-07-07 17:00:55,882 - INFO - excel_base.py - 1155 - 读取文件 汇总证券-合计-股票 开始 3572 14 
-2025-07-07 17:00:55,914 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化一/交易所回购.xls
-2025-07-07 17:00:55,914 - INFO - excel_base.py - 568 - 读取文件 交易所回购 开始 100 31 
-2025-07-07 17:00:55,918 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化一/期货保证金分析.xls
-2025-07-07 17:00:55,918 - INFO - excel_base.py - 586 - 读取文件 单元资产 开始 3 47 
-2025-07-07 17:00:55,924 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化二/成交回报.xls
-2025-07-07 17:00:55,927 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化二/单元资产.xls
-2025-07-07 17:00:55,928 - INFO - excel_base.py - 473 - 读取文件 单元资产 开始 3 118 
-2025-07-07 17:00:55,931 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化二/汇总证券-当日持仓.xls
-2025-07-07 17:00:55,939 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化二/汇总证券-合计.xls
-2025-07-07 17:00:55,940 - INFO - excel_base.py - 535 - 读取文件 汇总证券-合计 开始 190 14 
-2025-07-07 17:00:55,942 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化二/期货保证金分析.xls
-2025-07-07 17:00:55,942 - INFO - excel_base.py - 586 - 读取文件 单元资产 开始 3 47 
-2025-07-07 17:00:55,945 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化三/成交回报.xls
-2025-07-07 17:00:55,949 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化三/单元资产.xls
-2025-07-07 17:00:55,949 - INFO - excel_base.py - 473 - 读取文件 单元资产 开始 6 118 
-2025-07-07 17:00:55,949 - INFO - excel_base.py - 523 - 读取文件 单元资产 结束 {'量化三投机单元': {'row': 3, '序号': '3', '统计日期': '2025-07-07', '账户编号': '85016.0', '账户名称': '量化三', '资产单元序号': '391.0', '资产单元名称': '量化三投机单元', '当前现金余额': '4979415.91', '期初现金余额': '4984571.98', '单元资产净值(净价)': '4979415.91', '股票资产': '0.0', '股票成本': '0.0', '债券资产': '0.0', '债券成本': '0.0', '股票浮动盈亏': '0.0', '股票浮盈率(%)': '0.0', '债券浮动盈亏': '0.0', '债券浮盈率(%)': '0.0', '回购资产': '0.0', '基金资产': '0.0', '当日预买入金额': '0.0', '当日买金额': '22643980.0', '当日卖金额': '22639310.0', '现金冻结金额': '4979415.91', '现金解冻金额': '0.0', '累计实现收益': '-13090.0', '当日临时冻结金额': '0.0', '当日临时解冻金额': '0.0', 'T+1临时冻结金额': '0.0', 'T+1冻结金额': '0.0', '权证资产': '0.0', '买入未交割金额': '0.0', '卖出未交割金额': '0.0', '其他资产': '0.0', 'T+0交易可用金额': '0.0', 'T+1交易可用金额': '0.0', 'T+0指令可用金额': '0.0', 'T+1指令可用金额': '0.0', '期货保证金账户余额': '4979415.91', '占用保证金(静态)': '0.0', '期货盈亏': '0.0', '币种': '人民币', '债券资产/单元资产净值(%)': '0.0', '回购资产/单元资产净值(%)': '0.0', '股票资产/单元资产净值(%)': '0.0', '可用期货保证金': '4979415.91', '账户代码': '85016', '资产单元编号': '8501600', '银行余额': '0.0', '累计佣金': '0.0', '账户类型': '开放式', '当日预卖金额': '0.0', '资金': '0.0', 'T+0日间交易可用': '0.0', 'T+1日间交易可用': '0.0', 'T+0日间指令可用': '0.0', 'T+1日间指令可用': '0.0', '单位净值': '0.0000', '昨日单位净值': '0.0000', '单位分红': '0.0', '累计单位分红': '0.0', '合计应收': '0.0', '合计应付': '0.0', '债券资产(全价)': '0.0', '单元资产净值(全价)': '4979415.91', '债券资产(全价)/单元资产净值(全价%)': '0.0', '股票资产/单元资产净值(全价%)': '0.0', '基金资产/单元资产净值(全价%)': '0.0', '权证资产/单元资产净值(全价%)': '0.0', '回购资产/单元资产净值(全价%)': '0.0', '其它资产/单元资产净值(全价%)': '0.0', '基金资产/单元资产净值(%)': '0.0', '其它资产/单元资产净值(%)': '0.0', '权证资产/单元资产净值(%)': '0.0', '多空对冲比例(%)': '0.0', '单元资产增长率(%)': '-0.10344057665709544', '基金资产(除货币基金)': '0.0', '货币基金': '0.0', '债券基金': '0.0', '其他资产(除存款)': '0.0', '存款资产': '0.0', '基金资产(除货币和债券基金)': '0.0', '(基金资产+股票资产)/净值(%)': '0.0', '本期收益率(%)': '0.0', '期初投入': '0.0', '期初收益率(%)': '0.0', '累计收益率(%)': '0.0', '累计实现收益(含费用)': '-13256.07', '净值占基金净值(%)': '99.87512279863249', '单位净值增长率(%)': '0.0', '基金浮动盈亏': '0.0', '资金账号': '', '期货资金账号': '12800089', '报价回购当日收益': '0.0', '报价回购累计收益': '0.0', '当日股票收益率(%)': '0.0', '现货总资产': '0.0', '现金资产(扣期货保证金)': '4979415.91', '证券总市值(扣期货)': '0.0', '现金资产/单元资产净值(%)': '100.0', '期权资产': '0.0', '期权资产/单元资产净值(%)': '0.0', '总体盈亏': '-13090.0', '单元份额': '0.0', '期货当日实现盈亏': '-4990.0', '期货资金利用率(%)': '0.0', '保证券实际可用余额': '0.0', '期现对冲比例(%)': '0.0', '不包含T+1变化的T+0可用': '0.0', '基金净值': '4985641.84', '期货多头资产': '0.0', '期货空头资产': '0.0', '期货分仓': '南华CTP', '信用衍生品资产': '0.0', '国债充抵期货保证金': '0.0', '期货账户权益': '4979415.91', '基金成本': '0.0', '港股通预付款差额(已缴纳)': '0.0', '股票期权账户权益': 'N/A'}} 
-2025-07-07 17:00:55,951 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化三/汇总证券-当日持仓.xls
-2025-07-07 17:00:55,953 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化三/汇总证券-合计.xls
-2025-07-07 17:00:55,954 - INFO - excel_base.py - 535 - 读取文件 汇总证券-合计 开始 11 14 
-2025-07-07 17:00:55,955 - INFO - excel_base.py - 1562 - 成功读取文件 /home/lsz/dev/code/study/llwork/7.7/量化三/期货保证金分析.xls
-2025-07-07 17:00:55,955 - INFO - excel_base.py - 586 - 读取文件 单元资产 开始 3 47 
-2025-07-07 17:00:55,956 - INFO - excel_base.py - 1196 - 读取文件 量化一-结算数据 开始 92
-2025-07-07 17:00:55,957 - INFO - excel_base.py - 1196 - 读取文件 量化一-收盘数据 开始 92
-2025-07-07 17:00:55,958 - INFO - excel_base.py - 1196 - 读取文件 量化二-结算数据 开始 75
-2025-07-07 17:00:55,959 - INFO - excel_base.py - 1196 - 读取文件 量化二-收盘数据 开始 75
-2025-07-07 17:00:55,959 - INFO - excel_base.py - 1196 - 读取文件 量化三-结算数据 开始 21
-2025-07-07 17:00:55,960 - INFO - excel_base.py - 1196 - 读取文件 量化三-收盘数据 开始 21
-2025-07-07 17:00:55,966 - INFO - excel_base.py - 1962 - 单位净值(含返息、逆回购、手续费): 0.9975823966666667
-2025-07-07 17:00:55,966 - INFO - excel_base.py - 1963 - 昨日单位净值(含返息、逆回购、手续费): 0.996634942333333
-2025-07-07 17:00:55,966 - INFO - excel_base.py - 1964 - 日净值增长率(含返息、逆回购、手续费): 0.09506533366324302
-2025-07-07 17:00:55,999 - ERROR - excel_base.py - 352 - 绘制 /home/lsz/dev/code/study/llwork/7.7/量化一-结算数据_含返息.png 图时发生错误: '<' not supported between instances of 'str' and 'float'
-2025-07-07 17:00:56,036 - ERROR - excel_base.py - 352 - 绘制 /home/lsz/dev/code/study/llwork/7.7/量化一-收盘数据_含返息.png 图时发生错误: '<' not supported between instances of 'str' and 'float'
-2025-07-07 17:00:56,068 - ERROR - excel_base.py - 352 - 绘制 /home/lsz/dev/code/study/llwork/7.7/量化二-结算数据_含返息.png 图时发生错误: '<' not supported between instances of 'str' and 'float'
-2025-07-07 17:00:56,099 - ERROR - excel_base.py - 352 - 绘制 /home/lsz/dev/code/study/llwork/7.7/量化二-收盘数据_含返息.png 图时发生错误: '<' not supported between instances of 'str' and 'float'
-2025-07-07 17:00:56,132 - ERROR - excel_base.py - 352 - 绘制 /home/lsz/dev/code/study/llwork/7.7/量化三-结算数据_含返息.png 图时发生错误: '<' not supported between instances of 'str' and 'float'
-2025-07-07 17:00:56,137 - INFO - excel_base.py - 3349 - 生成 量化三-成交回报: 今日交易 3 只期货, 成交合约价值 4528.33 万元,其中
-1.国债期货:
-买入开仓: 2只 (T2509,TL2509)
-卖出平仓: 2只 (T2509,TL2509)
-2.黄金期货:
-卖出开仓: 1只 (au2510)
-买入平仓: 1只 (au2510)
-买入开仓: 1只 (au2510)
-卖出平仓: 1只 (au2510)
-3.铜期货:无
-4.其他品种:无
-2025-07-07 17:00:56,138 - INFO - excel_base.py - 3350 - 生成 量化三-成交回报: 共持仓: 0 只期货, 持仓合约价值 0.0 万元, 其中: 
-国债期货 0只 
-黄金期货 0只 
-铜期货 0只 
-其他品种 0只 
-2025-07-07 17:00:56,169 - ERROR - excel_base.py - 352 - 绘制 /home/lsz/dev/code/study/llwork/7.7/量化三-收盘数据_含返息.png 图时发生错误: '<' not supported between instances of 'str' and 'float'
-2025-07-07 17:00:56,169 - INFO - excel_base.py - 1765 - Sheet 已成功删除。
-2025-07-07 17:00:56,169 - INFO - excel_base.py - 1770 - 目标文件名: /home/lsz/dev/code/study/llwork/7.7/量化业务日报-2025-07-07.xlsx
-2025-07-07 17:00:56,205 - INFO - excel_base.py - 1656 - hc_list_with_profit_.size: 92, hc_list_no_profit_.size: [0.0, 0.0, -2e-05, 0.0, 0.0, -0.00048, -0.00048, -0.00048, -0.00017999999999999998, -0.00046, -0.0002, -0.0002, -0.00064, -0.00066, -0.00099, -0.00233, -0.00229, -0.00228, -0.0022400000000000002, -0.00216, -0.0020599999999999998, -0.007645, -0.002458, -0.00194, -0.00191, -0.00179, -0.0017499999999999998, -0.00131, -0.00126, -0.00091, -0.00481, -0.00417, -0.00415, -0.00411, -0.00377, -0.0012900000000000001, -0.00124, -0.00115, -0.00178, -0.0028100000000000004, -0.00262, -0.0025700000000000002, -0.0022, -0.00345, -0.00437, -0.005849999999999999, -0.00573, -0.00527, -0.00417, -0.0032500000000000003, -0.00272, -0.0032600000000000003, -0.003, -0.0028599999999999997, -0.0028699999999999997, -0.0028299999999999996, -0.0027400000000000002, -0.0025700000000000002, -0.0023899999999999998, -0.00243, -0.0027800000000000004, -0.00406, -0.00384, -0.0034999999999999996, -0.00336, -0.0034300000000000003, -0.00375, -0.00344, -0.00374, -0.0035499999999999998, -0.0034999999999999996, -0.00358, -0.0032500000000000003, -0.00312, -0.00302, -0.00291, -0.0028100000000000004, -0.0027400000000000002, -0.00265, -0.00269, -0.00345, -0.00388, -0.0031, -0.00306, -0.00301, -0.0028799999999999997, -0.0028100000000000004, -0.00271, -0.0027700000000000003, -0.0025900000000000003, -0.0025, -0.007055160460248168]
-2025-07-07 17:00:56,206 - ERROR - excel_base.py - 1677 - 设置量化一新净值信息出错: type str doesn't define __round__ method
-2025-07-07 17:00:56,206 - INFO - excel_base.py - 1688 - hc_list_with_profit_.size: 75, hc_list_no_profit_.size: [0.0, 0.0, -2e-05, 0.0, 0.0, -0.00048, -0.00048, -0.00048, -0.00017999999999999998, -0.00046, -0.0002, -0.0002, -0.00064, -0.00066, -0.00099, -0.00233, -0.00229, -0.00228, -0.0022400000000000002, -0.00216, -0.0020599999999999998, -0.007645, -0.002458, -0.00194, -0.00191, -0.00179, -0.0017499999999999998, -0.00131, -0.00126, -0.00091, -0.00481, -0.00417, -0.00415, -0.00411, -0.00377, -0.0012900000000000001, -0.00124, -0.00115, -0.00178, -0.0028100000000000004, -0.00262, -0.0025700000000000002, -0.0022, -0.00345, -0.00437, -0.005849999999999999, -0.00573, -0.00527, -0.00417, -0.0032500000000000003, -0.00272, -0.0032600000000000003, -0.003, -0.0028599999999999997, -0.0028699999999999997, -0.0028299999999999996, -0.0027400000000000002, -0.0025700000000000002, -0.0023899999999999998, -0.00243, -0.0027800000000000004, -0.00406, -0.00384, -0.0034999999999999996, -0.00336, -0.0034300000000000003, -0.00375, -0.00344, -0.00374, -0.0035499999999999998, -0.0034999999999999996, -0.00358, -0.0032500000000000003, -0.00312, -0.00302, -0.00291, -0.0028100000000000004, -0.0027400000000000002, -0.00265, -0.00269, -0.00345, -0.00388, -0.0031, -0.00306, -0.00301, -0.0028799999999999997, -0.0028100000000000004, -0.00271, -0.0027700000000000003, -0.0025900000000000003, -0.0025, -0.007055160460248168]
-2025-07-07 17:00:56,206 - ERROR - excel_base.py - 1708 - 设置 量化二 新净值信息出错: type str doesn't define __round__ method
-2025-07-07 17:00:56,206 - INFO - excel_base.py - 1719 - hc_list_with_profit_.size: 21, hc_list_no_profit_.size: [0.0, 0.0, -2e-05, 0.0, 0.0, -0.00048, -0.00048, -0.00048, -0.00017999999999999998, -0.00046, -0.0002, -0.0002, -0.00064, -0.00066, -0.00099, -0.00233, -0.00229, -0.00228, -0.0022400000000000002, -0.00216, -0.0020599999999999998, -0.007645, -0.002458, -0.00194, -0.00191, -0.00179, -0.0017499999999999998, -0.00131, -0.00126, -0.00091, -0.00481, -0.00417, -0.00415, -0.00411, -0.00377, -0.0012900000000000001, -0.00124, -0.00115, -0.00178, -0.0028100000000000004, -0.00262, -0.0025700000000000002, -0.0022, -0.00345, -0.00437, -0.005849999999999999, -0.00573, -0.00527, -0.00417, -0.0032500000000000003, -0.00272, -0.0032600000000000003, -0.003, -0.0028599999999999997, -0.0028699999999999997, -0.0028299999999999996, -0.0027400000000000002, -0.0025700000000000002, -0.0023899999999999998, -0.00243, -0.0027800000000000004, -0.00406, -0.00384, -0.0034999999999999996, -0.00336, -0.0034300000000000003, -0.00375, -0.00344, -0.00374, -0.0035499999999999998, -0.0034999999999999996, -0.00358, -0.0032500000000000003, -0.00312, -0.00302, -0.00291, -0.0028100000000000004, -0.0027400000000000002, -0.00265, -0.00269, -0.00345, -0.00388, -0.0031, -0.00306, -0.00301, -0.0028799999999999997, -0.0028100000000000004, -0.00271, -0.0027700000000000003, -0.0025900000000000003, -0.0025, -0.007055160460248168]
-2025-07-07 17:00:56,207 - ERROR - excel_base.py - 1740 - 设置 量化三 新净值信息出错: type str doesn't define __round__ method
+2025-07-11 16:05:09,351 - INFO - excel_base.py - 80 - 配置文件路径: /home/lsz/dev/code/work/python-study/test/配置.json
+2025-07-11 16:05:09,410 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化一/成交回报.xls
+2025-07-11 16:05:09,413 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化一/单元资产.xls
+2025-07-11 16:05:09,413 - INFO - excel_base.py - 554 - 读取文件 单元资产 开始 4 118 
+2025-07-11 16:05:09,415 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化一/汇总证券-当日持仓.xls
+2025-07-11 16:05:09,416 - INFO - excel_base.py - 507 - $IM2506 $股指期货 $IM
+2025-07-11 16:05:09,416 - INFO - excel_base.py - 507 - $IH2507 $股指期货 $IH
+2025-07-11 16:05:09,416 - INFO - excel_base.py - 507 - $IH2507 $股指期货 $IH
+2025-07-11 16:05:09,531 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化一/汇总证券-合计.xls
+2025-07-11 16:05:09,531 - INFO - excel_base.py - 616 - 读取文件 汇总证券-合计 开始 3611 14 
+2025-07-11 16:05:09,640 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化一/汇总证券-合计-股票.xls
+2025-07-11 16:05:09,640 - INFO - excel_base.py - 1251 - 读取文件 汇总证券-合计-股票 开始 3541 14 
+2025-07-11 16:05:09,667 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化一/交易所回购.xls
+2025-07-11 16:05:09,667 - INFO - excel_base.py - 649 - 读取文件 交易所回购 开始 77 31 
+2025-07-11 16:05:09,671 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化一/期货保证金分析.xls
+2025-07-11 16:05:09,671 - INFO - excel_base.py - 667 - 读取文件 单元资产 开始 3 47 
+2025-07-11 16:05:09,676 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化二/成交回报.xls
+2025-07-11 16:05:09,679 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化二/单元资产.xls
+2025-07-11 16:05:09,679 - INFO - excel_base.py - 554 - 读取文件 单元资产 开始 3 118 
+2025-07-11 16:05:09,684 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化二/汇总证券-当日持仓.xls
+2025-07-11 16:05:09,684 - INFO - excel_base.py - 507 - $苹果2510 $农副 $苹果
+2025-07-11 16:05:09,684 - INFO - excel_base.py - 507 - $聚氯乙烯2509 $能化 $聚氯乙烯
+2025-07-11 16:05:09,684 - INFO - excel_base.py - 507 - $红枣2509 $农副 $红枣
+2025-07-11 16:05:09,684 - INFO - excel_base.py - 507 - $玻璃2509 $能化 $玻璃
+2025-07-11 16:05:09,684 - INFO - excel_base.py - 507 - $聚乙烯2509 $能化 $聚乙烯
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $乙二醇2509 $能化 $乙二醇
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $苯乙烯2507 $能化 $苯乙烯
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $菜籽油2509 $农副 $菜籽油
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $纯碱2509 $能化 $纯碱
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $硅铁2509 $黑色 $硅铁
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $锰硅2509 $黑色 $锰硅
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $锌2507 $有色 $锌
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $聚丙烯2509 $能化 $聚丙烯
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $尿素2509 $能化 $尿素
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $玉米淀粉2507 $农副 $玉米淀粉
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $玉米2507 $农副 $玉米
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $氧化铝2509 $有色 $氧化铝
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $天然橡胶2509 $能化 $天然橡胶
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $白银2508 $贵金属 $白银
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $石油沥青2509 $能化 $石油沥青
+2025-07-11 16:05:09,685 - INFO - excel_base.py - 507 - $豆一号2509 $农副 $豆一号
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $豆一号2507 $农副 $豆一号
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $PTA2509 $能化 $PTA
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $甲醇N2509 $能化 $甲醇
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $IH2506 $股指期货 $IH
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $热轧卷板2510 $黑色 $热轧卷板
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $铁矿石2509 $黑色 $铁矿石
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $焦炭2509 $黑色 $焦炭
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $焦煤2509 $黑色 $焦煤
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $IF2506 $股指期货 $IF
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $豆粕2509 $农副 $豆粕
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $棕榈油2509 $农副 $棕榈油
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $铅2507 $有色 $铅
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $铜2507 $有色 $铜
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $螺纹钢2510 $黑色 $螺纹钢
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $铝2507 $有色 $铝
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $工业硅2509 $有色 $工业硅
+2025-07-11 16:05:09,686 - INFO - excel_base.py - 507 - $不锈钢2508 $有色 $不锈钢
+2025-07-11 16:05:09,687 - INFO - excel_base.py - 507 - $棉花2509 $农副 $棉花
+2025-07-11 16:05:09,687 - INFO - excel_base.py - 507 - $豆油2509 $农副 $豆油
+2025-07-11 16:05:09,687 - INFO - excel_base.py - 507 - $白糖2509 $农副 $白糖
+2025-07-11 16:05:09,687 - INFO - excel_base.py - 507 - $IMTest $股指期货 $IM
+2025-07-11 16:05:09,687 - INFO - excel_base.py - 507 - $IMTest $股指期货 $IM
+2025-07-11 16:05:09,693 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化二/汇总证券-合计.xls
+2025-07-11 16:05:09,693 - INFO - excel_base.py - 616 - 读取文件 汇总证券-合计 开始 164 14 
+2025-07-11 16:05:09,695 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化二/期货保证金分析.xls
+2025-07-11 16:05:09,695 - INFO - excel_base.py - 667 - 读取文件 单元资产 开始 3 47 
+2025-07-11 16:05:09,697 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化三/成交回报.xls
+2025-07-11 16:05:09,701 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化三/单元资产.xls
+2025-07-11 16:05:09,701 - INFO - excel_base.py - 554 - 读取文件 单元资产 开始 6 118 
+2025-07-11 16:05:09,703 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化三/汇总证券-当日持仓.xls
+2025-07-11 16:05:09,705 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化三/汇总证券-合计.xls
+2025-07-11 16:05:09,705 - INFO - excel_base.py - 616 - 读取文件 汇总证券-合计 开始 8 14 
+2025-07-11 16:05:09,707 - INFO - excel_base.py - 1386 - 成功读取文件 /home/lsz/dev/code/work/python-study/template/6.12/量化三/期货保证金分析.xls
+2025-07-11 16:05:09,707 - INFO - excel_base.py - 667 - 读取文件 单元资产 开始 3 47 
+2025-07-11 16:05:10,149 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:10,153 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:10,166 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:10,734 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:10,737 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:10,748 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:11,363 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:11,368 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:11,385 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:12,136 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:12,142 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:12,158 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:12,838 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:12,845 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:12,859 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:13,562 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:13,565 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:13,577 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:14,220 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:14,225 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:14,237 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:14,886 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:14,891 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:14,902 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:15,562 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:15,566 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:15,580 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:16,234 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:16,238 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:16,259 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:17,044 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:17,048 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:17,064 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:17,718 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:17,721 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:17,740 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-07-11 16:05:18,104 - INFO - excel_base.py - 1936 - Sheet 已成功删除。
+2025-07-11 16:05:18,105 - INFO - excel_base.py - 1941 - 目标文件名: /home/lsz/dev/code/work/python-study/template/6.12/量化业务日报-2025-06-10.xlsx

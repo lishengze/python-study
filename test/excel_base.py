@@ -440,26 +440,107 @@ def get_future_type_name(code):
     else:
         return '其他品种'    
 
+def calc_qusuo_value(long_dict, short_dict):
+    try:
+        rst = 0
+
+        long_short_stock = []
+
+        for stock, cc_info in long_dict.items():
+            if stock in short_dict:
+                if cc_info['count'] != short_dict[stock]['count']:
+                    if cc_info['count'] > short_dict[stock]['count']:
+                        rst += (long_dict[stock]['count'] - short_dict[stock]['count']) * (long_dict[stock]['amount'] / long_dict[stock]['count'])
+                    else:
+                        rst += (short_dict[stock]['count'] - long_dict[stock]['count']) * (short_dict[stock]['amount'] / short_dict[stock]['count'])
+                long_short_stock.append(stock)
+            else:
+                rst += cc_info['amount']
+
+        for stock, cc_info in short_dict.items():
+            if stock not in long_short_stock:
+                rst += cc_info['amount']
+        
+        return rst
+
+    except Exception as e:
+        logging.error(f"计算去锁市值失败, \nLong: {long_dict},\nShort: 1{short_dict},\n{e}")  
+        return -1   
+
 class ExcelDataRead():
-    def __init__(self):
-        pass
+    def __init__(self, excel_base_data, industry_dict):
+        self.excel_src_dict_ = excel_base_data
+        self.excel_industry_dict_ = industry_dict
+        # logging.info(self.excel_industry_dict_)
+
+        # pass
     
+    def update_industry_static_data(self, stock_name, amount, is_long):
+        try:
+            not_other = False
+            tmp_long = 0
+            tmp_short = 0
+
+            des_industry_name = '其他'
+            des_object_name = '其他'
+
+            for industry_name in self.excel_industry_dict_.keys():
+                industry_detail = self.excel_industry_dict_[industry_name]
+                if industry_name == '其他' or industry_name == '合计':
+                    continue
+                detail_array = industry_detail['标的详情']
+                for object in detail_array:
+                    if object in stock_name:
+                        des_industry_name = industry_name
+                        des_object_name = object
+
+                        not_other = True
+                        if is_long:
+                            industry_detail['统计数据']['多头市值'] += amount
+                            tmp_long = amount
+                        else:
+                            industry_detail['统计数据']['空头市值'] += amount
+                            tmp_short = amount
+                        
+                        industry_detail['统计数据']['净市值'] = industry_detail['统计数据']['多头市值'] - industry_detail['统计数据']['空头市值']
+            
+            logging.info(f"${stock_name} ${des_industry_name} ${des_object_name}")
+            # if '苹果2510' == stock_name:
+                
+            if not not_other:
+                if is_long:
+                    self.excel_industry_dict_['其他']['统计数据']['多头市值'] += amount
+                    tmp_long = amount
+                else:
+                    self.excel_industry_dict_['其他']['统计数据']['空头市值'] += amount  
+                    tmp_short = amount
+
+                self.excel_industry_dict_['其他']['统计数据']['净市值'] = self.excel_industry_dict_['其他']['统计数据']['多头市值'] - self.excel_industry_dict_['其他']['统计数据']['空头市值']
+
+            self.excel_industry_dict_['合计']['统计数据']['多头市值'] += tmp_long
+            self.excel_industry_dict_['合计']['统计数据']['空头市值'] += tmp_short
+            self.excel_industry_dict_['合计']['统计数据']['净市值'] += tmp_long - tmp_short
+
+        except Exception as e:
+            logging.error(f"更新量化二行业统计信息出错, {stock_name}, {amount}, {is_long}: {e}")  
+            return None     
+            
     def read_excel_sheet(self, xlrd_sheet, data_type, sheet_type='量化一'): 
         try:
             if data_type == '单元资产':
-                return self.read_dyzc_data(self=self , xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)
+                return self.read_dyzc_data(xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)
             elif data_type == '汇总证券-合计':
-                return self.read_hzzq_hj(self=self , xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)   
+                return self.read_hzzq_hj(xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)   
             elif data_type == '交易所回购':
-                return self.read_jyshg(self=self, xlrd_sheet=xlrd_sheet,sheet_type=sheet_type)   
+                return self.read_jyshg(xlrd_sheet=xlrd_sheet,sheet_type=sheet_type)   
             elif data_type == '期货保证金分析':
-                return self.read_qhbzjfx(self=self, xlrd_sheet=xlrd_sheet,sheet_type=sheet_type) 
+                return self.read_qhbzjfx(xlrd_sheet=xlrd_sheet,sheet_type=sheet_type) 
             elif data_type == '成交回报':
-                return self.read_cjhb(self=self, xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)    
+                return self.read_cjhb(xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)    
             elif data_type == '汇总证券-当日持仓':
-                return self.read_hzzq_drcc(self=self, xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)  
+                return self.read_hzzq_drcc( xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)  
             elif data_type == '汇总证券-合计-股票':
-                return self.read_hzzz_hj_gp(self=self, xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)                                          
+                return self.read_hzzz_hj_gp(xlrd_sheet=xlrd_sheet, sheet_type=sheet_type)                                          
             else:
                 return True
         except Exception as e:
@@ -519,8 +600,8 @@ class ExcelDataRead():
                     cell_value = str(xlrd_sheet.cell_value(nrow, col))
                     cell_dict[key][header[col]] = cell_value
                     
-            if '量化三' in sheet_type:
-                logging.info(f"读取文件 单元资产 结束 {cell_dict} ")
+            # if '量化三' in sheet_type:
+            #     logging.info(f"读取文件 单元资产 结束 {cell_dict} ")
 
             # print(cell_dict) 
             return cell_dict
@@ -733,7 +814,7 @@ class ExcelDataRead():
         try:
 
             if sheet_type == "量化三":
-                return self.read_cjhb_lhs(self, xlrd_sheet)
+                return self.read_cjhb_lhs(xlrd_sheet)
 
             cell_dict = {}            
             header_col_dict = {}
@@ -975,12 +1056,12 @@ class ExcelDataRead():
     def read_hzzq_drcc(self, xlrd_sheet, sheet_type="量化一"):
         try:
             if sheet_type == "量化三":
-                return self.read_hzzq_drcc_lhs(self, xlrd_sheet)
+                return self.read_hzzq_drcc_lhs(xlrd_sheet)
             cell_dict = {}            
             header_col_dict = {}
             for col in range(xlrd_sheet.ncols):
                 cell_value = str(xlrd_sheet.cell_value(0, col))
-                valid_item = ['持仓数量',  '证券代码', '持仓多空标志', '证券类别','本币市值']              
+                valid_item = ['持仓数量',  '证券代码', '证券名称','持仓多空标志', '证券类别','本币市值']              
                 if cell_value in valid_item:
                     header_col_dict[cell_value] = col
                     cell_dict[cell_value] = []
@@ -1029,6 +1110,8 @@ class ExcelDataRead():
                     stock_name = cell_dict['证券代码'][row]                    
                     trade_type = cell_dict['持仓多空标志'][row]
 
+                    stock_detail_name = cell_dict['证券名称'][row]
+
                     # print(f'{sheet_type}, {stock_name}, {trade_type}, {cell_dict["本币市值"][row]}')
                     
                     if stock_name not in done_detail_dict:
@@ -1054,16 +1137,25 @@ class ExcelDataRead():
                         # print('持仓数量', cell_dict['持仓数量'][row], '股票名称', stock_name)
                         mrkc_count += cell_dict['持仓数量'][row]
                     elif '多仓' in cell_dict['持仓多空标志'][row]:
+                        self.update_industry_static_data(stock_name = stock_detail_name, amount=float(cell_dict['本币市值'][row])/10000, is_long=True)
+
                         if stock_name not in mcpc:
-                            mcpc[stock_name] = cell_dict['持仓数量'][row]
+                            mcpc[stock_name] = {}
+                            mcpc[stock_name]['count'] = cell_dict['持仓数量'][row]
+                            mcpc[stock_name]['amount'] = cell_dict['本币市值'][row]
                         else:
-                            mcpc[stock_name] += cell_dict['持仓数量'][row]
+                            mcpc[stock_name]['count']  += cell_dict['持仓数量'][row]
+                            mcpc[stock_name]['amount'] += cell_dict['本币市值'][row]
                         mcpc_count += cell_dict['持仓数量'][row]
                     elif '空仓' in cell_dict['持仓多空标志'][row]:  
+                        self.update_industry_static_data(stock_name = stock_detail_name, amount=float(cell_dict['本币市值'][row]/10000), is_long=False)
                         if stock_name not in mrpc:
-                            mrpc[stock_name] = cell_dict['持仓数量'][row]
+                            mrpc[stock_name] = {}
+                            mrpc[stock_name]['count'] = cell_dict['持仓数量'][row]
+                            mrpc[stock_name]['amount'] = cell_dict['本币市值'][row]
                         else:
-                            mrpc[stock_name] += cell_dict['持仓数量'][row]
+                            mrpc[stock_name]['count'] += cell_dict['持仓数量'][row]
+                            mrpc[stock_name]['amount'] += cell_dict['本币市值'][row]
                         mrpc_count += cell_dict['持仓数量'][row]
                                                                     
                     
@@ -1072,6 +1164,10 @@ class ExcelDataRead():
 
             done_amount /= 10000
             # print(done_detail_dict)
+
+            if sheet_type  == "量化二":
+                self.excel_src_dict_['量化二']['其余信息']['结算数据']['总市值'] = round(done_amount,2) 
+                self.excel_src_dict_['量化二']['其余信息']['结算数据']['去锁市值'] = round( calc_qusuo_value(mcpc, mrpc),  2)
                 
             stock_info = f"股票: {stock_count} 只"            
             future_info = f"当前持有: {future_count} 只股指期货合约, {option_count} 只股指期权合约, 持仓合约价值 { round(done_amount,2) } 万元, 其中: \n"
@@ -1091,14 +1187,14 @@ class ExcelDataRead():
             if len(mcpc) > 0 and mcpc_count > 0:
                 future_info += '\n多仓: '
                 for key, value in mcpc.items():
-                    if value > 0:
-                        future_info += f"{key}({math.floor(float(value))} 手),"       
+                    if value['count'] > 0:
+                        future_info += f"{key}({math.floor(float(value['count'] ))} 手),"       
                         
             if len(mrpc) > 0 and mrpc_count > 0:
                 future_info += '\n空仓: '
                 for key, value in mrpc.items():
-                    if value > 0:
-                        future_info += f"{key}({math.floor(float(value))} 手),"             
+                    if value['count']  > 0:
+                        future_info += f"{key}({math.floor(float(value['count'] ))} 手),"             
             
             trade_detail_dict = {}
             trade_sum_dict = {}
@@ -1193,7 +1289,7 @@ class JZData:
         try:
             valid_row = get_last_row(sheet, sheet_name)
             
-            logging.info(f"读取文件 {sheet_name} 开始 {valid_row}")
+            # logging.info(f"读取文件 {sheet_name} 开始 {valid_row}")
             
             for i in range(2, valid_row+1):
                 date = str(sheet.cell(row=i, column=1).value)
@@ -1265,24 +1361,67 @@ class ExcelData:
         self.value_ = None
         self.is_merge_= False
        
+def read_json_array(json_array, meta_info):
+    try:
+        result = []
+        for data in json_array:
+            result.append(data)
+        return result
+    except Exception as e:
+        logging.error(f"读取${meta_info}信息出错: {e}")  
+        return None   
              
+def init_excel_file(execl_file_path, file_dict, data_read_obj:ExcelDataRead):
+    try:
+        for key, value in file_dict.items():
+            tmp_dir = execl_file_path + '/' + key
+            if os.path.exists(tmp_dir) == True:                                 
+                for file_name, value1 in value.items():                    
+                        if file_name != '其余信息' and file_name != '手动输入数据':
+                            complete_file_path = execl_file_path + '/' + key + '/' + file_name + '.xls'  
+                            if os.path.exists(complete_file_path) == True:
+                                try:    
+                                    tmp_workbook = xlrd.open_workbook(complete_file_path)
+                                    tmp_sheet = tmp_workbook.sheet_by_index(0)
+                                    logging.info(f"成功读取文件 {complete_file_path}")
+                                    # file_dict = data_read_obj.read_excel_sheet(self=data_read_obj, xlrd_sheet=tmp_sheet, data_type=file_name, sheet_type=key)
+
+                                    file_dict[key][file_name] = data_read_obj.read_excel_sheet(tmp_sheet, file_name, key)
+
+                                except FileNotFoundError:   
+                                    logging.warning(f"文件 {complete_file_path} 未找到。")
+                                except Exception as e:
+                                    logging.warning(f"读取文件 {complete_file_path} 时发生错误: {e}")       
+                            else:
+                                logging.warning(f"文件 {complete_file_path} 未找到。")
+            else:
+                file_dict[key]['其余信息']['isOpen'] = False
+                logging.warning(f"目录 {tmp_dir} 未找到。")
+                                    
+    except Exception as e:
+        logging.error(f"初始化 Excel 文件出错: {e}")  
+        return None
+                     
 class ExcelBase:
     def __init__(self):
         try:
             
             self.date = ''
             self.config_ = get_config()
-            self.data_read_obj_ = ExcelDataRead
+            
+            self.industry_list_ = ['农副', '有色', '能化', '黑色', '贵金属', '股指期货', '其他', '合计']
+            self.industry_dict_ = {}
+
             if self.config_ is None:
                 logging.critical("配置文件为空，请检查。")
                 return None
                             
-            if '量化一二所在目录' not in self.config_:
-                logging.critical("配置文件中未找到 '量化一二所在目录' 字段，请检查。")
+            if '量化导出文件所在目录' not in self.config_:
+                logging.critical("配置文件中未找到 '量化导出文件所在目录' 字段，请检查。")
                 return None
                 
                 
-            tmp_dir = self.config_['量化一二所在目录']         
+            tmp_dir = self.config_['量化导出文件所在目录']         
             self.file_path_ = tmp_dir.replace('\\', '/')
             
             if os.path.exists(self.file_path_) == False:
@@ -1318,6 +1457,7 @@ class ExcelBase:
             self.sheet4_dict_ = {}
             self.sheet5_dict_ = {}
             self.sheet6_dict_ = {}
+            self.sheet7_dict_ = {}
             
             self.gene_sheet_array_ = []
             
@@ -1359,7 +1499,8 @@ class ExcelBase:
                             
                         },
                         "结算数据": {
-                            
+                            "总市值": None,
+                            "去锁市值":None
                         },
                         'isOpen':True                        
                     },
@@ -1369,8 +1510,10 @@ class ExcelBase:
                         '账户资产净值': None,
                         '占用': None,
                         "返息":None,
-                        "手续费":None
-                    }                     
+                        "手续费":None,
+                        "当日盈亏":None,
+                        "平仓盈亏":None
+                    }             
                 },
                 '量化三':{
                     '成交回报':None,
@@ -1397,16 +1540,53 @@ class ExcelBase:
                 }                
             }
             
-            self.src_dict_ = self.init_excel_file(self.file_path_, self.src_dict_)
-            if self.src_dict_ is None:
-                logging.critical("初始化 Excel 文件失败。")
-                      
             self.read_detail_config()    
-                
-            self.read_jz_info()
+                            
         except Exception as e:
             logging.error(f"读取基本信息出错: {e}")  
-            
+
+    def InitDataDict(self, data_read_obj):
+        try:
+
+            init_excel_file(self.file_path_,self.src_dict_, data_read_obj)
+
+            if self.src_dict_ is None:
+                logging.critical("初始化 Excel 文件失败。")
+
+            self.read_jz_info()
+        except Exception as e:
+            logging.error(f"InitDataDict: {e}")  
+
+    def read_industry(self):
+        try:
+
+            if '行业统计' in self.config_['量化二']:   
+                src_industry_dict = self.config_['量化二']['行业统计']
+                
+                for item in self.industry_list_:
+                    if item in src_industry_dict or item == '其他' or item =='合计':
+                        self.industry_dict_[item] = {
+                            '标的详情':[],
+                            '统计数据': {
+                                '多头市值': 0,
+                                '空头市值': 0,
+                                '净市值':0
+                            }
+                        }
+
+                        if item in src_industry_dict:
+                            self.industry_dict_[item]['标的详情'] = read_json_array(src_industry_dict[item], item)
+                    else:
+                        logging.error(f"量化二行业统计 缺少 ${item}") 
+
+                # logging.info(self.industry_dict_)
+                                                                             
+            else:
+                logging.critical("配置文件中未找到 '量化二-行业统计' 字段，请检查。")       
+        except Exception as e:
+            logging.error(f"读取量化二行业统计信息出错: {e}")  
+            return None       
+                    
     def read_detail_config(self):   
         try:
             if '量化一' in self.config_:
@@ -1445,7 +1625,7 @@ class ExcelBase:
                 else:
                     logging.critical("配置文件中未找到 '量化一-实收资本' 字段，请检查。")                       
                                               
-                                    
+                
             else:
                 logging.critical("配置文件中未找到 '量化一' 字段，请检查。")
             
@@ -1484,7 +1664,23 @@ class ExcelBase:
                     if self.src_dict_['量化二']['手动输入数据']['实收资本'] is None:
                         logging.critical("配置文件中 '量化二-实收资本' 字段值为空，请检查。")
                 else:
-                    logging.critical("配置文件中未找到 '量化二-实收资本' 字段，请检查。")                                          
+                    logging.critical("配置文件中未找到 '量化二-实收资本' 字段，请检查。")     
+
+                if '当日盈亏'  in self.config_['量化二']:                                     
+                    self.src_dict_['量化二']['手动输入数据']['当日盈亏'] = float(str(self.config_['量化二']['当日盈亏'])) #手动输入的单元资产净值;
+                    if self.src_dict_['量化二']['手动输入数据']['当日盈亏'] is None:
+                        logging.critical("配置文件中 '量化二-当日盈亏' 字段值为空，请检查。")
+                else:
+                    logging.critical("配置文件中未找到 '量化二-当日盈亏' 字段，请检查。")                        
+                    
+                if '平仓盈亏'  in self.config_['量化二']:                                     
+                    self.src_dict_['量化二']['手动输入数据']['平仓盈亏'] = float(str(self.config_['量化二']['平仓盈亏'])) #手动输入的单元资产净值;
+                    if self.src_dict_['量化二']['手动输入数据']['平仓盈亏'] is None:
+                        logging.critical("配置文件中 '量化二-平仓盈亏' 字段值为空，请检查。")
+                else:
+                    logging.critical("配置文件中未找到 '量化二-平仓盈亏' 字段，请检查。")      
+
+                self.read_industry()                                                        
                                                                                   
             else:
                 logging.critical("配置文件中未找到 '量化二' 字段，请检查。")
@@ -1541,42 +1737,11 @@ class ExcelBase:
                 self.draw_line_days_ = int(self.config_['绘制折线图天数'])
             else:
                 self.draw_line_days_ = 15
-                
-            
+                            
         except Exception as e:
             logging.error(f"读取配置文件出错: {e}")  
             return None
-                     
-    def init_excel_file(self, execl_file_path, file_dict):
-        try:
-            for key, value in file_dict.items():
-                tmp_dir = execl_file_path + '/' + key
-                if os.path.exists(tmp_dir) == True:                                 
-                    for file_name, value1 in value.items():                    
-                            if file_name != '其余信息' and file_name != '手动输入数据':
-                                complete_file_path = execl_file_path + '/' + key + '/' + file_name + '.xls'  
-                                if os.path.exists(complete_file_path) == True:
-                                    try:    
-                                        tmp_workbook = xlrd.open_workbook(complete_file_path)
-                                        tmp_sheet = tmp_workbook.sheet_by_index(0)
-                                        logging.info(f"成功读取文件 {complete_file_path}")
-                                        file_dict[key][file_name] = self.data_read_obj_.read_excel_sheet(self=self.data_read_obj_, xlrd_sheet=tmp_sheet, data_type=file_name, sheet_type=key)
-
-                                    except FileNotFoundError:   
-                                        logging.warning(f"文件 {complete_file_path} 未找到。")
-                                    except Exception as e:
-                                        logging.warning(f"读取文件 {complete_file_path} 时发生错误: {e}")       
-                                else:
-                                    logging.warning(f"文件 {complete_file_path} 未找到。")
-                else:
-                    file_dict[key]['其余信息']['isOpen'] = False
-                    logging.warning(f"目录 {tmp_dir} 未找到。")
-                    
-            return file_dict                   
-        except Exception as e:
-            logging.error(f"初始化 Excel 文件出错: {e}")  
-            return None
-             
+                                  
     def read_jz_info(self):
         try:
             self.jz_ = {
@@ -1653,7 +1818,7 @@ class ExcelBase:
                         sheet.cell(row = last_row+1, column = 2, value = round(self.jz_['量化一']['结算数据'].jz_list_with_profit_[-1], 5))
                         sheet.cell(row = last_row+1, column = 4, value = round(self.jz_['量化一']['结算数据'].jz_list_no_profit_[-1], 5))
                         
-                        logging.info(f"hc_list_with_profit_.size: {len(self.jz_['量化一']['结算数据'].hc_list_with_profit_)}, hc_list_no_profit_.size: {self.jz_['量化一']['结算数据'].hc_list_no_profit_}")
+                        # logging.info(f"hc_list_with_profit_.size: {len(self.jz_['量化一']['结算数据'].hc_list_with_profit_)}, hc_list_no_profit_.size: {self.jz_['量化一']['结算数据'].hc_list_no_profit_}")
                         
                         for i in range(0, last_row):
                             sheet.cell(row = i+2, column = 3, value = str(round(self.jz_['量化一']['结算数据'].hc_list_with_profit_[i]*100, 4)) + '%')
@@ -1685,7 +1850,7 @@ class ExcelBase:
                         sheet.cell(row = last_row+1, column = 2, value = round(self.jz_['量化二']['结算数据'].jz_list_with_profit_[-1], 5))
                         sheet.cell(row = last_row+1, column = 4, value = round(self.jz_['量化二']['结算数据'].jz_list_no_profit_[-1], 5))
                         
-                        logging.info(f"hc_list_with_profit_.size: {len(self.jz_['量化二']['结算数据'].hc_list_with_profit_)}, hc_list_no_profit_.size: {self.jz_['量化一']['结算数据'].hc_list_no_profit_}")
+                        # logging.info(f"hc_list_with_profit_.size: {len(self.jz_['量化二']['结算数据'].hc_list_with_profit_)}, hc_list_no_profit_.size: {self.jz_['量化一']['结算数据'].hc_list_no_profit_}")
                         
                         for i in range(0, last_row):
                             sheet.cell(row = i+2, column = 3, value = str(round(self.jz_['量化二']['结算数据'].hc_list_with_profit_[i]*100, 4)) + '%')
@@ -1716,7 +1881,7 @@ class ExcelBase:
                         sheet.cell(row = last_row+1, column = 2, value = round(self.jz_['量化三']['结算数据'].jz_list_with_profit_[-1], 5))
                         sheet.cell(row = last_row+1, column = 4, value = round(self.jz_['量化三']['结算数据'].jz_list_no_profit_[-1], 5))
                         
-                        logging.info(f"hc_list_with_profit_.size: {len(self.jz_['量化三']['结算数据'].hc_list_with_profit_)}, hc_list_no_profit_.size: {self.jz_['量化一']['结算数据'].hc_list_no_profit_}")
+                        # logging.info(f"hc_list_with_profit_.size: {len(self.jz_['量化三']['结算数据'].hc_list_with_profit_)}, hc_list_no_profit_.size: {self.jz_['量化一']['结算数据'].hc_list_no_profit_}")
                         
                         for i in range(0, last_row):
                             sheet.cell(row = i+2, column = 3, value = str(round(self.jz_['量化三']['结算数据'].hc_list_with_profit_[i]*100, 4)) + '%')
@@ -1742,7 +1907,8 @@ class ExcelBase:
             self.jz_workbook_.save(self.file_path_ + '/净值.xlsx')
         except Exception as e:
             logging.error(f"设置新净值信息出错: {e}")  
-                        
+
+                      
     def Work(self):
         
         # print(self.src_dict_)
@@ -1752,11 +1918,16 @@ class ExcelBase:
            
         if self.src_dict_['量化二']['其余信息']['isOpen'] is True:
             self.gene_third_sheet()
-            self.gene_fourth_sheet()     
+            self.gene_fourth_sheet()   
+            
 
         if self.src_dict_['量化三']['其余信息']['isOpen'] is True:
             self.gene_fivth_sheet()
             self.gene_sixth_sheet()    
+
+        if self.src_dict_['量化二']['其余信息']['isOpen'] is True:
+            self.gene_seven_sheet()  
+
                         
         sheet_name_to_delete = 'Sheet'
         if sheet_name_to_delete in self.target_workbook_.sheetnames:
@@ -1778,11 +1949,12 @@ class ExcelBase:
             for key, excel_data in sheet_dict.items():
                 if excel_data is not None:
                     if key != '统计日期' and key != '注释':
+
                         sheet.cell(row = excel_data.row_, column = 1, value = key).font = self.bold_font_
                         sheet.cell(row = excel_data.row_, column = 1, value = key).border = self.border_
                         sheet.cell(row = excel_data.row_, column = 2, value = key).border = self.border_
                         sheet.cell(row = excel_data.row_, column = 2, value = key).font = self.no_bold_font_
-                        
+                    
                         if '量化一' in sheet_name:
                             sheet.cell(row = excel_data.row_, column = 3, value = key).font = self.no_bold_font_
                             sheet.cell(row = excel_data.row_, column = 3, value = key).border = self.border_
@@ -1959,9 +2131,9 @@ class ExcelBase:
                 sheet.cell(row = self.sheet1_dict_['单位净值(含返息、逆回购、手续费)'].row_, column = 2, value = round(self.sheet1_dict_['单位净值(含返息、逆回购、手续费)'].value_, 5))
                 
                 self.sheet1_dict_['日净值增长率(含返息、逆回购、手续费)'].value_ = (self.sheet1_dict_['单位净值(含返息、逆回购、手续费)'].value_ - self.sheet1_dict_['昨日单位净值(含返息、逆回购、手续费)'].value_) / self.sheet1_dict_['昨日单位净值(含返息、逆回购、手续费)'].value_ * 100
-                logging.info(f"单位净值(含返息、逆回购、手续费): {self.sheet1_dict_['单位净值(含返息、逆回购、手续费)'].value_}")
-                logging.info(f"昨日单位净值(含返息、逆回购、手续费): {self.sheet1_dict_['昨日单位净值(含返息、逆回购、手续费)'].value_}")
-                logging.info(f"日净值增长率(含返息、逆回购、手续费): {self.sheet1_dict_['日净值增长率(含返息、逆回购、手续费)'].value_}")
+                # logging.info(f"单位净值(含返息、逆回购、手续费): {self.sheet1_dict_['单位净值(含返息、逆回购、手续费)'].value_}")
+                # logging.info(f"昨日单位净值(含返息、逆回购、手续费): {self.sheet1_dict_['昨日单位净值(含返息、逆回购、手续费)'].value_}")
+                # logging.info(f"日净值增长率(含返息、逆回购、手续费): {self.sheet1_dict_['日净值增长率(含返息、逆回购、手续费)'].value_}")
                 
                 sheet.cell(row = self.sheet1_dict_['日净值增长率(含返息、逆回购、手续费)'].row_, column = 2, value = str(round(self.sheet1_dict_['日净值增长率(含返息、逆回购、手续费)'].value_, 5)) + '%')  
                 
@@ -2611,7 +2783,8 @@ class ExcelBase:
                         if key in cell_col_index:
                             set_value(sheet, self.sheet3_dict_['占用'].row_,cell_col_index[key],'占用保证金(静态)', value, '量化二-期货保证金分析', True, self.border_)
                             set_value(sheet, self.sheet3_dict_['账户权益'].row_,cell_col_index[key],'账户权益', value, '量化二-期货保证金分析', True, self.border_)
-                            sheet.cell(row = self.sheet3_dict_['风险度'].row_, column = cell_col_index[key], value = str(round(float(value['风险比例1(%)']),4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                            self.sheet3_dict_['风险度'].value_ = float(value['风险比例1(%)'])
+                            sheet.cell(row = self.sheet3_dict_['风险度'].row_, column = cell_col_index[key], value = str(round(self.sheet3_dict_['风险度'].value_,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                             sheet.cell(row = self.sheet3_dict_['风险度'].row_, column = cell_col_index[key]).border = self.border_
                         else:
                             logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
@@ -3346,8 +3519,8 @@ class ExcelBase:
                 logging.error(f"生成 量化三-收盘数据-三、保证金使用情况设置 单元格时发生错误: {e}")        
                             
                 
-            logging.info(f"生成 量化三-成交回报: {self.src_dict_['量化三']['成交回报']['future_info']}")
-            logging.info(f"生成 量化三-成交回报: {self.src_dict_['量化三']['汇总证券-当日持仓']['future_info']}")
+            # logging.info(f"生成 量化三-成交回报: {self.src_dict_['量化三']['成交回报']['future_info']}")
+            # logging.info(f"生成 量化三-成交回报: {self.src_dict_['量化三']['汇总证券-当日持仓']['future_info']}")
                                 
             if self.src_dict_['量化三']['成交回报'] is not None:
                 set_value(sheet, self.sheet6_dict_['交易方向及数量'].row_,2,'future_info', self.src_dict_['量化三']['成交回报'], '量化三-成交回报',False,self.border_)
@@ -3397,9 +3570,131 @@ class ExcelBase:
                 
         except Exception as e:
             logging.error(f"生成 量化三-收盘数据 表格时发生错误: {e}")
+
+    def gene_seven_sheet(self):
+        try:
+            try:
+
+                item_array = ['量化二持仓信息',  
+                            '统计日期', '行业', '农副', '有色', '能化', '黑色', '贵金属', 
+                            '股指期货', '其他', '合计', '汇总',
+                            '风险度：', '权益：', '当日盈亏：', '总市值：', '去锁市值：', '平仓盈亏：']
+                                                                    
+                sheet = self.target_workbook_.create_sheet(title='量化二持仓信息')
+                
+
+                tmp_index = 1
+                for item in item_array:
+                    self.sheet7_dict_[item] = ExcelData(row = tmp_index)
+                    tmp_index += 1     
+                                    
+                sheet.cell(row = self.sheet7_dict_['量化二持仓信息'].row_, column = 1, value = '量化二持仓信息').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['量化二持仓信息'].row_, column = 1, value = '量化二持仓信息')
+
+                sheet.cell(row = self.sheet7_dict_['行业'].row_, column = 1, value = '行业').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['行业'].row_, column = 1, value = '行业').border = self.border_
+
+                sheet.cell(row = self.sheet7_dict_['农副'].row_, column = 1, value = '农副').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['农副'].row_, column = 1, value = '农副').border = self.border_
+
+                sheet.cell(row = self.sheet7_dict_['有色'].row_, column = 1, value = '有色').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['有色'].row_, column = 1, value = '有色').border = self.border_
+
+                sheet.cell(row = self.sheet7_dict_['黑色'].row_, column = 1, value = '黑色').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['黑色'].row_, column = 1, value = '黑色').border = self.border_    
+
+                sheet.cell(row = self.sheet7_dict_['贵金属'].row_, column = 1, value = '贵金属').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['贵金属'].row_, column = 1, value = '贵金属').border = self.border_    
+
+                sheet.cell(row = self.sheet7_dict_['股指期货'].row_, column = 1, value = '股指期货').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['股指期货'].row_, column = 1, value = '股指期货').border = self.border_    
+
+                sheet.cell(row = self.sheet7_dict_['其他'].row_, column = 1, value = '其他').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['其他'].row_, column = 1, value = '其他').border = self.border_ 
+
+                sheet.cell(row = self.sheet7_dict_['合计'].row_, column = 1, value = '合计').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['合计'].row_, column = 1, value = '合计').border = self.border_   
+
+                sheet.cell(row = self.sheet7_dict_['统计日期'].row_, column = 1, value = '统计日期')
+                sheet.cell(row = self.sheet7_dict_['汇总'].row_, column = 1, value = '汇总')
+                sheet.cell(row = self.sheet7_dict_['风险度：'].row_, column = 1, value = '风险度：')
+                sheet.cell(row = self.sheet7_dict_['权益：'].row_, column = 1, value = '权益：')   
+                sheet.cell(row = self.sheet7_dict_['当日盈亏：'].row_, column = 1, value = '当日盈亏：')    
+                sheet.cell(row = self.sheet7_dict_['总市值：'].row_, column = 1, value = '总市值：')  
+                sheet.cell(row = self.sheet7_dict_['去锁市值：'].row_, column = 1, value = '去锁市值：') 
+                sheet.cell(row = self.sheet7_dict_['平仓盈亏：'].row_, column = 1, value = '平仓盈亏：')                      
+                
+                                                                                                                                            
+                                                        
+                sheet.merge_cells(start_row=1, start_column=1, end_row=1, end_column=4)
+
+                long_mk_fill = PatternFill(start_color='FADADE', end_color='FADADE', fill_type='solid')
+                short_mk_fill = PatternFill(start_color='E3F2D9', end_color='E3F2D9', fill_type='solid')
+                net_mk_fill = PatternFill(start_color='FFF4D1', end_color='FFF4D1', fill_type='solid')
+                                    
+                sheet.cell(row = self.sheet7_dict_['统计日期'].row_, column = 2, value = self.date)
+                sheet.cell(row = self.sheet7_dict_['统计日期'].row_, column = 4, value = '单位：万元')
+
+                sheet.cell(row = self.sheet7_dict_['行业'].row_, column = 2, value = '多头市值').border = self.border_
+                sheet.cell(row = self.sheet7_dict_['行业'].row_, column = 2, value = '多头市值').font = self.bold_font_
+
+                sheet.cell(row = self.sheet7_dict_['行业'].row_, column = 3, value = '空头市值').border = self.border_
+                sheet.cell(row = self.sheet7_dict_['行业'].row_, column = 3, value = '空头市值').font = self.bold_font_
+
+                sheet.cell(row = self.sheet7_dict_['行业'].row_, column = 4, value = '净市值').border = self.border_
+                sheet.cell(row = self.sheet7_dict_['行业'].row_, column = 4, value = '净市值').font = self.bold_font_
+
+
+                sheet.cell(row = self.sheet7_dict_['风险度：'].row_, column = 2, value = self.sheet3_dict_['风险度'].value_)
+                sheet.cell(row = self.sheet7_dict_['权益：'].row_, column = 2, value = self.sheet3_dict_['账户资产净值'].value_)
+                sheet.cell(row = self.sheet7_dict_['当日盈亏：'].row_, column = 2, value = self.src_dict_['量化二']['手动输入数据']['当日盈亏'])   
+                sheet.cell(row = self.sheet7_dict_['总市值：'].row_, column = 2, value = self.src_dict_['量化二']['其余信息']['结算数据']['总市值'])   
+                sheet.cell(row = self.sheet7_dict_['去锁市值：'].row_, column = 2, value = self.src_dict_['量化二']['其余信息']['结算数据']['去锁市值'])   
+                sheet.cell(row = self.sheet7_dict_['平仓盈亏：'].row_, column = 2, value = self.src_dict_['量化二']['手动输入数据']['平仓盈亏'])             
+                        
+            except Exception as e:
+                logging.error(f"生成 量化三-收盘数据-基础信息设置 单元格时发生错误: {e}")    
+                                
+                        
+            set_sheet_middle(sheet)
+
+            ################# 样式设置;
+            try:
+                sheet.column_dimensions['A'].width = 15
+                # 设置第二列(B列)的宽度为10个字符
+                sheet.column_dimensions['B'].width = 20    
+
+                sheet.column_dimensions['C'].width = 20   
+
+                sheet.column_dimensions['D'].width = 20   
+
+                # sheet.row_dimensions[excel_data.row_].height = 140  
+
+                for industry_name in self.industry_list_:
+                    sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 2, value= round(self.industry_dict_[industry_name]['统计数据']['多头市值'],2)).fill = long_mk_fill
+                    sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 3, value= round(self.industry_dict_[industry_name]['统计数据']['空头市值'],2)).fill = short_mk_fill
+                    sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 4, value= round(self.industry_dict_[industry_name]['统计数据']['净市值'],2)).fill = net_mk_fill
+                    sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 2).border = self.border_
+                    sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 3).border = self.border_
+                    sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 4).border = self.border_
+     
+                # sheet.cell(row = self.sheet6_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
+
+            except Exception as e:
+                logging.error(f"生成 量化三-收盘数据-最后样式设计 单元格时发生错误: {e}")   
+                
+            self.gene_sheet_array_.append('量化三-收盘数据')                   
+                
+        except Exception as e:
+            logging.error(f"生成 量化三-收盘数据 表格时发生错误: {e}")            
                
 if __name__ == "__main__":    
     excelobj = ExcelBase()
+
+    dataReadObj= ExcelDataRead(excelobj.src_dict_, excelobj.industry_dict_)
+
+    excelobj.InitDataDict(dataReadObj)
+
     excelobj.Work()
     input("请输入任意字符后按回车键退出程序...")
     sys.exit()
