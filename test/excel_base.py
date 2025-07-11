@@ -1240,7 +1240,7 @@ class ExcelDataRead():
             result_dict = {}
 
             
-            future_info_2 = f"共持仓 {math.floor(float(future_count))}只期货， 持仓合约价值 { round(done_amount,2) } 万元, 其中"
+            future_info_2 = f"共持仓 {math.floor(float(future_count))}只期货， 持仓合约价值 { round(done_amount,2) } 万元, \n其中"
 
             # print(future_info_2)
             
@@ -1460,7 +1460,7 @@ def copy_sheet(src_sheet, des_sheet):
 class ExcelBase:
     def __init__(self):
         try:
-            
+            self.line_height_ = 25
             self.date = ''
             self.config_ = get_config()
             
@@ -1967,8 +1967,7 @@ class ExcelBase:
             self.jz_workbook_.save(self.file_path_ + '/净值.xlsx')
         except Exception as e:
             logging.error(f"设置新净值信息出错: {e}")  
-
-                   
+            
     def Work(self):
         
         # print(self.src_dict_)
@@ -2267,6 +2266,7 @@ class ExcelBase:
                 if self.src_dict_['量化一']['成交回报'] is not None:
                     set_value(sheet, self.sheet1_dict_['交易方向及数量'].row_,2,'future_info', self.src_dict_['量化一']['成交回报'], '量化一-成交回报',False, self.border_)
                     set_value(sheet, self.sheet1_dict_['交易方向及数量'].row_,3,'stock_info', self.src_dict_['量化一']['成交回报'], '量化一-成交回报',False, self.border_)
+                    sheet.row_dimensions[self.sheet1_dict_['交易方向及数量'].row_].height = (max( self.src_dict_['量化一']['成交回报']['future_info'].count('\n') , self.src_dict_['量化一']['成交回报']['stock_info'].count('\n')) + 1) * self.line_height_                                        
                 else:
                     logging.warning("量化一-成交回报文件不存在。")
             except Exception as e:
@@ -2277,13 +2277,13 @@ class ExcelBase:
                 if self.src_dict_['量化一']['汇总证券-当日持仓'] is not None:
                     set_value(sheet, self.sheet1_dict_['持仓品种及数量'].row_,2,'future_info', self.src_dict_['量化一']['汇总证券-当日持仓'], '量化一-汇总证券-当日持仓',False, self.border_)
                     set_value(sheet, self.sheet1_dict_['持仓品种及数量'].row_,3,'stock_info', self.src_dict_['量化一']['汇总证券-当日持仓'], '量化一-汇总证券-当日持仓', False, self.border_)
+                    sheet.row_dimensions[self.sheet1_dict_['持仓品种及数量'].row_].height = (max( self.src_dict_['量化一']['汇总证券-当日持仓']['future_info'].count('\n') , self.src_dict_['量化一']['汇总证券-当日持仓']['stock_info'].count('\n')) + 1) * self.line_height_                    
                 else:
                     logging.warning("量化一-汇总证券-当日持仓文件不存在。")     
 
             except Exception as e:
                 logging.error(f"生成 量化一结算数据-五、持仓情况 单元格时发生错误: {e}")
-                            
-            
+                                        
             ################# 注释;
             try:                
                 extra_info = f"注:\n1、总盈利/亏损(不含逆回购): 根据032盈亏数据计算,未扣除中金所申报费。\n"
@@ -2302,13 +2302,9 @@ class ExcelBase:
                 # 设置第三列(C列)的宽度为15个字符
                 sheet.column_dimensions['C'].width = 58        
 
-                for key, value in self.sheet1_dict_.items():
-                    if key == '交易方向及数量' or key == '持仓品种及数量':
-                        sheet.row_dimensions[value.row_].height = 140 
-                    elif key == '注释':
-                        sheet.row_dimensions[value.row_].height = 80
-                    else:
-                        sheet.row_dimensions[value.row_].height = 32
+                for key, excel_data in self.sheet5_dict_.items():
+                    if key != '交易方向及数量' and key != '持仓品种及数量' and key != '注释':
+                        sheet.row_dimensions[excel_data.row_].height = 27   
                 
                 sheet.cell(row = self.sheet1_dict_['交易方向及数量'].row_, column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)   
                 sheet.cell(row = self.sheet1_dict_['交易方向及数量'].row_, column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)                 
@@ -2600,6 +2596,7 @@ class ExcelBase:
                 if self.src_dict_['量化一']['成交回报'] is not None:
                     set_value(sheet, self.sheet2_dict_['交易方向及数量'].row_,2,'future_info', self.src_dict_['量化一']['成交回报'], '量化一-成交回报',False, self.border_)
                     set_value(sheet, self.sheet2_dict_['交易方向及数量'].row_,3,'stock_info', self.src_dict_['量化一']['成交回报'], '量化一-成交回报',False, self.border_)
+                    sheet.row_dimensions[self.sheet2_dict_['交易方向及数量'].row_].height = (max( self.src_dict_['量化一']['成交回报']['future_info'].count('\n') , self.src_dict_['量化一']['成交回报']['stock_info'].count('\n')) + 1) * self.line_height_                                                            
                 else:
                     logging.warning("量化一-成交回报文件不存在。")
 
@@ -2611,6 +2608,7 @@ class ExcelBase:
                 if self.src_dict_['量化一']['汇总证券-当日持仓'] is not None:
                     set_value(sheet, self.sheet2_dict_['持仓品种及数量'].row_,2,'future_info', self.src_dict_['量化一']['汇总证券-当日持仓'], '量化一-汇总证券-当日持仓', False, self.border_)
                     set_value(sheet, self.sheet2_dict_['持仓品种及数量'].row_,3,'stock_info', self.src_dict_['量化一']['汇总证券-当日持仓'], '量化一-汇总证券-当日持仓', False, self.border_)
+                    sheet.row_dimensions[self.sheet2_dict_['持仓品种及数量'].row_].height =( max( self.src_dict_['量化一']['汇总证券-当日持仓']['future_info'].count('\n') , self.src_dict_['量化一']['汇总证券-当日持仓']['stock_info'].count('\n')) +1) * self.line_height_                                                                                
                 else:
                     logging.warning("量化一-汇总证券-当日持仓文件不存在。")  
             except Exception as e:
@@ -2857,6 +2855,7 @@ class ExcelBase:
             try:
                 if self.src_dict_['量化二']['成交回报'] is not None:
                     set_value(sheet, self.sheet3_dict_['交易方向及数量'].row_, 2,'future_info_2', self.src_dict_['量化二']['成交回报'], '量化二-成交回报', False, self.border_)
+                    sheet.row_dimensions[self.sheet3_dict_['交易方向及数量'].row_].height = (self.src_dict_['量化二']['成交回报']['future_info_2'].count('\n') + 1) * self.line_height_                                        
                 else:
                     logging.warning("量化二-成交回报文件不存在。")
             except Exception as e:
@@ -2866,6 +2865,7 @@ class ExcelBase:
             try:
                 if self.src_dict_['量化二']['汇总证券-当日持仓'] is not None:
                     set_value(sheet, self.sheet3_dict_['持仓品种及数量'].row_,2,'future_info_2', self.src_dict_['量化二']['汇总证券-当日持仓'], '量化二-汇总证券-当日持仓', False, self.border_)
+                    sheet.row_dimensions[self.sheet3_dict_['持仓品种及数量'].row_].height = (self.src_dict_['量化二']['汇总证券-当日持仓']['future_info_2'].count('\n') + 1) * self.line_height_                    
                 else:
                     logging.warning("量化二-汇总证券-当日持仓文件不存在。")           
             except Exception as e:
@@ -2879,13 +2879,9 @@ class ExcelBase:
                 sheet.column_dimensions['A'].width = 44
                 sheet.column_dimensions['B'].width = 58 
 
-                for key, excel_data in self.sheet3_dict_.items():
-                    if key == '交易方向及数量' or key == '持仓品种及数量':
-                        sheet.row_dimensions[excel_data.row_].height = 140 
-                    elif key == '注释':
-                        sheet.row_dimensions[excel_data.row_].height = 60
-                    else:
-                        sheet.row_dimensions[excel_data.row_].height = 27
+                for key, excel_data in self.sheet5_dict_.items():
+                    if key != '交易方向及数量' and key != '持仓品种及数量' and key != '注释':
+                        sheet.row_dimensions[excel_data.row_].height = 27 
                 
                 sheet.cell(row = self.sheet3_dict_['交易方向及数量'].row_, column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)   
                 sheet.cell(row = self.sheet3_dict_['交易方向及数量'].row_, column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)                 
@@ -3096,12 +3092,14 @@ class ExcelBase:
             ################# 四、交易情况;
             if self.src_dict_['量化二']['成交回报'] is not None:
                 set_value(sheet, self.sheet4_dict_['交易方向及数量'].row_,2,'future_info_2', self.src_dict_['量化二']['成交回报'], '量化二-成交回报',False,self.border_)
+                sheet.row_dimensions[self.sheet4_dict_['交易方向及数量'].row_].height = (self.src_dict_['量化二']['成交回报']['future_info_2'].count('\n') + 1) * self.line_height_                
             else:
                 logging.warning("量化二-成交回报文件不存在。")
                 
             ################# 五、持仓情况;
             if self.src_dict_['量化二']['汇总证券-当日持仓'] is not None:
                 set_value(sheet, self.sheet4_dict_['持仓品种及数量'].row_,2,'future_info_2', self.src_dict_['量化二']['汇总证券-当日持仓'], '量化二-汇总证券-当日持仓', False, self.border_)
+                sheet.row_dimensions[self.sheet4_dict_['持仓品种及数量'].row_].height = (self.src_dict_['量化二']['汇总证券-当日持仓']['future_info_2'].count('\n') + 1) * self.line_height_                
             else:
                 logging.warning("量化二-汇总证券-当日持仓文件不存在。")             
             # sheet.cell(row = self.sheet4_dict_['注释'], column = 1, value = '注：交易情况中的商品期货数量未去重。')
@@ -3115,12 +3113,8 @@ class ExcelBase:
                 sheet.column_dimensions['B'].width = 58     
 
                 for key, excel_data in self.sheet4_dict_.items():
-                    if key == '交易方向及数量' or key == '持仓品种及数量':
-                        sheet.row_dimensions[excel_data.row_].height = 140 
-                    elif key == '注释':
-                        sheet.row_dimensions[excel_data.row_].height = 60
-                    else:
-                        sheet.row_dimensions[excel_data.row_].height = 27
+                    if key != '交易方向及数量' and key != '持仓品种及数量' and key != '注释':
+                        sheet.row_dimensions[excel_data.row_].height = 27     
                 
                 sheet.cell(row = self.sheet4_dict_['交易方向及数量'].row_, column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)   
                 sheet.cell(row = self.sheet4_dict_['交易方向及数量'].row_, column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)                 
@@ -3334,6 +3328,7 @@ class ExcelBase:
             try:
                 if self.src_dict_['量化三']['成交回报'] is not None:
                     set_value(sheet, self.sheet5_dict_['交易方向及数量'].row_,2,'future_info', self.src_dict_['量化三']['成交回报'], '量化三-成交回报', False, self.border_)  # 不同的地方
+                    sheet.row_dimensions[self.sheet5_dict_['交易方向及数量'].row_].height = (self.src_dict_['量化三']['成交回报']['future_info'].count('\n') + 1) * self.line_height_
                 else:
                     logging.warning("量化三-成交回报文件不存在。")
             except Exception as e:
@@ -3343,6 +3338,7 @@ class ExcelBase:
             try:
                 if self.src_dict_['量化三']['汇总证券-当日持仓'] is not None:
                     set_value(sheet, self.sheet5_dict_['持仓品种及数量'].row_,2,'future_info', self.src_dict_['量化三']['汇总证券-当日持仓'], '量化三-汇总证券-当日持仓', False, self.border_) # 不同的地方
+                    sheet.row_dimensions[self.sheet5_dict_['持仓品种及数量'].row_].height = (self.src_dict_['量化三']['汇总证券-当日持仓']['future_info'].count('\n') + 1) * self.line_height_
                 else:
                     logging.warning("量化三-汇总证券-当日持仓文件不存在。")        
             except Exception as e:
@@ -3356,14 +3352,10 @@ class ExcelBase:
 
                 sheet.column_dimensions['A'].width = 44
                 sheet.column_dimensions['B'].width = 58 
-
+                        
                 for key, excel_data in self.sheet5_dict_.items():
-                    if key == '交易方向及数量' or key == '持仓品种及数量':
-                        sheet.row_dimensions[excel_data.row_].height = 140 
-                    elif key == '注释':
-                        sheet.row_dimensions[excel_data.row_].height = 60
-                    else:
-                        sheet.row_dimensions[excel_data.row_].height = 27
+                    if key != '交易方向及数量' and key != '持仓品种及数量' and key != '注释':
+                        sheet.row_dimensions[excel_data.row_].height = 27                           
                 
                 sheet.cell(row = self.sheet5_dict_['交易方向及数量'].row_, column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)   
                 sheet.cell(row = self.sheet5_dict_['交易方向及数量'].row_, column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)                 
@@ -3583,12 +3575,21 @@ class ExcelBase:
             # logging.info(f"生成 量化三-成交回报: {self.src_dict_['量化三']['汇总证券-当日持仓']['future_info']}")
                                 
             if self.src_dict_['量化三']['成交回报'] is not None:
+                self.sheet6_dict_['交易方向及数量'].value_ = self.src_dict_['量化三']['成交回报']['future_info']                
                 set_value(sheet, self.sheet6_dict_['交易方向及数量'].row_,2,'future_info', self.src_dict_['量化三']['成交回报'], '量化三-成交回报',False,self.border_)
+                count1 = self.sheet6_dict_['交易方向及数量'].value_.count('\n') + 1               
+                sheet.row_dimensions[self.sheet6_dict_['交易方向及数量'].row_].height = count1 *self.line_height_
+                logging.info(f"*** {count1}")
             else:
                 logging.warning("量化三-成交回报文件不存在。")
                 
             if self.src_dict_['量化三']['汇总证券-当日持仓'] is not None:
+                self.sheet6_dict_['持仓品种及数量'].value_ = self.src_dict_['量化三']['汇总证券-当日持仓']['future_info']                
                 set_value(sheet, self.sheet6_dict_['持仓品种及数量'].row_,2,'future_info', self.src_dict_['量化三']['汇总证券-当日持仓'], '量化三-汇总证券-当日持仓', False, self.border_)
+                count2 = self.sheet6_dict_['持仓品种及数量'].value_.count('\n') + 1
+                sheet.row_dimensions[self.sheet6_dict_['持仓品种及数量'].row_].height = count2 * self.line_height_
+                logging.info(f"*** {count2}")
+                
             else:
                 logging.warning("量化三-汇总证券-当日持仓文件不存在。")             
                 
@@ -3600,15 +3601,11 @@ class ExcelBase:
                 sheet.column_dimensions['A'].width = 44
                 # 设置第二列(B列)的宽度为10个字符
                 sheet.column_dimensions['B'].width = 58     
-
+                        
                 for key, excel_data in self.sheet6_dict_.items():
-                    if key == '交易方向及数量' or key == '持仓品种及数量':
-                        sheet.row_dimensions[excel_data.row_].height = 140 
-                    elif key == '注释':
-                        sheet.row_dimensions[excel_data.row_].height = 60
-                    else:
-                        sheet.row_dimensions[excel_data.row_].height = 27
-                
+                    if key != '交易方向及数量' and key != '持仓品种及数量' and key != '注释':
+                        sheet.row_dimensions[excel_data.row_].height = 27                        
+                                        
                 sheet.cell(row = self.sheet6_dict_['交易方向及数量'].row_, column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)   
                 sheet.cell(row = self.sheet6_dict_['交易方向及数量'].row_, column = 3).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)                 
                 sheet.cell(row = self.sheet6_dict_['持仓品种及数量'].row_, column = 2).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)
