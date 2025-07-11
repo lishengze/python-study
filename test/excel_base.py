@@ -439,32 +439,7 @@ def get_future_type_name(code):
     else:
         return '其他品种'    
 
-def calc_qusuo_value(long_dict, short_dict):
-    try:
-        rst = 0
 
-        long_short_stock = []
-
-        for stock, cc_info in long_dict.items():
-            if stock in short_dict:
-                if cc_info['count'] != short_dict[stock]['count']:
-                    if cc_info['count'] > short_dict[stock]['count']:
-                        rst += (long_dict[stock]['count'] - short_dict[stock]['count']) * (long_dict[stock]['amount'] / long_dict[stock]['count'])
-                    else:
-                        rst += (short_dict[stock]['count'] - long_dict[stock]['count']) * (short_dict[stock]['amount'] / short_dict[stock]['count'])
-                long_short_stock.append(stock)
-            else:
-                rst += cc_info['amount']
-
-        for stock, cc_info in short_dict.items():
-            if stock not in long_short_stock:
-                rst += cc_info['amount']
-        
-        return rst
-
-    except Exception as e:
-        logging.error(f"计算去锁市值失败, \nLong: {long_dict},\nShort: 1{short_dict},\n{e}")  
-        return -1   
 
 class ExcelDataRead():
     def __init__(self, excel_base_data, industry_dict):
@@ -474,6 +449,40 @@ class ExcelDataRead():
 
         # pass
     
+    def calc_qusuo_value(self, long_dict, short_dict):
+        try:
+            rst = 0
+
+            long_short_stock = []
+            suocang_info = ''
+            for stock, cc_info in long_dict.items():
+                if stock in short_dict:
+                    if cc_info['count'] != short_dict[stock]['count']:
+                        tmp_amount = 0
+                        if cc_info['count'] > short_dict[stock]['count']:
+                            tmp_amount += (long_dict[stock]['count'] - short_dict[stock]['count']) * (long_dict[stock]['amount'] / long_dict[stock]['count'])
+                        else:
+                            tmp_amount += (short_dict[stock]['count'] - long_dict[stock]['count']) * (short_dict[stock]['amount'] / short_dict[stock]['count'])
+                        rst += tmp_amount
+                        logging.info(f"{stock}, long: {long_dict[stock]['amount']}, {long_dict[stock]['count']}; short: {short_dict[stock]['amount']}, {short_dict[stock]['count']}, 锁仓后市值: {tmp_amount}")
+                        
+                        suocang_info += f"{stock}, 多仓: {long_dict[stock]['amount']}, {long_dict[stock]['count']}; 空仓: {short_dict[stock]['amount']}, {short_dict[stock]['count']}, 锁仓后市值: {tmp_amount}\n"
+
+                    long_short_stock.append(stock)
+                else:
+                    rst += cc_info['amount']
+
+            self.excel_industry_dict_['合计']['统计数据']['标的列表信息'] = suocang_info
+            for stock, cc_info in short_dict.items():
+                if stock not in long_short_stock:
+                    rst += cc_info['amount']
+            
+            return rst
+
+        except Exception as e:
+            logging.error(f"计算去锁市值失败, \nLong: {long_dict},\nShort: 1{short_dict},\n{e}")  
+            return -1   
+        
     def update_industry_static_data(self, stock_name, amount, is_long):
         try:
             not_other = False
@@ -492,7 +501,15 @@ class ExcelDataRead():
                     if object in stock_name:
                         des_industry_name = industry_name
                         des_object_name = object
-
+                        
+                        if stock_name not in industry_detail['统计数据']['标的列表']:
+                            if len(industry_detail['统计数据']['标的列表']) == 0:
+                                industry_detail['统计数据']['标的列表信息'] = stock_name
+                            else:
+                                industry_detail['统计数据']['标的列表信息'] += ', ' + stock_name
+                            
+                            industry_detail['统计数据']['标的列表'].append(stock_name)
+                            
                         not_other = True
                         if is_long:
                             industry_detail['统计数据']['多头市值'] += amount
@@ -503,10 +520,17 @@ class ExcelDataRead():
                         
                         industry_detail['统计数据']['净市值'] = industry_detail['统计数据']['多头市值'] - industry_detail['统计数据']['空头市值']
             
-            logging.info(f"${stock_name} ${des_industry_name} ${des_object_name}")
+            # logging.info(f"${stock_name} ${des_industry_name} ${des_object_name}")
             # if '苹果2510' == stock_name:
                 
             if not not_other:
+                if stock_name not in self.excel_industry_dict_['其他']['统计数据']['标的列表']:
+                    if len(self.excel_industry_dict_['其他']['统计数据']['标的列表']) == 0:
+                        self.excel_industry_dict_['其他']['统计数据']['标的列表信息'] = stock_name
+                    else:
+                        self.excel_industry_dict_['其他']['统计数据']['标的列表信息'] += ', ' + stock_name
+                    self.excel_industry_dict_['其他']['统计数据']['标的列表'].append(stock_name)                
+                    
                 if is_long:
                     self.excel_industry_dict_['其他']['统计数据']['多头市值'] += amount
                     tmp_long = amount
@@ -1098,7 +1122,7 @@ class ExcelDataRead():
                 if '股票' in value:                    
                     if cell_dict['持仓数量'][row] > 0:
                         stock_count += 1
-                elif '期货' in value or '期权' in value:
+                elif ('期货' in value or '期权' in value) and float(cell_dict['持仓数量'][row]) > 0.001:
                     if '期货' in value and cell_dict['持仓数量'][row] > 0:
                         future_count += 1
                     elif '期权' in value and cell_dict['持仓数量'][row] > 0:
@@ -1110,8 +1134,6 @@ class ExcelDataRead():
                     trade_type = cell_dict['持仓多空标志'][row]
 
                     stock_detail_name = cell_dict['证券名称'][row]
-
-                    # print(f'{sheet_type}, {stock_name}, {trade_type}, {cell_dict["本币市值"][row]}')
                     
                     if stock_name not in done_detail_dict:
                         done_detail_dict[stock_name] = {}
@@ -1136,7 +1158,9 @@ class ExcelDataRead():
                         # print('持仓数量', cell_dict['持仓数量'][row], '股票名称', stock_name)
                         mrkc_count += cell_dict['持仓数量'][row]
                     elif '多仓' in cell_dict['持仓多空标志'][row]:
-                        self.update_industry_static_data(stock_name = stock_detail_name, amount=float(cell_dict['本币市值'][row])/10000, is_long=True)
+                        
+                        if sheet_type  == "量化二":
+                            self.update_industry_static_data(stock_name = stock_detail_name, amount=float(cell_dict['本币市值'][row])/10000, is_long=True)
 
                         if stock_name not in mcpc:
                             mcpc[stock_name] = {}
@@ -1147,7 +1171,8 @@ class ExcelDataRead():
                             mcpc[stock_name]['amount'] += cell_dict['本币市值'][row]
                         mcpc_count += cell_dict['持仓数量'][row]
                     elif '空仓' in cell_dict['持仓多空标志'][row]:  
-                        self.update_industry_static_data(stock_name = stock_detail_name, amount=float(cell_dict['本币市值'][row]/10000), is_long=False)
+                        if sheet_type  == "量化二":
+                            self.update_industry_static_data(stock_name = stock_detail_name, amount=float(cell_dict['本币市值'][row]/10000), is_long=False)
                         if stock_name not in mrpc:
                             mrpc[stock_name] = {}
                             mrpc[stock_name]['count'] = cell_dict['持仓数量'][row]
@@ -1166,7 +1191,7 @@ class ExcelDataRead():
 
             if sheet_type  == "量化二":
                 self.excel_src_dict_['量化二']['其余信息']['结算数据']['总市值'] = round(done_amount,2) 
-                self.excel_src_dict_['量化二']['其余信息']['结算数据']['去锁市值'] = round( calc_qusuo_value(mcpc, mrpc),  2)
+                self.excel_src_dict_['量化二']['其余信息']['结算数据']['去锁市值'] = round( self.calc_qusuo_value(mcpc, mrpc),  2)
                 
             stock_info = f"股票: {stock_count} 只"            
             future_info = f"当前持有: {future_count} 只股指期货合约, {option_count} 只股指期权合约, 持仓合约价值 { round(done_amount,2) } 万元, 其中: \n"
@@ -1598,6 +1623,8 @@ class ExcelBase:
                         self.industry_dict_[item] = {
                             '标的详情':[],
                             '统计数据': {
+                                '标的列表':[],
+                                '标的列表信息':'',
                                 '多头市值': 0,
                                 '空头市值': 0,
                                 '净市值':0
@@ -3687,10 +3714,6 @@ class ExcelBase:
                 sheet.cell(row = self.sheet7_dict_['总市值：'].row_, column = 2, value = self.src_dict_['量化二']['其余信息']['结算数据']['总市值'])   
                 sheet.cell(row = self.sheet7_dict_['去锁市值：'].row_, column = 2, value = round(self.src_dict_['量化二']['其余信息']['结算数据']['去锁市值']/10000,2))   
                 sheet.cell(row = self.sheet7_dict_['平仓盈亏：'].row_, column = 2, value = round(self.src_dict_['量化二']['手动输入数据']['平仓盈亏']/10000,2))           
-
-
-                sheet_detail = self.target_workbook_.create_sheet(title='量化二持仓信息--详细统计')  
-                copy_sheet(sheet, sheet_detail)
                         
             except Exception as e:
                 logging.error(f"生成 量化三-收盘数据-基础信息设置 单元格时发生错误: {e}")    
@@ -3701,7 +3724,7 @@ class ExcelBase:
             ################# 样式设置;
             try:
                 sheet.column_dimensions['A'].width = 15
-                # 设置第二列(B列)的宽度为10个字符
+                
                 sheet.column_dimensions['B'].width = 20    
 
                 sheet.column_dimensions['C'].width = 20   
@@ -3717,14 +3740,33 @@ class ExcelBase:
                     sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 2).border = self.border_
                     sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 3).border = self.border_
                     sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 4).border = self.border_
+                
+                
      
-                # sheet.cell(row = self.sheet6_dict_['注释'], column = 1).alignment = Alignment(horizontal='left', vertical='center',wrap_text=True)    
+
 
             except Exception as e:
                 logging.error(f"生成 量化三-收盘数据-最后样式设计 单元格时发生错误: {e}")   
                 
-            self.gene_sheet_array_.append('量化三-收盘数据')                   
-                
+            # self.gene_sheet_array_.append('量化三-收盘数据')                   
+            
+            sheet_detail = self.target_workbook_.create_sheet(title='量化二持仓信息--详细统计')  
+            copy_sheet(sheet, sheet_detail)         
+            sheet_detail.column_dimensions['A'].width = 15
+            sheet_detail.column_dimensions['B'].width = 20    
+            sheet_detail.column_dimensions['C'].width = 20   
+            sheet_detail.column_dimensions['D'].width = 20     
+            sheet_detail.column_dimensions['E'].width = 60    
+            sheet_detail.merge_cells(start_row=1, start_column=1, end_row=1, end_column=4)     
+            
+            # self.excel_industry_dict_['合计']['统计数据']['标的列表信息']  
+            
+            for industry_name in self.industry_list_:
+                if industry_name != '合计':
+                    sheet_detail.cell(row = self.sheet7_dict_[industry_name].row_, column = 5, value= self.industry_dict_[industry_name]['统计数据']['标的列表信息'])
+        
+            sheet_detail.cell(row = self.sheet7_dict_['去锁市值：'].row_, column = 5, value= self.industry_dict_['合计']['统计数据']['标的列表信息'])
+
         except Exception as e:
             logging.error(f"生成 量化三-收盘数据 表格时发生错误: {e}")            
                
