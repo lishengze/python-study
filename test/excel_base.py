@@ -1295,10 +1295,11 @@ class JZData:
             
             for i in range(2, valid_row+1):
                 date = str(sheet.cell(row=i, column=1).value)
-                jz_no_profit = float(sheet.cell(row=i, column=2).value)
-                jz_with_profit = float(sheet.cell(row=i, column=4).value)
                 
+                jz_with_profit = float(sheet.cell(row=i, column=2).value)                
                 hc_with_profit = trans_hc_str(str(sheet.cell(row=i, column=3).value))
+
+                jz_no_profit = float(sheet.cell(row=i, column=4).value)
                 hc_no_profit = trans_hc_str(str(sheet.cell(row=i, column=5).value))
                 
                 self.date_list_.append(date)
