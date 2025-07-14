@@ -445,6 +445,11 @@ class ExcelDataRead():
     def __init__(self, excel_base_data, industry_dict):
         self.excel_src_dict_ = excel_base_data
         self.excel_industry_dict_ = industry_dict
+
+        self.long_amount_ = 0
+        self.short_amount_ = 0
+        self.net_amount_ = 0
+
         # logging.info(self.excel_industry_dict_)
 
         # pass
@@ -464,7 +469,7 @@ class ExcelDataRead():
                         else:
                             tmp_amount += (short_dict[stock]['count'] - long_dict[stock]['count']) * (short_dict[stock]['amount'] / short_dict[stock]['count'])
                         rst += tmp_amount
-                        logging.info(f"{stock}, long: {long_dict[stock]['amount']}, {long_dict[stock]['count']}; short: {short_dict[stock]['amount']}, {short_dict[stock]['count']}, 锁仓后市值: {tmp_amount}")
+                        # logging.info(f"{stock}, long: {long_dict[stock]['amount']}, {long_dict[stock]['count']}; short: {short_dict[stock]['amount']}, {short_dict[stock]['count']}, 锁仓后市值: {tmp_amount}")
                         
                         suocang_info += f"{stock}, 多仓: {long_dict[stock]['amount']}, {long_dict[stock]['count']}; 空仓: {short_dict[stock]['amount']}, {short_dict[stock]['count']}, 锁仓后市值: {tmp_amount}\n"
 
@@ -489,18 +494,28 @@ class ExcelDataRead():
             tmp_long = 0
             tmp_short = 0
 
-            des_industry_name = '其他'
-            des_object_name = '其他'
+            test_industry_list = []
+            test_object_list = []
+
+            # logging.info(self.excel_industry_dict_.keys())
 
             for industry_name in self.excel_industry_dict_.keys():
+
                 industry_detail = self.excel_industry_dict_[industry_name]
+
                 if industry_name == '其他' or industry_name == '合计':
                     continue
+
                 detail_array = industry_detail['标的详情']
                 for object in detail_array:
                     if object in stock_name:
-                        des_industry_name = industry_name
-                        des_object_name = object
+                        test_object_list.append(object)
+                        test_industry_list.append(industry_name)
+                        if not_other == True:
+                            # logging.warning(f"股票 {stock_name} 属于多个行业, 请检查 {test_industry_list}, {test_object_list}")
+                            if industry_name not in test_industry_list:
+                                logging.warning(f"股票 {stock_name} 属于多个行业, 请检查 {test_industry_list}, {test_object_list}")
+                            continue
                         
                         if stock_name not in industry_detail['统计数据']['标的列表']:
                             if len(industry_detail['统计数据']['标的列表']) == 0:
@@ -539,6 +554,12 @@ class ExcelDataRead():
                     tmp_short = amount
 
                 self.excel_industry_dict_['其他']['统计数据']['净市值'] = self.excel_industry_dict_['其他']['统计数据']['多头市值'] - self.excel_industry_dict_['其他']['统计数据']['空头市值']
+
+            self.long_amount_ += tmp_long
+            self.short_amount_ += tmp_short
+            self.net_amount_ += tmp_long - tmp_short
+
+            # logging.info(f"{stock_name} 多仓: {tmp_long}, 空仓: {tmp_short}, 净值: {tmp_long - tmp_short}, {self.long_amount_}, {self.short_amount_}, {self.net_amount_}")
 
             self.excel_industry_dict_['合计']['统计数据']['多头市值'] += tmp_long
             self.excel_industry_dict_['合计']['统计数据']['空头市值'] += tmp_short
@@ -1295,6 +1316,31 @@ def trans_hc_str(src_data):
         tmp_data = float(tmp_data)
     return tmp_data
 
+def get_sheet_height_width(sheet):
+    try:
+        height = 0
+        width = 0
+
+        height_differences = []
+        for i in range(1, sheet.max_row):
+            current_row = sheet.row_dimensions[i]
+            next_row = sheet.row_dimensions[i + 1]
+            
+            height_diff = next_row.height - current_row.height
+            height_differences.append(height_diff)
+            height += height_diff
+
+        for i in range(1, sheet.max_col):
+            current_row = sheet.row_dimensions[i]
+            next_row = sheet.row_dimensions[i + 1]
+            width_diff = next_row.width - current_row.width
+            width += width_diff       
+        
+        
+        return height, width
+    except Exception as e:
+        logging.error(f"获取sheet高度宽度出错: {e}")  
+
 class JZData:
     def __init__(self, meta_info):
         self.jz_list_no_profit_ = []  # 净值序列-无返息    
@@ -1357,6 +1403,10 @@ class JZData:
             if draw_net_value_curve == 0:
                 return
             # 绘制折线图
+
+            height, width = get_sheet_height_width(sheet)
+
+            logging.info(f"开始绘制 {pic_name} 图, {height}, {width}")
                                       
             pic_file_with_profit_name = file_path + '/' + pic_name + '_含返息.png'
             meta_info = '策略净值与回撤-含返息、手续费  ' + self.date_list_[-1]
@@ -1376,7 +1426,7 @@ class JZData:
             if False == draw_and_save_chart(draw_line_days,self.date_list_, self.jz_list_no_profit_, self.hc_list_no_profit_, pic_file_no_profit_name, meta_info):
                 return
             img = Image(pic_file_no_profit_name)
-            img.anchor = 'E20'
+            img.anchor = 'E24'
             sheet.add_image(img)  
                             
         except Exception as e:
@@ -3579,7 +3629,7 @@ class ExcelBase:
                 set_value(sheet, self.sheet6_dict_['交易方向及数量'].row_,2,'future_info', self.src_dict_['量化三']['成交回报'], '量化三-成交回报',False,self.border_)
                 count1 = self.sheet6_dict_['交易方向及数量'].value_.count('\n') + 1               
                 sheet.row_dimensions[self.sheet6_dict_['交易方向及数量'].row_].height = count1 *self.line_height_
-                logging.info(f"*** {count1}")
+                # logging.info(f"*** {count1}")
             else:
                 logging.warning("量化三-成交回报文件不存在。")
                 
@@ -3588,7 +3638,7 @@ class ExcelBase:
                 set_value(sheet, self.sheet6_dict_['持仓品种及数量'].row_,2,'future_info', self.src_dict_['量化三']['汇总证券-当日持仓'], '量化三-汇总证券-当日持仓', False, self.border_)
                 count2 = self.sheet6_dict_['持仓品种及数量'].value_.count('\n') + 1
                 sheet.row_dimensions[self.sheet6_dict_['持仓品种及数量'].row_].height = count2 * self.line_height_
-                logging.info(f"*** {count2}")
+                # logging.info(f"*** {count2}")
                 
             else:
                 logging.warning("量化三-汇总证券-当日持仓文件不存在。")             
@@ -3657,8 +3707,8 @@ class ExcelBase:
                 sheet.cell(row = self.sheet7_dict_['有色'].row_, column = 1, value = '有色').font = self.bold_font_
                 sheet.cell(row = self.sheet7_dict_['有色'].row_, column = 1, value = '有色').border = self.border_
 
-                sheet.cell(row = self.sheet7_dict_['能化'].row_, column = 1, value = '黑色').font = self.bold_font_
-                sheet.cell(row = self.sheet7_dict_['能化'].row_, column = 1, value = '黑色').border = self.border_    
+                sheet.cell(row = self.sheet7_dict_['能化'].row_, column = 1, value = '能化').font = self.bold_font_
+                sheet.cell(row = self.sheet7_dict_['能化'].row_, column = 1, value = '能化').border = self.border_    
 
                 sheet.cell(row = self.sheet7_dict_['黑色'].row_, column = 1, value = '黑色').font = self.bold_font_
                 sheet.cell(row = self.sheet7_dict_['黑色'].row_, column = 1, value = '黑色').border = self.border_    
@@ -3737,10 +3787,6 @@ class ExcelBase:
                     sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 2).border = self.border_
                     sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 3).border = self.border_
                     sheet.cell(row = self.sheet7_dict_[industry_name].row_, column = 4).border = self.border_
-                
-                
-     
-
 
             except Exception as e:
                 logging.error(f"生成 量化三-收盘数据-最后样式设计 单元格时发生错误: {e}")   

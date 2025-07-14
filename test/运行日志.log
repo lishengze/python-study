@@ -1,70 +1,43 @@
-2025-07-11 23:37:53,891 - INFO - excel_base.py - 80 - ÅäÖÃÎÄ¼şÂ·¾¶: D:\code\study\python-study\test\ÅäÖÃ.json
-2025-07-11 23:37:53,973 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Ò»/³É½»»Ø±¨.xls
-2025-07-11 23:37:53,986 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Ò»/µ¥Ôª×Ê²ú.xls
-2025-07-11 23:37:53,986 - INFO - excel_base.py - 577 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 4 118 
-2025-07-11 23:37:54,002 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Ò»/»ã×ÜÖ¤È¯-µ±ÈÕ³Ö²Ö.xls
-2025-07-11 23:37:54,184 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Ò»/»ã×ÜÖ¤È¯-ºÏ¼Æ.xls
-2025-07-11 23:37:54,186 - INFO - excel_base.py - 639 - ¶ÁÈ¡ÎÄ¼ş »ã×ÜÖ¤È¯-ºÏ¼Æ ¿ªÊ¼ 3651 14 
-2025-07-11 23:37:54,344 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Ò»/»ã×ÜÖ¤È¯-ºÏ¼Æ-¹ÉÆ±.xls
-2025-07-11 23:37:54,344 - INFO - excel_base.py - 1275 - ¶ÁÈ¡ÎÄ¼ş »ã×ÜÖ¤È¯-ºÏ¼Æ-¹ÉÆ± ¿ªÊ¼ 3572 14 
-2025-07-11 23:37:54,394 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Ò»/½»Ò×Ëù»Ø¹º.xls
-2025-07-11 23:37:54,394 - INFO - excel_base.py - 672 - ¶ÁÈ¡ÎÄ¼ş ½»Ò×Ëù»Ø¹º ¿ªÊ¼ 104 31 
-2025-07-11 23:37:54,415 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Ò»/ÆÚ»õ±£Ö¤½ğ·ÖÎö.xls
-2025-07-11 23:37:54,416 - INFO - excel_base.py - 690 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 3 47 
-2025-07-11 23:37:54,429 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯¶ş/³É½»»Ø±¨.xls
-2025-07-11 23:37:54,437 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯¶ş/µ¥Ôª×Ê²ú.xls
-2025-07-11 23:37:54,438 - INFO - excel_base.py - 577 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 3 118 
-2025-07-11 23:37:54,447 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯¶ş/»ã×ÜÖ¤È¯-µ±ÈÕ³Ö²Ö.xls
-2025-07-11 23:37:54,448 - INFO - excel_base.py - 467 - IM001, long: 2000000.0, 2.0; short: 888888.0, 1.0, Ëø²ÖºóÊĞÖµ: 1000000.0
-2025-07-11 23:37:54,474 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯¶ş/»ã×ÜÖ¤È¯-ºÏ¼Æ.xls
-2025-07-11 23:37:54,474 - INFO - excel_base.py - 639 - ¶ÁÈ¡ÎÄ¼ş »ã×ÜÖ¤È¯-ºÏ¼Æ ¿ªÊ¼ 197 14 
-2025-07-11 23:37:54,475 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯¶ş/ÆÚ»õ±£Ö¤½ğ·ÖÎö.xls
-2025-07-11 23:37:54,475 - INFO - excel_base.py - 690 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 3 47 
-2025-07-11 23:37:54,522 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Èı/³É½»»Ø±¨.xls
-2025-07-11 23:37:54,576 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Èı/µ¥Ôª×Ê²ú.xls
-2025-07-11 23:37:54,576 - INFO - excel_base.py - 577 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 6 118 
-2025-07-11 23:37:54,576 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Èı/»ã×ÜÖ¤È¯-µ±ÈÕ³Ö²Ö.xls
-2025-07-11 23:37:54,602 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Èı/»ã×ÜÖ¤È¯-ºÏ¼Æ.xls
-2025-07-11 23:37:54,602 - INFO - excel_base.py - 639 - ¶ÁÈ¡ÎÄ¼ş »ã×ÜÖ¤È¯-ºÏ¼Æ ¿ªÊ¼ 11 14 
-2025-07-11 23:37:54,616 - INFO - excel_base.py - 1413 - ³É¹¦¶ÁÈ¡ÎÄ¼ş D:/code/study/python-study/template/7.11/Á¿»¯Èı/ÆÚ»õ±£Ö¤½ğ·ÖÎö.xls
-2025-07-11 23:37:54,616 - INFO - excel_base.py - 690 - ¶ÁÈ¡ÎÄ¼ş µ¥Ôª×Ê²ú ¿ªÊ¼ 3 47 
-2025-07-11 23:37:56,025 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:56,042 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:56,075 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:57,208 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:57,216 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:57,229 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:58,274 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:58,283 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:58,310 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:59,260 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:59,276 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:37:59,286 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:00,533 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:00,533 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:00,564 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:01,495 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:01,502 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:01,527 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:02,775 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:02,775 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:02,818 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:03,588 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:03,599 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:03,614 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:04,392 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:04,475 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:04,501 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:05,059 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:05,059 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:05,074 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:05,412 - INFO - excel_base.py - 3582 - *** 11
-2025-07-11 23:38:05,412 - INFO - excel_base.py - 3591 - *** 5
-2025-07-11 23:38:05,717 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:05,720 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:05,734 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:06,390 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:06,390 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:06,405 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2025-07-11 23:38:06,792 - INFO - excel_base.py - 1995 - Sheet ÒÑ³É¹¦É¾³ı¡£
-2025-07-11 23:38:06,792 - INFO - excel_base.py - 2000 - Ä¿±êÎÄ¼şÃû: D:/code/study/python-study/template/7.11/Á¿»¯ÒµÎñÈÕ±¨-2025-07-11.xlsx
+2025-07-14 13:40:43,945 - INFO - excel_base.py - 80 - é…ç½®æ–‡ä»¶è·¯å¾„: /home/lsz/dev/code/work/python-study/test/é…ç½®.json
+2025-07-14 13:40:43,985 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸€/æˆäº¤å›æŠ¥.xls
+2025-07-14 13:40:43,986 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸€/å•å…ƒèµ„äº§.xls
+2025-07-14 13:40:43,986 - INFO - excel_base.py - 598 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 4 118 
+2025-07-14 13:40:43,987 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸€/æ±‡æ€»è¯åˆ¸-å½“æ—¥æŒä»“.xls
+2025-07-14 13:40:44,044 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸€/æ±‡æ€»è¯åˆ¸-åˆè®¡.xls
+2025-07-14 13:40:44,044 - INFO - excel_base.py - 660 - è¯»å–æ–‡ä»¶ æ±‡æ€»è¯åˆ¸-åˆè®¡ å¼€å§‹ 3651 14 
+2025-07-14 13:40:44,099 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸€/æ±‡æ€»è¯åˆ¸-åˆè®¡-è‚¡ç¥¨.xls
+2025-07-14 13:40:44,099 - INFO - excel_base.py - 1296 - è¯»å–æ–‡ä»¶ æ±‡æ€»è¯åˆ¸-åˆè®¡-è‚¡ç¥¨ å¼€å§‹ 3572 14 
+2025-07-14 13:40:44,113 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸€/äº¤æ˜“æ‰€å›è´­.xls
+2025-07-14 13:40:44,113 - INFO - excel_base.py - 693 - è¯»å–æ–‡ä»¶ äº¤æ˜“æ‰€å›è´­ å¼€å§‹ 104 31 
+2025-07-14 13:40:44,116 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸€/æœŸè´§ä¿è¯é‡‘åˆ†æ.xls
+2025-07-14 13:40:44,116 - INFO - excel_base.py - 711 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 3 47 
+2025-07-14 13:40:44,118 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–äºŒ/æˆäº¤å›æŠ¥.xls
+2025-07-14 13:40:44,120 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–äºŒ/å•å…ƒèµ„äº§.xls
+2025-07-14 13:40:44,120 - INFO - excel_base.py - 598 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 3 118 
+2025-07-14 13:40:44,122 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–äºŒ/æ±‡æ€»è¯åˆ¸-å½“æ—¥æŒä»“.xls
+2025-07-14 13:40:44,126 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–äºŒ/æ±‡æ€»è¯åˆ¸-åˆè®¡.xls
+2025-07-14 13:40:44,126 - INFO - excel_base.py - 660 - è¯»å–æ–‡ä»¶ æ±‡æ€»è¯åˆ¸-åˆè®¡ å¼€å§‹ 197 14 
+2025-07-14 13:40:44,127 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–äºŒ/æœŸè´§ä¿è¯é‡‘åˆ†æ.xls
+2025-07-14 13:40:44,127 - INFO - excel_base.py - 711 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 3 47 
+2025-07-14 13:40:44,129 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸‰/æˆäº¤å›æŠ¥.xls
+2025-07-14 13:40:44,131 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸‰/å•å…ƒèµ„äº§.xls
+2025-07-14 13:40:44,131 - INFO - excel_base.py - 598 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 6 118 
+2025-07-14 13:40:44,132 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸‰/æ±‡æ€»è¯åˆ¸-å½“æ—¥æŒä»“.xls
+2025-07-14 13:40:44,132 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸‰/æ±‡æ€»è¯åˆ¸-åˆè®¡.xls
+2025-07-14 13:40:44,132 - INFO - excel_base.py - 660 - è¯»å–æ–‡ä»¶ æ±‡æ€»è¯åˆ¸-åˆè®¡ å¼€å§‹ 11 14 
+2025-07-14 13:40:44,133 - INFO - excel_base.py - 1462 - æˆåŠŸè¯»å–æ–‡ä»¶ /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸‰/æœŸè´§ä¿è¯é‡‘åˆ†æ.xls
+2025-07-14 13:40:44,133 - INFO - excel_base.py - 711 - è¯»å–æ–‡ä»¶ å•å…ƒèµ„äº§ å¼€å§‹ 3 47 
+2025-07-14 13:40:44,153 - ERROR - excel_base.py - 1341 - è·å–sheeté«˜åº¦å®½åº¦å‡ºé”™: unsupported operand type(s) for -: 'NoneType' and 'NoneType'
+2025-07-14 13:40:44,153 - ERROR - excel_base.py - 1432 - ç»˜åˆ¶ é‡åŒ–ä¸€-ç»“ç®—æ•°æ® å›¾æ—¶å‘ç”Ÿé”™è¯¯: cannot unpack non-iterable NoneType object
+2025-07-14 13:40:44,170 - ERROR - excel_base.py - 1341 - è·å–sheeté«˜åº¦å®½åº¦å‡ºé”™: 'Worksheet' object has no attribute 'max_col'
+2025-07-14 13:40:44,170 - ERROR - excel_base.py - 1432 - ç»˜åˆ¶ é‡åŒ–ä¸€-æ”¶ç›˜æ•°æ® å›¾æ—¶å‘ç”Ÿé”™è¯¯: cannot unpack non-iterable NoneType object
+2025-07-14 13:40:44,185 - ERROR - excel_base.py - 1341 - è·å–sheeté«˜åº¦å®½åº¦å‡ºé”™: unsupported operand type(s) for -: 'NoneType' and 'NoneType'
+2025-07-14 13:40:44,185 - ERROR - excel_base.py - 1432 - ç»˜åˆ¶ é‡åŒ–äºŒ-ç»“ç®—æ•°æ® å›¾æ—¶å‘ç”Ÿé”™è¯¯: cannot unpack non-iterable NoneType object
+2025-07-14 13:40:44,200 - ERROR - excel_base.py - 1341 - è·å–sheeté«˜åº¦å®½åº¦å‡ºé”™: 'Worksheet' object has no attribute 'max_col'
+2025-07-14 13:40:44,200 - ERROR - excel_base.py - 1432 - ç»˜åˆ¶ é‡åŒ–äºŒ-æ”¶ç›˜æ•°æ® å›¾æ—¶å‘ç”Ÿé”™è¯¯: cannot unpack non-iterable NoneType object
+2025-07-14 13:40:44,216 - ERROR - excel_base.py - 1341 - è·å–sheeté«˜åº¦å®½åº¦å‡ºé”™: 'Worksheet' object has no attribute 'max_col'
+2025-07-14 13:40:44,216 - ERROR - excel_base.py - 1432 - ç»˜åˆ¶ é‡åŒ–ä¸‰-ç»“ç®—æ•°æ® å›¾æ—¶å‘ç”Ÿé”™è¯¯: cannot unpack non-iterable NoneType object
+2025-07-14 13:40:44,231 - ERROR - excel_base.py - 1341 - è·å–sheeté«˜åº¦å®½åº¦å‡ºé”™: 'Worksheet' object has no attribute 'max_col'
+2025-07-14 13:40:44,231 - ERROR - excel_base.py - 1432 - ç»˜åˆ¶ é‡åŒ–ä¸‰-æ”¶ç›˜æ•°æ® å›¾æ—¶å‘ç”Ÿé”™è¯¯: cannot unpack non-iterable NoneType object
+2025-07-14 13:40:44,269 - INFO - excel_base.py - 2044 - Sheet å·²æˆåŠŸåˆ é™¤ã€‚
+2025-07-14 13:40:44,269 - INFO - excel_base.py - 2049 - ç›®æ ‡æ–‡ä»¶å: /home/lsz/dev/code/work/python-study/template/7.11/é‡åŒ–ä¸šåŠ¡æ—¥æŠ¥-2025-07-11.xlsx
