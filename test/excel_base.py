@@ -3506,7 +3506,7 @@ class ExcelBase:
             try:
                 item_array = ['统计日期', 
                             '一、账户资产及收益情况', '账户名称', '账户编号', '资产单元名称','单元资产净值', '账户资产净值', '返息', '手续费', 
-                                '盈利/亏损(不含返息、逆回购、手续费)', '总盈利/亏损(含返息、逆回购、手续费)', '收益率(含返息、逆回购、手续费)', 
+                                '盈利/亏损(含返息、逆回购、手续费)', '总盈利/亏损(含返息、逆回购、手续费)', '收益率(含返息、逆回购、手续费)', 
                                 '盈利/亏损(不含返息、逆回购、手续费)', '总盈利/亏损(不含返息、逆回购、手续费)', '收益率(不含返息、逆回购、手续费)',
                             '二、净值列示', '实收资本', '资产净值', '总份额', '期初单位净值', '昨日单位净值(含返息、逆回购、手续费)', '单位净值(含返息、逆回购、手续费)', 
                                 '日净值增长率(含返息、逆回购、手续费)','昨日单位净值(不含返息、逆回购、手续费)', '单位净值(不含返息、逆回购、手续费)', '日净值增长率(不含返息、逆回购、手续费)',
@@ -3728,22 +3728,22 @@ class ExcelBase:
                 if self.src_dict_['量化三']['期货保证金分析'] is not None:
                     for key, value in self.src_dict_['量化三']['期货保证金分析'].items():
                         if key in cell_col_index:   
-                            sheet.cell(row = self.sheet6_dict_['账户权益'].row_, column = cell_col_index[key], value=self.src_dict_['量化三']['手动输入数据']['账户资产净值']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 账户权益 = 账户资产净值
+                            sheet.cell(row = self.sheet6_dict_['账户权益'].row_, column = cell_col_index[key], value=self.src_dict_['量化三']['手动输入数据']['单元资产净值']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 账户权益 = 账户资产净值
                             sheet.cell(row = self.sheet6_dict_['账户权益'].row_, column = cell_col_index[key]).border = self.border_
                             
                             self.sheet6_dict_['占用'].value_ = value['占用保证金(静态)']
                             set_value(sheet, self.sheet6_dict_['占用'].row_,cell_col_index[key],'占用保证金(静态)', value, '量化三-期货保证金分析', True, self.border_)
                             
-                            self.sheet6_dict_['风险度'].value_ = round(self.sheet6_dict_['占用'].value_  / self.src_dict_['量化三']['手动输入数据']['账户资产净值'] * 100, 4) # 风险度 = 占用÷账户权益×100%【保留4位小数】
+                            self.sheet6_dict_['风险度'].value_ = round(self.sheet6_dict_['占用'].value_  / self.src_dict_['量化三']['手动输入数据']['单元资产净值'] * 100, 4) # 风险度 = 占用÷账户权益×100%【保留4位小数】
                             sheet.cell(row = self.sheet6_dict_['风险度'].row_, column = cell_col_index[key], value= str(self.sheet6_dict_['风险度'].value_)+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 
                             sheet.cell(row = self.sheet6_dict_['风险度'].row_, column = cell_col_index[key]).border = self.border_                        
 
                         else:
                             logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
 
-                    sheet.cell(row = self.sheet1_dict_['占用'].row_, column = 3, value="-").border = self.border_
-                    sheet.cell(row = self.sheet1_dict_['账户权益'].row_, column = 3,value="-").border = self.border_
-                    sheet.cell(row = self.sheet1_dict_['风险度'].row_, column = 3,value="-").border = self.border_                            
+                    sheet.cell(row = self.sheet6_dict_['占用'].row_, column = 3, value="-").border = self.border_
+                    sheet.cell(row = self.sheet6_dict_['账户权益'].row_, column = 3,value="-").border = self.border_
+                    sheet.cell(row = self.sheet6_dict_['风险度'].row_, column = 3,value="-").border = self.border_                            
                 else:
                     logging.warning("量化三-期货保证金分析文件不存在。")
             except Exception as e:
