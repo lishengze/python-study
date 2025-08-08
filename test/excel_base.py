@@ -3336,7 +3336,7 @@ class ExcelBase:
                         sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 2).fill = self.with_profit_color_
                         sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 1).fill = self.with_profit_color_
                         
-                        self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_ = self.sheet5_dict_['账户资产净值'].value_  - self.src_dict_['量化三']['手动输入数据']['实收资本'] - self.src_dict_['量化三']['手动输入数据']['返息'] - self.src_dict_['量化三']['手动输入数据']['手续费']
+                        self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_ = self.sheet5_dict_['账户资产净值'].value_  - self.src_dict_['量化三']['手动输入数据']['实收资本'] - self.src_dict_['量化三']['手动输入数据']['返息'] - self.src_dict_['量化三']['手动输入数据']['手续费'] - self.src_dict_['量化三']['交易所回购']['返息']
                         sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2, value = round(self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
                         sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
                         sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2).fill = self.no_profit_color_
@@ -3650,7 +3650,7 @@ class ExcelBase:
                 sheet.cell(row = self.sheet6_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 2).fill = self.with_profit_color_
                 sheet.cell(row = self.sheet6_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 1).fill = self.with_profit_color_
                 
-                self.sheet6_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_ = self.sheet6_dict_['账户资产净值'].value_ - self.src_dict_['量化三']['手动输入数据']['实收资本'] - self.src_dict_['量化三']['手动输入数据']['返息'] - self.src_dict_['量化三']['手动输入数据']['手续费'] # 总盈利/亏损 = 账户资产净值 - 500w - 返息 - 手续费
+                self.sheet6_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_ = self.sheet6_dict_['账户资产净值'].value_ - self.src_dict_['量化三']['手动输入数据']['实收资本'] - self.src_dict_['量化三']['手动输入数据']['返息'] - self.src_dict_['量化三']['手动输入数据']['手续费'] - self.src_dict_['量化三']['交易所回购']['返息'] # 总盈利/亏损 = 账户资产净值 - 500w - 返息 - 手续费
                 sheet.cell(row = self.sheet6_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2, value=self.sheet6_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_ ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
                 sheet.cell(row = self.sheet6_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
                 sheet.cell(row = self.sheet6_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2).fill = self.no_profit_color_
