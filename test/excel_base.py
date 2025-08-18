@@ -1543,6 +1543,12 @@ def copy_sheet(src_sheet, des_sheet):
         logging.error(f"拷贝sheet 出错 {e}")  
         return None  
 
+def get_account_name_key(ori_account_name):
+    if '股票' in ori_account_name:
+        return '股票'
+    elif '投机' in ori_account_name:
+        return '投机'
+    return '错误'
 class ExcelBase:
     def __init__(self):
         try:
@@ -3265,6 +3271,11 @@ class ExcelBase:
             try:
                 cell_count = 1             
                 cell_col_index = {}
+                name_dict = {
+                    '股票':'股票单元', 
+                    '投机':'投机单元'
+                }
+
                 self.sheet5_dict_['账户资产净值'].value_  = 0
                 if self.src_dict_['量化三']['单元资产'] is not None:
                     cell_index = 1
@@ -3291,7 +3302,14 @@ class ExcelBase:
                             set_value(sheet, self.sheet5_dict_['单元资产净值'].row_,1+cell_index,'单元资产净值(净价)', value, '量化三-单元资产', True,self.border_)
                             
                             cell_index += 1
-                            cell_col_index[key] = cell_index     
+                            cell_col_index[key] = cell_index
+
+                            if '股票' in key:
+                                name_dict['股票'] = key
+
+                            if '投机' in key:
+                                name_dict['投机'] = key
+
 
                             self.sheet5_dict_['账户资产净值'].value_ += float(value['单元资产净值(净价)'])                                               
                         else:
@@ -3315,11 +3333,11 @@ class ExcelBase:
                         else:
                             logging.warning("量化三-交易所回购 没有 返息")
 
-                        sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index['量化三投机单元'], value=self.src_dict_['量化三']['手动输入数据']['返息'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
-                        sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index['量化三投机单元']).border = self.border_           
+                        sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index[name_dict['投机']], value=self.src_dict_['量化三']['手动输入数据']['返息'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
+                        sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index[name_dict['投机']]).border = self.border_           
                         
-                        sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index['量化三投机单元'], value=self.src_dict_['量化三']['手动输入数据']['手续费'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
-                        sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index['量化三投机单元']).border = self.border_     
+                        sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index[name_dict['投机']], value=self.src_dict_['量化三']['手动输入数据']['手续费'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
+                        sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index[name_dict['投机']]).border = self.border_     
 
                         sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index['量化三股票单元'], value="-" )
                         sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index['量化三股票单元']).border = self.border_                               
@@ -3425,6 +3443,8 @@ class ExcelBase:
             try:
                 if self.src_dict_['量化三']['期货保证金分析'] is not None:
                     for key, value in self.src_dict_['量化三']['期货保证金分析'].items():
+                        simple_key = get_account_name_key(key)
+                        key = name_dict[simple_key]
                         if key in cell_col_index:
                             set_value(sheet, self.sheet5_dict_['占用'].row_,cell_col_index[key],'占用保证金(静态)', value, '量化三-期货保证金分析', True, self.border_)
                             set_value(sheet, self.sheet5_dict_['账户权益'].row_,cell_col_index[key],'账户权益', value, '量化三-期货保证金分析', True, self.border_)
@@ -3524,7 +3544,11 @@ class ExcelBase:
                                                    
                                                     
                 sheet = self.target_workbook_.create_sheet(title='量化三-收盘数据')
-                
+                name_dict = {
+                    '股票':'股票单元', 
+                    '投机':'投机单元'
+                }
+
                 tmp_index = 1
                 for item in item_array:
                     self.sheet6_dict_[item] = ExcelData(row = tmp_index)
@@ -3575,7 +3599,7 @@ class ExcelBase:
                             self.sheet6_dict_['资产单元名称'].value_ = value['资产单元名称']
                             set_value(sheet, self.sheet6_dict_['资产单元名称'].row_, 1+cell_index,'资产单元名称', value, '量化三-单元资产',False, self.border_)
                             
-                            if '量化三投机单元' in key:                       
+                            if '投机' in key:                       
                                 sheet.cell(row = self.sheet6_dict_['单元资产净值'].row_, column = 1+cell_index, value=self.src_dict_['量化三']['手动输入数据']['单元资产净值']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 单元资产净值 = 手动输入
                                 sheet.cell(row = self.sheet6_dict_['单元资产净值'].row_, column = 1+cell_index).border = self.border_
                                 self.sheet6_dict_['账户资产净值'].value_ += self.src_dict_['量化三']['手动输入数据']['单元资产净值']
@@ -3607,7 +3631,14 @@ class ExcelBase:
                                 sheet.cell(row = self.sheet6_dict_['盈利/亏损(含返息、逆回购、手续费)'].row_, column = 1+cell_index).fill = self.with_profit_color_
                             
                             cell_index += 1
-                            cell_col_index[key] = cell_index    
+                            cell_col_index[key] = cell_index   
+
+                            if '股票' in key:
+                                name_dict['股票'] = key
+
+                            if '投机' in key:
+                                name_dict['投机'] = key
+
                         else:
                             set_value(sheet, self.sheet6_dict_['账户资产净值'].row_,2,'单元资产净值(净价)', value, '量化三-单元资产',False, self.border_)
 
@@ -3629,11 +3660,11 @@ class ExcelBase:
                 else:
                     logging.warning("量化三-交易所回购 没有 返息")
 
-                sheet.cell(row = self.sheet6_dict_['返息、逆回购'].row_, column = cell_col_index['量化三投机单元'], value=self.src_dict_['量化三']['手动输入数据']['返息'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
-                sheet.cell(row = self.sheet6_dict_['返息、逆回购'].row_, column = cell_col_index['量化三投机单元']).border = self.border_           
+                sheet.cell(row = self.sheet6_dict_['返息、逆回购'].row_, column = cell_col_index[name_dict['投机']], value=self.src_dict_['量化三']['手动输入数据']['返息'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
+                sheet.cell(row = self.sheet6_dict_['返息、逆回购'].row_, column = cell_col_index[name_dict['投机']]).border = self.border_           
                 
-                sheet.cell(row = self.sheet6_dict_['手续费'].row_, column = cell_col_index['量化三投机单元'], value=self.src_dict_['量化三']['手动输入数据']['手续费'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
-                sheet.cell(row = self.sheet6_dict_['手续费'].row_, column = cell_col_index['量化三投机单元']).border = self.border_     
+                sheet.cell(row = self.sheet6_dict_['手续费'].row_, column = cell_col_index[name_dict['投机']], value=self.src_dict_['量化三']['手动输入数据']['手续费'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
+                sheet.cell(row = self.sheet6_dict_['手续费'].row_, column = cell_col_index[name_dict['投机']]).border = self.border_     
 
                 sheet.cell(row = self.sheet6_dict_['手续费'].row_, column = cell_col_index['量化三股票单元'], value="-" )
                 sheet.cell(row = self.sheet6_dict_['手续费'].row_, column = cell_col_index['量化三股票单元']).border = self.border_                               
@@ -3733,6 +3764,8 @@ class ExcelBase:
             try: 
                 if self.src_dict_['量化三']['期货保证金分析'] is not None:
                     for key, value in self.src_dict_['量化三']['期货保证金分析'].items():
+                        simple_key = get_account_name_key(key)
+                        key = name_dict[simple_key]
                         if key in cell_col_index:   
                             sheet.cell(row = self.sheet6_dict_['账户权益'].row_, column = cell_col_index[key], value=self.src_dict_['量化三']['手动输入数据']['单元资产净值']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 账户权益 = 账户资产净值
                             sheet.cell(row = self.sheet6_dict_['账户权益'].row_, column = cell_col_index[key]).border = self.border_
