@@ -1670,6 +1670,7 @@ class ExcelBase:
                     '汇总证券-合计':None,
                     '期货保证金分析':None,
                     '交易所回购':None,
+                    
                     '其余信息': {
                         '收盘数据': {
                             
@@ -1680,6 +1681,7 @@ class ExcelBase:
                         'isOpen':True                        
                     },
                     "手动输入数据": {
+                        '投机单元名称':'投机',
                         '实收资本':5000000,
                         '账户资产净值': None,
                         '总份额': None,
@@ -1870,7 +1872,14 @@ class ExcelBase:
                     if self.src_dict_['量化三']['手动输入数据']['实收资本'] is None:
                         logging.critical("配置文件中 '量化三-实收资本' 字段值为空，请检查。")
                 else:
-                    logging.critical("配置文件中未找到 '量化三-实收资本' 字段，请检查。")                                          
+                    logging.critical("配置文件中未找到 '量化三-实收资本' 字段，请检查。")   
+
+                if '投机单元名称'  in self.config_['量化三']:                                     
+                    self.src_dict_['量化三']['手动输入数据']['投机单元名称'] = str(self.config_['量化三']['投机单元名称']) #手动输入的单元资产净值;
+                    if self.src_dict_['量化三']['手动输入数据']['投机单元名称'] is None:
+                        logging.critical("配置文件中 '量化三-投机单元名称' 字段值为空，请检查。")
+                else:
+                    logging.critical("配置文件中未找到 '量化三-投机单元名称' 字段，请检查。")                                                              
                                               
                                     
             else:
@@ -3281,6 +3290,11 @@ class ExcelBase:
                     cell_index = 1
                     for key, value in self.src_dict_['量化三']['单元资产'].items():
                         if key != '合计':
+                            if '投机' in key:
+                                if key != self.src_dict_['量化三']['手动输入数据']['投机单元名称']:
+                                    logging.warning(f"{key} 不在此次计算统计范围")
+                                    continue
+
                             dt = datetime.strptime(value['统计日期'], '%Y-%m-%d')
                             this_date = dt.strftime('%Y-%m-%d')
                             self.date = this_date
@@ -3586,6 +3600,11 @@ class ExcelBase:
                     for key, value in self.src_dict_['量化三']['单元资产'].items():
                         if key != '合计':
                             
+                            if '投机' in key:
+                                if key != self.src_dict_['量化三']['手动输入数据']['投机单元名称']:
+                                    logging.warning(f"{key} 不在此次计算统计范围")
+                                    continue
+
                             dt = datetime.strptime(value['统计日期'], '%Y-%m-%d')
                             this_date = dt.strftime('%Y-%m-%d')
                             self.date = this_date
