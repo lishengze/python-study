@@ -762,7 +762,7 @@ class ExcelDataRead():
                     if header[col] == '占用保证金(静态)' or header[col] == '账户权益' or header[col] == '风险比例1(%)':
                         cell_dict[key][header[col]] = round(float(cell_value), 4)
 
-            # print(cell_dict)        
+            logging.info(f"读取文件{sheet_type} 期货保证金 结束 {cell_dict}")        
             return cell_dict
 
         except Exception as e:
@@ -3458,7 +3458,9 @@ class ExcelBase:
                 if self.src_dict_['量化三']['期货保证金分析'] is not None:
                     for key, value in self.src_dict_['量化三']['期货保证金分析'].items():
                         simple_key = get_account_name_key(key)
-                        key = name_dict[simple_key]
+                        logging.info(f"读取文件 期货保证金分析 账户 {key} 数据 {value}")
+                        # key = name_dict[simple_key]
+
                         if key in cell_col_index:
                             set_value(sheet, self.sheet5_dict_['占用'].row_,cell_col_index[key],'占用保证金(静态)', value, '量化三-期货保证金分析', True, self.border_)
                             set_value(sheet, self.sheet5_dict_['账户权益'].row_,cell_col_index[key],'账户权益', value, '量化三-期货保证金分析', True, self.border_)
@@ -3784,7 +3786,7 @@ class ExcelBase:
                 if self.src_dict_['量化三']['期货保证金分析'] is not None:
                     for key, value in self.src_dict_['量化三']['期货保证金分析'].items():
                         simple_key = get_account_name_key(key)
-                        key = name_dict[simple_key]
+                        # key = name_dict[simple_key]
                         if key in cell_col_index:   
                             sheet.cell(row = self.sheet6_dict_['账户权益'].row_, column = cell_col_index[key], value=self.src_dict_['量化三']['手动输入数据']['单元资产净值']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 账户权益 = 账户资产净值
                             sheet.cell(row = self.sheet6_dict_['账户权益'].row_, column = cell_col_index[key]).border = self.border_
