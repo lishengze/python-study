@@ -1402,10 +1402,17 @@ class JZData:
             for i in range(2, valid_row+1):
                 date = str(sheet.cell(row=i, column=1).value)
                 
-                jz_with_profit = float(sheet.cell(row=i, column=2).value)                
-                hc_with_profit = trans_hc_str(str(sheet.cell(row=i, column=3).value))
+                try:
+                    jz_with_profit = float(sheet.cell(row=i, column=2).value)
+                except Exception as e:
+                    logging.error(f"读取文件 净值{sheet_name}, {i} 行, 2 列, 发生错误: {e}")                  
 
-                jz_no_profit = float(sheet.cell(row=i, column=4).value)
+                hc_with_profit = trans_hc_str(str(sheet.cell(row=i, column=3).value))
+                try:
+                    jz_no_profit = float(sheet.cell(row=i, column=4).value)
+                except Exception as e:
+                    logging.error(f"读取文件 净值{sheet_name}, {i} 行, 4 列, 发生错误: {e}")  
+                                
                 hc_no_profit = trans_hc_str(str(sheet.cell(row=i, column=5).value))
                 
                 self.date_list_.append(date)
@@ -1418,7 +1425,7 @@ class JZData:
             self.last_jz_with_profit_ = self.jz_list_with_profit_[-1]            
                 
         except Exception as e:
-            logging.error(f"读取文件 净值 发生错误: {e}")  
+            logging.error(f"读取文件 净值 {sheet_name} 发生错误: {e}")  
             return None
         
     
@@ -2911,12 +2918,14 @@ class ExcelBase:
                 sheet.cell(row = self.sheet3_dict_['昨日单位净值(不含返息、手续费)'].row_, column = 2).fill = self.no_profit_color_
                 sheet.cell(row = self.sheet3_dict_['昨日单位净值(不含返息、手续费)'].row_, column = 1).fill = self.no_profit_color_
                 
-                self.sheet3_dict_['单位净值(不含返息、手续费)'].value_ = (self.sheet3_dict_['实收资本'].value_ +  self.sheet3_dict_['总盈利/亏损(不含返息、手续费)'].value_) / self.src_dict_['量化二']['手动输入数据']['总份额'] #单位净值
-                sheet.cell(row = self.sheet3_dict_['单位净值(不含返息、手续费)'].row_, column = 2, value = round(self.sheet3_dict_['单位净值(不含返息、手续费)'].value_ , 5))
-                sheet.cell(row = self.sheet3_dict_['单位净值(不含返息、手续费)'].row_, column = 2).border = self.border_
-                sheet.cell(row = self.sheet3_dict_['单位净值(不含返息、手续费)'].row_, column = 2).fill = self.no_profit_color_
-                sheet.cell(row = self.sheet3_dict_['单位净值(不含返息、手续费)'].row_, column = 1).fill = self.no_profit_color_
-                
+                try:
+                    self.sheet3_dict_['单位净值(不含返息、手续费)'].value_ = (self.sheet3_dict_['实收资本'].value_ +  self.sheet3_dict_['总盈利/亏损(不含返息、手续费)'].value_) / self.src_dict_['量化二']['手动输入数据']['总份额'] #单位净值
+                    sheet.cell(row = self.sheet3_dict_['单位净值(不含返息、手续费)'].row_, column = 2, value = round(self.sheet3_dict_['单位净值(不含返息、手续费)'].value_ , 5))
+                    sheet.cell(row = self.sheet3_dict_['单位净值(不含返息、手续费)'].row_, column = 2).border = self.border_
+                    sheet.cell(row = self.sheet3_dict_['单位净值(不含返息、手续费)'].row_, column = 2).fill = self.no_profit_color_
+                    sheet.cell(row = self.sheet3_dict_['单位净值(不含返息、手续费)'].row_, column = 1).fill = self.no_profit_color_
+                except Exception as e:
+                    logging.error(f"生成 量化二结算数据-二、净值列示设置 实收资本  {self.sheet3_dict_['实收资本'].value_}, 总盈利/亏损(不含返息、手续费): {self.sheet3_dict_['总盈利/亏损(不含返息、手续费)'].value_}  单元格时发生错误: {e}")                      
                 
                 self.sheet3_dict_['日净值增长率(不含返息、手续费)'].value_ = (self.sheet3_dict_['单位净值(不含返息、手续费)'].value_  - self.sheet3_dict_['昨日单位净值(不含返息、手续费)'].value_) / self.sheet3_dict_['昨日单位净值(不含返息、手续费)'].value_ * 100 #日净值增长率
                 sheet.cell(row = self.sheet3_dict_['日净值增长率(不含返息、手续费)'].row_, column = 2, value = str(round(self.sheet3_dict_['日净值增长率(不含返息、手续费)'].value_, 5)) + '%')  
