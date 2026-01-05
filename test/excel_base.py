@@ -3634,6 +3634,7 @@ class ExcelBase:
                                 sheet.cell(row = self.sheet6_dict_['单元资产净值'].row_, column = 1+cell_index).border = self.border_
                                 self.sheet6_dict_['账户资产净值'].value_ += self.src_dict_['量化三']['手动输入数据']['单元资产净值']
 
+                                # todo 415*10000  改成配置输入 - 期货账户成本;
                                 profit1 = self.src_dict_['量化三']['手动输入数据']['单元资产净值'] - 415*10000 - self.src_dict_['量化三']['手动输入数据']['返息'] - self.src_dict_['量化三']['手动输入数据']['手续费']    #415w ;                      
                                 sheet.cell(row = self.sheet6_dict_['盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 1+cell_index, value=profit1).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 盈利/亏损(不含返息、逆回购、手续费) = 单元资产净值-600万元
                                 sheet.cell(row = self.sheet6_dict_['盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 1+cell_index).border = self.border_
@@ -3646,6 +3647,8 @@ class ExcelBase:
                                 sheet.cell(row = self.sheet6_dict_['盈利/亏损(含返息、逆回购、手续费)'].row_, column = 1+cell_index).fill = self.with_profit_color_
 
                             else:
+
+                                # todo 85*10000  改成配置输入 - 证券账户成本;
                                 sheet.cell(row = self.sheet6_dict_['单元资产净值'].row_, column = 1+cell_index, value=float(value['单元资产净值(净价)'])).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 单元资产净值 = 手动输入
                                 sheet.cell(row = self.sheet6_dict_['单元资产净值'].row_, column = 1+cell_index).border = self.border_
                                 self.sheet6_dict_['账户资产净值'].value_ += float(value['单元资产净值(净价)'])
