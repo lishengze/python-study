@@ -665,7 +665,7 @@ class ExcelDataRead():
             # if '量化三' in sheet_type:
             #     logging.info(f"读取文件 单元资产 结束 {cell_dict} ")
 
-            logging.info(cell_dict) 
+            # logging.info(cell_dict) 
             return cell_dict
         except Exception as e:
             logging.error(f"读取文件 单元资产 时发生错误: {e}")  
@@ -800,7 +800,11 @@ class ExcelDataRead():
             
             stock_buy_count = 0
             stock_sell_count = 0
-            stock_done_amount = 0            
+            stock_done_amount = 0    
+
+            etf_sell_count = 0;
+            etf_buy_count = 0;     
+            etf_done_amount = 0;
             
             future_list = []
 
@@ -822,6 +826,14 @@ class ExcelDataRead():
                         stock_sell_count += 1
                         
                     stock_done_amount += cell_dict['成交金额'][row]
+
+                if '开放式基金' in value:
+                    if cell_dict['委托方向'][row] == '买入':
+                        etf_buy_count += 1
+                    elif cell_dict['委托方向'][row] == '卖出':
+                        etf_sell_count += 1
+                        
+                    etf_done_amount += cell_dict['成交金额'][row]                    
 
                 if '期货' in value:
                     future_count +=1
@@ -861,7 +873,9 @@ class ExcelDataRead():
             future_done_amount /= 10000
             future_done_amount = round(future_done_amount, 2)
         
-            stock_info = f"买入股票: {stock_buy_count} 只, 卖出股票: {stock_sell_count} 只, 股票合计成交金额: {round(stock_done_amount,2)} 万元"                        
+            stock_info = f"买入股票: {stock_buy_count} 只, 卖出股票: {stock_sell_count} 只, 股票合计成交金额: {round(stock_done_amount,2)} 元\n"                        
+            etf_info = f"买入开放式基金: {etf_buy_count} 只,  卖出开放式基金: {etf_sell_count} 只, 开放式基金合计成交金额: {round(etf_done_amount,2)} 元"
+            stock_info += etf_info                
             future_info = '今日交易'
             
             if future_count > 0:
@@ -981,7 +995,7 @@ class ExcelDataRead():
             stock_done_amount = round(stock_done_amount, 2)
             future_done_amount = round(future_done_amount, 2)
 
-            stock_info = f"买入股票: {stock_buy_count} 只, 卖出股票: {stock_sell_count} 只, 股票合计成交金额: {round(stock_done_amount,2)} 万元"            
+            stock_info = f"买入股票: {stock_buy_count} 只, 卖出股票: {stock_sell_count} 只, 股票合计成交金额: {round(stock_done_amount,2)} 元"            
             future_info = f"今日交易: {len(future_list)} 只股指期货合约, {len(option_list)} 只股指期权合约， 成交合约价值 {round(future_done_amount,2)} 万元"
             
             future_info_2 = '今日交易'
@@ -998,7 +1012,7 @@ class ExcelDataRead():
             if stock_sell_count > 0:
                 stock_info_2 += f"卖出股票: {math.floor(float(stock_sell_count))} 只"
             if stock_done_amount > 0:
-                stock_info_2 += f"股票合计成交金额: {round(stock_done_amount,2)} 万元"
+                stock_info_2 += f"股票合计成交金额: {round(stock_done_amount,2)} 元"
                 
             
                     
@@ -1866,7 +1880,7 @@ class ExcelBase:
                 else:
                     logging.critical("配置文件中未找到 '量化二-结算' 字段，请检查。")      
 
-                if '收盘'  in self.config_['收盘']:                                     
+                if '收盘'  in self.config_['量化二']:                                     
                     if '实收资本'  in self.config_['量化二']['收盘']:                 
                         self.src_dict_['量化二']['手动输入数据']['收盘']['实收资本'] = float(str(self.config_['量化二']['收盘']['实收资本'])) #手动输入的单元资产净值;
                     else:
@@ -1965,6 +1979,8 @@ class ExcelBase:
                                     
             else:
                 logging.critical("配置文件中未找到 '量化三' 字段，请检查。")     
+
+            logging.info(f"读取配置文件成功。\n量化三配置: {self.src_dict_['量化三']}")
                 
             # logging.info(f"读取配置文件成功。\n量化一手动输入信息: {self.src_dict_['量化一']['手动输入数据']}\n量化二手动输入信息: {self.src_dict_['量化二']['手动输入数据']}\n量化三手动输入信息: {self.src_dict_['量化三']['手动输入数据']}")       
                   
@@ -3377,56 +3393,62 @@ class ExcelBase:
                     '投机':'投机单元'
                 }
 
-                self.sheet5_dict_['账户资产净值'].value_  = 0
-                if self.src_dict_['量化三']['单元资产'] is not None:
-                    cell_index = 1
-                    for key, value in self.src_dict_['量化三']['单元资产'].items():
-                        if key != '合计':
-                            if '投机' in key:
-                                if key != self.src_dict_['量化三']['手动输入数据']['投机单元名称']:
-                                    logging.warning(f"{key} 不在此次计算统计范围")
-                                    continue
+                try:
 
-                            dt = datetime.strptime(value['统计日期'], '%Y-%m-%d')
-                            this_date = dt.strftime('%Y-%m-%d')
-                            self.date = this_date
-                                                        
-                            sheet.cell(row = self.sheet5_dict_['统计日期'].row_, column = 2, value=str(value['统计日期']) + ", (金额单位：元)").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                            set_value(sheet, self.sheet5_dict_['账户名称'].row_,2,'账户名称', value, '量化三-单元资产', False,self.border_)
-                            tmpzhbh = value['账户编号']
-                            sheet.cell(row = self.sheet5_dict_['账户编号'].row_, column = 2, value=math.floor(float(tmpzhbh)))
-                            sheet.cell(row = self.sheet5_dict_['账户编号'].row_, column = 2).border = self.border_
-                            
-                            self.sheet5_dict_['资产单元名称'].value_ = value['资产单元名称']
-                            set_value(sheet, self.sheet5_dict_['资产单元名称'].row_, 1+cell_index,'资产单元名称', value, '量化三-单元资产',False, self.border_)
+                    self.sheet5_dict_['账户资产净值'].value_  = 0
+                    if self.src_dict_['量化三']['单元资产'] is not None:
+                        cell_index = 1
+                        for key, value in self.src_dict_['量化三']['单元资产'].items():
+                            if key != '合计':
+                                if '投机' in key:
+                                    if key != self.src_dict_['量化三']['手动输入数据']['投机单元名称']:
+                                        logging.warning(f"{key} 不在此次计算统计范围, 配置中账户名为: {self.src_dict_['量化三']['手动输入数据']['投机单元名称']}, 请检查。")
+                                        continue
 
-                            # self.sheet5_dict_['账户资产净值'].value_ = float(value['单元资产净值(净价)'])
-                            # set_value(sheet, self.sheet5_dict_['账户资产净值'].row_,1+cell_index,'单元资产净值(净价)', value, '量化三-单元资产', True, self.border_)
-                            
+                                dt = datetime.strptime(value['统计日期'], '%Y-%m-%d')
+                                this_date = dt.strftime('%Y-%m-%d')
+                                self.date = this_date
+                                                            
+                                sheet.cell(row = self.sheet5_dict_['统计日期'].row_, column = 2, value=str(value['统计日期']) + ", (金额单位：元)").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                                set_value(sheet, self.sheet5_dict_['账户名称'].row_,2,'账户名称', value, '量化三-单元资产', False,self.border_)
+                                tmpzhbh = value['账户编号']
+                                sheet.cell(row = self.sheet5_dict_['账户编号'].row_, column = 2, value=math.floor(float(tmpzhbh)))
+                                sheet.cell(row = self.sheet5_dict_['账户编号'].row_, column = 2).border = self.border_
+                                
+                                self.sheet5_dict_['资产单元名称'].value_ = value['资产单元名称']
+                                set_value(sheet, self.sheet5_dict_['资产单元名称'].row_, 1+cell_index,'资产单元名称', value, '量化三-单元资产',False, self.border_)
 
-                            self.sheet5_dict_['单元资产净值'].value_ = float(value['单元资产净值(净价)'])
-                            set_value(sheet, self.sheet5_dict_['单元资产净值'].row_,1+cell_index,'单元资产净值(净价)', value, '量化三-单元资产', True,self.border_)
-                            
-                            cell_index += 1
-                            cell_col_index[key] = cell_index
+                                # self.sheet5_dict_['账户资产净值'].value_ = float(value['单元资产净值(净价)'])
+                                # set_value(sheet, self.sheet5_dict_['账户资产净值'].row_,1+cell_index,'单元资产净值(净价)', value, '量化三-单元资产', True, self.border_)
+                                
 
-                            if '股票' in key:
-                                name_dict['股票'] = key
+                                self.sheet5_dict_['单元资产净值'].value_ = float(value['单元资产净值(净价)'])
+                                set_value(sheet, self.sheet5_dict_['单元资产净值'].row_,1+cell_index,'单元资产净值(净价)', value, '量化三-单元资产', True,self.border_)
+                                
+                                cell_index += 1
+                                cell_col_index[key] = cell_index
 
-                            if '投机' in key:
-                                name_dict['投机'] = key
+                                if '股票' in key:
+                                    name_dict['股票'] = key
+
+                                if '投机' in key:
+                                    name_dict['投机'] = key
 
 
-                            self.sheet5_dict_['账户资产净值'].value_ += float(value['单元资产净值(净价)'])                                               
-                        else:
-                            set_value(sheet, self.sheet5_dict_['账户资产净值'].row_,2,'单元资产净值(净价)', value, '量化三-单元资产',False, self.border_)
+                                self.sheet5_dict_['账户资产净值'].value_ += float(value['单元资产净值(净价)'])                                               
+                            else:
+                                set_value(sheet, self.sheet5_dict_['账户资产净值'].row_,2,'单元资产净值(净价)', value, '量化三-单元资产',False, self.border_)
 
-                    sheet.cell(row = self.sheet5_dict_['账户资产净值'].row_, column = 2, value=self.sheet5_dict_['账户资产净值'].value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 盈利/亏损(不含返息、逆回购、手续费) =《汇总证券(合计-股票)》“总体盈亏(含费用)”最后一行数值
-                    sheet.cell(row = self.sheet5_dict_['账户资产净值'].row_, column = 2).border = self.border_
+                        sheet.cell(row = self.sheet5_dict_['账户资产净值'].row_, column = 2, value=self.sheet5_dict_['账户资产净值'].value_).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 盈利/亏损(不含返息、逆回购、手续费) =《汇总证券(合计-股票)》“总体盈亏(含费用)”最后一行数值
+                        sheet.cell(row = self.sheet5_dict_['账户资产净值'].row_, column = 2).border = self.border_
 
-                    cell_count = cell_index            
-                else:
-                    logging.warning("量化三-单元资产文件不存在。")
+                        cell_count = cell_index            
+                    else:
+                        logging.warning("量化三-单元资产文件不存在。")
+                except Exception as e:
+                    logging.error(f"生成 量化三-结算数据-一、账户资产及收益情况 基础数据出错 单元格时发生错误: {e}")                             
+
+
 
                 try:
                     self.sheet5_dict_['实收资本'].value_ = self.src_dict_['量化三']['手动输入数据']['结算']['实收资本']
@@ -3437,55 +3459,60 @@ class ExcelBase:
                 except Exception as e:
                     logging.error(f"生成 量化三-结算数据-设置 实收资本、总份额 单元格时发生错误: {e}")                       
 
-                        
-                profits1 = 0  #总盈利/亏损(不含返息、逆回购、手续费)
-                if self.src_dict_['量化三']['汇总证券-合计'] is not None:
-                    if '返息' in self.src_dict_['量化三']['汇总证券-合计']:
-                        profits1 = self.src_dict_['量化三']['汇总证券-合计']['返息']
-                        
-                        if '返息' in self.src_dict_['量化三']['交易所回购']:   
-                            sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index['量化三股票单元'], value =self.src_dict_['量化三']['交易所回购']['返息']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                            sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index['量化三股票单元']).border = self.border_
+
+                try:                            
+                    logging.info(f"生成 量化三-结算数据-cell_col_index=\n{cell_col_index}")
+
+                    profits1 = 0  #总盈利/亏损(不含返息、逆回购、手续费)
+                    if self.src_dict_['量化三']['汇总证券-合计'] is not None:
+                        if '返息' in self.src_dict_['量化三']['汇总证券-合计']:
+                            profits1 = self.src_dict_['量化三']['汇总证券-合计']['返息']
+                            
+                            if '返息' in self.src_dict_['量化三']['交易所回购']:   
+                                sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index['量化三股票单元'], value =self.src_dict_['量化三']['交易所回购']['返息']).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                                sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index['量化三股票单元']).border = self.border_
+                            else:
+                                logging.warning("量化三-交易所回购 没有 返息")
+
+                            sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index[name_dict['投机']], value=self.src_dict_['量化三']['手动输入数据']['返息'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
+                            sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index[name_dict['投机']]).border = self.border_           
+                            
+                            sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index[name_dict['投机']], value=self.src_dict_['量化三']['手动输入数据']['手续费'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
+                            sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index[name_dict['投机']]).border = self.border_     
+
+                            sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index['量化三股票单元'], value="-" )
+                            sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index['量化三股票单元']).border = self.border_                               
+
+                            self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].value_ = self.sheet5_dict_['账户资产净值'].value_  -  self.sheet5_dict_['实收资本'].value_
+                            sheet.cell(row = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].row_, column = 2, value = round(self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].value_ ,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 与量化二不同的地方;
+                            sheet.cell(row = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
+                            sheet.cell(row = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].row_, column = 1).fill = self.with_profit_color_
+                            sheet.cell(row = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].row_, column = 2).fill = self.with_profit_color_
+                            
+                            self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].value_ = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].value_  / self.sheet5_dict_['实收资本'].value_ * 100
+                            sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 2, value = str(round(self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].value_,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                            sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
+                            sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 2).fill = self.with_profit_color_
+                            sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 1).fill = self.with_profit_color_
+                            
+                            self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_ = self.sheet5_dict_['账户资产净值'].value_  - self.sheet5_dict_['实收资本'].value_ - self.src_dict_['量化三']['手动输入数据']['返息'] - self.src_dict_['量化三']['手动输入数据']['手续费'] - self.src_dict_['量化三']['交易所回购']['返息']
+                            sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2, value = round(self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                            sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
+                            sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2).fill = self.no_profit_color_
+                            sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 1).fill = self.no_profit_color_
+                            
+                            self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].value_ = (self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_) / self.sheet5_dict_['实收资本'].value_ * 100 #收益率
+                            sheet.cell(row = self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].row_, column = 2, value = str(round(self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].value_,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
+                            sheet.cell(row = self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
+                            sheet.cell(row = self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].row_, column = 2).fill = self.no_profit_color_ 
+                            sheet.cell(row = self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].row_, column = 1).fill = self.no_profit_color_  
+                                                    
                         else:
-                            logging.warning("量化三-交易所回购 没有 返息")
-
-                        sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index[name_dict['投机']], value=self.src_dict_['量化三']['手动输入数据']['返息'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
-                        sheet.cell(row = self.sheet5_dict_['返息、逆回购'].row_, column = cell_col_index[name_dict['投机']]).border = self.border_           
-                        
-                        sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index[name_dict['投机']], value=self.src_dict_['量化三']['手动输入数据']['手续费'] ).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 总盈利/亏损 = 账户资产净值 - 1000万元【手动输入】
-                        sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index[name_dict['投机']]).border = self.border_     
-
-                        sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index['量化三股票单元'], value="-" )
-                        sheet.cell(row = self.sheet5_dict_['手续费'].row_, column = cell_col_index['量化三股票单元']).border = self.border_                               
-
-                        self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].value_ = self.sheet5_dict_['账户资产净值'].value_  -  self.sheet5_dict_['实收资本'].value_
-                        sheet.cell(row = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].row_, column = 2, value = round(self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].value_ ,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1 # 与量化二不同的地方;
-                        sheet.cell(row = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
-                        sheet.cell(row = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].row_, column = 1).fill = self.with_profit_color_
-                        sheet.cell(row = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].row_, column = 2).fill = self.with_profit_color_
-                        
-                        self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].value_ = self.sheet5_dict_['总盈利/亏损(含返息、逆回购、手续费)'].value_  / self.sheet5_dict_['实收资本'].value_ * 100
-                        sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 2, value = str(round(self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].value_,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                        sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
-                        sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 2).fill = self.with_profit_color_
-                        sheet.cell(row = self.sheet5_dict_['收益率(含返息、逆回购、手续费)'].row_, column = 1).fill = self.with_profit_color_
-                        
-                        self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_ = self.sheet5_dict_['账户资产净值'].value_  - self.sheet5_dict_['实收资本'].value_ - self.src_dict_['量化三']['手动输入数据']['返息'] - self.src_dict_['量化三']['手动输入数据']['手续费'] - self.src_dict_['量化三']['交易所回购']['返息']
-                        sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2, value = round(self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_,4)).number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                        sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
-                        sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 2).fill = self.no_profit_color_
-                        sheet.cell(row = self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].row_, column = 1).fill = self.no_profit_color_
-                        
-                        self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].value_ = (self.sheet5_dict_['总盈利/亏损(不含返息、逆回购、手续费)'].value_) / self.sheet5_dict_['实收资本'].value_ * 100 #收益率
-                        sheet.cell(row = self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].row_, column = 2, value = str(round(self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].value_,4))+"%").number_format = numbers.FORMAT_NUMBER_COMMA_SEPARATED1
-                        sheet.cell(row = self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].row_, column = 2).border = self.border_
-                        sheet.cell(row = self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].row_, column = 2).fill = self.no_profit_color_ 
-                        sheet.cell(row = self.sheet5_dict_['收益率(不含返息、逆回购、手续费)'].row_, column = 1).fill = self.no_profit_color_  
-                                                
+                            logging.warning("量化三-汇总证券-合计文件不存在。")
                     else:
                         logging.warning("量化三-汇总证券-合计文件不存在。")
-                else:
-                    logging.warning("量化三-汇总证券-合计文件不存在。")
+                except Exception as e:
+                    logging.error(f"生成 量化三-结算数据-收益相关 单元格时发生错误: {e}")                           
                     
             except Exception as e:
                 logging.error(f"生成 量化三-结算数据-一、账户资产及收益情况 单元格时发生错误: {e}")                       
@@ -3572,9 +3599,9 @@ class ExcelBase:
                         else:
                             logging.warning(f"期货保证金分析中的账户 {key} 不在单元资产中 ")
 
-                    sheet.cell(row = self.sheet1_dict_['占用'].row_, column = 3, value="-").border = self.border_
-                    sheet.cell(row = self.sheet1_dict_['账户权益'].row_, column = 3,value="-").border = self.border_
-                    sheet.cell(row = self.sheet1_dict_['风险度'].row_, column = 3,value="-").border = self.border_                            
+                    sheet.cell(row = self.sheet5_dict_['占用'].row_, column = 3, value="-").border = self.border_
+                    sheet.cell(row = self.sheet5_dict_['账户权益'].row_, column = 3,value="-").border = self.border_
+                    sheet.cell(row = self.sheet5_dict_['风险度'].row_, column = 3,value="-").border = self.border_                            
                 else:
                     logging.warning("量化三-期货保证金分析文件不存在。")
             except Exception as e:
