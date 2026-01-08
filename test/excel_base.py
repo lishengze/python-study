@@ -1084,11 +1084,16 @@ class ExcelDataRead():
 
             done_amount = 0 # 本币市值;
 
-            stock_count = 0                            
+            stock_count = 0             
+
+            etf_count = 0
+
             for value in cell_dict['证券类别']:
                 if '股票' in value:                    
                     if cell_dict['持仓数量'][row] > 0:
                         stock_count += 1
+                elif '开放式基金' in value:
+                    etf_count += 1
 
                 if '期货' in value and cell_dict['持仓数量'][row] > 0:
                     future_count += 1                      
@@ -1129,7 +1134,7 @@ class ExcelDataRead():
                 row += 1
 
             done_amount /= 10000    
-            stock_info = f"股票: {stock_count} 只"                                                                  
+            stock_info = f"股票: {stock_count} 只, 开放式基金: {etf_count} 只"                                                                  
             future_info = f"共持仓: {future_count} 只期货, 持仓合约价值 {round(done_amount,2)} 万元, 其中: \n"
             
             for future_type, future_struct in future_dict.items():
