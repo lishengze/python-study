@@ -1093,7 +1093,8 @@ class ExcelDataRead():
                     if cell_dict['持仓数量'][row] > 0:
                         stock_count += 1
                 elif '开放式基金' in value:
-                    etf_count += 1
+                    if cell_dict['持仓数量'][row] > 0:
+                        etf_count += 1
 
                 if '期货' in value and cell_dict['持仓数量'][row] > 0:
                     future_count += 1                      
