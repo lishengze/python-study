@@ -1,64 +1,64 @@
-2026-01-08 22:51:41,211 - INFO - excel_base.py - 92 - 配置文件路径: E:\code\study\python-study\test\配置.json
-2026-01-08 22:51:41,226 - INFO - excel_base.py - 1988 - 读取配置文件成功。
+2026-06-02 21:50:02,706 - INFO - excel_base.py - 92 - 配置文件路径: E:\code\study\python-study\test\配置.json
+2026-06-02 21:50:02,729 - INFO - excel_base.py - 1989 - 读取配置文件成功。
 量化三配置: {'成交回报': None, '单元资产': None, '汇总证券-当日持仓': None, '汇总证券-合计-股票': None, '汇总证券-合计': None, '期货保证金分析': None, '交易所回购': None, '其余信息': {'isOpen': True}, '手动输入数据': {'投机单元名称': '量化三投机', '实收资本': 5000000, '账户资产净值': None, '总份额': None, '返息': 0.0, '手续费': 0.0, '结算': {'实收资本': 4963324.57, '总份额': 4963324.57}, '收盘': {'实收资本': 4963324.57, '总份额': 4963324.57, '期货账户成本': 4100125.16, '证券账户成本': 863199.38}, '单元资产净值': 4100893.6}}
-2026-01-08 22:51:41,226 - WARNING - excel_base.py - 1538 - 目录 E:/code/study/python-study/template/2026.1.7/量化一 未找到。
-2026-01-08 22:51:41,236 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/成交回报.xls
-2026-01-08 22:51:41,238 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/单元资产.xls
-2026-01-08 22:51:41,238 - INFO - excel_base.py - 610 - 读取文件 单元资产 开始 3 118 
-2026-01-08 22:51:41,240 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/汇总证券-当日持仓.xls
-2026-01-08 22:51:41,249 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/汇总证券-合计.xls
-2026-01-08 22:51:41,249 - INFO - excel_base.py - 678 - 读取文件 汇总证券-合计 开始 430 14 
-2026-01-08 22:51:41,251 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/期货保证金分析.xls
-2026-01-08 22:51:41,254 - INFO - excel_base.py - 732 - 读取文件 单元资产 开始 3 47 
-2026-01-08 22:51:41,254 - INFO - excel_base.py - 765 - 读取文件量化二 期货保证金 结束 {'量化二-投机单元': {'row': 1, '占用保证金(静态)': 476047.85, '账户权益': 10095500.03, '风险比例1(%)': 4.7811}}
-2026-01-08 22:51:41,257 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/成交回报.xls
-2026-01-08 22:51:41,262 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/单元资产.xls
-2026-01-08 22:51:41,262 - INFO - excel_base.py - 610 - 读取文件 单元资产 开始 7 118 
-2026-01-08 22:51:41,266 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/汇总证券-当日持仓.xls
-2026-01-08 22:51:41,268 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/汇总证券-合计-股票.xls
-2026-01-08 22:51:41,268 - INFO - excel_base.py - 1351 - 读取文件 汇总证券-合计-股票 开始 24 14 
-2026-01-08 22:51:41,274 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/汇总证券-合计.xls
-2026-01-08 22:51:41,274 - INFO - excel_base.py - 678 - 读取文件 汇总证券-合计 开始 40 14 
-2026-01-08 22:51:41,276 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/期货保证金分析.xls
-2026-01-08 22:51:41,276 - INFO - excel_base.py - 732 - 读取文件 单元资产 开始 4 47 
-2026-01-08 22:51:41,276 - INFO - excel_base.py - 765 - 读取文件量化三 期货保证金 结束 {'量化三投机': {'row': 1, '占用保证金(静态)': 0.0, '账户权益': 4100893.66, '风险比例1(%)': 0.0}, '量化三投机（南华子账户1）': {'row': 2, '占用保证金(静态)': 0.0, '账户权益': 0.0, '风险比例1(%)': 0.0}}
-2026-01-08 22:51:41,279 - INFO - excel_base.py - 1525 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/交易所回购.xls
-2026-01-08 22:51:41,279 - INFO - excel_base.py - 714 - 读取文件 交易所回购 开始 5 31 
-2026-01-08 22:51:41,279 - CRITICAL - excel_base.py - 2030 - 文件中未找到 量化一-结算数据 表格，请检查。
-2026-01-08 22:51:41,279 - CRITICAL - excel_base.py - 2036 - 文件中未找到 量化一-收盘数据 表格，请检查。
-2026-01-08 22:51:41,748 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:41,749 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:41,755 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:41,975 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:41,975 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:41,981 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,179 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,181 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,181 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,421 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,421 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,426 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,524 - WARNING - excel_base.py - 3410 - 量化三投机（南华子账户1） 不在此次计算统计范围, 配置中账户名为: 量化三投机, 请检查。
-2026-01-08 22:51:42,524 - INFO - excel_base.py - 3462 - 生成 量化三-结算数据-设置 实收资本、总份额 单元格时，实收资本=4963324.57，总份额=4963324.57
-2026-01-08 22:51:42,524 - INFO - excel_base.py - 3469 - 生成 量化三-结算数据-cell_col_index=
+2026-06-02 21:50:02,729 - WARNING - excel_base.py - 1539 - 目录 E:/code/study/python-study/template/2026.1.7/量化一 未找到。
+2026-06-02 21:50:02,734 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/成交回报.xls
+2026-06-02 21:50:02,736 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/单元资产.xls
+2026-06-02 21:50:02,736 - INFO - excel_base.py - 610 - 读取文件 单元资产 开始 3 118 
+2026-06-02 21:50:02,738 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/汇总证券-当日持仓.xls
+2026-06-02 21:50:02,747 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/汇总证券-合计.xls
+2026-06-02 21:50:02,747 - INFO - excel_base.py - 678 - 读取文件 汇总证券-合计 开始 430 14 
+2026-06-02 21:50:02,748 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化二/期货保证金分析.xls
+2026-06-02 21:50:02,748 - INFO - excel_base.py - 732 - 读取文件 单元资产 开始 3 47 
+2026-06-02 21:50:02,748 - INFO - excel_base.py - 765 - 读取文件量化二 期货保证金 结束 {'量化二-投机单元': {'row': 1, '占用保证金(静态)': 476047.85, '账户权益': 10095500.03, '风险比例1(%)': 4.7811}}
+2026-06-02 21:50:02,751 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/成交回报.xls
+2026-06-02 21:50:02,753 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/单元资产.xls
+2026-06-02 21:50:02,753 - INFO - excel_base.py - 610 - 读取文件 单元资产 开始 7 118 
+2026-06-02 21:50:02,755 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/汇总证券-当日持仓.xls
+2026-06-02 21:50:02,757 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/汇总证券-合计-股票.xls
+2026-06-02 21:50:02,757 - INFO - excel_base.py - 1352 - 读取文件 汇总证券-合计-股票 开始 24 14 
+2026-06-02 21:50:02,759 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/汇总证券-合计.xls
+2026-06-02 21:50:02,759 - INFO - excel_base.py - 678 - 读取文件 汇总证券-合计 开始 40 14 
+2026-06-02 21:50:02,761 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/期货保证金分析.xls
+2026-06-02 21:50:02,761 - INFO - excel_base.py - 732 - 读取文件 单元资产 开始 4 47 
+2026-06-02 21:50:02,762 - INFO - excel_base.py - 765 - 读取文件量化三 期货保证金 结束 {'量化三投机': {'row': 1, '占用保证金(静态)': 0.0, '账户权益': 4100893.66, '风险比例1(%)': 0.0}, '量化三投机（南华子账户1）': {'row': 2, '占用保证金(静态)': 0.0, '账户权益': 0.0, '风险比例1(%)': 0.0}}
+2026-06-02 21:50:02,763 - INFO - excel_base.py - 1526 - 成功读取文件 E:/code/study/python-study/template/2026.1.7/量化三/交易所回购.xls
+2026-06-02 21:50:02,763 - INFO - excel_base.py - 714 - 读取文件 交易所回购 开始 5 31 
+2026-06-02 21:50:02,763 - CRITICAL - excel_base.py - 2031 - 文件中未找到 量化一-结算数据 表格，请检查。
+2026-06-02 21:50:02,763 - CRITICAL - excel_base.py - 2037 - 文件中未找到 量化一-收盘数据 表格，请检查。
+2026-06-02 21:50:03,203 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,203 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,209 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,411 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,411 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,415 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,636 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,637 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,642 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,884 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,884 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:03,889 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,021 - WARNING - excel_base.py - 3411 - 量化三投机（南华子账户1） 不在此次计算统计范围, 配置中账户名为: 量化三投机, 请检查。
+2026-06-02 21:50:04,021 - INFO - excel_base.py - 3463 - 生成 量化三-结算数据-设置 实收资本、总份额 单元格时，实收资本=4963324.57，总份额=4963324.57
+2026-06-02 21:50:04,021 - INFO - excel_base.py - 3470 - 生成 量化三-结算数据-cell_col_index=
 {'量化三投机': 2, '量化三股票单元': 3}
-2026-01-08 22:51:42,524 - INFO - excel_base.py - 3596 - 读取文件 期货保证金分析 账户 量化三投机 数据 {'row': 1, '占用保证金(静态)': 0.0, '账户权益': 4100893.66, '风险比例1(%)': 0.0}
-2026-01-08 22:51:42,524 - INFO - excel_base.py - 3596 - 读取文件 期货保证金分析 账户 量化三投机（南华子账户1） 数据 {'row': 2, '占用保证金(静态)': 0.0, '账户权益': 0.0, '风险比例1(%)': 0.0}
-2026-01-08 22:51:42,524 - WARNING - excel_base.py - 3605 - 期货保证金分析中的账户 量化三投机（南华子账户1） 不在单元资产中 
-2026-01-08 22:51:42,654 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,654 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,654 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,901 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,901 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,907 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:42,997 - INFO - excel_base.py - 3738 - 生成 量化三-收盘数据-设置 实收资本、总份额 单元格时，实收资本=4963324.57，总份额=4963324.57,期货账户成本=4100125.16,证券账户成本=863199.38
-2026-01-08 22:51:43,001 - WARNING - excel_base.py - 3758 - 量化三投机（南华子账户1） 不在此次计算统计范围
-2026-01-08 22:51:43,001 - WARNING - excel_base.py - 3955 - 期货保证金分析中的账户 量化三投机（南华子账户1） 不在单元资产中 
-2026-01-08 22:51:43,133 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:43,135 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:43,139 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:43,364 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:43,364 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:43,434 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-2026-01-08 22:51:43,541 - INFO - excel_base.py - 2200 - Sheet 已成功删除。
-2026-01-08 22:51:43,541 - INFO - excel_base.py - 2205 - 目标文件名: E:/code/study/python-study/template/2026.1.7/量化业务日报-2026-01-07.xlsx
+2026-06-02 21:50:04,021 - INFO - excel_base.py - 3597 - 读取文件 期货保证金分析 账户 量化三投机 数据 {'row': 1, '占用保证金(静态)': 0.0, '账户权益': 4100893.66, '风险比例1(%)': 0.0}
+2026-06-02 21:50:04,021 - INFO - excel_base.py - 3597 - 读取文件 期货保证金分析 账户 量化三投机（南华子账户1） 数据 {'row': 2, '占用保证金(静态)': 0.0, '账户权益': 0.0, '风险比例1(%)': 0.0}
+2026-06-02 21:50:04,021 - WARNING - excel_base.py - 3606 - 期货保证金分析中的账户 量化三投机（南华子账户1） 不在单元资产中 
+2026-06-02 21:50:04,148 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,149 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,153 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,349 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,349 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,354 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,443 - INFO - excel_base.py - 3739 - 生成 量化三-收盘数据-设置 实收资本、总份额 单元格时，实收资本=4963324.57，总份额=4963324.57,期货账户成本=4100125.16,证券账户成本=863199.38
+2026-06-02 21:50:04,443 - WARNING - excel_base.py - 3759 - 量化三投机（南华子账户1） 不在此次计算统计范围
+2026-06-02 21:50:04,446 - WARNING - excel_base.py - 3956 - 期货保证金分析中的账户 量化三投机（南华子账户1） 不在单元资产中 
+2026-06-02 21:50:04,564 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,564 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,568 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,785 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,785 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,848 - INFO - category.py - 224 - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-06-02 21:50:04,963 - INFO - excel_base.py - 2201 - Sheet 已成功删除。
+2026-06-02 21:50:04,963 - INFO - excel_base.py - 2206 - 目标文件名: E:/code/study/python-study/template/2026.1.7/量化业务日报-2026-01-07.xlsx
